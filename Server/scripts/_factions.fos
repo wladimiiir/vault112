@@ -1,0 +1,10 @@
+#ifndef __FACTIONS__
+#define __FACTIONS__
+
+#define FACTION_None				( 0 )
+#define FACTION_Junktown			( 1 )
+#define FACTION_Raiders				( 2 )
+#define FACTION_BrotherhoodOfSteel	( 3 )
+#define FACTION_Enclave				( 4 )
+
+#endif // __FACTIONS__

@@ -1,0 +1,31 @@
+// Author: cvet, heX, Tab10id
+#include "_macros.fos"
+#include "stdlib_h.fos"
+
+bool s_Dialog( Critter& player, Scenery& scenery, int skill, Item@ item, int dialogId )
+{
+    // Запускаем диалог, если игрок не применял к сценери скилл или итем
+    if( skill == -1 && not valid( item ) )
+    {
+        return RunDialog( player, dialogId, scenery.HexX, scenery.HexY, false );
+    }
+    return false;
+}
+
+bool s_DoorControl( Critter& player, Scenery& scenery, int skill, Item@ item, int entireNum, int toOpen )
+{
+    if( toOpen == 1 )
+    {
+        DoorControl( player, entireNum, true );
+    }
+    else
+    {
+        DoorControl( player, entireNum, false );
+    }
+    return true;
+}
+
+bool s_TransitToMap( Critter& player, Scenery& scenery, int skill, Item@ item, int locPid, int mapIndex, int entire )
+{
+    return TransitToMap( player, locPid, mapIndex, entire );
+}

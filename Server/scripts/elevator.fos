@@ -1,0 +1,96 @@
+#include "_macros.fos"
+
+#define RESET_ANYDATA_AFTER    ( 60 * 60 )
+//import void ShowElevator( Critter& player, uint8 elevatorType, uint[] mapPids, uint entireNum ) from "elevator";
+void ShowElevator( Critter& player, uint8 elevatorType, uint[] mapPids, uint entireNum )
+{
+    player.Wait( 0 );
+    Map @ playerMap = player.GetMap();
+    if( !valid( playerMap ) )
+        return;
+    uint mPid = playerMap.GetProtoId();
+    uint curLevel = 0;     // Этаж, на котором находится игрок
+    switch( elevatorType )
+    {
+    case 0:
+    case 2:
+    case 4:
+    case 8:
+        curLevel = 1;
+        break;
+    case 1:
+        curLevel = 0;
+        break;
+    case 3:
+    case 5:
+    case 6:
+        curLevel = 3;
+        break;
+    case 7:
+        curLevel = 4;
+        break;
+    }
+    uint[] data = { entireNum, curLevel };
+    for( uint i = 0, l = mapPids.length(); i < l; i++ )
+    {
+        if( mapPids[ i ] == mPid )
+        {
+            curLevel += i;
+        }
+        data.insertLast( mapPids[ i ] );
+    }
+    // cохраняем описание лифта в anydata
+    SetAnyData( AnyDataKey( player.Id, playerMap.Id ), data );
+    // добавляем событие очистки  AnyData (если игрок так и не воспользовался лифтом)
+    uint[] values = { player.Id, playerMap.Id };
+    CreateTimeEvent( __FullSecond + RESET_ANYDATA_AFTER, "e_ResetAnyData", values, true );
+    player.ShowScreen( SCREEN_ELEVATOR, ELEVATOR_X( elevatorType, curLevel ), "answer_SelectLevel" );
+}
+
+uint e_ResetAnyData( uint[] @ values )
+{
+    string key = AnyDataKey( values[ 0 ], values[ 1 ] );
+    if( IsAnyData( key ) )
+        EraseAnyData( key );
+    return 0;
+}
+
+string AnyDataKey( uint playerId, uint mapId )
+{
+    return "Elevator_MapId" + mapId + "_PlayerId" + playerId;
+}
+
+void answer_SelectLevel( Critter& player, uint answerI, string& answerS )
+{
+    Map @ map = player.GetMap();
+    if( !valid( map ) )
+        return;
+    string key = AnyDataKey( player.Id, map.Id );
+    if( !IsAnyData( key ) )
+        return;
+    uint[] params;
+    if( GetAnyData( key, params ) )
+    {
+        uint l = params.length();
+        uint entNum = ( l == 0 ? 0 : params[ 0 ] );
+        uint firstLevelNum = ( l <= 1 ? 0 : params[ 1 ] );
+        EraseAnyData( key );
+        for( uint i = firstLevelNum; i < l + firstLevelNum; i++ )
+        {
+            if( answerI == i )
+            {
+                Location @loc = map.GetLocation();
+                for( uint j = 0, l = loc.GetMapCount(); j < l; j++ )
+                {
+                    Map @ newMap = loc.GetMapByIndex( j );                 // GetMapByPid(params[i-firstLevelNum+2], 0);
+                    if( valid( newMap ) && newMap.GetProtoId() == params[ i - firstLevelNum + 2 ] )
+                    {
+                        player.TransitToMap( newMap.Id, entNum );
+                        return;
+                    }
+                }
+                return;
+            }
+        }
+    }
+}

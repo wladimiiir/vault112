@@ -1,0 +1,30 @@
+#ifndef _ENTIRES_H_
+#define _ENTIRES_H_
+
+#define ENTIRE_DEFAULT			( 0 )
+#define ENTIRE_RESOURCE_ROCK	( 70 )
+#define ENTIRE_RESOURCE_FLINT	( 71 )
+#define ENTIRE_PLAYER_START		( 240 )
+#define ENTIRE_NO_LOG_OFF		( 241 )
+#define ENTIRE_REPLICATION		( 242 )
+#define ENTIRE_CAR				( 243 )
+#define ENTIRE_CAR_CRITTERS		( 244 )
+#define ENTIRE_BIG_CAR			( 245 )
+
+#define DEFAULT_CAR_PARK_ENTIRE			(400)
+#define DEFAULT_PATROL_ENTIRE			(401)
+#define	DEFAULT_HIDEOUT_ENTIRE			(402)
+#define	DEFAULT_JAIL_ENTIRE				(403)
+#define DEFAULT_BUYABLE_HOUSE_START		(500)
+#define	DEFAULT_BRAHMIN_NO_PASS_ENTIRE	(600)
+#define	DEFAULT_HOTEL_ENTIRE			(700)
+#define	DEFAULT_HOTEL_ROOM_ENTIRE_START	(701)
+
+class Entire
+{
+    int    Number;
+    uint16 HexX;
+    uint16 HexY;
+}
+
+#endif

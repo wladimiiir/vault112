@@ -1,0 +1,98 @@
+Starting FOnline (version 0422-EB)...
+Engine initialization...
+Sprite manager initialization...
+Sprite manager initialization complete.
+Sound manager initialization...
+Sound manager initialization complete.
+Loaded<325> critter types.
+Load scripts...
+Bind reserved functions...
+Bind reserved functions complete.
+Load scripts complete.
+Interface initialization.
+Load data.
+Load sprites.
+Interface initialization complete.
+Item manager initialization...
+Item manager initialization complete.
+Hex field initialization...
+Hex field initialization complete.
+Engine initialization complete.
+Network init...
+Connecting to server<localhost:4000>.
+Connecting successful.
+Network init successful.
+Auntification success.
+Change map...
+Get hash of map, pid<3>...complete.
+Load map...Load map success.
+Local map loaded.
+Chosen parameters...complete.
+Quests...Complete.
+Change map...
+Get hash of map, pid<500>...Load map<map500> from cache fail.
+Get map...500...New: Tiles Walls Scenery Old:. Map saved.
+Change map...
+Get hash of map, pid<500>...complete.
+Load map...Load map success.
+Local map loaded.
+Chosen parameters...complete.
+Quests...Complete.
+Disconnect.
+Traffic: send<18172>, receive<214393>, whole<232565>, receive real<1621704>.
+Disconnect success.
+Network init...
+Connecting to server<localhost:4000>.
+Connecting successful.
+Network init successful.
+Auntification success.
+Change map...
+Global map loaded.
+Chosen parameters...complete.
+Quests...Complete.
+Change map...
+Get hash of map, pid<500>...complete.
+Load map...Load map success.
+Local map loaded.
+Chosen parameters...complete.
+Quests...Complete.
+Disconnect.
+Traffic: send<19496>, receive<219828>, whole<239324>, receive real<1637050>.
+Disconnect success.
+Network init...
+Connecting to server<localhost:4000>.
+Connecting successful.
+Network init successful.
+Auntification success.
+Change map...
+Get hash of map, pid<3>...complete.
+Load map...Load map success.
+Local map loaded.
+Chosen parameters...complete.
+Quests...Complete.
+Change map...
+Get hash of map, pid<500>...complete.
+Get map...500...New: Tiles Walls Scenery Old:. Map saved.
+Change map...
+Get hash of map, pid<500>...complete.
+Load map...Load map success.
+Local map loaded.
+Chosen parameters...complete.
+Quests...Complete.
+Disconnect.
+Traffic: send<83807>, receive<434578>, whole<518385>, receive real<3252731>.
+Disconnect success.
+Engine finish...
+Disconnect.
+Traffic: send<83807>, receive<434578>, whole<518385>, receive real<3252731>.
+Disconnect success.
+Resource manager finish...
+Resource manager finish complete.
+Hex field finish...
+Hex field finish complete.
+Sprite manager finish...
+Sprite manager finish complete.
+Sound manager finish.
+Sound manager finish complete.
+Engine finish complete.
+FOnline finished.

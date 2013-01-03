@@ -1,0 +1,179 @@
+#include "_client_defines.fos"
+#include "client_gui_h.fos"
+#include "_colors.fos"
+#include "_macros.fos"
+#include "_msgstr.fos"
+
+#define	QUEST_MESSAGE_SHOW_TIME		(REAL_SECOND(10))
+#define	SERVER_MESSAGE_SHOW_TIME	(REAL_SECOND(30))
+#define	QUEST_MESSAGE_SHOWING_SPEED	(8)
+#define	QUEST_MESSAGE_HIDING_SPEED	(2)
+#define QUEST_NAME_X				(10)
+#define QUEST_TASK_X				(10)
+
+#define STATE_HIDDEN				(0)
+#define STATE_SHOWN					(1)
+#define STATE_SHOWING				(2)
+#define STATE_HIDING				(3)
+
+uint QuestNameState = STATE_HIDDEN;
+uint QuestTaskState = STATE_HIDDEN;
+uint ServerMessageState = STATE_HIDDEN;
+
+IGUIElementTextOpt@ QuestName;
+IGUIElementTextOpt@ QuestTask;
+IGUIElementTextOpt@ ServerMessageText;
+IGUIElementTextOpt@ WMServerMessageText;
+uint QuestMessageHideTime = 0;
+uint ServerMessageHideTime = 0;
+//import void ShowQuestMessage(string@ questName, string@ questTask) from "client_screen_messages";
+void ShowQuestMessage(string@ questName, string@ questTask)
+{
+	QuestName.setText(questName);
+	QuestTask.setText(questTask);
+	QuestNameState = STATE_SHOWING;
+	QuestMessageHideTime = __FullSecond + QUEST_MESSAGE_SHOW_TIME;
+}
+
+void ShowServerMessage( int time, int , int, string@ message, int[] @ )
+{
+	ServerMessageText.setText(message);
+	WMServerMessageText.setText(message);
+	ServerMessageState = STATE_SHOWING;
+	ServerMessageText.AbsolutePosition(10 ,10);
+	WMServerMessageText.AbsolutePosition(10 ,10);
+	ServerMessageHideTime = __FullSecond + SERVER_MESSAGE_SHOW_TIME;
+	
+	
+}
+//import void InitMessagesScreenPanel() from "client_screen_messages";
+void InitMessagesScreenPanel()
+{
+	QuestNameDrawCallback questNameDrawCallback;
+	QuestTaskDrawCallback questTaskDrawCallback;
+	ServerMessageTextDrawCallback serverMessageTextDrawCallback;
+	
+	uint width = __ScreenWidth / 3;
+	@QuestName = GUI_AddText(CLIENT_MAIN_SCREEN_GAME, "", 0, 0)
+	  .TextOptions(FONT_BIG, COLOR_SAND, FT_BORDERED | FT_BOTTOM)
+      .AbsolutePosition(-width, __ScreenHeight / 2 - 100)
+      .TextBoxSize(width, 100)
+      .CallbackDraw(questNameDrawCallback);
+      
+    @QuestTask = GUI_AddText(CLIENT_MAIN_SCREEN_GAME, "", 0, 0)
+	  .TextOptions(FONT_FAT, COLOR_LGRAY, FT_ALIGN | FT_BORDERED)
+      .AbsolutePosition(-width, __ScreenHeight / 2 + 10)
+      .TextBoxSize(width, 100)
+      .CallbackDraw(questTaskDrawCallback);
+	  
+	@ServerMessageText = GUI_AddText(CLIENT_MAIN_SCREEN_GAME , "", 0, 0)
+	  .TextOptions(FONT_FALLOUT, COLOR_WHITE, FT_ALIGN | FT_BORDERED)
+      .AbsolutePosition(10 ,10)
+      .TextBoxSize(width, 100)
+      .CallbackDraw(serverMessageTextDrawCallback);
+
+	@WMServerMessageText = GUI_AddText(CLIENT_MAIN_SCREEN_GLOBAL_MAP , "", 0, 0)
+	  .TextOptions(FONT_FALLOUT, COLOR_WHITE, FT_ALIGN | FT_BORDERED)
+      .AbsolutePosition(10 ,10)
+      .TextBoxSize(width, 100)
+      .CallbackDraw(serverMessageTextDrawCallback); 
+  
+}
+
+
+
+
+class QuestNameDrawCallback : IGUIElementCallbackDraw
+{
+	void OnDraw(int id) override
+	{
+		if(QuestNameState == STATE_HIDDEN)
+			return;
+		
+		if(QuestTaskState == STATE_SHOWN)
+		{
+			if(__FullSecond > QuestMessageHideTime)
+			{
+				QuestMessageHideTime = 0;
+				QuestNameState = STATE_HIDING;
+				QuestTaskState = STATE_HIDING;
+			}
+		}
+		else if(QuestNameState == STATE_SHOWING)
+		{
+			QuestName.Position(QuestName.getPosX() + QUEST_MESSAGE_SHOWING_SPEED, QuestName.getPosY());
+			if(QuestName.getPosX() >= QUEST_NAME_X)
+			{
+				QuestNameState = STATE_SHOWN;
+				QuestTaskState = STATE_SHOWING;
+			}
+		}
+		else if(QuestNameState == STATE_HIDING)
+		{
+			QuestName.Position(QuestName.getPosX() - QUEST_MESSAGE_HIDING_SPEED, QuestName.getPosY());
+			if(QuestName.getPosX() <= -QuestName.getWidth())
+			{
+				QuestNameState = STATE_HIDDEN;
+			}
+		}
+	}
+}
+
+class QuestTaskDrawCallback : IGUIElementCallbackDraw
+{
+	void OnDraw(int id) override
+	{
+		if(QuestTaskState == STATE_HIDDEN)
+			return;
+		
+		if(QuestTaskState == STATE_SHOWING)
+		{
+			QuestTask.Position(QuestTask.getPosX() + QUEST_MESSAGE_SHOWING_SPEED, QuestTask.getPosY());
+			if(QuestTask.getPosX() >= QUEST_TASK_X)
+				QuestTaskState = STATE_SHOWN;
+		}
+		else if(QuestTaskState == STATE_HIDING)
+		{
+			QuestTask.Position(QuestTask.getPosX() - QUEST_MESSAGE_HIDING_SPEED, QuestTask.getPosY());
+			if(QuestTask.getPosX() <= -QuestTask.getWidth())
+			{
+				QuestTaskState = STATE_HIDDEN;
+			}
+		}
+	}
+}
+
+
+class ServerMessageTextDrawCallback : IGUIElementCallbackDraw
+{
+	void OnDraw(int id) override
+	{
+		if(ServerMessageState == STATE_HIDDEN)
+			return;
+		if(ServerMessageState == STATE_SHOWN)
+			{
+				if(__FullSecond > ServerMessageHideTime)
+				{
+					ServerMessageHideTime = 0;
+					//ServerMessageText.Position(ServerMessageText.getPosX() ,  - 10);
+					//WMServerMessageText.Position(WMServerMessageText.getPosX() ,  - 10);
+					ServerMessageText.setText("");
+					WMServerMessageText.setText("");
+					ServerMessageState = STATE_HIDDEN;
+				}
+			}
+
+		else if(ServerMessageState == STATE_SHOWING)
+		{
+			
+			//ServerMessageText.setText(""+ServerMessageText.getText()+" "+(ServerMessageHideTime-__FullSecond));
+			//WMServerMessageText.setText(""+ServerMessageText.getText()+" "+(ServerMessageHideTime-__FullSecond));
+			ServerMessageText.Position(((__ScreenWidth-6.5*ServerMessageText.getText().length())/2) , 50);
+			ServerMessageText.TextBoxSize((8.5*ServerMessageText.getText().length()), 20);
+			WMServerMessageText.Position(((__ScreenWidth-6.5*WMServerMessageText.getText().length())/2) , 50);
+			WMServerMessageText.TextBoxSize((8.5*WMServerMessageText.getText().length()), 20);
+			ServerMessageState = STATE_SHOWN;
+		}
+
+	}
+}

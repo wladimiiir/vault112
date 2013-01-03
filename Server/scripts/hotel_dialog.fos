@@ -1,0 +1,57 @@
+#define HOTEL_ROOM_MAX			(30)
+
+bool d_IsHotelTenant(Critter& player, Critter@ npc)
+{
+	HotelRoom@ hotelRoom = GetHotelRoom(player);
+	return valid(hotelRoom);
+}
+
+void r_SetTenant(Critter& player, Critter@ npc, int days)
+{
+	HotelRoom@ hotelRoom = GetHotelRoom(player);
+	if(false && valid(hotelRoom))
+	{
+		hotelRoom.SetTenancy(player, hotelRoom.GetTenancyEndTime(player) + REAL_DAY(days));
+	}
+	else
+	{
+		@hotelRoom = FindVacantHotelRoom(player);
+		if(!valid(hotelRoom))
+			return;
+		hotelRoom.SetTenancy(player, __FullSecond + REAL_DAY(days));
+		
+		if(valid(npc))
+			ShowHotelRoom(npc, hotelRoom);
+	}
+}
+
+void r_ShowHotelRoom(Critter& player, Critter@ npc)
+{
+	if(!valid(npc))
+		return;
+	HotelRoom@ hotelRoom = GetHotelRoom(player);
+	if(!valid(hotelRoom))
+		return;
+	
+	ShowHotelRoom(npc, hotelRoom);
+}
+
+bool d_IsAnyRoomAvaliable(Critter& player, Critter@ npc)
+{
+	HotelRoom@[] hotelRooms = GetMapHotelRooms(player.GetMap());
+	uint count = 0;
+	for (uint i = 0; i < hotelRooms.length(); i++)
+		count += hotelRooms[i].GetTenantCount();
+		
+	return count < HOTEL_ROOM_MAX; 
+}
+
+bool d_IsLessThanDays(Critter& player, Critter@ npc, int days)
+{
+	HotelRoom@ hotelRoom = GetHotelRoom(player);
+	if(!valid(hotelRoom))
+		return true;
+		
+	return hotelRoom.GetTenancyEndTime(player) < uint(__FullSecond + REAL_DAY(days));
+}
+

@@ -1,0 +1,103 @@
+/**
+* Dialog scripts
+*/
+void r_TeamDeathmatch(Critter& player, Critter@ npc, int combatMode)
+{
+	DeleteBattle(player);
+	
+	Battle@ battle = TeamDeathmatch(player, combatMode);
+	Battles.insertLast(battle);
+}
+
+void r_SetBattleDuration(Critter& player, Critter@ npc, int minutes)
+{
+	Battle@ battle = GetCreatedBattle(player);
+	if(!valid(battle))
+		return;
+		
+	battle.SetDuration(REAL_MINUTE(minutes));
+}
+
+void r_SetBattleRounds(Critter& player, Critter@ npc, int rounds)
+{
+	Battle@ battle = GetCreatedBattle(player);
+	if(!valid(battle))
+		return;
+		
+	battle.SetDuration(rounds);
+}
+
+void r_SetBattleLocation(Critter& player, Critter@ npc, int locationPid)
+{
+	Battle@ battle = GetCreatedBattle(player);
+	if(!valid(battle))
+		return;
+		
+	battle.SetLocation(locationPid);
+}
+
+void r_StartBattle(Critter& player, Critter@ npc)
+{
+	Battle@ battle = GetCreatedBattle(player);
+	if(!valid(battle))
+		return;
+		
+	battle.Join(player);
+}
+
+void r_DeleteBattle(Critter& player, Critter@ npc)
+{
+	Battle@ battle = GetCreatedBattle(player);
+	if(!valid(battle))
+		return;
+		
+	DeleteBattle(player);
+}
+
+dictionary JoinBattles;
+
+void dlg_LoadBattles(Critter& player, Critter@ npc, string@ lexems)
+{
+	if(IS_DIALOG_END(lexems) || IS_DIALOG_SAY_MODE(lexems))
+        return;
+    Battle@[] battles;
+    uint index = 0;
+	for (uint i = 0; i < Battles.length(); i++)
+	{
+		if(!Battles[i].CanJoin())
+			continue;
+		lexems += "$battle" + index + Battles[i].GetCreatorName();
+		battles.insertLast(Battles[i]);
+		index++;
+	}
+    JoinBattles.set("" + player.Id, battles);
+}
+
+bool d_BattleCountMoreThan(Critter& player, Critter@ npc, int value)
+{
+	uint count = 0;
+	for (uint i = 0; i < Battles.length(); i++)
+		if(Battles[i].CanJoin())
+			count++;
+	
+	return count > uint(value);
+}
+
+void r_JoinBattle(Critter& player, Critter@ npc, int battleIndex)
+{
+	if(!JoinBattles.exists("" + player.Id))
+	{
+		player.Say(SAY_NETMSG, "<error b3>");
+		return;
+	}
+	
+	Battle@[] battles;
+	JoinBattles.get("" + player.Id, battles);
+	
+	if(uint(battleIndex) >= battles.length())
+	{
+		player.Say(SAY_NETMSG, "<error b4>");
+		return;
+	}
+	battles[battleIndex].Join(player);
+}

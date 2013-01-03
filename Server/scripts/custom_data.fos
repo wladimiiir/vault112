@@ -1,0 +1,478 @@
+#include "serializator.fos"
+#include "_macros.fos"
+#include "combat_h.fos"
+#include "custom_data_h.fos"
+#include "utils_for_array.fos"
+
+#define	OFFENCE_DECREASE_INTERVAL	(REAL_MINUTE(10))
+#define	DEFAULT_DECREASE_SEVERITY	(1)
+
+import bool IsKeyAvailable( Critter& cr, uint lockerId ) from "lockers";
+
+//import bool IsProtectedFromAttacker(Critter& critter, Critter& attacker) from "custom_data";
+bool IsProtectedFromAttacker(Critter& critter, Critter& attacker)
+{
+	uint8 weaponMode = 0;
+	ProtoItem@ proto = attacker.GetSlotProto(SLOT_HAND1, weaponMode);
+	uint8 use = _WeaponModeUse(weaponMode);
+	
+	return IsProtectedFromAttack(critter, _WeaponSubType(proto, use), _WeaponDmgType(proto, use), _WeaponRound(proto, use) > 1);
+}
+
+//import bool IsProtectedFromAttack(Critter& critter, uint8 weaponSubType, uint8 damageType, bool isBurst) from "custom_data";
+bool IsProtectedFromAttack(Critter& critter, uint8 weaponSubType, uint8 damageType, bool isBurst)
+{
+	Synchronize();
+	
+	AttackProtectionInfo@ info = AttackProtectionInfo(critter);
+	bool isProtected = false;
+	if(!isBurst && info.IsProtected(ATTACK_PROTECTION_SINGLE_SHOT) && weaponSubType == WS_GUN)
+		isProtected = true;
+	else if(isBurst && info.IsProtected(ATTACK_PROTECTION_BURST))
+		isProtected = true;
+	else if(damageType == DAMAGE_EXPLODE && info.IsProtected(ATTACK_PROTECTION_EXPLODE))
+		isProtected = true;
+	else if(isGrenade(weaponSubType, damageType) && info.IsProtected(ATTACK_PROTECTION_GRENADE))
+		isProtected = true;
+	else if(weaponSubType == WS_UNARMED && info.IsProtected(ATTACK_PROTECTION_UNARMED))
+		isProtected = true;
+	else if(weaponSubType == WS_MELEE && info.IsProtected(ATTACK_PROTECTION_MELEE))
+		isProtected = true;
+	else if(damageType == DAMAGE_FIRE && info.IsProtected(ATTACK_PROTECTION_FLAME))
+		isProtected = true;
+	else if(weaponSubType == WS_THROWING && info.IsProtected(ATTACK_PROTECTION_THROWING))
+		isProtected = true;
+
+	Resynchronize();
+	return isProtected;
+}
+
+//import bool IsProtectedFromHexAttack(Critter& critter, uint8 hexX, uint8 hexY) from "custom_data";
+bool IsProtectedFromHexAttack(Critter& critter, uint8 hexX, uint8 hexY)
+{
+	Synchronize();
+	
+	//TODO: get critters around critter and ask them about protection
+	AttackProtectionInfo@ info = AttackProtectionInfo(critter);
+	bool isProtected = info.IsProtected(ATTACK_PROTECTION_HEX_ATTACK);
+	
+	Resynchronize();
+	return isProtected;
+}
+
+//import void AddAttackProtection(Critter@ protector, Critter& critter, uint protectionFlags) from "custom_data";
+void AddAttackProtection(Critter@ protector, Critter& critter, uint protectionFlags)
+{
+	if(protectionFlags == 0)
+		return;
+		
+	Synchronize();
+	
+	AttackProtectionInfo@ info = AttackProtectionInfo(critter);
+	info.AddProtection(protector, protectionFlags);
+	
+	Resynchronize();
+}
+
+//import void RemoveAttackProtection(Critter@ protector, Critter& critter, uint protectionFlags) from "custom_data";
+void RemoveAttackProtection(Critter@ protector, Critter& critter, uint protectionFlags)
+{
+	Synchronize();
+	
+	AttackProtectionInfo@ info = AttackProtectionInfo(critter);
+	info.RemoveProtection(protector, protectionFlags);
+	
+	Resynchronize();
+}
+
+//import void ClearAttackProtection(Critter& critter) from "custom_data";
+void ClearAttackProtection(Critter& critter)
+{
+	Synchronize();
+	
+	AttackProtectionInfo@ info = AttackProtectionInfo(critter);
+	info.ClearProtection();
+	
+	Resynchronize();
+}
+
+//import uint GetAttackProtectionCount(Critter& critter) from "custom_data";
+uint GetAttackProtectionCount(Critter& critter)
+{
+	Synchronize();
+
+	AttackProtectionInfo@ info = AttackProtectionInfo(critter);
+	uint protectionCount = info.GetProtectionCount();
+	
+	Resynchronize();
+	return protectionCount;
+}
+
+bool isGrenade(uint8 weaponSubType, uint8 damageType)
+{
+	if(weaponSubType == WS_THROWING && (damageType == DAMAGE_PLASMA || damageType == DAMAGE_EMP || damageType == DAMAGE_EXPLODE))
+		return true; // all kinds of grenade
+	
+	return false;
+}
+
+class AttackProtectionInfo : AbstractProtectionInfo
+{
+	AttackProtectionInfo(Critter@ critter)
+	{
+		super("AttackProtection", @critter);
+	}
+}
+
+//import bool IsProtectedFromSkill(Critter& critter, int skill, Critter@ targetCritter, Item@ targetItem, Scenery@ targetScenery) from "custom_data";
+bool IsProtectedFromSkill(Critter& critter, int skill, Critter@ targetCritter, Item@ targetItem, Scenery@ targetScenery)
+{
+	Synchronize();
+	
+	SkillProtectionInfo@ info = SkillProtectionInfo(critter);
+	
+	if((skill == SKILL_LOOT_CRITTER || (skill == SK_STEAL && valid(targetCritter) && targetCritter.IsKnockout())) 
+				&& info.IsProtected(SKILL_PROTECTION_LOOT))
+		return true;
+	else if(skill == SK_LOCKPICK && info.IsProtected(SKILL_PROTECTION_LOCKPICK))
+		return true;
+	else if(skill == SKILL_PICK_ON_GROUND && (IsCar(targetItem) || IsCarTrunk(targetItem))
+				&& !IsKeyAvailable(critter, targetItem.LockerId) && info.IsProtected(SKILL_PROTECTION_USE_CAR))
+		return true;
+	
+	Resynchronize();
+	return false;
+}
+
+bool IsCar(Item@ item)
+{
+	if(!valid(item))
+		return false;
+	
+	return item.GetType() == ITEM_TYPE_CAR;
+}
+
+bool IsCarTrunk(Item@ item)
+{
+	if(!valid(item))
+		return false;
+		
+	uint16[] carTrunkProtoIds = {PID_HUMMER_BAG, PID_BUGGY_BAG, PID_VERTIBIRD_BAG, PID_SCOUT_BAG, PID_HIGHWAYMAN_BAG};
+	return Present(item.GetProtoId(), carTrunkProtoIds);
+}
+
+//import void AddSkillProtection(Critter@ protector, Critter& critter, uint protectionFlags) from "custom_data";
+void AddSkillProtection(Critter@ protector, Critter& critter, uint protectionFlags)
+{
+	Synchronize();
+	
+	SkillProtectionInfo@ info = SkillProtectionInfo(critter);
+	info.AddProtection(protector, protectionFlags);
+	
+	Resynchronize();
+}
+
+//import void RemoveSkillProtection(Critter@ protector, Critter& critter, uint protectionFlags) from "custom_data";
+void RemoveSkillProtection(Critter@ protector, Critter& critter, uint protectionFlags)
+{
+	Synchronize();
+	
+	SkillProtectionInfo@ info = SkillProtectionInfo(critter);
+	info.RemoveProtection(protector, protectionFlags);
+	
+	Resynchronize();
+}
+
+//import void ClearSkillProtection(Critter& critter) from "custom_data";
+void ClearSkillProtection(Critter& critter)
+{
+	Synchronize();
+	
+	SkillProtectionInfo@ info = SkillProtectionInfo(critter);
+	info.ClearProtection();
+	
+	Resynchronize();
+}
+
+//import uint GetSkillProtectionCount(Critter& critter) from "custom_data";
+uint GetSkillProtectionCount(Critter& critter)
+{
+	Synchronize();
+
+	SkillProtectionInfo@ info = SkillProtectionInfo(critter);
+	uint protectionCount = info.GetProtectionCount();
+	
+	Resynchronize();
+	return protectionCount;
+}
+
+class SkillProtectionInfo : AbstractProtectionInfo
+{
+	SkillProtectionInfo(Critter@ critter)
+	{
+		super("SkillProtection", @critter);
+	}
+}
+
+class AbstractProtectionInfo 
+{
+	#define _GetKey	(ProtectionId + "_" + Protected.Id)
+	
+	private string@ ProtectionId;
+	Critter@ Protected;
+	private uint[] Protectors;
+	private uint[] Protections;
+	
+	AbstractProtectionInfo(string@ protectionId, Critter@ critter)
+	{
+		@ProtectionId = protectionId;
+		@Protected = critter;
+		Load();
+	}
+	
+	private void Load()
+	{
+		Serializator serializator;
+		if(!serializator.Load(_GetKey))
+			return;
+		
+		uint size = 0;
+		serializator.Get(size);
+		for (uint i = 0; i < size; i++) 
+		{
+			uint protectorId = 0;
+			uint protectionFlags = 0;
+			serializator.Get(protectorId);
+			serializator.Get(protectionFlags);
+			Protectors.insertLast(protectorId);
+			Protections.insertLast(protectionFlags);
+		}
+	}
+	
+	private void Save()
+	{
+		Serializator serializator;
+		serializator.Set(Protections.length());
+		for (uint i = 0; i < Protections.length(); i++)
+		{
+			serializator.Set(Protectors[i]);
+			serializator.Set(Protections[i]);
+		}
+		serializator.Save(_GetKey);
+	}
+	
+	bool IsProtected(uint protectionFlag)
+	{
+		for (uint i = 0; i < Protections.length(); i++)
+			if(FLAG(Protections[i], protectionFlag))
+				return true;
+				
+		return false;
+	}
+	
+	void AddProtection(Critter@ protector, uint protectionFlags)
+	{
+		RemoveProtection(protector, protectionFlags);
+		Protectors.insertLast(protector is null ? 0 : protector.Id);
+		Protections.insertLast(protectionFlags);
+		Save();
+	}
+	
+	void RemoveProtection(Critter@ protector, uint protectionFlags)
+	{
+		uint protectorId = protector is null ? 0 : protector.Id;
+		for (uint i = 0; i < Protections.length(); i++)
+			if(Protections[i] == protectionFlags && Protectors[i] == protectorId)
+			{
+				Protectors.removeAt(i);
+				Protections.removeAt(i);
+				Save();
+				break;
+			}
+	}
+	
+	uint GetProtectionCount()
+	{
+		return Protections.length();
+	} 
+	
+	void ClearProtection()
+	{
+		EraseAnyData(_GetKey);
+	}
+}
+
+//import void AddOffence(Critter& offender, uint areaId, uint offenceSeverity) from "custom_data";
+void AddOffence(Critter& offender, uint areaId, uint offenceSeverity)
+{
+	Synchronize();
+	
+	OffenderInfo@ info = OffenderInfo(offender);
+	info.AddOffence(areaId, offenceSeverity);
+	
+	Resynchronize();
+}
+
+//import uint GetOffence(Critter& offender, uint areaId) from "custom_data";
+uint GetOffence(Critter& offender, uint areaId)
+{
+	Synchronize();
+
+	OffenderInfo@ info = OffenderInfo(offender);
+	uint offence = info.GetOffence(areaId);
+	
+	Resynchronize();
+	return offence;
+}
+
+//import void RemoveOffence(Critter& offender, uint areaId, uint offenceSeverity) from "custom_data";
+void RemoveOffence(Critter& offender, uint areaId, uint offenceSeverity)
+{
+	Synchronize();
+
+	OffenderInfo@ info = OffenderInfo(offender);
+	info.RemoveOffence(areaId, offenceSeverity);
+	
+	Resynchronize();
+}
+
+//import void ClearOffences(Critter& offender) from "custom_data";
+void ClearOffences(Critter& offender)
+{
+	Synchronize();
+
+	OffenderInfo@ info = OffenderInfo(offender);
+	info.ClearOffences();
+	
+	Resynchronize();
+}
+
+//import void ClearOffence(Critter& offender, uint areaId) from "custom_data";
+void ClearOffence(Critter& offender, uint areaId)
+{
+	Synchronize();
+
+	OffenderInfo@ info = OffenderInfo(offender);
+	info.RemoveOffence(areaId, info.GetOffence(areaId));
+	
+	Resynchronize();
+}
+
+class OffenderInfo
+{
+	#define _GetKey	("OffenderInfo_" + Offender.Id)
+	
+	Critter@ Offender;
+	private uint[] AreaIds;
+	private uint[] OffenceCounts;
+	
+	OffenderInfo(Critter@ offender)
+	{
+		@Offender = offender;
+		Load();
+	}
+	
+	private void Load()
+	{
+		Serializator serializator;
+		if(!serializator.Load(_GetKey))
+			return;
+		
+		uint size = 0;
+		serializator.Get(size);
+		for (uint i = 0; i < size; i++) 
+		{
+			uint areaId = 0;
+			uint offenceCount = 0;
+			serializator.Get(areaId);
+			serializator.Get(offenceCount);
+			AreaIds.insertLast(areaId);
+			OffenceCounts.insertLast(offenceCount);
+		}
+	}
+	
+	private void Save()
+	{
+		Serializator serializator;
+		serializator.Set(AreaIds.length());
+		for (uint i = 0; i < AreaIds.length(); i++)
+		{
+			serializator.Set(AreaIds[i]);
+			serializator.Set(OffenceCounts[i]);
+		}
+		serializator.Save(_GetKey);
+	}
+	
+	uint GetOffence(uint areaId)
+	{
+		for (uint i = 0; i < AreaIds.length(); i++)
+			if(AreaIds[i] == areaId)
+				return OffenceCounts[i];
+				
+		return 0;
+	}
+	
+	void AddOffence(uint areaId, uint offenceSeverity)
+	{
+		for (uint i = 0; i < AreaIds.length(); i++)
+			if(AreaIds[i] == areaId)
+			{
+				OffenceCounts[i] += offenceSeverity;
+				Save();
+				return;
+			}
+		
+		AreaIds.insertLast(areaId);
+		OffenceCounts.insertLast(offenceSeverity);
+		StartRemoveOffenceTimeEvent();
+		Save();
+	}
+	
+	void RemoveOffence(uint areaId, uint offenceSeverity)
+	{
+		for (uint i = 0; i < AreaIds.length(); i++)
+			if(AreaIds[i] == areaId)
+			{
+				OffenceCounts[i] = MAX(int(OffenceCounts[i]) - int(offenceSeverity), 0);
+				Save();
+				return;
+			}
+	}
+	
+	bool DecreaseOffences(uint offenceSeverity)
+	{
+		bool decreased = false;
+		for (uint i = 0; i < OffenceCounts.length(); i++)
+			if(OffenceCounts[i] > 0)
+			{
+				OffenceCounts[i] -= offenceSeverity;
+				decreased = true;
+			}
+		if(decreased)
+			Save();
+		return decreased;
+	}
+	
+	void ClearOffences()
+	{
+		AreaIds.resize(0);
+		OffenceCounts.resize(0);
+		Save();
+	}
+
+	private void StartRemoveOffenceTimeEvent()
+	{
+		CreateTimeEvent(__FullSecond + OFFENCE_DECREASE_INTERVAL, "e_DecreaseOffence", Offender.Id, true);
+	}
+}
+
+uint e_DecreaseOffence(uint[]@ values)
+{
+	Critter@ critter = GetCritter(values[0]);
+	if(!valid(critter))
+		return OFFENCE_DECREASE_INTERVAL;
+	
+	OffenderInfo@ info = OffenderInfo(critter);
+	return info.DecreaseOffences(DEFAULT_DECREASE_SEVERITY) ? OFFENCE_DECREASE_INTERVAL : 0;
+}
+

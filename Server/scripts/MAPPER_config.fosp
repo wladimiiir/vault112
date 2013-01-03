@@ -1,0 +1,72 @@
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+
+void InitializeGame()
+{
+	__RoofAlpha=200;
+	__SpritesZoomMax=10.0f;
+	__SpritesZoomMin=0.2f;
+	__Anim2CombatBegin=(40);
+	__Anim2CombatIdle=(41);
+	__Anim2CombatEnd=(42);
+	__SplitTilesCollection=true;       
+	
+	InitializeGeometry();
+}      
+
+void InitializeGeometry()
+{   
+	
+	__GeometryType=(0);           
+	
+	switch(__GeometryType)
+	{
+		case(0):
+		__MapHexagonal=true;
+		__MapHexWidth=32;
+		__MapHexHeight=16;
+		__MapHexLineHeight=12;
+		__MapTileOffsX=-8;
+		__MapTileOffsY=34;
+		__MapRoofOffsX=-8;
+		__MapRoofOffsY=-64;
+		__MapRoofSkipSize=2;
+		__MapCameraAngle=25.7f;
+		__MapSmoothPath=true;
+		__MapDataPrefix="art/geometry/fallout_";
+		break;
+		
+		case(1):
+		__MapHexagonal=false;
+		__MapHexWidth=36;
+		__MapHexHeight=18;
+		__MapHexLineHeight=9;
+		__MapTileOffsX=18;
+		__MapTileOffsY=18;
+		__MapRoofOffsX=18;
+		__MapRoofOffsY=-72;
+		__MapRoofSkipSize=2;
+		__MapCameraAngle=30.0f;
+		__MapSmoothPath=false;
+		__MapDataPrefix="art/geometry/tactics_";
+		break;
+		
+		case(2):
+		__MapHexagonal=false;
+		__MapHexWidth=78;
+		__MapHexHeight=40;
+		__MapHexLineHeight=20;
+		__MapTileOffsX=39;
+		__MapTileOffsY=40;
+		__MapRoofOffsX=39;
+		__MapRoofOffsY=-44;
+		__MapRoofSkipSize=1;
+		__MapCameraAngle=30.0f;
+		__MapSmoothPath=true;
+		__MapDataPrefix="art/geometry/arcanum_";
+		break;
+		
+		default:
+		Log("Wrong geometry type value.");
+		break;
+	}
+}

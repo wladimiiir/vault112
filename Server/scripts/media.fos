@@ -1,0 +1,37 @@
+// Author: cvet
+#include "_macros.fos"
+
+// Templates:
+// import void PlayMusic(Critter& cr, string& musicName, uint pos, uint repeat) from "media";
+// import void PlayMusic(Map& map, string& musicName, uint pos, uint repeat) from "media";
+// import void PlayVideo(Critter& cr, string& videoName, bool canStop) from "media";
+// import void PlayVideo(Map& map, string& videoName, bool canStop) from "media";
+
+
+void PlayMusic( Critter& cr, string& musicName, uint pos, uint repeat ) // Export
+{
+    if( cr.IsPlayer() )
+        cr.RunClientScript( "_PlayMusic", int(pos), int(repeat), 0, musicName, null );
+}
+
+void PlayMusic( Map& map, string& musicName, uint pos, uint repeat ) // Export
+{
+    Critter@[] critters;
+    map.GetCritters( 0, FIND_ALL | FIND_ONLY_PLAYERS, critters );
+    for( uint i = 0, j = critters.length(); i < j; i++ )
+        critters[ i ].RunClientScript( "_PlayMusic", int(pos), int(repeat), 0, musicName, null );
+}
+
+void PlayVideo( Critter& cr, string& videoName, bool canStop ) // Export
+{
+    if( cr.IsPlayer() )
+        cr.RunClientScript( "_PlayVideo", canStop ? 1 : 0, 0, 0, videoName, null );
+}
+
+void PlayVideo( Map& map, string& videoName, bool canStop ) // Export
+{
+    Critter@[] critters;
+    map.GetCritters( 0, FIND_ALL | FIND_ONLY_PLAYERS, critters );
+    for( uint i = 0, j = critters.length(); i < j; i++ )
+        critters[ i ].RunClientScript( "_PlayVideo", canStop ? 1 : 0, 0, 0, videoName, null );
+}

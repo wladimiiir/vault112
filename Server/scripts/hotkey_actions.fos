@@ -1,0 +1,42 @@
+#include "_client_defines.fos"
+#include "_defines.fos"
+#include "_macros.fos"
+
+bool EndTurnBasedTurn()
+{
+	if(__ConsoleActive == true) 
+		return false;
+	
+	CritterCl@ chosen = GetChosen();
+	if(valid(chosen) && chosen.IsTurnBasedTurn())
+	{
+		RunServerScriptUnsafe( "combat@unsafe_EndTurnBasedTurn", 0, 0, 0, null, null );
+		return true;
+	}
+	
+	return false;
+}
+
+bool EndTurnBasedCombat()
+{
+	if(__ConsoleActive == true) 
+		return false;
+	
+	CritterCl@ chosen = GetChosen();
+	if(valid(chosen) && chosen.IsTurnBasedTurn())
+	{
+		RunServerScriptUnsafe( "combat@unsafe_EndTurnBasedCombat", 0, 0, 0, null, null );
+		return true;
+	}
+	
+	return false;
+}
+
+void ShowGroundPickUpScreen()
+{
+	CritterCl@ chosen = GetChosen();
+	if(!valid(chosen) || !chosen.IsLife())
+		return;
+		
+	RunServerScriptUnsafe( "item@unsafe_GroundPickUp", 0, 0, 0, null, null );
+}

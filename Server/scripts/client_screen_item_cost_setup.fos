@@ -1,0 +1,328 @@
+#include "_macros.fos"
+#include "_client_defines.fos"
+#include "client_gui_h.fos"
+
+import int GetIniValue(string& iniKey, int defaultValue) from "ini_parser";
+import int[]@ GetIniValues4(string& iniKey, int[]@ defaultValues) from "ini_parser";
+
+uint InvItemCount = 10;
+
+uint ItemsIndex = 0;
+ProtoItem@ ChosenItemProto;
+uint ChosenItemCost = 0;
+bool EditingCost = false;
+IGUIElementImageOpt@[] Items;
+IGUIElementImageOpt@ ChosenItem;
+IGUIElementTextOpt@ ItemCost;
+IGUIElementButtonOpt@ MoveUpButton;
+IGUIElementButtonOpt@ MoveDownButton;
+IGUIElementButtonOpt@ DoneButton;
+IGUIElementButtonOpt@ CancelButton;
+
+uint[] ItemProtos;
+dictionary@ ItemProtoCosts;
+uint ShopkeeperId;
+string@ CallbackScript;
+
+void SetChosenItem(ProtoItem& proto)
+{
+	if(valid(ChosenItemProto))
+		ItemProtoCosts.set(""+ChosenItemProto.ProtoId, ChosenItemCost);
+	
+	@ChosenItemProto = proto;
+	ChosenItem.loadImage(proto.PicInv, 0);
+	ItemProtoCosts.get(""+proto.ProtoId, ChosenItemCost);
+	ItemCost.setText(GetChosenItemCostString());
+	EditingCost = false;
+}
+
+string GetChosenItemCostString()
+{
+	string cost = "" + ChosenItemCost;
+	while(cost.length() < 5)
+		cost = "0" + cost;
+	return cost;
+}
+
+void ShowSetupScreen(int shopkeeperId, int, int, string@ callbackScript, int[]@ customCosts)
+{
+	if(!valid(customCosts))
+		return;
+		
+	if(!PrepareScreen(customCosts))
+	{
+		Message("<Error 1>");
+		return;
+	}
+
+	ShopkeeperId = shopkeeperId;
+	@CallbackScript = callbackScript;
+	ShowScreen(CLIENT_SCREEN_ITEM_COST_SETUP, 0, 0, 0);
+}
+
+bool PrepareScreen(int[] customCosts)
+{
+	if(customCosts.length() % 2 != 0)
+		return false;
+		
+	ItemsIndex = 0;
+	ClearItems();
+	ChosenItem.clearImage();
+	@ChosenItemProto = null;
+	ChosenItemCost = 0;
+	ItemCost.setText(GetChosenItemCostString());
+	ItemProtos.resize(0);
+	dictionary costs;
+	for (uint i = 0; i < customCosts.length(); i+=2)
+	{
+		uint protoId = uint(customCosts[i]);
+		uint cost = uint(customCosts[i + 1]);
+		ItemProtos.insertLast(protoId);
+		costs.set(""+protoId, cost);
+	}
+	@ItemProtoCosts = costs;
+	
+	RefreshItems();
+	RefreshButtons();
+	
+	return true;
+}
+
+void ClearItems()
+{
+	for (uint i = 0; i < Items.length(); i++)
+		Items[i].clearImage();
+}
+
+void RefreshItems()
+{	
+	for (uint i = ItemsIndex; i < ItemProtos.length() && i < ItemsIndex + InvItemCount; i++)
+	{
+		ProtoItem@ proto = GetProtoItem(ItemProtos[i]);
+		if(valid(proto))
+			Items[i - ItemsIndex].loadImage(proto.PicInv, 0);
+	}
+}
+
+void RefreshButtons()
+{
+	MoveUpButton.setVisible(ItemsIndex > 0);
+	MoveDownButton.setVisible(ItemProtos.length() > ItemsIndex + InvItemCount);
+}
+
+void InitItemCostSetupScreen()
+{
+	GUI_CreateScreen(CLIENT_SCREEN_ITEM_COST_SETUP, GetIfaceIniStr("PSMainPic"))
+		.CallbackKeyPress(ChangeCostCallback());
+
+	int itemHeight = GetIniValue("PSHeightItem", 30);
+	int itemWidth = GetIniValue("PSWidthItem", 70);
+	int[] positions = GetIniValues4("PSInv", null);
+	InvItemCount = positions[3] / itemHeight;
+	Items.resize(0);
+	for (uint i = 0; i < InvItemCount; i++)
+	{
+		IGUIElementImageOpt@ item = GUI_AddImage(CLIENT_SCREEN_ITEM_COST_SETUP)
+			.Stretch(true)
+			.Position(positions[0], positions[1] + i * itemHeight, itemWidth, itemHeight)
+			.CallbackMouseClick(ItemClicked(i));
+			
+		Items.insertLast(item);
+	}
+	
+	@ChosenItem = GUI_AddImage(CLIENT_SCREEN_ITEM_COST_SETUP)
+		.Stretch(true)
+		.Position("PSItem");
+	@ItemCost = GUI_AddText(CLIENT_SCREEN_ITEM_COST_SETUP)
+		.TextOptions(FONT_BIG_NUM, COLOR_GRAY)
+		.Position("PSValue");
+	@MoveUpButton = GUI_AddButton(CLIENT_SCREEN_ITEM_COST_SETUP)
+		.UpPic(GetIfaceIniStr("PSInvScrUpPic"))
+		.DownPic(GetIfaceIniStr("PSInvScrUpPicDn"))
+		.Position("PSInvScrUp")
+		.CallbackMouseClick(MoveUpCallback());
+	@MoveDownButton = GUI_AddButton(CLIENT_SCREEN_ITEM_COST_SETUP)
+		.UpPic(GetIfaceIniStr("PSInvScrDnPic"))
+		.DownPic(GetIfaceIniStr("PSInvScrDnPicDn"))
+		.Position("PSInvScrDn")
+		.CallbackMouseClick(MoveDownCallback());	
+	@DoneButton = GUI_AddButton(CLIENT_SCREEN_ITEM_COST_SETUP)
+		.DownPic(GetIfaceIniStr("PSdonePicDn"))
+		.Position("PSdone")
+		.CallbackMouseClick(DoneCallback());
+	@CancelButton = GUI_AddButton(CLIENT_SCREEN_ITEM_COST_SETUP)
+		.DownPic(GetIfaceIniStr("PScancelPicDn"))
+		.Position("PScancel")
+		.CallbackMouseClick(CancelCallback());
+}
+
+class ItemClicked : IGUIElementCallbackMouseClick
+{
+	private uint Index;
+	
+	ItemClicked(uint index)
+	{
+		Index = index;
+	}
+	
+	void OnMouseClick(int id, int click) override
+	{
+		if(ItemsIndex + Index >= ItemProtos.length())
+			return;
+		
+		if(click == MOUSE_CLICK_WHEEL_DOWN)
+			MoveDown();
+		if(click == MOUSE_CLICK_WHEEL_UP)
+			MoveUp();
+		
+		if(click != MOUSE_CLICK_LEFT)
+			return;
+		
+		ProtoItem@ proto = GetProtoItem(ItemProtos[ItemsIndex + Index]);
+		if(!valid(proto))
+			return;
+		
+		SetChosenItem(proto);
+	}
+}
+
+class DoneCallback : IGUIElementCallbackMouseClick
+{
+	void OnMouseClick(int id, int click) override
+	{
+		if(valid(CallbackScript))
+			RunServerScriptUnsafe(CallbackScript, ShopkeeperId, 0, 0, null, GetProtoItemCosts());
+		HideScreen(CLIENT_SCREEN_ITEM_COST_SETUP, 0, 0, 0);
+	}
+	
+	int[] GetProtoItemCosts()
+	{
+		int[] costs;
+		if(valid(ChosenItemProto))
+			ItemProtoCosts.set(""+ChosenItemProto.ProtoId, ChosenItemCost);
+		
+		string@[] keys;
+		ItemProtoCosts.keys(keys);
+		for (uint i = 0; i < keys.length(); i++)
+		{
+			int protoId = 0;
+			StrToInt(keys[i], protoId);
+			uint cost;
+			ItemProtoCosts.get(keys[i], cost);
+			costs.insertLast(protoId);
+			costs.insertLast(cost);
+		}
+		
+		return costs;
+	}
+}
+
+class CancelCallback : IGUIElementCallbackMouseClick
+{
+	void OnMouseClick(int id, int click) override
+	{
+		HideScreen(CLIENT_SCREEN_ITEM_COST_SETUP, 0, 0, 0);
+	}
+}
+
+class MoveUpCallback : IGUIElementCallbackMouseClick
+{
+	void OnMouseClick(int id, int click) override
+	{
+		MoveUp();
+	}
+}
+
+void MoveUp()
+{
+	if(!MoveUpButton.isVisible())
+		return;
+	ItemsIndex--;
+	RefreshItems();
+	RefreshButtons();
+}
+
+class MoveDownCallback : IGUIElementCallbackMouseClick
+{
+	void OnMouseClick(int id, int click) override
+	{
+		MoveDown();
+	}
+}
+
+void MoveDown()
+{
+	if(!MoveDownButton.isVisible())
+		return;
+	ItemsIndex++;
+	RefreshItems();
+	RefreshButtons();
+}
+
+class ChangeCostCallback : IGUIScreenCallbackKeyPress
+{
+	bool OnKeyPress(uint8 key) override
+	{
+		if(!valid(ChosenItemProto))
+			return true;
+		
+		if(key == DIK_BACK)
+		{
+			ChosenItemCost = ChosenItemCost / 10;
+			ItemCost.setText(GetChosenItemCostString());
+			EditingCost = true;
+			return false;
+		}
+		
+		uint number = 555;
+		if(key >= DIK_1 && key <= DIK_0)
+			number = key == DIK_0 ? 0 : key - DIK_1 + 1;
+		else
+			switch(key)
+			{
+				case DIK_NUMPAD0:
+					number = 0;
+					break;
+				case DIK_NUMPAD1:
+					number = 1;
+					break;
+				case DIK_NUMPAD2:
+					number = 2;
+					break;
+				case DIK_NUMPAD3:
+					number = 3;
+					break;
+				case DIK_NUMPAD4:
+					number = 4;
+					break;
+				case DIK_NUMPAD5:
+					number = 5;
+					break;
+				case DIK_NUMPAD6:
+					number = 6;
+					break;
+				case DIK_NUMPAD7:
+					number = 7;
+					break;
+				case DIK_NUMPAD8:
+					number = 8;
+					break;
+				case DIK_NUMPAD9:
+					number = 9;
+					break;
+			}
+
+		if(number > 9)
+			return true;
+
+		if(EditingCost)
+			ChosenItemCost = (ChosenItemCost * 10 + number) % 100000;
+		else
+		{
+			ChosenItemCost = number;
+			EditingCost = true;
+		}
+		ItemCost.setText(GetChosenItemCostString());
+		return false;
+	}
+}

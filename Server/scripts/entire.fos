@@ -1,0 +1,227 @@
+// Authors: Cvet, rifleman17(dead
+#ifndef _ENTIRES_
+#define _ENTIRES_
+
+#include "_defines.fos"
+#include "entire_h.fos"
+
+Entire@ GetEntire( Map& map, int entireNum, int skip )
+{
+    Entire ent;
+    if( map.GetEntireCoords( entireNum, skip, ent.HexX, ent.HexY ) == false )
+        return null;
+    ent.Number = entireNum;
+    return ent;
+}
+
+uint ParseEntires( Map& map, Entire[]& entires, int number )
+{
+    uint oldCount = entires.length();
+    uint count = map.CountEntire( number );
+    entires.resize( oldCount + count );
+
+    for( uint i = 0; i < count; i++ )
+    {
+        Entire@ ent = entires[ oldCount + i ];
+        if( map.GetEntireCoords( number, i, ent.HexX, ent.HexY ) == false )
+            return 0;
+        ent.Number = number;
+    }
+
+    return count;
+}
+
+bool GetEntireFreeHex( Map& map, int number, uint16& hx, uint16& hy )
+{
+    uint count = map.CountEntire( number );
+
+    // Fisrt check direct coords
+    for( uint i = 0; i < count; i++ )
+    {
+        if( map.GetEntireCoords( number, i, hx, hy ) && map.IsHexPassed( hx, hy ) )
+            return true;
+    }
+
+    if( hx == 0 || hy == 0 || hx >= map.GetWidth() - 1 || hy >= map.GetHeight() - 1 )
+        return false;                                                                     // Check borders
+
+    // Second check coords with offsets
+    for( uint i = 0; i < count; i++ )
+    {
+        if( map.GetEntireCoords( number, i, hx, hy ) )
+        {
+            for( int x = -1; x <= 1; x++ )
+            {
+                for( int y = -1; y <= 1; y++ )
+                {
+                    if( x == 0 && y == 0 )
+                        continue;                                  // Skip direct position
+
+                    if( __MapHexagonal )
+                    {
+                        if( ( hx % 2 ) == 1 && ( ( x == -1 && y == 1 ) || ( x == 1 && y == 1 ) ) )
+                            continue;
+                        if( ( hx % 2 ) == 0 && ( ( x == -1 && y == -1 ) || ( x == 1 && y == -1 ) ) )
+                            continue;
+                    }
+
+                    if( map.IsHexPassed( hx + x, hy + y ) )
+                    {
+                        hx += x;
+                        hy += y;
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+
+bool GetNearEntire( Map& map, int number, uint16& hx, uint16& hy )
+{
+    uint16 hxBase = hx;
+    uint16 hyBase = hy;
+
+    Entire[] entires;
+    uint count = ParseEntires( map, entires, number );
+    if( count == 0 )
+        return false;
+
+    hx = entires[ 0 ].HexX;
+    hy = entires[ 0 ].HexY;
+    for( uint i = 1; i < count; i++ )
+    {
+        Entire@ ent = entires[ i ];
+        if( GetDistantion( hxBase, hyBase, ent.HexX, ent.HexY ) < GetDistantion( hxBase, hyBase, hx, hy ) )
+        {
+            hx = ent.HexX;
+            hy = ent.HexY;
+        }
+    }
+
+    return true;
+}
+
+
+// * ******************************************* Мертвая зона, заданная EntireHex'ами ******************************************* */
+/*
+   Всякая простая замкнутая ломаная на плоскости разбивает точки плоскости на две области – внутреннюю и внешнюю.
+
+   из координат игрока пускается горизонтальный луч
+   если луч пересекает ломаную закрытой зоны нечетное число раз - он находится во внутренней зоне ломаной, иначе в наружной
+
+   cr - криттер, которого проверяем
+   map - карта, на которой имеется мертвая зона
+   dir - направление луча (лучше использовать горизонталь по х - dir = 0\
+   hexFirst - номер первого из гексов, ограничивающих мертвую зону
+   hexEnd - номер последнего гекса, ограничивающего мертвую зону
+
+   номера гексов должны возрастать для каждой последующей точки.
+   нельзя поставить общий номер всем гексам, иначе для общего случая (невыпуклого многоугольника мертвой зоны) будет найдено множество решений
+
+ */
+bool IsCritterInDeadZone( Critter& cr, Map& map, uint8 dir, uint8 hexFirst, uint8 hexEnd )
+{
+    uint crossNum = 0;   // число пересечений луча и ломанных, ограничивающих многоугольник мертвой зоны
+    for( uint i = hexFirst; i <= hexEnd; i++ )
+    {
+        if( BeamCrossing2Section( map, i, ( i == hexEnd ? hexFirst : i + 1 ), cr.HexX, cr.HexY, dir ) )
+        {
+            crossNum++;
+            // DL("пересек");
+        }
+    }
+    bool inZone = false;
+    if( crossNum > 0 && ( crossNum % 2 == 1 ) )
+        inZone = true;
+    // if(inZone) DL("inzone");
+    return inZone;
+
+}
+
+// Признак:  луч пересекает некий отрезок между двумя Entire гексами
+// map - карта
+// hexNum1 - начальный гекс отрезка
+// hexNum2 - конечный гекс отрезка
+// beamX - координата начала луча по оси x
+// beamY - координата начала луча по оси у
+// dir - направление луча
+// если не найдены гексы, или нет пересечения луча и отрезка между гексами - вернет false
+// если луч пересекает отрезок - вернет true
+bool BeamCrossing2Section( Map& map, uint8 hexNum1, uint8 hexNum2, uint16 beamX, uint16 beamY, uint8 dir )
+{
+    // 1. вычисляем координаты конечной точки луча
+    uint16 hx0 = beamX;
+    uint16 beamX2 = hx0;
+    uint16 hy0 = beamY;
+    uint16 beamY2 = hy0;
+    uint   steps = 0;
+
+    while( hx0 != beamX2 || hy0 != beamY2 || steps == 0 )
+    {
+        steps += 1;
+        hx0 = beamX2;
+        hy0 = beamY2;
+        map.MoveHexByDir( beamX2, beamY2, dir, steps );
+    }
+
+    // координаты конечной точки высчитаны beamX2, beamY2
+    uint16 hx1 = 0;
+    uint16 hx2 = 0;
+    uint16 hy1 = 0;
+    uint16 hy2 = 0;
+    // координаты начальной и конечной точки отрезка между двумя гексами
+    if( !map.GetEntireCoords( hexNum1, 0, hx1, hy1 ) )
+        return false;
+    if( !map.GetEntireCoords( hexNum2, 0, hx2, hy2 ) )
+        return false;
+    // уравнение прямой для отрезка выглядит так
+    // а*x + b*y + c = 0
+    // уравнение прямой для луча
+    /*
+            Известно, что система:
+            a1 x + b1 y = c1
+            a2 x + b2 y = c2
+            имеет следующее решение:
+            x = dx/d
+            y = dy/d,
+            где d - определитель матрицы,
+            d = a1b2 - a2b1,
+            dx = c1b2 - c2b1,
+            dy = a1c2 - a2c1.
+            В нашей системе
+            a1 = hx1 - hx2
+            b1 = beamX2 - beamX
+            c1 = hx1 - beamX
+
+            a2 = hy1 - hy2
+            b2 = beamY2 - beamY
+            c2 = hy1 - beamY
+            d = (hx1-hx2)*(beamY2-beamY) - (hy1-hy2)*(beamX2-beamX)
+            dx1 = (hx1 - beamX)*(beamY2-beamY) - (hy1-beamY)*(beamX2-beamX)
+            dy = (hx1-hx2)*(hy1-beamY)-(hy1-hy2)*(hx1-beamX)
+     */
+
+    // Знаменатель
+    float z = ( int(hx1) - int(hx2) ) * ( int(beamY2) - int(beamY) ) - ( int(hy1) - int(hy2) ) * ( int(beamX2) - int(beamX) );
+    // числитель 1
+    float ch = ( int(hx1) - int(beamX) ) * ( int(beamY2) - int(beamY) ) - ( int(hy1) - int(beamY) ) * ( int(beamX2) - int(beamX) );
+    // числитель 2
+    float cbeam = ( int(hx1) - int(hx2) ) * ( int(hy1) - int(beamY) ) - ( int(hy1) - int(hy2) ) * ( int(hx1) - int(beamX) );
+    // если числители и знаменатель = 0, прямые совпадают, считаем что это не пересечение
+    if( z == 0 && ch == 0 && cbeam == 0 )
+        return false;
+    // если знаменатель = 0, отрезок и луч = параллельны, не пересекаются
+    if( z == 0 )
+        return false;
+    // точка пересечения на отрезке
+    float crossS = ch / z;
+    // точка пересечения на луче
+    float crossB = cbeam / z;
+    return ( 0 < crossS && crossS < 1 && 0 < crossB && crossB < 1 );
+}
+
+
+
+#endif

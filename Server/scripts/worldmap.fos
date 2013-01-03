@@ -1,0 +1,1980 @@
+#include "_macros.fos"
+#include "_teams.fos"
+#include "_bags.fos"
+
+import bool AddAttackPlane( Critter& npc, uint priority, Critter& target ) from "npc_planes";
+import void GenerateCavernEncounter( Map@ map, Critter@[] @ critters ) from "cave_mobs";
+
+#define ZONE_COUNT_X                       ( 25 )
+#define ZONE_COUNT_Y                       ( 30 )
+#define ZONE_LENGTH                        ( 60 )
+
+#define STR_VIEW                           ( 10000010 )   // {10000010}{}{Вы наткнулись на @lex who@.}
+#define STR_VIEW_WITH_PLAYER               ( 10000011 )   // {10000011}{}{Вы наткнулись на @lex who@ и @lex player@.}
+#define STR_VIEW_WITH_PLAYERS              ( 10000012 )   // {10000012}{}{Вы наткнулись на @lex who@ и банду @lex player@.}
+#define STR_VIEW_ONLY_PLAYER               ( 10000013 )   // {10000013}{}{Вы наткнулись на @lex player@.}
+#define STR_VIEW_ONLY_PLAYERS              ( 10000014 )   // {10000014}{}{Вы наткнулись на банду @lex player@.}
+#define STR_QUESTION                       ( 10000020 )   // {10000020}{}{Вы хотите увидеть @lex who@?}
+#define STR_QUESTION_WITH_PLAYER           ( 10000021 )   // {10000021}{}{Вы хотите увидеть @lex who@ и @lex player@?}
+#define STR_QUESTION_WITH_PLAYERS          ( 10000022 )   // {10000022}{}{Вы хотите увидеть @lex who@ и банду @lex player@?}
+#define STR_QUESTION_ONLY_PLAYER           ( 10000023 )   // {10000023}{}{Вы хотите увидеть @lex player@?}
+#define STR_QUESTION_ONLY_PLAYERS          ( 10000024 )   // {10000024}{}{Вы хотите увидеть банду @lex player@?}
+
+#define ENCOUNTER_OBJECT_NONE              ( 0 )
+#define ENCOUNTER_OBJECT_CRITTER           ( 1 )
+#define ENCOUNTER_OBJECT_ITEM              ( 2 )
+
+#define CHECK_RANDOM                       ( 0 )
+#define CHECK_PARAM                        ( 1 )
+#define CHECK_LVAR                         ( 2 )
+#define CHECK_GVAR                         ( 3 )
+#define CHECK_HOUR                         ( 4 )
+#define CHECK_LVAR_ANY                     ( 5 )
+#define CHECK_PARAM_ANY                    ( 6 )
+#define ASSIGN_LVAR                        ( 10 )
+
+#define ACTION_NONE                        ( 0 )
+#define ACTION_FIGHTING                    ( 1 )   // Combined with Ambush
+
+#define TERRAIN_Desert                     ( 0 )
+#define TERRAIN_Mountain                   ( 1 )
+#define TERRAIN_City                       ( 2 )
+#define TERRAIN_Coast                      ( 3 )
+#define TERRAIN_Water                      ( 4 )
+
+#define FILL_No_Fill                       ( 0 )
+#define FILL_Fill_W                        ( 1 )
+
+// Encounter frequency percentages
+#define CHANCE_Forced                      ( 100 ) // This shouldn't change
+#define CHANCE_Frequent                    ( 38 )  // Was 9/3d6
+#define CHANCE_Common                      ( 22 )  // Was 8/3d6
+#define CHANCE_Uncommon                    ( 12 )  // Was 6/3d6
+#define CHANCE_Rare                        ( 4 )   // Was 5/3d6
+#define CHANCE_None                        ( 0 )   // This shouldn't change
+
+#define POSITION_NONE                      ( 0 )
+#define POSITION_SURROUNDING               ( 1 )   // Окружают
+#define POSITION_HUDDLE                    ( 2 )   //
+#define POSITION_WEDGE                     ( 3 )
+#define POSITION_CONE                      ( 4 )
+#define POSITION_DOUBLE_LINE               ( 5 )
+#define POSITION_STRAIGHT_LINE             ( 6 )
+
+uint[][] PositionDirs =
+{
+    { 0 },                                     // POSITION_NONE
+// Steps Path 1       Path 2
+    { 1, 4, 3, 2, 1, 0, 5, 2, 3, 4, 5, 0, 1 }, // POSITION_SURROUNDING
+    { 1, 5, 0, 1, 2, 3, 4, 1, 0, 5, 4, 3, 2 }, // POSITION_HUDDLE
+    { 1, 4,           2 },                     // POSITION_WEDGE
+    { 1, 5,           1 },                     // POSITION_CONE
+    { 2, 1, 2,         4, 5 },                 // POSITION_DOUBLE_LINE
+    { 2, 1, 2,         4, 5 } // POSITION_STRAIGHT_LINE
+};
+
+#define GROUP_Player						( uint( -1 ) )
+#define GROUP_Aliens						( 0 )
+#define GROUP_Ants							( 1 )
+#define GROUP_Bandits						( 2 )
+#define GROUP_Blades						( 3 )
+#define GROUP_Bootlegger					( 4 )
+#define GROUP_Brahmins						( 5 )
+#define GROUP_Broken_Hills_Caravan			( 6 )
+#define GROUP_Brotherhood_Initiate_Patrol	( 7 )
+#define GROUP_Brotherhood_Patrol			( 8 )
+#define GROUP_Caravan						( 9 )
+#define GROUP_Centaurs						( 10 )
+#define GROUP_Claim_Jumpers					( 11 )
+#define GROUP_Coyotes						( 12 )
+#define GROUP_Crimson_Caravan				( 13 )
+#define GROUP_Deathclaws1					( 14 )
+#define GROUP_Den_Caravan					( 15 )
+#define GROUP_Desert_Hounds					( 16 )
+#define GROUP_Enclave_Patrol				( 17 )
+#define GROUP_Far_Go_Traders				( 18 )
+#define GROUP_Farmers						( 19 )
+#define GROUP_Fire_Geckos					( 20 )
+#define GROUP_Fishermen						( 21 )
+#define GROUP_Floaters						( 22 )
+#define GROUP_Followers_of_the_Apocalypse	( 23 )
+#define GROUP_Gang							( 24 )
+#define GROUP_Gecko_Caravan					( 25 )
+#define GROUP_Geckos						( 26 )
+#define GROUP_Ghoul_Crazies					( 27 )
+#define GROUP_Ghouls						( 28 )
+#define GROUP_Giant_Rats					( 29 )
+#define GROUP_Golden_Geckos					( 30 )
+#define GROUP_Hermit						( 31 )
+#define GROUP_Highwaymen					( 32 )
+#define GROUP_Homeless_people				( 33 )
+#define GROUP_Homesteaders					( 34 )
+#define GROUP_Hub_Patrol					( 35 )
+#define GROUP_Hubologist					( 36 )
+#define GROUP_Hunters						( 37 )
+#define GROUP_Junktown_Scouts				( 38 )
+#define GROUP_Khans							( 39 )
+#define GROUP_Lone_Wanderer					( 40 )
+#define GROUP_Lone_Wanderer					( 41 )
+#define GROUP_Mantis						( 42 )
+#define GROUP_Marauders						( 43 )
+#define GROUP_Mercenaries					( 44 )
+#define GROUP_Merchant_Party				( 45 )
+#define GROUP_Mobsters						( 46 )
+#define GROUP_Molerats						( 47 )
+#define GROUP_Moonshiners					( 48 )
+#define GROUP_Mutated_Molerats				( 49 )
+#define GROUP_Mutated_Pigrats				( 50 )
+#define GROUP_Mutated_Rats					( 51 )
+#define GROUP_NCR_Caravan					( 52 )
+#define GROUP_New_Reno_Caravan				( 53 )
+#define GROUP_Peasants						( 54 )
+#define GROUP_Pigrats						( 55 )
+#define GROUP_Press_Gang					( 56 )
+#define GROUP_Prospector					( 57 )
+#define GROUP_Punkers						( 58 )
+#define GROUP_Rabid_Dogs					( 59 )
+#define GROUP_Radscorpions					( 60 )
+#define GROUP_Raiders_Metal_Armor			( 61 )
+#define GROUP_Raiders_Weak					( 62 )
+#define GROUP_Rangers						( 63 )
+#define GROUP_Redding_Caravan				( 64 )
+#define GROUP_Regulators					( 65 )
+#define GROUP_Rippers						( 66 )
+#define GROUP_Robbers						( 67 )
+#define GROUP_Robbers_Strong				( 68 )
+#define GROUP_Rogues						( 69 )
+#define GROUP_Salvagers						( 70 )
+#define GROUP_San_Francisco_Caravan			( 71 )
+#define GROUP_Scavengers					( 72 )
+#define GROUP_Silver_Geckos					( 73 )
+#define GROUP_Slave_Run						( 74 )
+#define GROUP_Slavers						( 75 )
+#define GROUP_Slaves						( 76 )
+#define GROUP_Small_Radscorpions			( 77 )
+#define GROUP_Stranger						( 78 )
+#define GROUP_Super_Mutants_Army			( 79 )
+#define GROUP_Thugs							( 80 )
+#define GROUP_Tough_Aliens					( 81 )
+#define GROUP_Tough_Fire_Geckos				( 82 )
+#define GROUP_Tough_looking_Wastelander		( 83 )
+#define GROUP_Trader						( 84 )
+#define GROUP_Trappers						( 85 )
+#define GROUP_Traveler						( 86 )
+#define GROUP_Unity_Patrol					( 87 )
+#define GROUP_Vault_City_Caravan			( 88 )
+#define GROUP_Vault_City_Patrol				( 89 )
+#define GROUP_Water_Merchants				( 90 )
+#define GROUP_Wild_Brahmins					( 91 )
+#define GROUP_Wild_Dogs						( 92 )
+#define GROUP_Wolves						( 93 )
+#define GROUP_Deathclaws2					( 94 )
+#define GROUP_Deathclaws3					( 95 )
+#define GROUP_CentaursFloaters				( 96 )
+#define GROUP_MutatedRadscorpions			( 97 )
+#define GROUP_BlackRadscorpions				( 98 )
+#define GROUP_MAX	/* Internal usage */	( 99 )
+
+#define	TABLE_00_00			( 0 )
+#define	TABLE_00_01			( 1 )
+#define	TABLE_00_02			( 2 )
+#define	TABLE_00_03			( 3 )
+#define	TABLE_00_04			( 4 )
+#define	TABLE_00_05			( 5 )
+#define	TABLE_00_06			( 6 )
+#define	TABLE_00_07			( 7 )
+#define	TABLE_00_08			( 8 )
+#define	TABLE_00_09			( 9 )
+#define	TABLE_00_10			( 10 )
+#define	TABLE_00_11			( 11 )
+#define	TABLE_00_12			( 12 )
+#define	TABLE_00_13			( 13 )
+#define	TABLE_00_14			( 14 )
+#define	TABLE_00_15			( 15 )
+
+#define	TABLE_01_00			( 16 )
+#define	TABLE_01_01			( 17 )
+#define	TABLE_01_02			( 18 )
+#define	TABLE_01_03			( 19 )
+#define	TABLE_01_04			( 20 )
+#define	TABLE_01_05			( 21 )
+#define	TABLE_01_06			( 22 )
+#define	TABLE_01_07			( 23 )
+#define	TABLE_01_08			( 24 )
+#define	TABLE_01_09			( 25 )
+#define	TABLE_01_10			( 26 )
+#define	TABLE_01_11			( 27 )
+#define	TABLE_01_12			( 28 )
+#define	TABLE_01_13			( 29 )
+#define	TABLE_01_14			( 30 )
+#define	TABLE_01_15			( 31 )
+
+#define	TABLE_02_00			( 32 )
+#define	TABLE_02_01			( 33 )
+#define	TABLE_02_02			( 34 )
+#define	TABLE_02_03			( 35 )
+#define	TABLE_02_04			( 36 )
+#define	TABLE_02_05			( 37 )
+#define	TABLE_02_06			( 38 )
+#define	TABLE_02_07			( 39 )
+#define	TABLE_02_08			( 40 )
+#define	TABLE_02_09			( 41 )
+#define	TABLE_02_10			( 42 )
+#define	TABLE_02_11			( 43 )
+#define	TABLE_02_12			( 44 )
+#define	TABLE_02_13			( 45 )
+#define	TABLE_02_14			( 46 )
+#define	TABLE_02_15			( 47 )
+
+#define	TABLE_03_00			( 48 )
+#define	TABLE_03_01			( 49 )
+#define	TABLE_03_02			( 50 )
+#define	TABLE_03_03			( 51 )
+#define	TABLE_03_04			( 52 )
+#define	TABLE_03_05			( 53 )
+#define	TABLE_03_06			( 54 )
+#define	TABLE_03_07			( 55 )
+#define	TABLE_03_08			( 56 )
+#define	TABLE_03_09			( 57 )
+#define	TABLE_03_10			( 58 )
+#define	TABLE_03_11			( 59 )
+#define	TABLE_03_12			( 60 )
+#define	TABLE_03_13			( 61 )
+#define	TABLE_03_14			( 62 )
+#define	TABLE_03_15			( 63 )
+
+#define	TABLE_04_00			( 64 )
+#define	TABLE_04_01			( 65 )
+#define	TABLE_04_02			( 66 )
+#define	TABLE_04_03			( 67 )
+#define	TABLE_04_04			( 68 )
+#define	TABLE_04_05			( 69 )
+#define	TABLE_04_06			( 70 )
+#define	TABLE_04_07			( 71 )
+#define	TABLE_04_08			( 72 )
+#define	TABLE_04_09			( 73 )
+#define	TABLE_04_10			( 74 )
+#define	TABLE_04_11			( 75 )
+#define	TABLE_04_12			( 76 )
+#define	TABLE_04_13			( 77 )
+#define	TABLE_04_14			( 78 )
+#define	TABLE_04_15			( 79 )
+
+#define	TABLE_05_00			( 80 )
+#define	TABLE_05_01			( 81 )
+#define	TABLE_05_02			( 82 )
+#define	TABLE_05_03			( 83 )
+#define	TABLE_05_04			( 84 )
+#define	TABLE_05_05			( 85 )
+#define	TABLE_05_06			( 86 )
+#define	TABLE_05_07			( 87 )
+#define	TABLE_05_08			( 88 )
+#define	TABLE_05_09			( 89 )
+#define	TABLE_05_10			( 90 )
+#define	TABLE_05_11			( 91 )
+#define	TABLE_05_12			( 92 )
+#define	TABLE_05_13			( 93 )
+#define	TABLE_05_14			( 94 )
+#define	TABLE_05_15			( 95 )
+
+#define	TABLE_06_00			( 96 )
+#define	TABLE_06_01			( 97 )
+#define	TABLE_06_02			( 98 )
+#define	TABLE_06_03			( 99 )
+#define	TABLE_06_04			( 100 )
+#define	TABLE_06_05			( 101 )
+#define	TABLE_06_06			( 102 )
+#define	TABLE_06_07			( 103 )
+#define	TABLE_06_08			( 104 )
+#define	TABLE_06_09			( 105 )
+#define	TABLE_06_10			( 106 )
+#define	TABLE_06_11			( 107 )
+#define	TABLE_06_12			( 108 )
+#define	TABLE_06_13			( 109 )
+#define	TABLE_06_14			( 110 )
+#define	TABLE_06_15			( 111 )
+
+#define	TABLE_07_00			( 112 )
+#define	TABLE_07_01			( 113 )
+#define	TABLE_07_02			( 114 )
+#define	TABLE_07_03			( 115 )
+#define	TABLE_07_04			( 116 )
+#define	TABLE_07_05			( 117 )
+#define	TABLE_07_06			( 118 )
+#define	TABLE_07_07			( 119 )
+#define	TABLE_07_08			( 120 )
+#define	TABLE_07_09			( 121 )
+#define	TABLE_07_10			( 122 )
+#define	TABLE_07_11			( 123 )
+#define	TABLE_07_12			( 124 )
+#define	TABLE_07_13			( 125 )
+#define	TABLE_07_14			( 126 )
+#define	TABLE_07_15			( 127 )
+
+#define	TABLE_08_00			( 128 )
+#define	TABLE_08_01			( 129 )
+#define	TABLE_08_02			( 130 )
+#define	TABLE_08_03			( 131 )
+#define	TABLE_08_04			( 132 )
+#define	TABLE_08_05			( 133 )
+#define	TABLE_08_06			( 134 )
+#define	TABLE_08_07			( 135 )
+#define	TABLE_08_08			( 136 )
+#define	TABLE_08_09			( 137 )
+#define	TABLE_08_10			( 138 )
+#define	TABLE_08_11			( 139 )
+#define	TABLE_08_12			( 140 )
+#define	TABLE_08_13			( 141 )
+#define	TABLE_08_14			( 142 )
+#define	TABLE_08_15			( 143 )
+
+#define	TABLE_09_00			( 144 )
+#define	TABLE_09_01			( 145 )
+#define	TABLE_09_02			( 146 )
+#define	TABLE_09_03			( 147 )
+#define	TABLE_09_04			( 148 )
+#define	TABLE_09_05			( 149 )
+#define	TABLE_09_06			( 150 )
+#define	TABLE_09_07			( 151 )
+#define	TABLE_09_08			( 152 )
+#define	TABLE_09_09			( 153 )
+#define	TABLE_09_10			( 154 )
+#define	TABLE_09_11			( 155 )
+#define	TABLE_09_12			( 156 )
+#define	TABLE_09_13			( 157 )
+#define	TABLE_09_14			( 158 )
+#define	TABLE_09_15			( 159 )
+
+#define	TABLE_10_00			( 160 )
+#define	TABLE_10_01			( 161 )
+#define	TABLE_10_02			( 162 )
+#define	TABLE_10_03			( 163 )
+#define	TABLE_10_04			( 164 )
+#define	TABLE_10_05			( 165 )
+#define	TABLE_10_06			( 166 )
+#define	TABLE_10_07			( 167 )
+#define	TABLE_10_08			( 168 )
+#define	TABLE_10_09			( 169 )
+#define	TABLE_10_10			( 170 )
+#define	TABLE_10_11			( 171 )
+#define	TABLE_10_12			( 172 )
+#define	TABLE_10_13			( 173 )
+#define	TABLE_10_14			( 174 )
+#define	TABLE_10_15			( 175 )
+
+#define	TABLE_11_00			( 176 )
+#define	TABLE_11_01			( 177 )
+#define	TABLE_11_02			( 178 )
+#define	TABLE_11_03			( 179 )
+#define	TABLE_11_04			( 180 )
+#define	TABLE_11_05			( 181 )
+#define	TABLE_11_06			( 182 )
+#define	TABLE_11_07			( 183 )
+#define	TABLE_11_08			( 184 )
+#define	TABLE_11_09			( 185 )
+#define	TABLE_11_10			( 186 )
+#define	TABLE_11_11			( 187 )
+#define	TABLE_11_12			( 188 )
+#define	TABLE_11_13			( 189 )
+#define	TABLE_11_14			( 190 )
+#define	TABLE_11_15			( 191 )
+
+#define	TABLE_12_00			( 192 )
+#define	TABLE_12_01			( 193 )
+#define	TABLE_12_02			( 194 )
+#define	TABLE_12_03			( 195 )
+#define	TABLE_12_04			( 196 )
+#define	TABLE_12_05			( 197 )
+#define	TABLE_12_06			( 198 )
+#define	TABLE_12_07			( 199 )
+#define	TABLE_12_08			( 200 )
+#define	TABLE_12_09			( 201 )
+#define	TABLE_12_10			( 202 )
+#define	TABLE_12_11			( 203 )
+#define	TABLE_12_12			( 204 )
+#define	TABLE_12_13			( 205 )
+#define	TABLE_12_14			( 206 )
+#define	TABLE_12_15			( 207 )
+
+#define	TABLE_13_00			( 208 )
+#define	TABLE_13_01			( 209 )
+#define	TABLE_13_02			( 210 )
+#define	TABLE_13_03			( 211 )
+#define	TABLE_13_04			( 212 )
+#define	TABLE_13_05			( 213 )
+#define	TABLE_13_06			( 214 )
+#define	TABLE_13_07			( 215 )
+#define	TABLE_13_08			( 216 )
+#define	TABLE_13_09			( 217 )
+#define	TABLE_13_10			( 218 )
+#define	TABLE_13_11			( 219 )
+#define	TABLE_13_12			( 220 )
+#define	TABLE_13_13			( 221 )
+#define	TABLE_13_14			( 222 )
+#define	TABLE_13_15			( 223 )
+
+#define	TABLE_14_00			( 224 )
+#define	TABLE_14_01			( 225 )
+#define	TABLE_14_02			( 226 )
+#define	TABLE_14_03			( 227 )
+#define	TABLE_14_04			( 228 )
+#define	TABLE_14_05			( 229 )
+#define	TABLE_14_06			( 230 )
+#define	TABLE_14_07			( 231 )
+#define	TABLE_14_08			( 232 )
+#define	TABLE_14_09			( 233 )
+#define	TABLE_14_10			( 234 )
+#define	TABLE_14_11			( 235 )
+#define	TABLE_14_12			( 236 )
+#define	TABLE_14_13			( 237 )
+#define	TABLE_14_14			( 238 )
+#define	TABLE_14_15			( 239 )
+
+#define	TABLE_15_00			( 240 )
+#define	TABLE_15_01			( 241 )
+#define	TABLE_15_02			( 242 )
+#define	TABLE_15_03			( 243 )
+#define	TABLE_15_04			( 244 )
+#define	TABLE_15_05			( 245 )
+#define	TABLE_15_06			( 246 )
+#define	TABLE_15_07			( 247 )
+#define	TABLE_15_08			( 248 )
+#define	TABLE_15_09			( 249 )
+#define	TABLE_15_10			( 250 )
+#define	TABLE_15_11			( 251 )
+#define	TABLE_15_12			( 252 )
+#define	TABLE_15_13			( 253 )
+#define	TABLE_15_14			( 254 )
+#define	TABLE_15_15			( 255 )
+
+#define	TABLE_16_00			( 256 )
+#define	TABLE_16_01			( 257 )
+#define	TABLE_16_02			( 258 )
+#define	TABLE_16_03			( 259 )
+#define	TABLE_16_04			( 260 )
+#define	TABLE_16_05			( 261 )
+#define	TABLE_16_06			( 262 )
+#define	TABLE_16_07			( 263 )
+#define	TABLE_16_08			( 264 )
+#define	TABLE_16_09			( 265 )
+#define	TABLE_16_10			( 266 )
+#define	TABLE_16_11			( 267 )
+#define	TABLE_16_12			( 268 )
+#define	TABLE_16_13			( 269 )
+#define	TABLE_16_14			( 270 )
+#define	TABLE_16_15			( 271 )
+
+#define	TABLE_17_00			( 272 )
+#define	TABLE_17_01			( 273 )
+#define	TABLE_17_02			( 274 )
+#define	TABLE_17_03			( 275 )
+#define	TABLE_17_04			( 276 )
+#define	TABLE_17_05			( 277 )
+#define	TABLE_17_06			( 278 )
+#define	TABLE_17_07			( 279 )
+#define	TABLE_17_08			( 280 )
+#define	TABLE_17_09			( 281 )
+#define	TABLE_17_10			( 282 )
+#define	TABLE_17_11			( 283 )
+#define	TABLE_17_12			( 284 )
+#define	TABLE_17_13			( 285 )
+#define	TABLE_17_14			( 286 )
+#define	TABLE_17_15			( 287 )
+
+#define	TABLE_18_00			( 288 )
+#define	TABLE_18_01			( 289 )
+#define	TABLE_18_02			( 290 )
+#define	TABLE_18_03			( 291 )
+#define	TABLE_18_04			( 292 )
+#define	TABLE_18_05			( 293 )
+#define	TABLE_18_06			( 294 )
+#define	TABLE_18_07			( 295 )
+#define	TABLE_18_08			( 296 )
+#define	TABLE_18_09			( 297 )
+#define	TABLE_18_10			( 298 )
+#define	TABLE_18_11			( 299 )
+#define	TABLE_18_12			( 300 )
+#define	TABLE_18_13			( 301 )
+#define	TABLE_18_14			( 302 )
+#define	TABLE_18_15			( 303 )
+
+#define	TABLE_19_00			( 304 )
+#define	TABLE_19_01			( 305 )
+#define	TABLE_19_02			( 306 )
+#define	TABLE_19_03			( 307 )
+#define	TABLE_19_04			( 308 )
+#define	TABLE_19_05			( 309 )
+#define	TABLE_19_06			( 310 )
+#define	TABLE_19_07			( 311 )
+#define	TABLE_19_08			( 312 )
+#define	TABLE_19_09			( 313 )
+#define	TABLE_19_10			( 314 )
+#define	TABLE_19_11			( 315 )
+#define	TABLE_19_12			( 316 )
+#define	TABLE_19_13			( 317 )
+#define	TABLE_19_14			( 318 )
+#define	TABLE_19_15			( 319 )
+
+#define	TABLE_20_00			( 320 )
+#define	TABLE_20_01			( 321 )
+#define	TABLE_20_02			( 322 )
+#define	TABLE_20_03			( 323 )
+#define	TABLE_20_04			( 324 )
+#define	TABLE_20_05			( 325 )
+#define	TABLE_20_06			( 326 )
+#define	TABLE_20_07			( 327 )
+#define	TABLE_20_08			( 328 )
+#define	TABLE_20_09			( 329 )
+#define	TABLE_20_10			( 330 )
+#define	TABLE_20_11			( 331 )
+#define	TABLE_20_12			( 332 )
+#define	TABLE_20_13			( 333 )
+#define	TABLE_20_14			( 334 )
+#define	TABLE_20_15			( 335 )
+
+#define	TABLE_21_00			( 336 )
+#define	TABLE_21_01			( 337 )
+#define	TABLE_21_02			( 338 )
+#define	TABLE_21_03			( 339 )
+#define	TABLE_21_04			( 340 )
+#define	TABLE_21_05			( 341 )
+#define	TABLE_21_06			( 342 )
+#define	TABLE_21_07			( 343 )
+#define	TABLE_21_08			( 344 )
+#define	TABLE_21_09			( 345 )
+#define	TABLE_21_10			( 346 )
+#define	TABLE_21_11			( 347 )
+#define	TABLE_21_12			( 348 )
+#define	TABLE_21_13			( 349 )
+#define	TABLE_21_14			( 350 )
+#define	TABLE_21_15			( 351 )
+
+#define	TABLE_22_00			( 352 )
+#define	TABLE_22_01			( 353 )
+#define	TABLE_22_02			( 354 )
+#define	TABLE_22_03			( 355 )
+#define	TABLE_22_04			( 356 )
+#define	TABLE_22_05			( 357 )
+#define	TABLE_22_06			( 358 )
+#define	TABLE_22_07			( 359 )
+#define	TABLE_22_08			( 360 )
+#define	TABLE_22_09			( 361 )
+#define	TABLE_22_10			( 362 )
+#define	TABLE_22_11			( 363 )
+#define	TABLE_22_12			( 364 )
+#define	TABLE_22_13			( 365 )
+#define	TABLE_22_14			( 366 )
+#define	TABLE_22_15			( 367 )
+
+#define	TABLE_23_00			( 368 )
+#define	TABLE_23_01			( 369 )
+#define	TABLE_23_02			( 370 )
+#define	TABLE_23_03			( 371 )
+#define	TABLE_23_04			( 372 )
+#define	TABLE_23_05			( 373 )
+#define	TABLE_23_06			( 374 )
+#define	TABLE_23_07			( 375 )
+#define	TABLE_23_08			( 376 )
+#define	TABLE_23_09			( 377 )
+#define	TABLE_23_10			( 378 )
+#define	TABLE_23_11			( 379 )
+#define	TABLE_23_12			( 380 )
+#define	TABLE_23_13			( 381 )
+#define	TABLE_23_14			( 382 )
+#define	TABLE_23_15			( 383 )
+
+#define	TABLE_24_00			( 384 )
+#define	TABLE_24_01			( 385 )
+#define	TABLE_24_02			( 386 )
+#define	TABLE_24_03			( 387 )
+#define	TABLE_24_04			( 388 )
+#define	TABLE_24_05			( 389 )
+#define	TABLE_24_06			( 390 )
+#define	TABLE_24_07			( 391 )
+#define	TABLE_24_08			( 392 )
+#define	TABLE_24_09			( 393 )
+#define	TABLE_24_10			( 394 )
+#define	TABLE_24_11			( 395 )
+#define	TABLE_24_12			( 396 )
+#define	TABLE_24_13			( 397 )
+#define	TABLE_24_14			( 398 )
+#define	TABLE_24_15			( 399 )
+
+#define	TABLE_25_00			( 400 )
+#define	TABLE_25_01			( 401 )
+#define	TABLE_25_02			( 402 )
+#define	TABLE_25_03			( 403 )
+#define	TABLE_25_04			( 404 )
+#define	TABLE_25_05			( 405 )
+#define	TABLE_25_06			( 406 )
+#define	TABLE_25_07			( 407 )
+#define	TABLE_25_08			( 408 )
+#define	TABLE_25_09			( 409 )
+#define	TABLE_25_10			( 410 )
+#define	TABLE_25_11			( 411 )
+#define	TABLE_25_12			( 412 )
+#define	TABLE_25_13			( 413 )
+#define	TABLE_25_14			( 414 )
+#define	TABLE_25_15			( 415 )
+
+#define	TABLE_26_00			( 416 )
+#define	TABLE_26_01			( 417 )
+#define	TABLE_26_02			( 418 )
+#define	TABLE_26_03			( 419 )
+#define	TABLE_26_04			( 420 )
+#define	TABLE_26_05			( 421 )
+#define	TABLE_26_06			( 422 )
+#define	TABLE_26_07			( 423 )
+#define	TABLE_26_08			( 424 )
+#define	TABLE_26_09			( 425 )
+#define	TABLE_26_10			( 426 )
+#define	TABLE_26_11			( 427 )
+#define	TABLE_26_12			( 428 )
+#define	TABLE_26_13			( 429 )
+#define	TABLE_26_14			( 430 )
+#define	TABLE_26_15			( 431 )
+
+#define	TABLE_27_00			( 432 )
+#define	TABLE_27_01			( 433 )
+#define	TABLE_27_02			( 434 )
+#define	TABLE_27_03			( 435 )
+#define	TABLE_27_04			( 436 )
+#define	TABLE_27_05			( 437 )
+#define	TABLE_27_06			( 438 )
+#define	TABLE_27_07			( 439 )
+#define	TABLE_27_08			( 440 )
+#define	TABLE_27_09			( 441 )
+#define	TABLE_27_10			( 442 )
+#define	TABLE_27_11			( 443 )
+#define	TABLE_27_12			( 444 )
+#define	TABLE_27_13			( 445 )
+#define	TABLE_27_14			( 446 )
+#define	TABLE_27_15			( 447 )
+
+#define TABLE_MAX	/* Internal usage */	( 448 )
+
+class CCheck
+{
+    uint  Type;
+    uint  Index;
+    uint8 Operator;
+    int   Value;
+
+    CCheck()
+    {
+        Type = 0;
+        Index = 0;
+        Operator = 0;
+        Value = 0;
+    }
+
+    void Set( uint type, uint index, uint8 operator, int value )
+    {
+        Type = type;
+        Index = index;
+        Operator = operator;
+        Value = value;
+    }
+}
+
+class CEncounterObject
+{
+    uint   ObjectType;
+    uint16 Pid;                 // Proto id
+    uint   DialogId;
+    uint AiId;
+    uint NpcRoleId;
+    uint BagId;
+    string ScriptName;
+    uint   DistanceLength;      // Distance from players
+    CEncounterObject@[] Childs; // Items in inventory or container
+    CCheck[] Checks;
+    // Only for critter
+    uint RatioValue;
+    bool IsDead;
+    // Only for item
+    uint Minimum;
+    uint Maximum;
+    uint InvSlot;
+
+    CEncounterObject()
+    {
+        ObjectType = 0;
+        Pid = 0;
+        AiId = 0;
+        NpcRoleId = 0;
+        BagId = BAG_Empty;
+        DialogId = 0;
+        ScriptName = "";
+        DistanceLength = 0;
+        RatioValue = 0;
+        IsDead = false;
+        Minimum = 0;
+        Maximum = 0;
+        InvSlot = 0;
+    }
+
+    CEncounterObject@ NewCheck( uint type, uint index, uint8 operator, int value )
+    {
+        Checks.grow( 1 );
+        Checks.last().Set( type, index, operator, value );
+        return this;
+    }
+	CEncounterObject@ AI( uint aiId )
+    {
+        AiId = aiId;
+        return this;
+    }
+    CEncounterObject@ Role( uint role )
+    {
+        NpcRoleId = role;
+        return this;
+    }
+    CEncounterObject@ Bag( uint bag )
+    {
+        BagId = bag;
+        return this;
+    }
+    CEncounterObject@ Dialog( uint dialog )
+    {
+        DialogId = dialog;
+        return this;
+    }
+    CEncounterObject@ Script( string& script )
+    {
+        ScriptName = script;
+        return this;
+    }
+    CEncounterObject@ Distance( uint distance )
+    {
+        DistanceLength = distance;
+        return this;
+    }
+    CEncounterObject@ CheckRandom( int value )
+    {
+        NewCheck( CHECK_RANDOM, 0, 0, value );
+        return this;
+    }
+    CEncounterObject@ CheckParam( uint index, uint8 operator, int value )
+    {
+        NewCheck( CHECK_PARAM, index, operator, value );
+        return this;
+    }
+    CEncounterObject@ CheckParamAny( uint index, uint8 operator, int value )
+    {
+        NewCheck( CHECK_PARAM_ANY, index, operator, value );
+        return this;
+    }
+    CEncounterObject@ CheckLVar( uint index, uint8 operator, int value )
+    {
+        NewCheck( CHECK_LVAR, index, operator, value );
+        return this;
+    }
+    CEncounterObject@ CheckLVarAny( uint index, uint8 operator, int value )
+    {
+        NewCheck( CHECK_LVAR_ANY, index, operator, value );
+        return this;
+    }
+    CEncounterObject@ CheckGVar( uint index, uint8 operator, int value )
+    {
+        NewCheck( CHECK_GVAR, index, operator, value );
+        return this;
+    }
+    CEncounterObject@ CheckHour( uint8 operator, int value )
+    {
+        NewCheck( CHECK_HOUR, 0, operator, value );
+        return this;
+    }
+    CEncounterObject@ Ratio( uint ratio )
+    {
+        
+        RatioValue = ratio;
+        return this;
+    }
+    CEncounterObject@ Dead( bool dead )
+    {
+        IsDead = dead;
+        return this;
+    }
+    CEncounterObject@ Slot( uint slot )
+    {
+        InvSlot = slot;
+        return this;
+    }
+
+    CEncounterObject@ AddItem( uint16 pid, uint min, uint max, uint slot )
+    {
+        CEncounterObject new_child;
+        Childs.insertLast( @new_child );
+        new_child.Pid = pid;
+        new_child.Minimum = min;
+        new_child.Maximum = max;
+        new_child.InvSlot = slot;
+        return this;
+    }
+    
+    CEncounterObject@ AddItem( uint16 pid, uint chance, uint min, uint max, uint slot )
+    {
+        CEncounterObject new_child;
+        Childs.insertLast( @new_child );
+        new_child.Pid = pid;
+        new_child.Minimum = min;
+        new_child.Maximum = max;
+        new_child.InvSlot = slot;
+        new_child.CheckRandom( chance );
+        return this;
+    }
+}
+
+class CEncounterGroup
+{
+    uint TeamNum;
+    uint Position;
+    uint Spacing;
+    uint Distance;
+    CEncounterObject[] Objects;
+
+    CEncounterGroup()
+    {
+        TeamNum = 0;
+        Position = 0;
+        Spacing = 0;
+        Distance = 0;
+    }
+
+    CEncounterObject@ NewObject()
+    {
+        Objects.grow( 1 );
+        return Objects.last();
+    }
+
+    CEncounterObject@ AddCritter( uint16 pid )
+    {
+        CEncounterObject@ obj = NewObject();
+        obj.ObjectType = ENCOUNTER_OBJECT_CRITTER;
+        obj.Pid = pid;
+        return obj;
+    }
+
+    CEncounterObject@ AddItem( uint16 pid )
+    {
+        CEncounterObject@ obj = NewObject();
+        obj.ObjectType = ENCOUNTER_OBJECT_ITEM;
+        obj.Pid = pid;
+        return obj;
+    }
+}
+
+class CEncounter
+{
+    uint   Chance;
+    uint   StrNum;
+    uint16 LocPid;
+    bool   IsSpecial;
+    uint[] Groups;
+    uint[] RatioMin;
+    uint[] RatioMax;
+    uint[] Actions;
+    CCheck[] Checks;
+
+    CEncounter()
+    {
+        Chance = 0;
+        StrNum = 0;
+        LocPid = 0;
+        IsSpecial = false;
+    }
+
+    CEncounter@ AddGroup( uint group, uint ratioMin, uint ratioMax )
+    {
+        Groups.grow( 1 );
+        RatioMin.grow( 1 );
+        RatioMax.grow( 1 );
+        Groups.last() = group;
+        RatioMin.last() = ratioMin;
+        RatioMax.last() = ratioMax;
+        return this;
+    }
+
+    CEncounter@ Fighting( uint fromGroup, uint toGroup )
+    {
+        Actions.insertLast( fromGroup );
+        Actions.insertLast( toGroup );
+        Actions.insertLast( ACTION_FIGHTING );
+        return this;
+    }
+
+    CEncounter@ NewCheck( uint type, uint index, uint8 operator, int value )
+    {
+        Checks.grow( 1 );
+        Checks.last().Set( type, index, operator, value );
+        return this;
+    }
+
+    CEncounter@ LocationPid( uint16 locationPid )
+    {
+        LocPid = locationPid;
+        return this;
+    }
+    CEncounter@ Special( bool special )
+    {
+        IsSpecial = special;
+        return this;
+    }
+    CEncounter@ CheckRandom( int value )
+    {
+        NewCheck( CHECK_RANDOM, 0, 0, value );
+        return this;
+    }
+    CEncounter@ CheckParam( uint index, uint8 operator, int value )
+    {
+        NewCheck( CHECK_PARAM, index, operator, value );
+        return this;
+    }
+    CEncounter@ CheckParamAny( uint index, uint8 operator, int value )
+    {
+        NewCheck( CHECK_PARAM_ANY, index, operator, value );
+        return this;
+    }
+    CEncounter@ CheckLVar( uint index, uint8 operator, int value )
+    {
+        NewCheck( CHECK_LVAR, index, operator, value );
+        return this;
+    }
+    CEncounter@ CheckLVarAny( uint index, uint8 operator, int value )
+    {
+        NewCheck( CHECK_LVAR_ANY, index, operator, value );
+        return this;
+    }
+    CEncounter@ CheckGVar( uint index, uint8 operator, int value )
+    {
+        NewCheck( CHECK_GVAR, index, operator, value );
+        return this;
+    }
+    CEncounter@ CheckHour( uint8 operator, int value )
+    {
+        NewCheck( CHECK_HOUR, 0, operator, value );
+        return this;
+    }
+    CEncounter@ AssignLVar( uint index, uint8 operator, int value )
+    {
+        NewCheck( ASSIGN_LVAR, index, operator, value );
+        return this;
+    }
+}
+
+class CEncounterTable
+{
+    uint16[] LocationPids;
+    CEncounter[] Encounters;
+
+    void AddLocationPid( uint16 locationPid )
+    {
+        LocationPids.insertLast( locationPid );
+    }
+
+    CEncounter@ AddEncounter( uint chance, uint strNum )
+    {
+        Encounters.grow( 1 );
+        Encounters.last().Chance = chance;
+        Encounters.last().StrNum = strNum;
+        return @Encounters.last();
+    }
+}
+
+class CZone
+{
+    int              Difficulty;
+    uint             Terrain;
+    uint             MorningChance;
+    uint             AfternoonChance;
+    uint             NightChance;
+    CEncounterTable@ Table;
+
+    CZone()
+    {
+        Difficulty = 0;
+        Terrain = 0;
+        MorningChance = 0;
+        AfternoonChance = 0;
+        NightChance = 0;
+        @Table = null;
+    }
+}
+
+CEncounterGroup[] EncounterGroups( GROUP_MAX );
+CEncounterTable[] EncounterTables( TABLE_MAX );
+CZone@[]          WorldmapGround( ZONE_COUNT_X* ZONE_COUNT_Y );
+CZone@[]          WorldmapWater( ZONE_COUNT_X* ZONE_COUNT_Y );
+
+//
+// Zone
+//
+
+void SetZone( uint zx, uint zy, uint table, int difficulty, uint terrain, uint morningChance, uint afternoonChance, uint nightChance )
+{
+    CZone@ zone = CZone();
+    @zone.Table = EncounterTables[ table ];
+    zone.Difficulty = difficulty;
+    zone.Terrain = terrain;
+    zone.MorningChance = morningChance;
+    zone.AfternoonChance = afternoonChance;
+    zone.NightChance = nightChance;
+
+    if( terrain != TERRAIN_Water )
+        @WorldmapGround[ zy * ZONE_COUNT_X + zx ] = zone;
+    else
+        @WorldmapWater[ zy * ZONE_COUNT_X + zx ] = zone;
+}
+
+void SetZone( uint zx, uint zy, uint table, int difficulty, uint terrain, uint chance )
+{
+    SetZone( zx, zy, table, difficulty, terrain, chance, chance, chance );
+}
+
+//
+// Tables
+//
+
+void AddTableToAllTables( CEncounterTable& globalTable )
+{
+    for( uint i = 0; i < TABLE_MAX; i++ )
+    {
+        //~ if( i != TABLE_Ocean1_O && i != TABLE_Ocean2_O )
+        //~ {
+            CEncounterTable@ table = EncounterTables[ i ];
+
+            for( uint j = 0; j < globalTable.LocationPids.length(); j++ )
+            {
+                table.LocationPids.grow( 1 );
+                table.LocationPids.last() = globalTable.LocationPids[ j ];
+            }
+
+            for( uint j = 0; j < globalTable.Encounters.length(); j++ )
+            {
+                table.Encounters.grow( 1 );
+                table.Encounters.last() = globalTable.Encounters[ j ];
+            }
+        //~ }
+    }
+}
+
+//
+// Checks
+//
+
+bool CheckCompare( int val1, uint8 operator, int val2 )
+{
+    if( operator == '>' )
+        return val1 > val2;
+    if( operator == '<' )
+        return val1 < val2;
+    if( operator == '=' )
+        return val1 == val2;
+    Log( "Unknown operator." );
+    return false;
+}
+
+bool CheckCompareAnyParam( CCheck& check, Critter@[]& critters )
+{
+    for( uint i = 0, j = critters.length(); i < j; i++ )
+    {
+        if( CheckCompare( critters[ i ].Param[ check.Index ], check.Operator, check.Value ) )
+            return true;
+    }
+    return false;
+}
+
+bool CheckCompareAnyVar( CCheck& check, Critter@[]& critters )
+{
+    for( uint i = 0, j = critters.length(); i < j; i++ )
+    {
+        GameVar@ lvar = GetLocalVar( check.Index, critters[ i ].Id );
+        if( valid( lvar ) )
+        {
+            if( CheckCompare( lvar.GetValue(), check.Operator, check.Value ) )
+                return true;
+        }
+    }
+    return false;
+}
+
+void CheckAssignVar( GameVar& val1, uint8 operator, int val2 )
+{
+    if( operator == '=' )
+        val1 = val2;
+    else if( operator == '+' )
+        val1 += val2;
+    else if( operator == '-' )
+        val1 -= val2;
+    else if( operator == '*' )
+        val1 *= val2;
+    else if( operator == '/' )
+        val1 /= val2;
+    else
+        Log( "Unknown operator." );
+}
+
+bool CheckChecks( CCheck[]& checks, Critter@[]& critters )
+{
+    bool checkOk = false;
+    for( int i = 0, j = checks.length(); i < j; i++ )
+    {
+        CCheck@ check = checks[ i ];
+        switch( check.Type )
+        {
+	        case CHECK_RANDOM:
+	            if( Random( 1, 100 ) > check.Value )
+	                return false;
+	            break;
+	        case CHECK_HOUR:
+	            if( not CheckCompare( __Hour, check.Operator, check.Value ) )
+	                return false;
+	            break;
+	        case CHECK_PARAM:
+	            for( uint i = 0, j = critters.length(); i < j; i++ )
+	                if( not CheckCompare( critters[ i ].Param[ check.Index ], check.Operator, check.Value ) )
+	                    return false;
+	            break;
+	        case CHECK_PARAM_ANY:
+	            if( not CheckCompareAnyParam( check, critters ) )
+	                return false;
+	            break;
+	        case CHECK_LVAR:
+	            // Log("Checking var"+check.Index);
+	            for( uint i = 0, j = critters.length(); i < j; i++ )
+	            {
+	                GameVar@ lvar = GetLocalVar( check.Index, critters[ i ].Id );
+	                if( not valid( lvar ) )
+	                {
+	                    // Log("Local var not found.");
+	                    return false;
+	                }
+	                // Log("Var val"+lvar.GetValue()+"cr id");
+	                if( not CheckCompare( lvar.GetValue(), check.Operator, check.Value ) )
+	                    return false;
+	            }
+	            break;
+	        case CHECK_LVAR_ANY:
+	            if( not CheckCompareAnyVar( check, critters ) )
+	                return false;
+	            break;
+	        case CHECK_GVAR:
+	        {
+	            GameVar@ gvar = GetGlobalVar( check.Index );
+	            if( not valid( gvar ) )
+	            {
+	                // Log("Global var not found.");
+	                return false;
+	            }
+	            if( not CheckCompare( gvar.GetValue(), check.Operator, check.Value ) )
+	                return false;
+	            break;
+	        }
+	        default:
+	            continue;
+        }
+    }
+    return true;
+}
+
+void AssignChecks( CCheck[]& checks, Critter@[]& critters )
+{
+    for( int i = 0, j = checks.length(); i < j; i++ )
+    {
+        CCheck@ check = checks[ i ];
+        if( check.Type == ASSIGN_LVAR )
+        {
+            for( uint i = 0, j = critters.length(); i < j; i++ )
+            {
+                GameVar@ lvar = GetLocalVar( check.Index, critters[ i ].Id );
+                CheckAssignVar( lvar, check.Operator, check.Value );
+            }
+        }
+    }
+}
+
+//
+// Stored founded encounters
+//
+
+#define FOUNDED_ENCOUNTER_LIVE_TIME    ( REAL_MINUTE( 30 ) ) // 30 real minutes
+class CFoundedEncounter
+{
+    uint        Index;
+    uint16[] LocationPids;
+    CEncounter@ Encounter;
+    bool        IsGenerated;
+    uint        FullSecond;
+    uint        PositionX;
+    uint        PositionY;
+    uint        OwnerId;
+    bool        OwnerGroup;
+    bool        TurnBased;
+    uint        LocationId;
+    bool        IsWater;
+    uint16      StartHexX;
+    uint16      StartHexY;
+    bool[] DirBusy;
+    uint        AskChance;
+
+    CFoundedEncounter()
+    {
+        Index = 0;
+        @Encounter = null;
+        IsGenerated = false;
+        FullSecond = 0;
+        PositionX = 0;
+        PositionY = 0;
+        OwnerId = 0;
+        OwnerGroup = false;
+        TurnBased = false;
+        LocationId = 0;
+        IsWater = false;
+        StartHexX = 0;
+        StartHexY = 0;
+        DirBusy.resize( 6 );
+    }
+}
+
+CFoundedEncounter[] FoundedEncounters( 1000 );
+uint FoundedEncountersLastIndex = 0;
+
+CFoundedEncounter@ CreateFoundedEncounter( bool isWater, uint x, uint y, CEncounter@ encounter, uint16[]& locationPids, uint ownerId, bool ownerGroup )
+{
+    for( int i = 0, j = FoundedEncounters.length(); i < j; i++ )
+    {
+        CFoundedEncounter@ ge = FoundedEncounters[ i ];
+        if( ge.Index == 0 || __FullSecond - ge.FullSecond >= FOUNDED_ENCOUNTER_LIVE_TIME + REAL_MINUTE( 1 ) )
+        {
+            FoundedEncountersLastIndex++;
+            ge.Index = FoundedEncountersLastIndex;
+            ge.LocationPids = locationPids;
+            @ge.Encounter = encounter;
+            ge.IsGenerated = false;
+            ge.FullSecond = __FullSecond;
+            ge.PositionX = x;
+            ge.PositionY = y;
+            ge.OwnerId = ownerId;
+            ge.OwnerGroup = ownerGroup;
+            ge.LocationId = 0;
+            ge.IsWater = isWater;
+            for( uint k = 0; k < 6; k++ )
+                ge.DirBusy[ k ] = false;
+            return ge;
+        }
+    }
+
+    // Grow buffer and refind
+    FoundedEncounters.resize( FoundedEncounters.length() * 2 );
+    return CreateFoundedEncounter( isWater, x, y, encounter, locationPids, ownerId, ownerGroup );
+}
+
+CFoundedEncounter@ GetFoundedEncounter( uint index )
+{
+    for( int i = 0, j = FoundedEncounters.length(); i < j; i++ )
+    {
+        CFoundedEncounter@ ge = FoundedEncounters[ i ];
+        if( ge.Index == index )
+            return ge;
+    }
+    return null;
+}
+
+CFoundedEncounter@ GetNearFoundedEncounter( bool isWater, Critter@[] @ group, uint x, uint y, uint radius )
+{
+    int combatMode = group[ 0 ].Mode[ MODE_DEFAULT_COMBAT ];
+    for( int i = 0, j = FoundedEncounters.length(); i < j; i++ )
+    {
+        CFoundedEncounter@ ge = FoundedEncounters[ i ];
+        if( ge.Index == 0 )
+            continue;
+        if( ge.TurnBased && combatMode == COMBAT_MODE_REAL_TIME )
+            continue;
+        if( not ge.TurnBased && combatMode == COMBAT_MODE_TURN_BASED )
+            continue;
+        if( ge.IsWater != isWater )
+            continue;
+        if( __FullSecond - ge.FullSecond >= FOUNDED_ENCOUNTER_LIVE_TIME )
+            continue;
+        if( not ge.IsGenerated )
+            continue;
+        if( valid( ge.Encounter ) && ge.Encounter.IsSpecial && not CheckChecks( ge.Encounter.Checks, group ) )
+            continue;
+        if( uint( sqrt( float( POW2( ge.PositionX - x ) + POW2( ge.PositionY - y ) ) ) ) > radius )
+            continue;
+        if( group[ 0 ].Id == ge.OwnerId )
+            continue;
+        if( not valid( GetLocation( ge.LocationId ) ) )
+            continue;
+
+        return ge;
+    }
+    return null;
+}
+
+uint GetFreeDir( bool[]& dirBysy )
+{
+    // Try find random
+    uint dir = Random( 0, 5 );
+    if( not dirBysy[ dir ] )
+    {
+        dirBysy[ dir ] = true;
+        return dir;
+    }
+
+    // Try find any free
+    for( uint i = 0; i < 6; i++ )
+    {
+        if( not dirBysy[ i ] )
+        {
+            dirBysy[ i ] = true;
+            return i;
+        }
+    }
+
+    // Any busy
+    return Random( 0, 5 );
+}
+
+void RotatePosition( uint toDir, uint[]& positionsDirs )
+{
+    for( uint i = 1, j = positionsDirs.length(); i < j; i++ ) // Skip Steps
+    {
+        positionsDirs[ i ] += toDir;
+        if( positionsDirs[ i ] > 5 )
+            positionsDirs[ i ] -= 6;
+    }
+}
+
+void MovePositionPoint( Map& map, uint16& pointX, uint16& pointY, uint[]& positionDirs, uint pathIndex, uint count, uint spacing )
+{
+    uint steps = positionDirs[ 0 ];
+    uint pathLen = ( positionDirs.length() - 1 ) / 2;
+    count *= steps;
+    count %= pathLen;
+    if( steps > 1 )
+    {
+        for( uint i = 0; i < spacing; i++ )
+        {
+            for( uint j = 0; j < steps; j++ )
+            {
+                uint dir = positionDirs[ 1 + pathLen * pathIndex + count + j ];
+                map.MoveHexByDir( pointX, pointY, dir, 1 );
+            }
+        }
+    }
+    else
+    {
+        uint dir = positionDirs[ 1 + pathLen * pathIndex + count ];
+        map.MoveHexByDir( pointX, pointY, dir, spacing );
+    }
+}
+
+void ParseEncounterObject( CEncounterObject@ obj, Map@ map, uint16 posX, uint16 posY, uint8 reversDir, Critter@[]& crittersGrouop, uint teamId, dictionary@ critterScripts )
+{
+    if( obj.ObjectType == ENCOUNTER_OBJECT_CRITTER )
+    {
+        if( not map.IsHexPassed( posX, posY ) )
+            return;
+
+        int[] items;
+        if( obj.Childs.length() > 0 )
+        {
+            for( uint i = 0, j = obj.Childs.length(); i < j; i++ )
+            {
+                CEncounterObject@ child = obj.Childs[ i ];
+                if( !CheckChecks( child.Checks, crittersGrouop ) )
+					continue;
+					
+                uint              count = Random( child.Minimum, child.Maximum );
+                if( count > 0 )
+                {
+                    items.insertLast( child.Pid );
+                    items.insertLast( count );
+                    items.insertLast( child.InvSlot );
+                }
+            }
+        }
+
+        int[] params = { ENCOUNTER_CRITTER, 1, ST_DIALOG_ID, obj.DialogId, ST_AI_ID, obj.AiId, ST_NPC_ROLE, obj.NpcRoleId, ST_BAG_ID, obj.BagId, ST_TEAM_ID, teamId, ST_REPLICATION_TIME, -1 };
+        Critter@ npc = map.AddNpc( obj.Pid, posX, posY, reversDir, params, items, null );
+        if( not valid( npc ) )
+            return;
+
+		if(obj.ScriptName.length() > 0)
+			critterScripts.set("" + npc.Id, obj.ScriptName);
+			
+        if( obj.IsDead )
+            npc.ToDead( Random( 0, 1 ) == 0 ? ANIM2_DEAD_FRONT : ANIM2_DEAD_BACK, null );
+        else
+            crittersGrouop.insertLast( @npc );
+    }
+    else if( obj.ObjectType == ENCOUNTER_OBJECT_ITEM )
+    {
+        Item@ item = map.AddItem( posX, posY, obj.Pid, 1 );
+        if( not valid( item ) )
+            return;
+
+        if( obj.Childs.length() > 0 && item.GetType() == ITEM_TYPE_CONTAINER )
+        {
+            for( uint i = 0, j = obj.Childs.length(); i < j; i++ )
+            {
+                CEncounterObject@ child = obj.Childs[ i ];
+                uint              count = Random( child.Minimum, child.Maximum );
+                if( count > 0 )
+                    item.AddItem( child.Pid, count, 0 );
+            }
+        }
+    }
+    else
+    {
+        Log( "Unknown object type<" + obj.ObjectType + ">." );
+    }
+}
+
+void ActionFighting( Critter@[]& npcL, Critter@[]& npcR )
+{
+    for( int i = 0, j = npcL.length(); i < j; i++ )
+    {
+        Critter@ nl = npcL[ i ];
+        bool     nlIsNpc = nl.IsNpc();
+        for( int k = 0, l = npcR.length(); k < l; k++ )
+        {
+            Critter@ nr = npcR[ k ];
+            if( nlIsNpc )
+            {
+                //~ AddAttackPlane( nl, 0, nr );
+                nl.AddEnemyInStack( nr.Id );
+                nl.Wait( Random( 2000, 4000 ) );
+            }
+            if( nr.IsNpc() )
+            {
+                //~ AddAttackPlane( nr, 0, nl );
+                nr.AddEnemyInStack( nl.Id );
+                nr.Wait( Random( 2000, 4000 ) );
+            }
+        }
+    }
+}
+
+Map@ GenerateEncounter( CFoundedEncounter@ fe, Critter@[] @ critters )
+{
+    CEncounter@ encounter = fe.Encounter;
+    uint16      locPid = ( valid( encounter ) ? encounter.LocPid : 0 );
+    if( locPid == 0 )
+        locPid = fe.LocationPids[ Random( 0, fe.LocationPids.length() - 1 ) ];
+
+    fe.LocationId = CreateLocation( locPid, fe.PositionX, fe.PositionY, null );
+    if( fe.LocationId == 0 )
+    {
+        Log( "CreateLocation fail, location pid<" + locPid + ">." );
+        return null;
+    }
+
+    Location@ location = GetLocation( fe.LocationId );
+    if( not valid( location ) )
+    {
+        Log( "GetLocation fail." );
+        return null;
+    }
+    GameVar@ isEncounter = GetLocalVar( LLVAR_is_encounter, fe.LocationId );
+    if( valid( isEncounter ) )
+    {
+        isEncounter = 1;
+    }
+    // Генерация итемов на всех картах энкаунтера
+    for( uint i = 0, l = location.GetMapCount(); i < l; i++ )
+    {
+        Map@ m = location.GetMapByIndex( i );
+        if( valid( m ) )
+        {
+            if( i > 0 )
+            {
+                GenerateCavernEncounter( m, critters );
+            }
+        }
+    }
+
+    Map@ map = location.GetMapByIndex( 0 );
+    if( not valid( map ) )
+    {
+        Log( "GetMapByIndex fail." );
+        return null;
+    }
+
+    uint16 startX = 0, startY = 0;
+    if( not map.GetEntireCoords( 0, 0, startX, startY ) )
+    {
+        Log( "Default entire not found." );
+        return null;
+    }
+    fe.StartHexX = startX;
+    fe.StartHexY = startY;
+
+    if( not valid( encounter ) ) // Empty map
+    {
+        fe.IsGenerated = true;
+        return map;
+    }
+
+    Critter@ leader = critters[ 0 ];
+    Critter@[][] crittersGroups( encounter.Groups.length() );
+    dictionary critterScripts;
+
+    for( uint i = 0, j = encounter.Groups.length(); i < j; i++ )
+    {
+        uint groupNum = encounter.Groups[ i ];
+
+        if( groupNum == GROUP_Player )
+        {
+            Critter@[] @ crGroup = crittersGroups[ i ];
+            crGroup.resize( critters.length() );
+            for( uint k = 0, l = critters.length(); k < l; k++ )
+                @crGroup[ k ] = critters[ k ];
+            continue;
+        }
+
+        if( groupNum >= GROUP_MAX )
+        {
+            Log( "Invalid group number." );
+            continue;
+        }
+
+        CEncounterGroup@ group = EncounterGroups[ groupNum ];
+        uint             ratio = Random( encounter.RatioMin[ i ], encounter.RatioMax[ i ] );
+
+        uint             distance = group.Distance;
+        if( distance == 0 )
+            distance = 7 + leader.Stat[ ST_PERCEPTION ] + leader.Perk[ PE_CAUTIOUS_NATURE ] * 3;
+
+        uint teamId = group.TeamNum;
+        if( teamId == 0 )
+            teamId = TEAM_Mob0 + i;
+
+        uint position = group.Position;
+        uint spacing = group.Spacing;
+        if( position == POSITION_SURROUNDING )
+            spacing = leader.Stat[ ST_PERCEPTION ] + leader.Perk[ PE_CAUTIOUS_NATURE ] * 3;
+
+        uint[] positionDirs = PositionDirs[ position ];
+        uint steps = positionDirs[ 0 ];
+        uint dirsCount = 0;
+
+        uint freeDir = GetFreeDir( fe.DirBusy );
+        if( freeDir != 0 )
+            RotatePosition( freeDir, positionDirs );
+        uint reversDir = freeDir + 3;
+        if( reversDir > 5 )
+            reversDir -= 6;
+
+        // Get start point for group
+        uint16[] pointX = { startX, startY };
+        uint16[] pointY = { startX, startY };
+        if( position != POSITION_NONE )
+        {
+            uint16 hx = pointX[ 0 ], hy = pointY[ 0 ];
+            map.MoveHexByDir( pointX[ 0 ], pointY[ 0 ], freeDir, position != POSITION_SURROUNDING ? distance : spacing );
+            map.GetHexCoord( hx, hy, pointX[ 0 ], pointY[ 0 ], 0.0f, 0 );  // Check for barrier
+            pointX[ 1 ] = pointX[ 0 ];
+            pointY[ 1 ] = pointY[ 0 ];
+            MovePositionPoint( map, pointX[ 1 ], pointY[ 1 ], positionDirs, 1, 0, spacing );
+        }
+
+        for( uint k = 0, l = group.Objects.length(); k < l; k++ )
+        {
+            CEncounterObject@ obj = group.Objects[ k ];
+
+            if( not CheckChecks( obj.Checks, critters ) )
+                continue;
+
+            uint otherDistance = obj.DistanceLength;
+            uint count = obj.RatioValue * ratio / 100;
+            if( count == 0 )
+                count = 1;
+
+            uint16 oldPosX = startX, oldPosY = startY;
+            for( uint n = 0; n < count; n++ )
+            {
+                uint16 posX, posY;
+                if( otherDistance > 0 || position == POSITION_NONE )
+                {
+                    posX = startX + Random( -5, 5 );
+                    posY = startY + Random( -5, 5 );
+                    map.MoveHexByDir( posX, posY, freeDir, otherDistance > 0 ? otherDistance : distance );
+                }
+                else
+                {
+                    uint pathIndex = dirsCount % 2;
+                    posX = pointX[ pathIndex ] + ( position == POSITION_SURROUNDING ? Random( -3, 0 ) : 0 );
+                    posY = pointY[ pathIndex ] + ( position == POSITION_SURROUNDING ? Random( -3, 0 ) : 0 );
+                    MovePositionPoint( map, pointX[ pathIndex ], pointY[ pathIndex ], positionDirs, pathIndex, dirsCount, spacing );
+                    dirsCount++;
+                }
+
+                map.GetHexCoord( oldPosX, oldPosY, posX, posY, 0.0f, 0 );          // Check for barrier
+                oldPosX = posX;
+                oldPosY = posY;
+                ParseEncounterObject( obj, map, posX, posY, reversDir, crittersGroups[ i ], teamId, critterScripts );
+            }
+        }
+    }
+
+    for( uint i = 0, j = encounter.Actions.length(); i < j; i += 3 )
+    {
+        uint fromGroup = encounter.Actions[ i ];
+        uint toGroup = encounter.Actions[ i + 1 ];
+        uint action = encounter.Actions[ i + 2 ];
+
+        if( action == ACTION_FIGHTING && fromGroup < crittersGroups.length() && toGroup < crittersGroups.length() )
+            ActionFighting( crittersGroups[ fromGroup ], crittersGroups[ toGroup ] );
+    }
+    
+    for (uint i = 0; i < crittersGroups.length(); i++)
+	{
+		Critter@[] crittersGroup = crittersGroups[i];
+		for (uint j = 0; j < crittersGroup.length(); j++)
+		{
+			Critter@ critter = crittersGroup[j];
+			if(!valid(critter) || !critterScripts.exists("" + critter.Id))
+				continue;
+			
+			string@ scriptName;
+			critterScripts.get("" + critter.Id, @scriptName);
+			
+			if(valid(scriptName))
+				critter.SetScript(scriptName);
+		}
+	}
+
+    fe.IsGenerated = true;
+    return map;
+}
+
+//
+// Imports
+//
+// void FindEncounter(Critter@[]@ critters, uint zx, uint zy) return foundedEncounterIndex
+// bool InviteToEncounter(uint foundedEncounterIndex, Critter@[]@ critters) invite critters to encounter
+// void WorldmapInit() call on start server
+
+/*const int[] ScanOffsX={-1,0,1,-1,0,1,-1,0,1};
+   const int[] ScanOffsY={-1,0,1,-1,0,1,-1,0,1};
+   void ScanZone(Critter& cr, uint zx, uint zy)
+   {
+        uint zoneX=cr.WorldX/__GlobalMapZoneLength;
+        uint zoneY=cr.WorldY/__GlobalMapZoneLength;
+
+        cr.SetFog(zoneX,zoneY,FOG_NONE);
+        cr.SetFog(zoneX-1,zoneY-1,FOG_SELF);
+        cr.SetFog(zoneX  ,zoneY-1,FOG_SELF);
+        cr.SetFog(zoneX+1,zoneY-1,FOG_SELF);
+        cr.SetFog(zoneX-1,zoneY  ,FOG_SELF);
+        cr.SetFog(zoneX+1,zoneY  ,FOG_SELF);
+        cr.SetFog(zoneX-1,zoneY+1,FOG_SELF);
+        cr.SetFog(zoneX  ,zoneY+1,FOG_SELF);
+        cr.SetFog(zoneX+1,zoneY+1,FOG_SELF);
+
+        for(int ox=-1;ox<2;ox++)
+        {
+                for(int oy=-1;oy<2;oy++)
+                {
+
+                }
+        }
+   }*/
+
+void FindEncounter( Critter@[]& group, Item@ car, uint x, uint y, uint& encounterDescriptor, bool& waitForAnswer, bool empty )
+{
+    encounterDescriptor = 0;
+    waitForAnswer = false;
+
+    uint zx = x / ZONE_LENGTH;
+    uint zy = y / ZONE_LENGTH;
+    if( zx >= ZONE_COUNT_X || zy >= ZONE_COUNT_Y )
+    {
+        // Log("Invalid zones coordinates."); in faction mod size is greather than ZONE_COUNT_X, ZONE_COUNT_Y.
+        return;
+    }
+
+    bool isWater = ( GetGlobalMapRelief( x, y ) == 0 );
+    int  walkType = ( valid( car ) ? car.Proto.Car_MovementType : GM_WALK_GROUND );
+    bool walkWaterOrFly = ( walkType == GM_WALK_WATER || walkType == GM_WALK_FLY );
+    if( walkType == GM_WALK_GROUND && isWater )
+        return;
+
+    CZone@ zone = ( isWater ? WorldmapWater[ zy * ZONE_COUNT_X + zx ] : WorldmapGround[ zy * ZONE_COUNT_X + zx ] );
+    if( not valid( zone ) )
+        return;
+    Critter@ leader = group[ 0 ];
+    
+    //~ if(FindSlayerCampEncounter(leader, x, y, encounterDescriptor, waitForAnswer))
+		//~ return;
+    
+    // Create empty map
+    if( empty )
+    {
+        CFoundedEncounter@ fe = CreateFoundedEncounter( isWater, x, y, null, zone.Table.LocationPids, leader.Id, group.length() > 1 );
+        if( not valid( fe ) )
+            return;
+        waitForAnswer = false;
+        encounterDescriptor = fe.Index;
+        return;
+    }
+
+    // Check chance
+    uint chance;
+    if( IS_MORNING( __Hour ) )
+        chance = zone.MorningChance;
+    if( IS_AFTERNOON( __Hour ) )
+        chance = zone.AfternoonChance;
+    else
+        chance = zone.NightChance;
+    if( uint( Random( 1, 100 ) ) > chance )
+        return;
+
+    // Try find already founded encounter
+    CFoundedEncounter@ feAlready = GetNearFoundedEncounter( isWater, group, x, y, ZONE_LENGTH / 2 );
+    if( valid( feAlready ) )
+    {
+        int outdoorsman = leader.Skill[ SK_OUTDOORSMAN ] + zone.Difficulty;
+        outdoorsman = CLAMP( outdoorsman, 6, 95 );
+        if( outdoorsman >= Random( 1, 100 ) || walkWaterOrFly )
+        {
+			/*Location@ location = GetLocation( feAlready.LocationId );
+	        if( valid( location ) )
+	        {
+	            Map@ map = location.GetMapByIndex( 0 );
+	            if(valid(map))
+				{
+					
+				}
+	        }*/ //TODO: preview
+	        
+            uint8 say = feAlready.TurnBased ? SAY_ENCOUNTER_TB : SAY_ENCOUNTER_RT;
+            if( valid( feAlready.Encounter ) )
+            {
+                leader.SayMsg( say, TEXTMSG_GM, feAlready.OwnerGroup ? STR_QUESTION_WITH_PLAYERS : STR_QUESTION_WITH_PLAYER,
+                               "$who @msg gm " + feAlready.Encounter.StrNum + "@$player" + GetPlayerName( feAlready.OwnerId ) );
+            }
+            else
+            {
+                leader.SayMsg( say, TEXTMSG_GM, feAlready.OwnerGroup ? STR_QUESTION_ONLY_PLAYERS : STR_QUESTION_ONLY_PLAYER,
+                               "$player" + GetPlayerName( feAlready.OwnerId ) );
+            }
+            waitForAnswer = true;
+
+            if( not walkWaterOrFly )
+            {
+                if( leader.Skill[ SK_OUTDOORSMAN ] <= 95 )
+                    leader.StatBase[ ST_EXPERIENCE ] += 100 - leader.Skill[ SK_OUTDOORSMAN ] - zone.Difficulty;
+                else
+                    leader.StatBase[ ST_EXPERIENCE ] += 5 - zone.Difficulty;
+            }
+        }
+        
+
+        for( uint i = 0, j = group.length(); i < j; i++ )
+        {
+			group[ i ].PlaySound("encounter.ogg", true);
+            group[ i ].Say( SAY_FLASH_WINDOW, "" );
+        }
+        encounterDescriptor = feAlready.Index;
+        return;
+    }
+
+    // Try find new encounter
+    int luck = 0;
+    for( uint i = 0, j = group.length(); i < j; i++ )
+        luck += group[ i ].Stat[ ST_LUCK ];
+    luck /= group.length();
+
+    int roll = Random( 0, 100 ) + luck - 5 + 2 * leader.Perk[ PE_EXPLORER ] + leader.Perk[ PE_RANGER ];
+    if( roll < 0 )
+        roll = 0;
+    int maxRoll = 0;
+
+    CEncounter[] @ encounters = zone.Table.Encounters;
+    CEncounter@[] encountersThru( encounters.length() );
+    for( uint i = 0, j = encounters.length(); i < j; i++ )
+    {
+        CEncounter@ enc = encounters[ i ];
+        if( CheckChecks( enc.Checks, group ) )
+        {
+            maxRoll += enc.Chance;
+            @encountersThru[ i ] = encounters[ i ];
+        }
+        else
+        {
+            @encountersThru[ i ] = null;
+        }
+    }
+
+    roll = roll * maxRoll / 100;
+    for( uint i = 0, j = encountersThru.length(); i < j; i++ )
+    {
+        CEncounter@ enc = encountersThru[ i ];
+
+        if( not valid( enc ) )
+            continue;
+        if( uint( roll ) > enc.Chance && i < j - 1 )
+        {
+            roll -= enc.Chance;
+            continue;
+        }
+
+        CFoundedEncounter@ fe = CreateFoundedEncounter( isWater, x, y, enc, zone.Table.LocationPids, leader.Id, group.length() > 1 );
+        if( not valid( fe ) )
+            return;
+
+        int outdoorsman = leader.Skill[ SK_OUTDOORSMAN ] + zone.Difficulty;
+        outdoorsman = CLAMP( outdoorsman, 6, 95 );
+        if(leader.IsPlayer() && (outdoorsman >= Random( 1, 100 ) || walkWaterOrFly) )
+        {
+            leader.SayMsg( SAY_ENCOUNTER_ANY, TEXTMSG_GM, STR_QUESTION, "$who @msg gm " + enc.StrNum + "@" );
+            waitForAnswer = true;
+
+            if( not walkWaterOrFly )
+            {
+                if( leader.Skill[ SK_OUTDOORSMAN ] <= 95 )
+                    leader.StatBase[ ST_EXPERIENCE ] += 100 - leader.Skill[ SK_OUTDOORSMAN ] - zone.Difficulty;
+                else
+                    leader.StatBase[ ST_EXPERIENCE ] += 5 - zone.Difficulty;
+            }
+        }
+
+        for( uint i = 0, j = group.length(); i < j; i++ )
+        {
+			group[ i ].PlaySound("encounter.ogg", true);
+            group[ i ].Say( SAY_FLASH_WINDOW, "" );
+		}
+        encounterDescriptor = fe.Index;
+        break;
+    }
+}
+
+void InviteToEncounter( Critter@[]& group, Item@ car, uint encounterDescriptor, int combatMode, uint& mapId, uint16& hexX, uint16& hexY, uint8& dir )
+{
+    mapId = 0;
+
+    CFoundedEncounter@ fe = GetFoundedEncounter( encounterDescriptor );
+    if( not valid( fe ) )
+    {
+        Log( "GetFoundedEncounter fail." );
+        return;
+    }
+
+    bool isGenerated = fe.IsGenerated;
+    Map@ map = null;
+    if( isGenerated )
+    {
+        Location@ location = GetLocation( fe.LocationId );
+        if( not valid( location ) )
+        {
+            // Log("Location not found.");
+            return;
+        }
+
+        @map = location.GetMapByIndex( 0 );
+    }
+    else
+    {
+        @map = GenerateEncounter( fe, group );
+    }
+
+    if( not valid( map ) )
+    {
+        Log( "Map not found." );
+        return;
+    }
+
+    if( !isGenerated && (combatMode == COMBAT_MODE_TURN_BASED || combatMode == COMBAT_MODE_ANY && Random(0,1) == 0 ))
+    {
+		Location@ location = map.GetLocation();
+		if(valid(location))
+		{
+			Map@[] maps;
+			location.GetMaps(maps);
+			for (uint i = 0; i < maps.length(); i++)
+				maps[i].SetTurnBasedAvailability(true);
+		}
+        fe.TurnBased = true;
+    }
+
+    Critter@ leader = group[ 0 ];
+    mapId = map.Id;
+    hexX = fe.StartHexX;
+    hexY = fe.StartHexY;
+    if( isGenerated )
+    {
+        if( valid( car ) )
+        {
+			Location @ loc = map.GetLocation();
+            // Place critters near his car
+            hexX = uint16( -1 );
+            hexY = uint16( -1 );
+			if (loc.Visible==false && loc.GeckCount==0)loc.GeckVisible = false;
+			// Car Proccessing
+			for( uint i = 0, j = group.length(); i < j; i++ )
+			{
+			group[ i ].SetKnownLoc (true,loc.Id);
+			}
+        }
+        else
+        {
+            dir = GetFreeDir( fe.DirBusy );
+            map.MoveHexByDir( hexX, hexY, dir, leader.Stat[ ST_PERCEPTION ] + leader.Perk[ PE_CAUTIOUS_NATURE ] * 3 );
+            dir += 3;
+            if( dir > 5 )
+                dir -= 6;
+        }
+    }
+    else
+    {
+		Location @ loc = map.GetLocation();
+        if( valid( car ) )
+        {
+            // Place critters near his car
+            hexX = uint16( -1 );
+            hexY = uint16( -1 );
+			// Car Proccessing
+			loc.GeckVisible = false;
+			for( uint i = 0, j = group.length(); i < j; i++ )
+			{
+			group[ i ].SetKnownLoc (true,loc.Id);
+			}
+        }
+
+        dir = Random( 0, 5 );
+    }
+
+    if( isGenerated || valid( fe.Encounter ) )
+    {
+        for( uint i = 0, j = group.length(); i < j; i++ )
+        {
+            Critter@ cr = group[ i ];
+            if( not isGenerated )
+                cr.SayMsg( SAY_NETMSG, TEXTMSG_GM, STR_VIEW, "$who @msg gm " + fe.Encounter.StrNum + "@" );
+            else if( valid( fe.Encounter ) )
+                cr.SayMsg( SAY_NETMSG, TEXTMSG_GM, fe.OwnerGroup ? STR_VIEW_WITH_PLAYERS : STR_VIEW_WITH_PLAYER, "$who @msg gm " + fe.Encounter.StrNum + "@$player" + GetPlayerName( fe.OwnerId ) );
+            else
+                cr.SayMsg( SAY_NETMSG, TEXTMSG_GM, fe.OwnerGroup ? STR_VIEW_ONLY_PLAYERS : STR_VIEW_ONLY_PLAYER, "$player" + GetPlayerName( fe.OwnerId ) );
+        }
+    }
+    if( valid( fe.Encounter ) )
+        AssignChecks( fe.Encounter.Checks, group );
+}
+
+uint GetGlobalMapRelief( uint x, uint y )
+{
+    // Used low four bits of image
+    // Zero is water
+    return GetImageColor( IMAGE_RELIEF, x, y ) & 0xF;
+}
+
+void WorldmapInit()
+{
+    LoadImage( IMAGE_RELIEF, "relief_v112.png", 1, PT_SERVER_MAPS );
+
+    #include "worldmap_init.fos"
+}

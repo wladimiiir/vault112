@@ -1,0 +1,15 @@
+#ifndef __DIALOGS__
+#define __DIALOGS__
+
+#define DIALOG_all_default					( 0 )
+#define DIALOG_all_brahmin					( 1 )
+#define DIALOG_all_shopkeeper				( 2 )
+#define DIALOG_all_roboguard				( 3 )
+
+#define DIALOG_claire						( 500 )
+#define DIALOG_dr_braun						( 501 )
+#define DIALOG_robo_stuff_keeper			( 502 )
+
+#define DIALOG_battleground					( 1000 )
+
+#endif // __DIALOGS__

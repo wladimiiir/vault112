@@ -1,0 +1,107 @@
+/**
+ * Created: 5.7.2012
+ * Author: mikewall
+ */
+
+#include "_macros.fos"
+#include "container_item_respawn_init.fos"
+
+ContainerSpawnInfo@[]@ ContainerSpawnInfos;
+
+//used in mapper
+void _RespawnInit(Item& item, bool firstTime)
+{
+	if(!firstTime)
+		return;
+	if(item.GetType() != ITEM_TYPE_CONTAINER)
+	{
+		Log("Warning: Trying to initialize random item spawning in other than container type.");
+		return;
+	}
+	if(item.Val0 == 0)
+	{
+		Log("Warning: Please specify Value1 for random item spawning as ID of defined spawning info.");
+		return;
+	}
+	
+	ContainerSpawnInfo@ info = GetSpawnInfo(item.Val0);
+	if(!valid(info))
+	{
+		Log("Warning: No container spawn info found for ID = " + item.Val0);
+		return;
+	}
+	CreateSpawnInfoTimeEvent(info, item);
+}
+
+void CreateSpawnInfoTimeEvent(ContainerSpawnInfo@ spawnInfo, Item& container)
+{
+	uint[] values = {spawnInfo.Id, container.Id};
+    CreateTimeEvent(__FullSecond + spawnInfo.GetRespawnTime(), "e_SpawnContainerItems", values, true);
+}
+
+uint e_SpawnContainerItems(uint[]@ values)
+{
+	ContainerSpawnInfo@ spawnInfo = GetSpawnInfo(values[0]);
+	Item@ container = GetItem(values[1]);
+	
+	if(!valid(spawnInfo) || !valid(container))
+		return 0;
+	
+	ProcessContainerSpawnInfo(spawnInfo, container);
+        
+    return spawnInfo.GetRespawnTime();
+}
+
+void ProcessContainerSpawnInfo(ContainerSpawnInfo@ spawnInfo, Item@ container) 
+{	
+	CloseContainer(container);
+	spawnInfo.AddItemsToContainer(container);
+	LockContainer(spawnInfo, container);
+}
+
+void CloseContainer(Item@ container)
+{
+	if(_LockerIsOpen(container))
+		container.LockerClose();
+}
+
+void LockContainer(ContainerSpawnInfo@ spawnInfo, Item@ container)
+{
+	if(container.LockerId != 0)
+		return;
+	uint complexity = spawnInfo.GetLockerComplexity();
+	if(complexity == 0)
+		return;
+		
+	container.LockerId = Random(1, 1000);
+	container.LockerComplexity = complexity;
+}
+
+ContainerSpawnInfo@ GetSpawnInfo(uint id)
+{
+	if(!valid(ContainerSpawnInfos))
+		@ContainerSpawnInfos = CreateContainerSpawnInfos();
+	
+	for (uint i = 0; i < ContainerSpawnInfos.length(); i++)
+		if(ContainerSpawnInfos[i].Id == id)
+			return ContainerSpawnInfos[i];
+	return null;
+}
+
+/*
+ * ~run spawn_container_items ListRunningSpawnEvents [critterId]
+ */
+void ListRunningSpawnEvents(Critter& critter, int, int, int) 
+{
+	if(!valid(ContainerSpawnInfos))
+	{
+		critter.Say(SAY_NETMSG, "Spawning has not been initialized.");
+		return;
+	}
+	
+	for (uint i = 0; i < ContainerSpawnInfos.length(); i++)
+	{
+		ContainerSpawnInfo@ spawnInfo = ContainerSpawnInfos[i];
+		critter.Say(SAY_NETMSG, "Random spawn info (Id="+spawnInfo.Id+")");
+	}
+}

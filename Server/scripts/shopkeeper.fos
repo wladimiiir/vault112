@@ -1,0 +1,421 @@
+#include "_macros.fos"
+#include "utils_for_array.fos"
+#include "serializator.fos"
+#include "shopkeeper_dialog.fos"
+#include "shopkeeper_extensions.fos"
+#include "critter_action_basic.fos"
+#include "critter_action_condition.fos"
+
+void ShopkeeperInit(Critter& npc, bool firstTime)
+{
+	if(firstTime)
+	{
+		npc.ModeBase[MODE_NO_BARTER] = 0;
+		npc.ModeBase[MODE_NO_LOOT] = 1;
+		npc.ModeBase[MODE_NO_STEAL] = 1;
+		npc.StatBase[ST_DIALOG_ID] = DIALOG_all_shopkeeper;
+	}
+	
+	Action@ action = LoopAction(true)
+						.AddSubAction(RepeatAtInterval(REAL_SECOND(10))
+							.AddSubAction(Run(RefreshTableStuff)))
+						.AddSubAction(RepeatAtInterval(REAL_SECOND(20), REAL_SECOND(40))
+							.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70132)
+								.If(FunctionCheck(HasNoSupplier)))
+							.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70133, GetSupplierLexems)
+								.If(FunctionCheck(HasSupplier))))
+	;
+
+	actionManager.Start(npc, action);
+	
+	npc.SetEvent(CRITTER_EVENT_BARTER, "_ShopkeeperBarter");
+}
+
+void RefreshTableStuff(Critter& critter, Critter@)
+{
+	Map@ map = critter.GetMap();
+	if(!valid(map))
+		return;
+	
+	Shopkeeper shopkeeper(critter);
+	TableStuff@ stuff = GetClosestTableStuff(critter);
+	if(!valid(stuff) || stuff.GetDistance(map, critter.HexX, critter.HexY) > 3)
+	{
+		Log("Too far");
+		return;
+	}
+	
+	if(shopkeeper.HasSupplier())
+		stuff.Show();
+	else
+		stuff.Hide();
+}
+
+bool HasSupplier(Critter& critter, Critter@, Item@)
+{
+	Shopkeeper shopkeeper(critter);
+	return shopkeeper.HasSupplier();
+}
+
+bool HasNoSupplier(Critter& critter, Critter@, Item@)
+{
+	Shopkeeper shopkeeper(critter);
+	return !shopkeeper.HasSupplier();
+}
+
+string@ GetSupplierLexems(Critter& critter, Critter@)
+{
+	Shopkeeper shopkeeper(critter);
+	string@ supplierName = shopkeeper.GetSupplierName();
+	return valid(supplierName) ? "$supplierName"+supplierName : null;
+}
+
+bool _ShopkeeperBarter(Critter& npc, Critter& player, bool attach, uint barterCount)
+{
+	Shopkeeper shopkeeper(npc);
+	
+	if(attach)
+	{
+		shopkeeper.SetupForCritter(player);
+		
+		if(shopkeeper.IsSupplier(player) || shopkeeper.HasOldItems(player))
+			npc.StatBase[ST_FREE_BARTER_PLAYER] = player.Id;
+		else
+		{
+			int[] costs = GetCosts(shopkeeper, shopkeeper.GetNpcItems());
+			player.RunClientScript("barter@SetCustomCosts", npc.Id, 0, 0, null, costs);
+			npc.StatBase[ST_FREE_BARTER_PLAYER] = 0;
+		}
+
+		npc.ModeBase[MODE_BARTER_ONLY_CASH] = shopkeeper.IsSupplier(player) ? 0 : 1;
+	}
+		
+	return true;
+}
+
+//import int GetCustomCost(Critter& npc, Item& item) from "shopkeeper";
+int GetCustomCost(Critter& npc, Item& item)
+{
+	Shopkeeper shopkeeper(npc);
+	if(!shopkeeper.HasSupplier())
+		return -1;
+	
+	return shopkeeper.GetCost(item.Proto);
+}
+
+//import bool ShopkeeperAccepts(Critter& npc, Critter& player, Item@[]& buyItems, Item@[]& saleItems) from "shopkeeper";
+bool ShopkeeperAccepts(Critter& npc, Critter& player, Item@[]& buyItems, Item@[]& saleItems)
+{
+	Shopkeeper shopkeeper(npc);
+	if(shopkeeper.HasOldItems(player) && saleItems.length() > 0)
+	{
+		player.SayMsg(SAY_DIALOG, TEXTMSG_DLG, 70131);
+		return false;
+	}
+	return true;
+}
+
+void SetupItemCosts(Critter& supplier, Critter& npc)
+{
+	Shopkeeper shopkeeper(npc);
+	if(!shopkeeper.IsSupplier(supplier))
+		return;
+	
+	Item@[] items = shopkeeper.GetSupplierItems(supplier);
+	int[] costs = GetCosts(shopkeeper, items);
+	supplier.RunClientScript("client_screen_item_cost_setup@ShowSetupScreen", npc.Id, 0, 0, 
+		"shopkeeper@unsafe_SaveCustomCosts", costs);
+}
+
+int[] GetCosts(Shopkeeper& shopkeeper, Item@[] items)
+{
+	int[] costs;
+	uint16[] addedProtoIds;
+	for (uint i = 0; i < items.length(); i++)
+	{
+		if(items[i].GetProtoId() == PID_BOTTLE_CAPS || Present(items[i].GetProtoId(), addedProtoIds))
+			continue;
+		
+		costs.insertLast(items[i].GetProtoId());
+		costs.insertLast(shopkeeper.GetCost(items[i].Proto));
+		addedProtoIds.insertLast(items[i].GetProtoId());
+	}
+	return costs;
+}
+
+void unsafe_SaveCustomCosts(Critter& player, int shopkeeperId, int, int, string@, int[]@ protoItemCosts)
+{
+	Critter@ shopkeeperCr = GetCritter(shopkeeperId);
+	if(!valid(shopkeeperCr))
+	{
+		player.Say(SAY_NETMSG, "<Error 11>");
+		return;
+	}
+	Shopkeeper shopkeeper(shopkeeperCr);
+	if(!shopkeeper.IsSupplier(player))
+	{
+		player.Say(SAY_NETMSG, "<Error 12>");
+		return;
+	}
+	if(protoItemCosts.length() % 2 != 0)
+	{
+		player.Say(SAY_NETMSG, "<Error 13>");
+		return;
+	}
+	
+	shopkeeper.SetCosts(protoItemCosts);
+}
+
+class Shopkeeper
+{
+	#define _GetKey		("Shopkeeper_" + Npc.Id)
+	
+	private Critter@ Npc;
+	private uint LoadedItemsCritter;
+	private uint Supplier;
+	private uint SupplyEndTime;
+	private dictionary SupplierContainers;
+	private dictionary CustomCosts;
+	
+	Shopkeeper(Critter& npc)
+	{
+		@Npc = npc;
+		LoadedItemsCritter = 0;
+		Supplier = 0;
+		SupplyEndTime = 0;
+		Load();
+	}
+	
+	bool HasSupplier()
+	{
+		return Supplier != 0 && __FullSecond < SupplyEndTime;
+	}
+	
+	uint GetSupplyEndTime()
+	{
+		return SupplyEndTime;
+	}
+	
+	bool IsSupplier(Critter& critter)
+	{
+		return HasSupplier() && Supplier == critter.Id;
+	}
+	
+	bool HasOldItems(Critter& critter)
+	{
+		if(IsSupplier(critter))
+			return false;
+		return valid(GetSupplierContainer(critter.Id));
+	}
+	
+	private Item@ GetSupplierContainer(uint critterId)
+	{
+		Item@ container;
+		SupplierContainers.get(""+critterId, @container);
+		
+		if(!valid(container))
+			return null;
+		
+		if(HasSupplier() && critterId == Supplier)
+			return container;
+		
+		bool canDelete = false;
+		if(LoadedItemsCritter == critterId)
+		{
+			canDelete = GetNpcItems().length() == 0;
+		}
+		else
+		{
+			Item@[] items;
+			canDelete = container.GetItems(0, items) == 0;
+		}
+		
+		if(canDelete)
+		{
+			SupplierContainers.delete(""+critterId);
+			@container = null;
+			Save();
+		}
+		
+		return container;
+	}
+	
+	Item@[] GetNpcItems()
+	{
+		Item@[] items;
+		Npc.GetItems(0, items);
+		for (uint i = items.length() - 1; int(i) >= 0 ; i--)
+			if(valid(items[i]) && items[i].GetProtoId() == PID_HIDDEN_CONTAINER)
+				items.removeAt(i);
+
+		return items;
+	}
+	
+	void SetSupplier(Critter& supplier, uint supplyEndTime)
+	{
+		if(Supplier != supplier.Id)
+		{
+			Supplier = supplier.Id;
+			CustomCosts.deleteAll();
+		}
+		SupplyEndTime = supplyEndTime;
+		if(!SupplierContainers.exists(""+Supplier))
+		{
+			Item@ container = Npc.AddItem(PID_HIDDEN_CONTAINER, 1);
+			if(!valid(container))
+			{
+				Supplier = 0;
+				return;
+			}
+			_ItemSetHidden(container);
+			SupplierContainers.set(""+Supplier, @container);
+		}
+		Save();
+	}
+	
+	Item@[] GetSupplierItems(Critter& supplier)
+	{
+		if(LoadedItemsCritter == supplier.Id)
+			return GetNpcItems();
+		else
+		{
+			Item@[] items;
+			Item@ container = GetSupplierContainer(supplier.Id);
+			if(!valid(container))
+				return items;
+			container.GetItems(0, items);
+			return items;
+		}
+	}
+	
+	string@ GetSupplierName()
+	{
+		if(!HasSupplier())
+			return null;
+		return GetPlayerName(Supplier);
+	}
+	
+	void SetCost(uint protoId, uint cost)
+	{
+		CustomCosts.set(""+protoId, cost);
+		Save();
+	}
+	
+	void SetCosts(int[] protoIdCosts)
+	{
+		for (uint i = 0; i < protoIdCosts.length() - 1; i+=2)
+			CustomCosts.set(""+protoIdCosts[i], protoIdCosts[i+1]);
+		Save();
+	}
+	
+	uint GetCost(ProtoItem& proto)
+	{
+		uint cost = 0;
+		if(CustomCosts.exists(""+proto.ProtoId))
+			CustomCosts.get(""+proto.ProtoId, cost);
+		else
+			cost = proto.Cost;
+		return cost;
+	}
+	
+	void SetupForCritter(Critter& critter)
+	{
+		Item@ container = GetSupplierContainer(LoadedItemsCritter);
+		if(valid(container))
+			SaveItems(container);
+		LoadItems(critter);
+		Save();
+	}
+	
+	private void SaveItems(Item& container)
+	{
+		Item@[] items = GetNpcItems();
+		MoveItems(items, container, 0);
+		LoadedItemsCritter = 0;
+	}
+	
+	private void LoadItems(Critter& critter)
+	{
+		Item@ container = GetSupplierContainer(critter.Id);
+		if(!valid(container))
+		{
+			if(HasSupplier())
+				@container = GetSupplierContainer(Supplier);
+			if(!valid(container))
+				return;
+
+			LoadedItemsCritter = Supplier;
+		}
+		else
+		{
+			LoadedItemsCritter = critter.Id;
+		}
+		
+		Item@[] items;
+		container.GetItems(0, items);
+		MoveItems(items, Npc);
+	}
+	
+	private void Save()
+	{
+		Serializator serializator;
+		
+		serializator.Set(LoadedItemsCritter);
+		serializator.Set(Supplier);
+		serializator.Set(SupplyEndTime);
+		string@[] keys;
+		SupplierContainers.keys(keys);
+		serializator.Set(keys.length);
+		for (uint i = 0; i < keys.length(); i++)
+		{
+			Item@ container;
+			SupplierContainers.get(keys[i], @container);
+			serializator.Set(keys[i]);
+			serializator.Set(container.Id);
+		}
+		keys.resize(0);
+		CustomCosts.keys(keys);
+		serializator.Set(keys.length);
+		for (uint i = 0; i < keys.length(); i++)
+		{
+			uint cost;
+			CustomCosts.get(keys[i], cost);
+			serializator.Set(keys[i]);
+			serializator.Set(cost);
+		}
+		serializator.Save(_GetKey);
+	}
+	
+	private void Load()
+	{
+		Serializator serializator;
+		if(!serializator.Load(_GetKey))
+			return;
+		
+		serializator.Get(LoadedItemsCritter);
+		serializator.Get(Supplier);
+		serializator.Get(SupplyEndTime);
+		uint size = 0;
+		serializator.Get(size);
+		for (uint i = 0; i < size; i++)
+		{
+			string key = "";
+			serializator.Get(key);
+			Item@ item;
+			serializator.Get(item);
+			if(valid(item))
+				SupplierContainers.set(key, @item);
+		}
+		serializator.Get(size);
+		for (uint i = 0; i < size; i++)
+		{
+			string key = "";
+			serializator.Get(key);
+			uint cost = 0;
+			serializator.Get(cost);
+			CustomCosts.set(key, cost);
+		}
+	}
+}
+
+

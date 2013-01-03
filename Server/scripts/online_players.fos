@@ -1,0 +1,6 @@
+#include "_macros.fos"
+
+uint[] GetOnlinePlayers()
+{
+	return uint[](0);
+}

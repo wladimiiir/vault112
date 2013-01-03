@@ -1,0 +1,1667 @@
+#include "_time.fos"
+#include "_math.fos"
+#include "npc_ai.fos"
+#include "critter_action.fos"
+#include "critter_action_h.fos"
+#include "entire.fos"
+#include "utils_for_array.fos"
+#include "wrappers.fos"
+
+import bool AddAttackPlane( Critter& npc, uint priority, Critter& target, int minHp, bool run ) from "npc_planes";
+import bool AddWalkPlane( Critter& npc, uint priority, int identifier, uint identifierExt, uint16 hexX, uint16 hexY, uint8 dir, bool run, uint cut) from "npc_planes";
+import bool AddMiscPlane( Critter& npc, uint priority, uint waitSecond, string@ funcName ) from "npc_planes";
+import bool AddPickPlane( Critter& npc, uint priority, Item@ item, uint useItemId, bool toOpen ) from "npc_planes";
+import uint EraseAttackPlane( Critter& npc, Critter& target ) from "npc_planes";
+import void AddOffence(Critter& offender, uint areaId, uint offenceSeverity) from "custom_data";
+import void UseDrugOn( Critter& cr, Critter& onCr, Item& drug ) from "drugs";
+
+/****************
+ * Actions
+ ****************/
+
+class Patrol : DefaultAction
+{
+	private uint EntireNum;
+	private bool Run;
+	private bool SetHomePos;
+	private bool OnlyFreeEntire;
+	private PatrolEntireWrapper@ EntireWrapper;
+	
+	Patrol(uint entireNum, bool run)
+	{
+		EntireNum = entireNum;
+		Run = run;
+		SetHomePos = true;
+		OnlyFreeEntire = false;
+	}
+	
+	Patrol(uint entireNum, bool run, bool setHomePos, bool onlyFreeEntire)
+	{
+		EntireNum = entireNum;
+		Run = run;
+		SetHomePos = setHomePos;
+		OnlyFreeEntire = onlyFreeEntire;
+	}
+	
+	void Perform(Critter& critter)
+	{
+		Info("Performing partol action.");
+		Map@ map = critter.GetMap();
+		if(!valid(map))
+		{
+			Finish(critter);
+			return;
+		}
+			
+		Entire[] entires;
+		ParseEntires(map, entires, EntireNum);
+		
+		if(entires.length() == 0)
+		{
+			Finish(critter);
+			return;
+		}
+		
+		uint16 hx = 0;
+		uint16 hy = 0;
+		uint8  dir = 0;
+		critter.GetHomePos(map.Id, hx, hy, dir);
+		
+		Entire@ entire = Entire();
+		entire.HexX = hx;
+		entire.HexY = hy;
+		
+		int tryCount = 10;
+		if(OnlyFreeEntire)
+		{
+			while(tryCount-- > 0)
+			{
+				@entire = entires[Random(0, entires.length() - 1)];
+				PatrolEntireWrapper wrapper(map, entire);
+				if(!wrapper.HasPatroller())
+				{
+					wrapper.SetPatroller(critter);
+					@EntireWrapper = wrapper;
+					break;
+				}
+			}
+		}		
+		else
+			while(entire.HexX == hx && entire.HexY == hy && tryCount-- > 0)
+				@entire = entires[Random(0, entires.length() - 1)];
+			
+		if(tryCount > 0)
+		{
+			SetListening(true);
+			AddWalkPlane(critter, AI_PLANE_WALK_PRIORITY, PATROL_PLANE_IDENTIFIER, 0, entire.HexX, entire.HexY, Random(0, 5), Run, 1);
+		}
+		else 
+		{
+			Finish(critter);
+		}
+	}
+	
+	int PlaneEndEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem) override
+	{		
+		Info("Some plane ended.");
+		if(plane.Identifier == PATROL_PLANE_IDENTIFIER)
+	    {
+			Info("Patrol walk plane ended.");
+			if(SetHomePos)
+				critter.SetHomePos(critter.HexX, critter.HexY, Random( 0, 5 ));
+			if(valid(EntireWrapper))
+			{
+				EntireWrapper.SetPatroller(null);
+				@EntireWrapper = null;
+			}
+	        SetListening(false);
+			Finish(critter);
+			return PLANE_RUN_GLOBAL;
+	    }
+		return PLANE_RUN_GLOBAL; 
+	}
+	
+	string GetInfo() override {return "Patrol";}
+}
+
+#define	RANDOM_DIRECTION	(6)
+class ChangeDirection : DefaultAction
+{
+	private uint Direction; // >5 for random
+	private bool SetHome;
+	
+	ChangeDirection(uint direction)
+	{
+		Direction = direction;
+		SetHome = false;
+	}
+	
+	ChangeDirection(uint direction, bool setHome)
+	{
+		Direction = direction;
+		SetHome = setHome;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		if(critter.IsBusy())
+		{
+			Finish(critter);
+			return;
+		}
+		Info("Performing change direction action.");
+		Map@ map = critter.GetMap();
+		
+		if(!valid(map))
+		{
+			Finish(critter);
+			return;
+		}
+		uint direction = critter.Dir;
+		
+		while(Direction > 5 && direction == critter.Dir)
+			direction = Random(0, 5);
+		
+		if((critter.Dir == 0 && direction == 5) 
+			|| (critter.Dir == 5 && direction == 0) 
+			|| (critter.Dir > direction && critter.Dir - direction == 1)
+			|| (critter.Dir < direction && direction - critter.Dir == 1))
+			critter.SetDir(direction);
+		else
+		{
+			uint16 hexX = critter.HexX;
+			uint16 hexY = critter.HexY;
+			Info("Was: "+hexX+", "+hexY);
+			map.MoveHexByDir(hexX, hexY, direction, 1);
+			Info("Is: "+hexX+", "+hexY);
+			if(map.IsHexPassed(hexX, hexY) && !valid(map.GetCritter(hexX, hexY)))
+				critter.MoveToDir(direction);
+		}
+		if(SetHome)
+			critter.SetHomePos(critter.HexX, critter.HexY, critter.Dir);
+			
+		Finish(critter);
+	}
+	
+	string GetInfo() override {return "ChangeDirection";}
+}
+
+class LookAround : DefaultAction 
+{
+	LookAround(uint lookCount, uint lookTime)
+	{
+		for (uint i = 0; i < lookCount; i++)
+		{
+			AddSubAction(ChangeDirection(100));
+			AddSubAction(Wait(lookTime));
+		}
+	}
+	
+	string GetInfo() override {return "LookAround";}
+}
+
+class MoveTo : DefaultAction
+{
+	private uint16 HexX;
+	private uint16 HexY;
+	private bool Run;
+	private bool SetHome;
+	private int EntireNum;
+	
+	MoveTo(uint16 hexX, uint16 hexY, bool run)
+	{
+		HexX = hexX;
+		HexY = hexY;
+		Run = run;
+		SetHome = false;
+		EntireNum = 0;
+	}
+	
+	MoveTo(uint16 hexX, uint16 hexY, bool run, bool setHome)
+	{
+		HexX = hexX;
+		HexY = hexY;
+		Run = run;
+		SetHome = setHome;
+		EntireNum = 0;
+	}
+	
+	MoveTo(int entireNum, bool run)
+	{
+		EntireNum = entireNum;
+		Run = run;
+		SetHome = false;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		if(EntireNum != 0 && !RefreshEntireHexes(critter))
+		{
+			Log("No entire found on map: " + EntireNum);
+			Finish(critter);
+			return;
+		}
+		
+		critter.ErasePlane(AI_PLANE_WALK, false);
+		AddWalkPlane(critter, AI_PLANE_WALK_PRIORITY, 
+			MOVE_TO_PLANE_IDENTIFIER, 0, HexX, HexY, 
+			GetDirection(critter.HexX, critter.HexY, HexX, HexY), Run, 1);
+		SetListening(true);
+	}
+	
+	private bool RefreshEntireHexes(Critter& critter)
+	{
+		Map@ map = critter.GetMap();
+		if(!valid(map))
+			return false;
+			
+		HexX = critter.HexX;
+		HexY = critter.HexY;
+		
+		if(!map.GetNearEntireCoords(EntireNum, HexX, HexY))
+			return false;
+		
+		return true;
+	}
+	
+	int PlaneEndEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem) override
+	{
+		if(plane.Identifier != MOVE_TO_PLANE_IDENTIFIER)
+			return PLANE_RUN_GLOBAL;
+			
+		if(reason == REASON_GAG_CRITTER)
+			return PLANE_KEEP;
+			
+		SetListening(false);
+		if(reason == REASON_SUCCESS)
+		{
+			critter.SetDir(GetDirection(critter.HexX, critter.HexY, HexX, HexY));
+			if(SetHome)
+				critter.SetHomePos(critter.HexX, critter.HexY, critter.Dir);
+			Finish(critter);
+		}
+		else
+		{
+			Info("Starting next super action");
+			StartNextSuperAction(critter);
+		}
+		
+		return PLANE_RUN_GLOBAL;
+	}
+	
+	string GetInfo() override {return "MoveTo";}
+}
+
+class GoHome : DefaultAction
+{
+	private bool Run;
+	
+	GoHome(bool run)
+	{
+		Run = run;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		uint   mapId = 0;
+        uint16 hexX = 0;
+        uint16 hexY = 0;
+        uint8  dir = 0;
+        critter.GetHomePos(mapId, hexX, hexY, dir);
+		
+		SubActions.resize(0);
+		AddSubAction(MoveTo(hexX, hexY, Run));
+		Finish(critter);
+	}
+	
+	string GetInfo() override {return "GoHome";}
+}
+
+funcdef void AnimateFunction(Critter&);
+class Animate : DefaultAction
+{
+	private AnimateFunction@ animateFunction;
+	
+	Animate(AnimateFunction@ animateFunction)
+	{
+		@animateFunction = animateFunction;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		animateFunction(critter);
+		critter.Wait(__Breaktime);
+		Finish(critter);
+	}
+	
+	string GetInfo() override {return "AnimateFunction";}
+}
+
+#define LOOT_TYPE_HOLD		(0)
+#define LOOT_TYPE_REMEMBER	(1)
+#define LOOT_TYPE_DELETE	(2)
+
+class Loot : CrittersHolderAction
+{
+	private uint LootType;
+	private uint[] LootCritterIds;
+	
+	Loot() 
+	{
+		LootType = LOOT_TYPE_HOLD;
+	}
+	
+	Loot(uint lootType) 
+	{
+		LootType = lootType;
+	}
+	
+	Loot(Critter@ toLoot)
+	{
+		AddCritter(toLoot);
+		LootType = LOOT_TYPE_HOLD;
+	}
+	
+	Loot(Critter@ toLoot, uint lootType)
+	{
+		AddCritter(toLoot);
+		LootType = lootType;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		Info("Looting");
+		if(!HasValidCritters())
+		{
+			Info("No valid critters");
+			StartNextSuperAction(critter);
+			return;
+		}
+		
+		SetListening(true);
+		LootCritterIds.resize(0);
+		for (uint i = 0; i < GetCritters().length(); i++)
+		{
+			Critter@ otherCritter = GetCritters()[i];
+			LootCritterIds.insertLast(otherCritter.Id);
+			AddWalkPlane(critter, AI_PLANE_WALK_PRIORITY, LOOT_PLANE_IDENTIFIER, otherCritter.Id, 
+				otherCritter.HexX, otherCritter.HexY, 
+				GetDirection(critter.HexX, critter.HexY, otherCritter.HexX, otherCritter.HexY), 
+				true, 1);
+		}
+	}
+	
+	int PlaneEndEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem) override
+	{
+		if(plane.Type == AI_PLANE_WALK && plane.Identifier == LOOT_PLANE_IDENTIFIER)
+		{
+			Critter@ lootCritter = GetHolderCritter(plane.IdentifierExt);
+			if(valid(lootCritter))
+			{
+				Info("Valid loot critter");
+				Item@[] items;
+				lootCritter.GetItems(SLOT_INV, items);
+				lootCritter.GetItems(SLOT_HAND1, items);
+				lootCritter.GetItems(SLOT_HAND2, items);
+				lootCritter.GetItems(SLOT_ARMOR, items);
+				lootCritter.GetMap().GetItems(lootCritter.HexX, lootCritter.HexY, items);
+				critter.SetDir(GetDirection(critter.HexX, critter.HexY, lootCritter.HexX, lootCritter.HexY));
+				
+				switch(LootType)
+				{
+					case LOOT_TYPE_HOLD:
+						Info("Holding");
+						MoveItems(items, critter);
+						break;
+					case LOOT_TYPE_REMEMBER:
+					{
+						Info("Remembering");
+						ItemHolderWrapper wrapper(critter);
+						wrapper.PutItems(""+lootCritter.Id, items);
+						break;
+					}
+					case LOOT_TYPE_DELETE:
+						Info("Deleting");
+						for (uint i = 0; i < items.length(); i++)
+							DeleteItem(items[i]);
+						break;
+				}
+				
+				_CritAnimatePickup(critter);
+	            critter.Wait(2000);
+			}
+			
+	        RemoveFromArray(LootCritterIds, plane.IdentifierExt);
+			if(LootCritterIds.length() == 0)
+			{
+				SetListening(false);
+				Finish(critter);
+			}
+		}
+		return PLANE_RUN_GLOBAL;
+	}
+	
+	string GetInfo() override {return "Loot";}
+}
+
+class Follow : CrittersHolderAction
+{
+	private uint MaxDistance;
+	private bool Run;
+	
+	private Critter@ Followed;
+	
+	Follow(uint maxDistance)
+	{
+		MaxDistance = maxDistance;
+		Run = true;
+	}
+	
+	Follow(uint maxDistance, bool run)
+	{
+		MaxDistance = maxDistance;
+		Run = run;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		if(!HasValidCritters())
+		{
+			StartNextSubAction(critter);
+			return;
+		}
+		
+		Info("Performing Follow");
+		@Followed = GetClosestCritter(critter);
+		if(!valid(Followed))
+		{
+			Info("Starting next super action.");
+			StartNextSuperAction(critter);
+			return;
+		}
+			
+		SetListening(true);
+		Info("Going to followed");
+		MoveTo(Followed.HexX, Followed.HexY, true).Start(critter);
+	}
+	
+	int PlaneEndEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem) override
+	{
+		if(plane.Identifier != MOVE_TO_PLANE_IDENTIFIER)
+			return PLANE_RUN_GLOBAL;
+		
+		if(!valid(Followed))
+		{
+			Info("No valid critter found...finishing.");
+			SetListening(false);
+			ClearCritters();
+			StartNextSuperAction(critter);
+			return PLANE_RUN_GLOBAL;
+		}
+		
+		if(MaxDistance >= GetDistantion(critter.HexX, critter.HexY, Followed.HexX, Followed.HexY))
+		{
+			Info("Finishing follow.");
+			SetListening(false);
+			RemoveCritter(Followed);
+			for (uint i = 0; i < SubActions.length(); i++)
+			{
+				CrittersHolderAction@ action = cast<CrittersHolderAction>(SubActions[i]);
+				if(valid(action))
+				{
+					action.ClearCritters();
+					action.AddCritter(Followed);
+				}
+			}
+			Finish(critter);
+		}
+		else
+		{
+			Info("Repeating follow.");
+			MoveTo(Followed.HexX, Followed.HexY, true).Start(critter);
+		}
+		
+		return PLANE_RUN_GLOBAL; 
+	}
+	
+	void StartNextSuperAction(Critter& critter)
+	{
+		if(HasValidCritters()) 
+			Start(critter); //more critters to follow => start again
+		else
+			CrittersHolderAction::StartNextSuperAction(critter);
+	}
+	
+	string GetInfo() override {return "Follow";}
+}
+
+class LookAt : CrittersHolderAction
+{
+	void Perform(Critter& critter) override
+	{
+		if(!HasValidCritters())
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		
+		critter.SetDir(GetDirection(critter.HexX, critter.HexY, GetCritters()[0].HexX,  GetCritters()[0].HexY));
+		Finish(critter);
+	}
+	
+	string GetInfo() override {return "LookAt";}
+}
+
+class PickUp : ItemsHolderAction
+{
+	#define PICK_UP_PRIORITY	(AI_PLANE_PICK_PRIORITY - 1)
+	
+	private uint16[] PickItemPids;
+	
+	void Perform(Critter& critter) override
+	{
+		if(!HasValidItems())
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		Info("Performing pick up");
+		PickItemPids.resize(0);
+		for (uint i = 0; i < GetItems().length(); i++)
+		{
+			Item@ item = GetItems()[i];
+			PickItemPids.insertLast(item.GetProtoId());
+			AddPickPlane(critter, PICK_UP_PRIORITY, item, 0, false);
+		}
+		SetListening(true);
+	}
+	
+	int PlaneEndEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem) override 
+	{ 
+		if(plane.Type != AI_PLANE_PICK || plane.Priority != PICK_UP_PRIORITY)
+			return PLANE_RUN_GLOBAL;
+			
+		RemoveFromArray(PickItemPids, plane.Pick_Pid);
+		if(PickItemPids.length() == 0)
+		{
+			Info("Finishing pick up.");
+			SetListening(false);
+			Finish(critter);
+		}
+			
+		return PLANE_RUN_GLOBAL;
+	}
+}
+ 
+class Inform : CrittersHolderAction
+{
+	private uint16 TextMsg;
+	private uint StringNum;
+	
+	Inform(uint16 textMsg, uint stringNum)
+	{
+		TextMsg = textMsg;
+		StringNum = stringNum;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		Info("Informing "+GetCritters().length()+ " critters.");
+		if(!HasValidCritters())
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		for (uint i = 0; i < GetCritters().length(); i++)
+			GetCritters()[i].SayMsg(SAY_NETMSG, TextMsg, StringNum);
+		Finish(critter);
+	}
+}
+
+class Wait : DefaultAction 
+{
+	private uint WaitTimeFrom;
+	private uint WaitTimeTo;
+	private uint ToTime;
+	
+	Wait(uint waitTime)
+	{
+		WaitTimeFrom = waitTime;
+		WaitTimeTo = waitTime;
+	}
+	
+	Wait(uint waitTimeFrom, uint waitTimeTo)
+	{
+		WaitTimeFrom = waitTimeFrom;
+		WaitTimeTo = waitTimeTo;
+	}
+	
+	void Perform(Critter& critter)
+	{
+		if(WaitTimeFrom == 0 && WaitTimeTo == 0)
+		{
+			Finish(critter);
+			return;
+		}
+			
+		Info("Performing wait action.");
+		ToTime = __FullSecond + Random(WaitTimeFrom, WaitTimeTo);
+		CreateWaitPlane(critter);
+		SetListening(true);
+	}
+	
+	private void CreateWaitPlane(Critter& critter)
+	{
+		NpcPlane@ plane = CreatePlane();
+		plane.Type = AI_PLANE_MISC;
+		plane.Identifier = WAIT_PLANE_IDENTIFIER;
+		plane.Priority = AI_PLANE_MISC_PRIORITY;
+		plane.Misc_WaitSecond = __FullSecond + REAL_SECOND(1);
+		critter.AddPlane(plane);
+	}
+	
+	int PlaneEndEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem) override
+	{		
+		Info("Some plane ended.");
+		if(plane.Identifier == WAIT_PLANE_IDENTIFIER)
+	    {
+			if(__FullSecond >= ToTime)
+			{
+				Info("Wait plane ended.");
+		        SetListening(false);
+				Finish(critter);
+			}
+			else 
+			{
+				plane.Misc_WaitSecond = __FullSecond + REAL_SECOND(1);
+				return PLANE_KEEP;
+			}
+	    }
+		return PLANE_RUN_GLOBAL;
+	}
+	
+	void Cancel(Critter& critter)
+	{
+		SetListening(false);
+		DefaultAction::Cancel(critter);
+	}
+	
+	string GetInfo() override {return "Wait";}
+}
+
+class RepeatAtInterval : DefaultAction
+{
+	private uint IntervalFrom;
+	private uint IntervalTo;
+	
+	private uint NextStart;
+	
+	RepeatAtInterval(uint interval)
+	{
+		IntervalFrom = interval;
+		IntervalTo = interval;
+		NextStart = 0;
+	}
+	
+	RepeatAtInterval(uint intervalFrom, uint intervalTo)
+	{
+		IntervalFrom = intervalFrom;
+		IntervalTo = intervalTo;
+		NextStart = 0;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		if(__FullSecond < NextStart)
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		
+		NextStart = __FullSecond + Random(IntervalFrom, IntervalTo); 
+		Finish(critter);
+	}
+}
+
+class Heal : CrittersHolderAction
+{
+	Heal()
+	{
+		AddSubAction(Wait(REAL_SECOND(2)));
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		if(!HasValidCritters())
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		
+		for (uint i = 0; i < GetCritters().length(); i++)
+		{
+			Critter@ patient = GetCritters()[i];
+			critter.SetDir(GetDirection(critter.HexX, critter.HexY, patient.HexX, patient.HexY));
+			if(patient.IsInjured())
+			{
+				_CritAnimateUse(critter);
+				for( uint i = DAMAGE_BEGIN; i <= DAMAGE_END; i++ )
+					patient.DamageBase[i] = 0;
+			}
+			if(patient.Stat[ST_CURRENT_HP] < patient.Stat[ST_MAX_LIFE])
+			{
+				_CritAnimateUse(critter);
+				patient.StatBase[ST_CURRENT_HP] = patient.Stat[ST_MAX_LIFE];
+			}
+		}
+		Finish(critter);
+	}
+}
+
+class Hide : DefaultAction
+{
+	void Perform(Critter& critter)
+	{
+		critter.ParamBase[INVIS_LEVEL] = 100;
+		Finish(critter);
+	}
+}
+
+class Show : DefaultAction
+{
+	void Perform(Critter& critter)
+	{
+		critter.ParamBase[INVIS_LEVEL] = 0;
+		Finish(critter);
+	}
+}
+
+class WatchForThieves : CrittersHolderAction
+{
+	float ChanceToNoticeFailingThief;
+	float ChanceToNoticeSuccessfullThief;
+	
+	WatchForThieves(float chanceToNoticeFailingThief, float chanceToNoticeSuccessfullThief)
+	{
+		ChanceToNoticeFailingThief = chanceToNoticeFailingThief;
+		ChanceToNoticeSuccessfullThief = chanceToNoticeSuccessfullThief;
+		BlockSubActions();
+	}
+	
+	bool IsListening() override { return true; }
+	
+	void SeeSomeoneStealingEvent(Critter& critter, Critter& victim, Critter& thief, bool success, Item& item, uint count) override
+	{
+		Info("Seeing someone stealing something");
+		if((success && HAS_CHANCE(ChanceToNoticeSuccessfullThief))
+			|| (!success && HAS_CHANCE(ChanceToNoticeFailingThief)))
+		{
+			ClearCritters();
+			AddCritter(thief);
+			UnblockSubActions();
+			Start(critter);
+			BlockSubActions();
+		}
+	}
+	
+	string GetInfo() override {return "AttackThief";}
+}
+
+class AttackAttacker : ListeningAction
+{
+	private bool OnlyPlayer;
+	
+	AttackAttacker()
+	{
+		OnlyPlayer = true;
+	}
+	
+	AttackAttacker(bool onlyPlayer)
+	{
+		OnlyPlayer = onlyPlayer;
+	}
+	
+	bool AttackedEvent(Critter& critter, Critter& attacker) override
+	{
+		Info("Someone attacked me");
+		AddAttackPlane(critter, 0, attacker, AI_MIN_HP(critter.Stat[ST_AI_ID]), true);
+		PerformAndAction(critter, attacker, null);
+		return true;
+	}
+	
+	void SeeSomeoneAttackEvent(Critter& critter, Critter& attacker, Critter& attacked) override
+	{
+		Info("Seeing someone attacking");
+		if(OnlyPlayer && !attacker.IsPlayer())
+			return;
+		AddAttackPlane(critter, 0, attacker, AI_MIN_HP(critter.Stat[ST_AI_ID]), true);
+		PerformAndAction(critter, attacker, null);
+	}
+	
+	string GetInfo() override {return "AttackAttacker";}
+}
+
+class AttackWithForceFlags : ListeningAction 
+{
+	private uint AttackForceFlags;
+	
+	AttackWithForceFlags(uint attackForceFlags)
+	{
+		AttackForceFlags = attackForceFlags;
+	}
+	
+	bool AttackEvent(Critter& critter, Critter& target) override
+	{
+		if(!target.IsPlayer())
+			return false;
+		
+		if(HAS_CHANCE(Chance))
+		{
+			PerformAndAction(critter, target, null);
+			Info("Attacking with force flags: "+AttackForceFlags);
+			critter.ParamBase[ATTACK_FORCE_FLAGS] = AttackForceFlags;
+		}
+		else
+		{
+			critter.ParamBase[ATTACK_FORCE_FLAGS] = 0;
+		}
+		
+		return false;
+	}
+	
+	int PlaneEndEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem) override
+	{
+		if(plane.Type == AI_PLANE_ATTACK)
+			critter.ParamBase[ATTACK_FORCE_FLAGS] = 0;
+			
+		return PLANE_RUN_GLOBAL;
+	}
+	
+	string GetInfo() override {return "AttackWithForceFlags";}
+}
+
+class ProvideReinforcements : ListeningAction
+{
+	#define	UNLIMITED_DISTANCE	(0)
+	int MessageNumber;
+	uint MaxDistance;
+	
+	ProvideReinforcements(uint messageNumber)
+	{
+		MessageNumber = messageNumber;
+		MaxDistance = UNLIMITED_DISTANCE;
+	}
+	
+	ProvideReinforcements(uint messageNumber, uint maxDistance)
+	{
+		MessageNumber = messageNumber;
+		MaxDistance = maxDistance;
+	}
+	
+	void MessageEvent(Critter& critter, Critter& messenger, int message, int value)
+	{
+		if(message != MessageNumber || !Check(critter, messenger, null))
+			return;
+
+		if(MaxDistance != UNLIMITED_DISTANCE)
+		{
+			uint distance = GetDistantion(critter.HexX, critter.HexY, messenger.HexX, messenger.HexY);
+			if(distance > MaxDistance)
+				return;
+		}
+			
+		Critter@ offender = GetCritter(value);
+		if(!valid(offender))
+			return;
+		AddAttackPlane(critter, 0, offender, AI_MIN_HP(critter.Stat[ST_AI_ID]), true);
+		PerformAndAction(critter, messenger, null);
+	}
+	
+	string GetInfo() override {return "ProvideReinforcements";}
+}
+
+class UseDrug : DefaultAction 
+{
+	private uint[]@ DrugPids;
+	
+	UseDrug(uint drugPid)
+	{
+		uint[] drugPids = {drugPid};
+		@DrugPids = drugPids;
+	}
+	
+	UseDrug(uint[] drugPids)
+	{
+		@DrugPids = drugPids;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		int apCost = __RtApCostUseItem;
+		
+		if(apCost <= critter.Stat[ST_CURRENT_AP])
+			for (uint i = 0; i < DrugPids.length(); i++)
+			{
+				Item@ item = _CritGetItem(critter, DrugPids[i]);
+				if(valid(item))
+				{
+					UseDrugOn(critter, critter, item);
+					_CritAnimateUse(critter);
+					critter.StatBase[ST_CURRENT_AP] -= __RtApCostUseItem * 100;
+					critter.Wait(2000);
+					break;
+				}	
+			}
+			
+		
+		
+		Finish(critter);
+	}
+}
+
+class UseReinforcements : ListeningAction
+{
+	private uint LastMessageTime;
+	private uint MessageNumber;
+	
+	UseReinforcements(uint messageNumber)
+	{
+		MessageNumber = messageNumber;
+		LastMessageTime = __FullSecond;
+	}
+	
+	bool AttackEvent(Critter& critter, Critter& target)
+	{
+		if(!HAS_CHANCE(Chance) || !Check(critter, target, null) || LastMessageTime + 300 > __FullSecond) //not sooner than in 300 seconds
+			return false;
+			
+		uint time = GetTick();
+		critter.SendMessage(MessageNumber, target.Id, MESSAGE_TO_ALL_ON_MAP);
+		Info("Sending message took "+(GetTick() - time)+" ms");
+		LastMessageTime = __FullSecond;
+		PerformAndAction(critter, target, null);
+		return false;
+	}
+	
+	string GetInfo() override {return "UseReinforcements";}
+}
+
+class CallReinforcements : CrittersHolderAction
+{
+	private uint MessageNumber;
+	
+	CallReinforcements(uint messageNumber)
+	{
+		MessageNumber = messageNumber;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		if(!HasValidCritters())
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		
+		for (uint i = 0; i < GetCritters().length(); i++)
+			critter.SendMessage(MessageNumber, GetCritters()[i].Id, MESSAGE_TO_ALL_ON_MAP);
+		
+		Finish(critter);
+	}
+	
+	string GetInfo() override {return "CallReinforcements";}
+}
+
+class SetAttackerJailTimeout : ListeningAction
+{
+	private uint JailTimeOut;
+	
+	SetAttackerJailTimeout(uint jailTimeOut)
+	{
+		JailTimeOut = jailTimeOut;
+	}
+	
+	bool AttackedEvent(Critter& critter, Critter& attacker) override
+	{
+		if(attacker.IsPlayer())
+			attacker.TimeoutBase[TO_JAIL] = __FullSecond + JailTimeOut;
+		
+		return false;
+	}
+	
+	void SeeSomeoneAttackEvent(Critter& critter, Critter& attacker, Critter& attacked) override
+	{
+		if(attacker.IsPlayer())
+			attacker.TimeoutBase[TO_JAIL] = __FullSecond + JailTimeOut;
+	}
+	
+	void DeadEvent(Critter& critter, Critter@ killer) override
+	{
+		if(valid(killer) && killer.IsPlayer())
+			killer.TimeoutBase[TO_JAIL] = __FullSecond + JailTimeOut;
+	}
+	
+	void SeeSomeoneDeadEvent(Critter& critter, Critter& killed, Critter@ killer) override
+	{
+		if(valid(killer) && killer.IsPlayer())
+			killer.TimeoutBase[TO_JAIL] = __FullSecond + JailTimeOut;
+	}
+	
+	string GetInfo() override {return "SetAttackerJailTimeout";}
+}
+
+class SetHome : DefaultAction
+{
+	void Perform(Critter& critter) override
+	{
+		critter.SetHomePos(critter.HexX, critter.HexY, critter.Dir);
+	}
+}
+
+class SetJailTimeout : CrittersHolderAction
+{
+	private uint JailTimeOut;
+	
+	SetJailTimeout(uint jailTimeOut)
+	{
+		JailTimeOut = jailTimeOut;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		if(!HasValidCritters())
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		for (uint i = 0; i < GetCritters().length(); i++)
+			GetCritters()[i].TimeoutBase[TO_JAIL] = __FullSecond + JailTimeOut;
+		
+		Finish(critter);
+	}
+}
+
+class TransitCritterToMap : CrittersHolderAction
+{
+	private Map@ Map;
+	private uint MapProtoId;
+	private uint EntireNum;
+	private uint16 HexX;
+	private uint16 HexY;
+	private bool UseEntire;
+	
+	TransitCritterToMap(uint mapProtoId, uint entireNum)
+	{
+		MapProtoId = mapProtoId;
+		@Map = null;
+		EntireNum = entireNum;
+		UseEntire = true;
+	}
+	
+	TransitCritterToMap(Map@ map, uint16 hexX, uint16 hexY)
+	{
+		@Map = map;
+		HexX = hexX;
+		HexY = hexY;
+		UseEntire = false;
+	}
+	
+	TransitCritterToMap(Map@ map, uint entireNum)
+	{
+		@Map = map;
+		EntireNum = entireNum;
+		UseEntire = true;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		if(!HasValidCritters())
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		Map@ map = valid(Map) ? Map : GetMapByPid(MapProtoId, 0);
+		if(!valid(map))
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		
+		if(UseEntire)
+			if(!GetEntireFreeHex(map, EntireNum, HexX, HexY))
+			{
+				StartNextSuperAction(critter);
+				return;
+			}
+			
+		for (uint i = 0; i < GetCritters().length(); i++)
+			GetCritters()[i].TransitToMap(map.Id, HexX, HexY, GetCritters()[i].Dir);
+		
+		Finish(critter);
+	}
+	
+	string GetInfo() override {return "TransitCritterToMap";}
+}
+
+class TransitCritterToGlobal : CrittersHolderAction
+{
+	void Perform(Critter& critter) override
+	{
+		if(!HasValidCritters())
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		
+		for (uint i = 0; i < GetCritters().length(); i++)
+			GetCritters()[i].TransitToGlobal(false);
+		
+		Finish(critter);
+	}
+	
+	string GetInfo() override {return "TransitCritterToGlobal";}
+}
+
+class Revive : CrittersHolderAction 
+{
+	Revive() {}
+	
+	Revive(Critter@ toRevive)
+	{
+		AddCritter(toRevive);
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		if(!HasValidCritters())
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		for (uint i = 0; i < GetCritters().length(); i++)
+		{
+			Critter@ otherCritter = GetCritters()[i];
+			if(otherCritter.IsDead())
+				otherCritter.ToLife();
+		}		
+		Finish(critter);
+	}
+	
+	string GetInfo() override {return "Revive";}
+}
+
+funcdef void CritterFunction(Critter&, Critter@);
+
+class Run : DefaultAction 
+{
+	private CritterFunction@ Function;
+	
+	Run(CritterFunction@ function)
+	{
+		@Function = function;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		Function(critter, null);
+		Finish(critter);
+	}
+}
+
+class RunCritterFunction : CrittersHolderAction
+{
+	private CritterFunction@ Function;
+	
+	RunCritterFunction(CritterFunction@ function)
+	{
+		@Function = function;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		for (uint i = 0; i < GetCritters().length(); i++)
+			Function(critter, GetCritters()[i]);
+		
+		Finish(critter);
+	}
+}
+
+class TakeToJail : CrittersHolderAction
+{
+	TakeToJail(Map@ jailMap, uint jailEntire)
+	{
+		AddSubAction(Loot());
+		AddSubAction(Say(TEXTMSG_TEXT, 70110));
+		AddSubAction(Wait(REAL_SECOND(3)));
+		AddSubAction(TransitCritterToMap(jailMap, jailEntire)
+						.AddSubAction(RunCritterFunction(FunctionSetJailed))
+						.AddSubAction(Revive())
+						.AddSubAction(RunCritterFunction(FunctionRefreshVisible)));
+		AddSubAction(GoHome(true));
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		if(!HasValidCritters())
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		
+		Finish(critter);
+	}
+	
+	string GetInfo() override {return "TakeToJail";}
+}
+
+class ReleaseFromJail : CrittersHolderAction 
+{
+	private uint16 JailDoorHexX;
+	private uint16 JailDoorHexY;
+	
+	ReleaseFromJail(uint16 jailDoorHexX, uint16 jailDoorHexY)
+	{
+		JailDoorHexX = jailDoorHexX;
+		JailDoorHexY = jailDoorHexY;
+		AddSubAction(MoveTo(JailDoorHexX, JailDoorHexY, false));
+		AddSubAction(Say(TEXTMSG_TEXT, 70111));
+		AddSubAction(Wait(REAL_SECOND(3)));
+		AddSubAction(TransitCritterToGlobal()
+						.AddSubAction(RunCritterFunction(FunctionUnsetJailed)));
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		if(!HasValidCritters())
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		
+		Finish(critter);
+	}
+	
+	string GetInfo() override {return "ReleaseFromJail";}
+}
+
+void FunctionSetJailed(Critter& critter, Critter@ otherCritter)
+{
+	if(valid(otherCritter))
+		otherCritter.ParamBase[JAILED] = 1;
+}
+
+void FunctionUnsetJailed(Critter& critter, Critter@ otherCritter)
+{
+	if(valid(otherCritter))
+		otherCritter.ParamBase[JAILED] = 0;
+}
+
+void FunctionRefreshVisible(Critter& critter, Critter@ otherCritter)
+{
+	if(valid(otherCritter))
+		otherCritter.RefreshVisible();
+}
+
+class CancelSneaking : CrittersHolderAction
+{
+	CancelSneaking()
+	{
+		BlockSubActions();
+		SetListening(true);
+	}
+	
+	void ShowCritterEvent(Critter& critter, Critter& showCritter) override
+	{
+		ClearCritters();
+		if(showCritter.Mode[MODE_HIDE] == 0 || !HAS_CHANCE(Chance))
+			return;
+			
+		AddCritter(showCritter);
+		showCritter.ModeBase[MODE_HIDE] = 0;
+		//TODO: remove and action
+		PerformAndAction(critter, showCritter, null);
+
+		UnblockSubActions();
+		SetListening(false);
+		Start(critter);
+	}
+	
+	void SeeSomeoneUseSkill(Critter& critter, Critter& skillCritter, int skill, Critter@ onCritter, Item@ onItem, Scenery@ onScenery) override
+	{
+		ClearCritters();
+		if(skill != SK_SNEAK || !HAS_CHANCE(Chance))
+			return;
+		
+		AddCritter(skillCritter);
+		skillCritter.ModeBase[MODE_HIDE] = 1;
+		//TODO: remove and action
+		PerformAndAction(critter, skillCritter, onItem);
+		
+		UnblockSubActions();
+		SetListening(false);
+		Start(critter);
+	}
+	
+	void StartNextSuperAction(Critter& critter) override
+	{
+		BlockSubActions();
+		SetListening(true);
+		CrittersHolderAction::StartNextSuperAction(critter);
+	}
+	
+	string GetInfo() override {return "CancelSneaking";}
+}
+
+class RecordOffence : CrittersHolderAction
+{
+	private uint OffenceArea;
+	private uint AttackOffenceSeverity;
+	private uint KillOffenceSeverity;
+	private uint OffenceSeverity;
+	private bool Listener; 
+	
+	RecordOffence(uint offenceArea)
+	{
+		OffenceArea = offenceArea;
+		AttackOffenceSeverity = 1;
+		KillOffenceSeverity = 3;
+		Listener = true;
+	}
+	
+	RecordOffence(uint offenceArea, uint offenceSeverity)
+	{
+		OffenceArea = offenceArea;
+		OffenceSeverity = offenceSeverity;
+		Listener = false;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		if(Listener)
+		{
+			SetListening(true);
+			Finish(critter);
+		}
+		else if(HasValidCritters())
+		{
+			for (uint i = 0; i < GetCritters().length(); i++)
+				AddOffence(GetCritters()[i], OffenceArea, OffenceSeverity);
+			Finish(critter);
+		}
+		else
+		{
+			StartNextSuperAction(critter);
+		}
+	}
+	
+	bool AttackedEvent(Critter& critter, Critter& attacker) override
+	{
+		if(!attacker.IsPlayer())
+			return false;
+		AddOffence(attacker, OffenceArea, AttackOffenceSeverity);
+		return false;
+	}
+	
+	void DeadEvent(Critter& critter, Critter@ killer) override
+	{
+		if(!killer.IsPlayer())
+			return;
+		AddOffence(killer, OffenceArea, KillOffenceSeverity);
+	}
+	
+	void SeeSomeoneAttackedEvent(Critter& critter, Critter& attacked, Critter& attacker) override
+	{
+		if(!attacker.IsPlayer())
+			return;
+		AddOffence(attacker, OffenceArea, AttackOffenceSeverity);
+	}
+	
+	void SeeSomeoneDeadEvent(Critter& critter, Critter& killed, Critter@ killer) override
+	{
+		if(!valid(killer) || !killer.IsPlayer())
+			return;
+		AddOffence(killer, OffenceArea, KillOffenceSeverity);
+	}
+	
+	string GetInfo() override {return "RecordOffence";}
+}
+
+class Attack : CrittersHolderAction
+{
+	private uint[] TargetIds;
+	
+	void Perform(Critter& critter) override
+	{
+		if(!HasValidCritters())
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		
+		Info("Performing Attack action");
+		SetListening(true);
+		TargetIds.resize(0);
+		for (uint i = 0; i < GetCritters().length(); i++)
+		{
+			TargetIds.insertLast(GetCritters()[i].Id);
+			AddAttackPlane(critter, 0, GetCritters()[i], AI_MIN_HP(critter.Stat[ST_AI_ID]), true); 
+		}
+	}
+	
+	int PlaneEndEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem) override
+	{ 
+		if(plane.Type != AI_PLANE_ATTACK)
+			return PLANE_RUN_GLOBAL;
+			
+		RemoveFromArray(TargetIds, plane.Attack_TargId);
+
+		if(TargetIds.length() == 0)
+		{
+			Info("Ending Attack action");
+			SetListening(false);
+			Finish(critter);
+		}
+		
+		return PLANE_RUN_GLOBAL;
+	}
+	
+	string GetInfo() override {return "Attack";}
+}
+
+class ForbidItems : CrittersHolderAction
+{
+	private uint16[]@ ItemPids;
+	private uint[]@ SearchSlots;
+	
+	ForbidItems(uint16[] itemPids)
+	{
+		@ItemPids = itemPids;
+		uint[] slots = {SLOT_HAND1, SLOT_HAND2, SLOT_INV};
+		@SearchSlots = slots;
+		BlockSubActions();
+	}
+	
+	bool IsListening() override { return true; }
+	
+	void ShowCritterEvent(Critter& critter, Critter& showCritter) override
+	{
+		if(showCritter.IsPlayer() && HasForbiddenItems(showCritter))
+		{
+			AddCritter(showCritter);
+			UnblockSubActions();
+			Start(critter);
+			BlockSubActions();
+		}
+		else
+		{
+			ClearCritters();
+		}
+	}
+	
+	bool HasForbiddenItems(Critter& critter)
+	{
+	    Item@[] items;
+	    for (uint i = 0; i < SearchSlots.length(); i++)
+			critter.GetItems(SearchSlots[i], items);
+		
+		for (uint i = 0; i < items.length(); i++)
+			if(IsForbidden(items[i]))
+				return true;
+		
+	    return false;
+	}
+	
+	bool IsForbidden(Item@ item)
+	{
+	    if(!valid(item))
+	        return false;
+	    return Present(item.GetProtoId(), ItemPids);
+	}
+}
+
+class DeleteCritterItems : CrittersHolderAction
+{
+	private uint16[] ItemPids;
+	
+	DeleteCritterItems(uint16[] itemPids)
+	{
+		ItemPids = itemPids;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		if(!HasValidCritters())
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		for (uint i = 0; i < GetCritters().length(); i++)
+			DelItems(GetCritters()[i]);
+		Finish(critter);
+	}
+	
+	private void DelItems(Critter& critter)
+	{
+		for (uint i = 0; i < ItemPids.length(); i++)
+		{
+			Item@ item = _CritGetItem(critter, ItemPids[i]);
+			if(valid(item)) DeleteItem(item);
+		}
+	}
+}
+
+class DeleteItems : ItemsHolderAction
+{
+	void Perform(Critter& critter) override
+	{
+		if(!HasValidItems())
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		Info("Performing delete items: "+GetItems().length());
+		for (uint i = 0; i < GetItems().length(); i++)
+			DeleteItem(GetItems()[i]);
+	}
+}
+
+class SetLocalVar : CrittersHolderAction
+{
+	private uint LocalVar;
+	private uint Value;
+	
+	SetLocalVar(uint localVar, uint value)
+	{
+		LocalVar = localVar;
+		Value = value;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		if(!HasValidCritters())
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		
+		for (uint i = 0; i < GetCritters().length(); i++)
+		{
+			GameVar@ lvar = GetLocalVar(LocalVar, GetCritters()[i].Id);
+			if(valid(lvar) && lvar != Value)
+				lvar = Value;
+		}
+		Finish(critter);
+	}
+}
+
+class CloseDoor : ListeningAction
+{
+	#define CLOSE_DOOR_PLANE_IDENTIFIER	(85436)
+	
+	int PlaneBeginEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem) override 
+	{
+		if(plane.Type != AI_PLANE_WALK || plane.Identifier == CLOSE_DOOR_PLANE_IDENTIFIER)
+			return PLANE_RUN_GLOBAL;
+			
+		NpcPlane@[]@ doorClosePlanes = CreateDoorClosePlanes(critter, plane);
+		if(!valid(doorClosePlanes))
+			return PLANE_RUN_GLOBAL;
+		
+		Log("Found some door in path. Planes = "+doorClosePlanes.length());
+		for (uint i = 0; i < doorClosePlanes.length(); i++)
+			critter.AddPlane(doorClosePlanes[i]);
+		
+		return PLANE_RUN_GLOBAL;
+	}
+	
+	private NpcPlane@[]@ CreateDoorClosePlanes(Critter& critter, NpcPlane& plane)
+	{
+		Map@ map = critter.GetMap();
+		if(!valid(map))
+			return null;
+			
+		NpcPlane@[] planes;
+		uint16 hexX = critter.HexX;
+		uint16 hexY = critter.HexY;
+		uint16 endHexX = plane.Walk_HexX;
+		uint16 endHexY = plane.Walk_HexY;
+		Item@ door;
+		bool foundDoor = true;
+		
+		while(hexX != endHexX && hexY != endHexY)
+		{
+			int dir = GetOffsetDir(hexX, hexY, endHexY, endHexY, 89);
+			map.MoveHexByDir(hexX, hexY, dir, 1);
+			
+			NpcPlane@ walkPlane = plane.GetCopy();
+			walkPlane.Walk_HexX = hexX;
+			walkPlane.Walk_HexY = hexY;
+			walkPlane.Walk_Dir = dir;
+			walkPlane.Identifier = CLOSE_DOOR_PLANE_IDENTIFIER;
+			planes.insertLast(walkPlane);
+			
+			if(valid(door) && GetDistantion(door.HexX, door.HexY, hexX, hexY) == 1)
+				planes.insertLast(CreateCloseDoorPlane(@door));
+			
+			@door = map.GetDoor(hexX, hexY);
+			if(valid(door))
+				foundDoor = true;
+		}
+		
+		return foundDoor ? @planes : null;
+	}
+	
+	private NpcPlane@ CreateCloseDoorPlane(Item@ door)
+	{
+		NpcPlane@ plane = CreatePlane();
+	    plane.Type = AI_PLANE_PICK;
+	    plane.Priority = AI_PLANE_PICK_PRIORITY;
+	    plane.Pick_HexX = door.HexX;
+	    plane.Pick_HexY = door.HexY;
+	    plane.Pick_Pid = door.GetProtoId();
+	    plane.Pick_UseItemId = 0;
+	    plane.Pick_ToOpen = false;
+	    plane.Run = true;
+	    return plane;
+	}
+}

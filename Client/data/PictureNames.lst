@@ -1,0 +1,263 @@
+#
+# Critter parameters
+#
+
+0      art\skilldex\STRENGTH.FRM  # Strength     (Basic Stat)
+1      art\skilldex\PERCEPTN.FRM  # Perception   (Basic Stat)
+2      art\skilldex\ENDUR.FRM     # Endurance    (Basic Stat)
+3      art\skilldex\CHARISMA.FRM  # Charisma     (Basic Stat)
+4      art\skilldex\INTEL.FRM     # Intelligence (Basic Stat)
+5      art\skilldex\AGILITY.FRM   # Agility      (Basic Stat)
+6      art\skilldex\LUCK.FRM      # Luck         (Basic Stat)
+7      art\skilldex\HITPOINT.FRM  # Hit Points
+8      art\skilldex\ACTIONPT.FRM  # Action Points
+9      art\skilldex\ARMORCLS.FRM  # Armor Class
+10     art\skilldex\MELEEDAM.FRM  # Melee Damage
+11     art\skilldex\CARRYAMT.FRM  # Carry Weight (Carry Amount)
+12     art\skilldex\SEQUENCE.FRM  # Sequence
+13     art\skilldex\HEALRATE.FRM  # Healing Rate
+14     art\skilldex\CRITCHNC.FRM  # Critical Chance
+23     art\skilldex\DAMRESIS.FRM  # Damage Resistance
+30     art\skilldex\RADRESIS.FRM  # Radiation resist
+31     art\skilldex\POISNRES.FRM  # Poison Resistance
+72     art\skilldex\HITPOINT.FRM  # Hit Points
+73     art\skilldex\POISONED.FRM  # Poison level
+74     art\skilldex\RADIATED.FRM  # Radiation level
+76     art\skilldex\EXPER.FRM     # Experience
+77     art\skilldex\LEVEL.FRM     # Level
+
+200    art\skilldex\GUNSML.FRM    # Small Guns
+201    art\skilldex\GUNBIG.FRM    # Big Guns
+202    art\skilldex\ENERGYWP.FRM  # Energy Weapons
+203    art\skilldex\UNARMED.FRM   # Unarmed
+204    art\skilldex\MELEE.FRM     # Melee Weapons
+205    art\skilldex\THROWING.FRM  # Throwing
+206    art\skilldex\FIRSTAID.FRM  # First Aid
+207    art\skilldex\DOCTOR.FRM    # Doctor
+208    art\skilldex\SNEAK.FRM     # Sneak
+209    art\skilldex\LOCKPICK.FRM  # Lockpick
+210    art\skilldex\STEAL.FRM     # Steal
+211    art\skilldex\TRAPS.FRM     # Traps
+212    art\skilldex\SCIENCE.FRM   # Science
+213    art\skilldex\REPAIR.FRM    # Repair
+214    art\skilldex\SPEECH.FRM    # Speech
+215    art\skilldex\BARTER.FRM    # Barter
+216    art\skilldex\GAMBLING.FRM  # Gambling
+217    art\skilldex\OUTDOORS.FRM  # Outdoorsman
+
+260    art\skilldex\KILLS.FRM     # Men
+261    art\skilldex\KILLS.FRM     # Women
+262    art\skilldex\KILLS.FRM     # Children
+263    art\skilldex\KILLS.FRM     # Super Mutant
+264    art\skilldex\KILLS.FRM     # Ghoul
+265    art\skilldex\KILLS.FRM     # Brahmin
+266    art\skilldex\KILLS.FRM     # Redscorpion
+267    art\skilldex\KILLS.FRM     # Rat
+268    art\skilldex\KILLS.FRM     # Floater
+269    art\skilldex\KILLS.FRM     # Centaur
+270    art\skilldex\KILLS.FRM     # Robot
+271    art\skilldex\KILLS.FRM     # Dog
+272    art\skilldex\KILLS.FRM     # Manti
+273    art\skilldex\KILLS.FRM     # Deathclaw
+274    art\skilldex\KILLS.FRM     # Plant
+275    art\skilldex\KILLS.FRM     # Gecko
+276    art\skilldex\KILLS.FRM     # Alien
+277    art\skilldex\KILLS.FRM     # Giant Ant
+278    art\skilldex\KILLS.FRM     # Big Bad Boss
+279    art\skilldex\KILLS.FRM     # Giant Beetle
+280    art\skilldex\KILLS.FRM     # Giant Wasp
+
+300    art\skilldex\SWFTLERN.FRM  # Bookworm
+301    art\skilldex\AWARENES.FRM  # Awareness
+302    art\skilldex\HND2HND.FRM   # Bonus Hand-to-Hand Attacks
+303    art\skilldex\DAMAGE.FRM    # Bonus Hand-to-Hand Damage
+304    art\skilldex\BONUSMVE.FRM  # Bonus Move
+305    art\skilldex\BONUSRNG.FRM  # Bonus Ranged Damage
+306    art\skilldex\BONUSRAT.FRM  # Bonus Rate of Fire
+307    art\skilldex\EARLYSEQ.FRM  # Earlier Sequence
+308    art\skilldex\HEALRATE.FRM  # Faster Healing
+309    art\skilldex\MORECRIT.FRM  # More Criticals
+310    art\skilldex\NIGHTVIZ.FRM  # Night Vision
+311    art\skilldex\PRESENCE.FRM  # Presence
+312    art\skilldex\RADRESIS.FRM  # Rad Resistance
+313    art\skilldex\TOUGHNES.FRM  # Toughness
+314    art\skilldex\PACKANIM.FRM  # Pack Animal
+315    art\skilldex\SHARPSHT.FRM  # Sharpshooter
+316    art\skilldex\SILNTRUN.FRM  # Silent Running
+317    art\skilldex\SURVIVAL.FRM  # Survivalist
+318    art\skilldex\MSTRTRAD.FRM  # Master Trader
+319    art\skilldex\EDUCATED.FRM  # Educated
+320    art\skilldex\HEALER.FRM    # Healer
+321    art\skilldex\FORTUNFD.FRM  # Fortune Finder
+322    art\skilldex\BETRCRIT.FRM  # Better Criticals
+323    art\skilldex\EMPATHY.FRM   # Empathy
+324    art\skilldex\SLAYER.FRM    # Slayer
+325    art\skilldex\SNIPER.FRM    # Sniper
+326    art\skilldex\SILENTD.FRM   # Silent Death
+327    art\skilldex\ACTION.FRM    # Action Boy
+328    art\skilldex\MENTALBK.FRM  # Mental Block
+329    art\skilldex\LIFEGIVR.FRM  # Lifegiver
+330    art\skilldex\DODGER.FRM    # Dodger
+331    art\skilldex\SNAKEEAT.FRM  # Snakeater
+332    art\skilldex\MRFIXIT.FRM   # Mr Fixit
+333    art\skilldex\MEDIC.FRM     # Medic
+334    art\skilldex\MTRTHIEF.FRM  # Master Thief
+335    art\skilldex\SPEAKER.FRM   # Speaker
+336    art\skilldex\HEAVEHO.FRM   # Heave Ho
+337    art\skilldex\FRIENFOE.FRM  # Friendly Foe
+338    art\skilldex\PICKPOCK.FRM  # Pickpocket
+339    art\skilldex\GHOST.FRM     # Ghost
+340    art\skilldex\CULTOPER.FRM  # Cult of Personality
+341    art\skilldex\SCROUNGR.FRM  # Scrounger
+342    art\skilldex\EXPLORER.FRM  # Explorer
+343    art\skilldex\FLOWER.FRM    # Flower Child
+344    art\skilldex\PATHFNDR.FRM  # Pathfinder
+345    art\skilldex\ANIMALFR.FRM  # Animal Friend
+346    art\skilldex\SCOUT.FRM     # Scout
+347    art\skilldex\STRANGER.FRM  # Mysterious Stranger
+348    art\skilldex\RANGER.FRM    # Ranger
+349    art\skilldex\QUIKPOCK.FRM  # Quick Pockets
+350    art\skilldex\SMOOTHTK.FRM  # Smooth Talker
+351    art\skilldex\SWFTLERN.FRM  # Swift Learner
+352    art\skilldex\TAG.FRM       # Tag
+353    art\skilldex\MUTATE.FRM    # Mutate
+
+380    art\skilldex\ADRNRUSH.FRM  # Adrenaline Rush
+381    art\skilldex\CAUTIOUS.FRM  # Cautious Nature
+382    art\skilldex\SWFTLERN.FRM  # Comprehension
+383    art\skilldex\TRAPS.FRM     # Demolition Expert
+384    art\skilldex\GAMBLING.FRM  # Gambler
+385    art\skilldex\STRENGTH.FRM  # Gain Strength
+386    art\skilldex\PERCEPTN.FRM  # Gain Perception
+387    art\skilldex\ENDUR.FRM     # Gain Endurance
+388    art\skilldex\CHARISMA.FRM  # Gain Charisma
+389    art\skilldex\INTEL.FRM     # Gain Intelligence
+390    art\skilldex\AGILITY.FRM   # Gain Agility
+391    art\skilldex\LUCK.FRM      # Gain Luck
+392    art\skilldex\HARMLESS.FRM  # Harmless
+393    art\skilldex\HERE&NOW.FRM  # Here and Now
+394    art\skilldex\H2HEVADE.FRM  # Hand to Hand Evade
+395    art\skilldex\KMASUTRA.FRM  # Kama Sutra Master
+396    art\skilldex\KARMABCN.FRM  # Karma Beacon
+397    art\skilldex\LITESTEP.FRM  # Light Step
+398    art\skilldex\LVNGANAT.FRM  # Living Anatomy
+399    art\skilldex\MAGPERS.FRM   # Magnetic Personality
+400    art\skilldex\BARTER.FRM    # Negotiator
+401    art\skilldex\PACKRAT.FRM   # Pack Rat
+402    art\skilldex\PYROMNAC.FRM  # Pyromaniac
+403    art\skilldex\QWKRECOV.FRM  # Quick Recovery
+404    art\skilldex\BARTER.FRM    # Salesman
+405    art\skilldex\STONWALL.FRM  # Stonewall
+406    art\skilldex\STEAL.FRM     # Thief
+407    art\skilldex\WEPNHAND.FRM  # Weapon Handling
+
+419    art\skilldex\JINXED.FRM    # Jinxed
+420    art\skilldex\DRMLARMR.FRM  # Terminator
+
+430    art\skilldex\GECKOSKN.FRM  # Gecko Skinning
+431    art\skilldex\VCINNOC.FRM   # Vault City Inoculations
+432    art\skilldex\DRMLARMR.FRM  # Dermal Armor
+433    art\skilldex\DRMLARMR.FRM  # Dermal Armor
+434    art\skilldex\PHNXARMR.FRM  # Phoenix Armor
+435    art\skilldex\PHNXARMR.FRM  # Phoenix Armor
+436    art\skilldex\PERCEPTN.FRM  # NCR Gain Perception
+437    art\skilldex\ENDUR.FRM     # NCR Gain Endurance
+438    art\skilldex\BARTER.FRM    # NCR Gain Barter
+439    art\skilldex\REPAIR.FRM    # NCR Gain Repair
+440    art\skilldex\NIGHTVIZ.FRM  # Modoc Vampire Accuracy
+441    art\skilldex\NIGHTPER.FRM  # Modoc Vampire Regeneration
+
+470    art\skilldex\NUKACOLA.FRM  # Nuka-Cola
+471    art\skilldex\BUFFOUTS.FRM  # Buffout
+472    art\skilldex\MENTATS.FRM   # Mentats
+473    art\skilldex\PSYCHO.FRM    # Psycho
+474    art\skilldex\RADAWAY.FRM   # Radaway
+475    art\skilldex\JETADICT.FRM  # Jet
+476    art\skilldex\TRAGIC.FRM    # Tragic
+
+480    art\skilldex\REPBRSRK.FRM  # Reputation (Berserker)
+481    art\skilldex\REPGOOD.FRM   # Reputation (Champion)
+482    art\skilldex\REPCHILD.FRM  # Reputation (Child Killer)
+483    art\skilldex\EXPERTSX.FRM  # Expert (Sex for New Reno)
+484    art\skilldex\FIGHTER.FRM   # Fighter Rep
+485    art\skilldex\GIGOLO.FRM    # Gigolo (Sex for New Reno)
+486    art\skilldex\GRAVEROB.FRM  # Grave-robber
+487    art\skilldex\MARRIED.FRM   # Married Rep
+488    art\skilldex\PORNSTAR.FRM  # Pornstar (Sex for New Reno)
+489    art\skilldex\SLAVER.FRM    # Slaver Rep
+490    art\skilldex\VIRGIN.FRM    # Virgin (Sex for New Reno)
+491    art\skilldex\MADEMAN.FRM   # Made Man Rep
+492    art\skilldex\MADEMAN.FRM   # Made Man Rep
+493    art\skilldex\MADEMAN.FRM   # Made Man Rep
+494    art\skilldex\MADEMAN.FRM   # Made Man Rep
+495    art\skilldex\DIVORCED.FRM  # Divorced/Widowed
+496    art\skilldex\pbear.png     # Pedobear
+497    art\skilldex\EXPER.FRM     # Vault City Guarsman
+
+500    art\skilldex\POISONED.FRM  # Poisoned
+501    art\skilldex\RADIATED.FRM  # Radiated
+502    art\skilldex\EYEDAMAG.FRM  # Eye Damage
+503    art\skilldex\ARMRIGHT.FRM  # Crippled Right Arm
+504    art\skilldex\ARMLEFT.FRM   # Crippled Left Arm
+505    art\skilldex\LEGRIGHT.FRM  # Crippled Right Leg
+506    art\skilldex\LEGLEFT.FRM   # Crippled Left Leg
+
+550    art\skilldex\FASTMETA.FRM  # Fast Metabolism
+551    art\skilldex\BRUISER.FRM   # Bruiser
+552    art\skilldex\SMLFRAME.FRM  # Small Frame
+553    art\skilldex\ONEHAND.FRM   # One Hander
+554    art\skilldex\FINESSE.FRM   # Finesse
+555    art\skilldex\KAMIKAZE.FRM  # Kamikaze
+556    art\skilldex\HEAVYHND.FRM  # Heavy Handed
+557    art\skilldex\FASTSHOT.FRM  # Fast Shot
+558    art\skilldex\BLDMESS.FRM   # Bloody Mess
+559    art\skilldex\JINXED.FRM    # Jinxed
+560    art\skilldex\GOODNATR.FRM  # Good Natured
+561    art\skilldex\ADDICT.FRM    # Drug Addict
+562    art\skilldex\DRUGREST.FRM  # Drug Resistant
+563    art\skilldex\EMPATHY.FRM   # Sexappeal
+564    art\skilldex\SKILLED.FRM   # Skilled
+565    art\skilldex\NIGHTPER.FRM  # Night Person
+566    art\skilldex\GIFTED.FRM    # Gifted
+
+#
+# Character tabs
+#
+
+1000   art\skilldex\PERKS.FRM     # Perks
+1001   art\skilldex\KILLS.FRM     # Kills
+1002   art\skilldex\KARMA.FRM     # Karma
+1003   art\skilldex\TRAITS.FRM    # Traits
+1004   art\skilldex\REP.FRM       # Reputation (Good/Bad)
+1005   art\skilldex\SKILLS.FRM    # Skills/Tag Skills/Skill Points
+1006   art\skilldex\LEVELNXT.FRM  # Next Level
+1007   art\skilldex\ADDICT.FRM    # Drug addiction
+1008   art\skilldex\ALCHOHOL.FRM  # Alcohol addiction
+
+#
+# Whole reputation
+#
+
+2000   art\skilldex\GUARDIAN.FRM  # Savior of the Damned
+2001   art\skilldex\GUARDIAN.FRM  # Guardian Rep
+2002   art\skilldex\SHLDHOPE.FRM  # Shield of Hope Rep
+2003   art\skilldex\DEFENDER.FRM  # Defender Rep
+2004   art\skilldex\WANDERER.FRM  # Wanderer Rep
+2005   art\skilldex\BETRAY.FRM    # Betrayer
+2006   art\skilldex\DESPAIR.FRM   # Despair Rep
+2007   art\skilldex\SCOURGE.FRM   # Scourge Rep
+2008   art\skilldex\DEMON.FRM     # Demon Rep
+
+#
+# Town reputation
+#
+
+2100   art\skilldex\IDOLIZED.FRM  # Idolized Rep
+2101   art\skilldex\LIKED.FRM     # Liked Rep
+2102   art\skilldex\LIKED.FRM     # Accepted
+2103   art\skilldex\NEUTRAL.FRM   # Neutral Rep
+2104   art\skilldex\HATED.FRM     # Antipathy
+2105   art\skilldex\HATED.FRM     # Hated Rep
+2106   art\skilldex\VILLFIED.FRM  # Villified Rep
+
+

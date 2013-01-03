@@ -1,0 +1,226 @@
+// Author: rifleman17
+#include "_macros.fos"
+#include "utils_for_array.fos"
+
+import bool AddAttackPlane( Critter& npc, uint priority, Critter& target ) from "npc_planes";
+import void PlayCloseLockerSound(Item& locker) from "sounds";
+import bool IsStandingOnBlocker(Item& door) from "doors";
+import bool BlockMultihexDoor(Item& door) from "doors";
+
+// ƒверь, котора€ зпкроетс€ через 2 игровые минуты илии через некоторое число реальных секунд , указанное в val3
+void _DoorAutoCloseInit( Item& door, bool firstTime )
+{
+    door.SetEvent( ITEM_EVENT_SKILL, "e_UseAutoCloseDoor" );
+}
+
+bool e_UseAutoCloseDoor( Item& door, Critter& cr, int skill )
+{
+    CreateTimeEvent( __FullSecond + REAL_MINUTE( door.Val3 == 0 ? 2 : door.Val3 ), "e_AutoCloseDoor", door.Id, true );
+    return false;
+}
+
+uint e_AutoCloseDoor( uint[] @ val )
+{
+    Item@ door = GetItem( val[ 0 ] );
+    if( not valid( door ) )
+    {
+        return 0;
+    }
+    if( !FLAG( door.LockerCondition, LOCKER_ISOPEN ) )
+        return 0;
+    uint autoCloseDelay = val.length() > 1 ? val[1] : REAL_MINUTE( 3 );
+    
+    return TryCloseDoor(door, true) ? 0 : autoCloseDelay;
+}
+
+//import bool TryCloseDoor(Item& door, bool playSound) from "item";
+bool TryCloseDoor(Item& door, bool playSound)
+{
+    uint16 x = 0;
+    uint16 y = 0;
+    Map@ map = door.GetMapPosition( x, y );
+    if( not valid( map ) )
+        return true;
+
+    Critter@ cr = map.GetCritter( x, y );
+    if( valid( cr ) )
+        if( cr.IsLife() )
+        {
+            return false;
+        }
+        else
+        {
+            // ѕопытка сдвинуть труп. ≈сли не получитс€, дверь поверх трупа закроетс€
+            cr.TransitToMap( map.Id, x - 1, y, cr.Dir );
+        }
+        
+    if(IsStandingOnBlocker(door))
+		return false;
+
+	
+    if( door.LockerClose() )
+    {
+		BlockMultihexDoor(door);
+		
+		if(playSound)
+			PlayCloseLockerSound(door);
+			
+        return true;
+	}
+
+    return false;
+}
+
+// ƒверь, котора€ не открываетс€ стандартными способами
+void _ClosedDoorInit( Item& door, bool firstTime )
+{
+    door.SetEvent( ITEM_EVENT_SKILL, "_UseDoor" );
+}
+
+bool _UseDoor( Item& door, Critter& cr, int skill )
+{
+    return true;
+}
+
+// ƒверь, при использовании которой открываетс€ диалог
+void _DialogDoorInit( Item& door, bool firstTime )
+{
+    door.SetEvent( ITEM_EVENT_SKILL, "_UseDialogDoor" );
+}
+
+bool _UseDialogDoor( Item& door, Critter& cr, int skill )
+{
+    RunDialog( cr, door.Val3, door.HexX, door.HexY, false );
+    return true;
+}
+
+// √олодиск с номером, присвоенном в Val0
+void _HoloInit( Item& item, bool firstTime )
+{
+    if( item.GetProtoId() != PID_HOLODISK )
+        return;
+    item.HolodiskNumber = item.Val0;
+    item.SetScript( "" );
+    item.Update();
+
+}
+
+// Ќастройка автоматического удалени€ предмета через икс часов
+void SetDeleteItem( Item& item, uint delHours )
+{
+    CreateTimeEvent( __FullSecond + delHours * 60 * 60, "e_DeleteItem", item.Id, true );
+}
+
+uint e_DeleteItem( uint[] @ val )
+{
+    Item@ item = GetItem( val[ 0 ] );
+    if( valid( item ) )
+        DeleteItem( item );
+    return 0;
+}
+
+// ќхран€ема€ дверь или другой предмет
+// в Val0 - пишетс€ врем€ автоматического закрыти€ двери, в реальных минутах, если больше 0, дверь будет автоматически закрыватьс€
+// обратите внимание, игрок может застр€ть за дверью, если пройдет внутрь, а она захлопнетс€
+// в Val1 прописываетс€ номер роли Ќѕ÷ которые будут говорить, должно быть отличным от нол€
+// если скрипт только на одно использование - в Val2 - нужно указать любое значение, это может использоватьс€ дл€ охран€емых предметов, например оружи€
+#define STR_DONTOUCH    ( 540 )
+
+
+void _GuardedItemInit( Item& item, bool firstTime )
+{
+    item.SetEvent( ITEM_EVENT_SKILL, "_GuardedItemSkill" );
+}
+
+bool _GuardedItemSkill( Item& item, Critter& cr, int skill )
+{
+    Map@ map = cr.GetMap();
+    if( !valid( map ) )
+        return false;
+    int  role = item.Val1;
+    bool reset = ( item.Val2 > 0 ? true : false );
+    if( cr.IsPlayer() )
+    {
+        uint guards = map.GetNpcCount( role, FIND_LIFE | FIND_ONLY_NPC );
+        if( guards == 0 )
+        {
+            if( reset )
+            {
+                item.SetEvent( ITEM_EVENT_SKILL, "" );
+                item.SetScript( null );
+            }
+            if( item.GetType() == ITEM_TYPE_DOOR || item.GetType() == ITEM_TYPE_CONTAINER )
+            {
+                if( item.Val0 > 0 )
+                    CreateTimeEvent( __FullSecond + REAL_MINUTE( item.Val0 == 0 ? 2 : item.Val0 ), "e_AutoCloseDoor", item.Id, true );
+            }
+            return false;
+        }
+        Critter@ guard = map.GetNpc( role, FIND_LIFE | FIND_ONLY_NPC, Random( 0, guards - 1 ) );
+        if( valid( guard ) )
+        {
+            GameVar@ counter = GetUnicumVar( UVAR_guarded_item_skill, guard.Id, cr.Id );
+            if( valid( counter ) )
+            {
+                if( counter < 2 )
+                {
+                    NpcPlane@[] planes;
+                    if( guard.GetPlanes( AI_PLANE_ATTACK, planes ) > 0 )
+                    {
+                        for( uint i = 0, l = planes.length(); i < l; i++ )
+                        {
+                            if( planes[ i ].Attack_TargId == cr.Id )
+                            {
+                                if( reset )
+                                {
+                                    item.SetEvent( ITEM_EVENT_SKILL, "" );
+                                    item.SetScript( null );
+                                }
+                                return false;
+                            }
+                        }
+                    }
+                    counter = counter.GetValue() + 1;
+                    guard.SayMsg( SAY_SHOUT, TEXTMSG_TEXT, STR_DONTOUCH, "$pname" + GetPlayerName( cr.Id ) );
+                }
+                else
+                {
+                    counter = 0;
+                    AddAttackPlane( guard, 0, cr );
+                }
+            }
+        }
+        return true;
+    }
+    else
+    {
+        // Ќпц такие двери открыть тоже не смогут
+        return true;
+    }
+}
+
+void unsafe_GroundPickUp(Critter& player, int, int, int, string@, int[]@)
+{
+	Map@ map = player.GetMap();
+	if(!valid(map))
+		return;
+		
+	Item@[] items;
+	map.GetItems(player.HexX, player.HexY, items);
+	
+	if(items.length() < 2)
+		return;
+		
+	int[] protoCounts;
+	uint16[] addedProtos;
+	for (uint i = 0; i < items.length(); i++)
+	{
+		if(Present(items[i].GetProtoId(), addedProtos))
+			continue;
+		protoCounts.insertLast(items[i].GetProtoId());
+		protoCounts.insertLast(items[i].GetCount());
+		addedProtos.insertLast(items[i].GetProtoId());
+	}
+		
+	player.RunClientScript("client_screen_ground_pickup@ShowGroundPickupScreen", 0, 0, 0, null, protoCounts);
+}

@@ -1,0 +1,374 @@
+// Author: cvet
+#include "_macros.fos"
+#include "entire.fos"
+#include "_msgstr.fos"
+
+import void DropDrugEffects( Critter& cr ) from "drugs";
+import void DropPoison( Critter& cr ) from "poison";
+import void DropRadiation( Critter& cr ) from "radiation";
+import void PlayVideo( Critter& cr, string& videoName, bool canStop ) from "media";
+import void FindEncounter( Critter@[]& group, Item@ car, uint x, uint y, uint& encounterDescriptor, bool& waitForAnswer, bool empty ) from "worldmap";
+import void InviteToEncounter( Critter@[]& group, Item@ car, uint encounterDescriptor, int combatMode, uint& mapId, uint16& hexX, uint16& hexY, uint8& dir ) from "worldmap";
+
+const uint16 HellMapPid = 0;
+const        uint16[] ReplicatorsMapPids = { MAP_v112_1 };
+uint         ReplicatorPos = 0;
+
+// Permanent death
+bool IsPermanentDeathInit = false;
+uint[] PermanentDeath;
+
+bool IsPermanentDeath( uint id ) // Export
+{
+    if( not IsPermanentDeathInit )
+    {
+        GetAnyData( "PermanentDeath", PermanentDeath );
+        IsPermanentDeathInit = true;
+    }
+
+    for( uint i = 0, j = PermanentDeath.length(); i < j; i++ )
+        if( PermanentDeath[ i ] == id )
+            return true;
+    return false;
+}
+
+void ClearPermanentDeath() // Export
+{
+    PermanentDeath.resize( 0 );
+    SetAnyData( "PermanentDeath", PermanentDeath );
+}
+
+void AddPermanentDeath( uint id )
+{
+    if( not IsPermanentDeathInit )
+    {
+        GetAnyData( "PermanentDeath", PermanentDeath );
+        IsPermanentDeathInit = true;
+    }
+
+    if( not IsPermanentDeath( id ) )
+    {
+        PermanentDeath.insertLast( id );
+        SetAnyData( "PermanentDeath", PermanentDeath );
+    }
+}
+
+Map@ GetStartReplicatorMap()
+{
+	uint locationId = CreateLocation(LOCATION_Vault112_Start, 100, 100, null);
+	if(locationId == 0)
+		return null;
+		
+	Location@ location = GetLocation(locationId);
+	if(!valid(location))
+		return null;
+	
+	return location.GetMapByIndex(0);
+}
+
+Map@ GetNearReplicatorMap( Critter& cr )
+{
+    Map@ nearMap = null;
+    int  nearDist = 0;
+    for( uint i = 0, j = ReplicatorsMapPids.length(); i < j; i++ )
+    {
+        Map@ map = GetMapByPid( ReplicatorsMapPids[ i ], 0 );
+        if( valid( map ) )
+        {
+            Location@ loc = map.GetLocation();
+            int       dx = int(cr.WorldX) - int(loc.WorldX);
+            int       dy = int(cr.WorldY) - int(loc.WorldY);
+            int       dist = int( sqrt( dx * dx + dy * dy ) );
+
+            if( not valid( nearMap ) || dist < nearDist )
+            {
+                @nearMap = map;
+                nearDist = dist;
+            }
+        }
+    }
+    return nearMap;
+}
+
+void SetStartLocation( Critter& cr ) // Export
+{
+    Map@ replicator = GetStartReplicatorMap();
+    if( not valid( replicator ) )
+        return;
+
+    // Hidden fog on default player position
+    uint zoneX = cr.WorldX / __GlobalMapZoneLength;
+    uint zoneY = cr.WorldY / __GlobalMapZoneLength;
+    cr.SetFog( zoneX, zoneY, FOG_FULL );
+    cr.SetFog( zoneX - 1, zoneY - 1, FOG_FULL );
+    cr.SetFog( zoneX, zoneY - 1, FOG_FULL );
+    cr.SetFog( zoneX + 1, zoneY - 1, FOG_FULL );
+    cr.SetFog( zoneX - 1, zoneY, FOG_FULL );
+    cr.SetFog( zoneX + 1, zoneY, FOG_FULL );
+    cr.SetFog( zoneX - 1, zoneY + 1, FOG_FULL );
+    cr.SetFog( zoneX, zoneY + 1, FOG_FULL );
+    cr.SetFog( zoneX + 1, zoneY + 1, FOG_FULL );
+
+    cr.TransitToMap( replicator.Id, ENTIRE_REPLICATION );
+
+    //~ zoneX = cr.WorldX / __GlobalMapZoneLength;
+    //~ zoneY = cr.WorldY / __GlobalMapZoneLength;
+    //~ cr.SetFog( zoneX, zoneY, FOG_NONE );
+    //~ cr.SetFog( zoneX - 1, zoneY - 1, FOG_HALF );
+    //~ cr.SetFog( zoneX, zoneY - 1, FOG_HALF );
+    //~ cr.SetFog( zoneX + 1, zoneY - 1, FOG_HALF );
+    //~ cr.SetFog( zoneX - 1, zoneY, FOG_HALF );
+    //~ cr.SetFog( zoneX + 1, zoneY, FOG_HALF );
+    //~ cr.SetFog( zoneX - 1, zoneY + 1, FOG_HALF );
+    //~ cr.SetFog( zoneX, zoneY + 1, FOG_HALF );
+    //~ cr.SetFog( zoneX + 1, zoneY + 1, FOG_HALF );
+}
+
+void SetReplicationTime( Critter& cr ) // Export
+{
+    int replTime = cr.Stat[ ST_REPLICATION_TIME ];
+    if( replTime < 0 )
+        return;                            // No respawn
+    if( replTime == 0 )                    // Take default values
+    {
+        if( cr.IsPlayer() )
+            replTime = 3;                  // 3 minutes
+        else
+            replTime = Random( 90, 120 );  // 90-120 minutes
+    }
+    replTime *= REAL_MINUTE( 1 );
+    cr.TimeoutBase[ TO_REPLICATION ] = __FullSecond + replTime;
+}
+
+bool IsHellMap( int mapPid )
+{
+    return mapPid == HellMapPid;
+}
+
+void ReplicateCritter( Critter& cr ) // Export
+{
+    Map@   dieMap = cr.GetMap();
+    Map@   map = null;
+    uint16 hx = 0, hy = 0, mapId = 0;
+
+    // Check car
+    Item@[] cars;
+    cr.GetItemsByType( ITEM_TYPE_CAR, cars );
+    if( cars.length() > 0 )
+    {
+        // Transit to random encounter
+        bool transferred = false;
+        uint encounterDescriptor = uint( -1 );
+        bool waitForAnswer = false;
+        FindEncounter( cr.GetGlobalGroup(), cars[ 0 ], cr.WorldX, cr.WorldY, encounterDescriptor, waitForAnswer, true );
+        if( encounterDescriptor != uint( -1 ) )
+        {
+            uint   mapId = 0;
+            uint16 hexX = 0;
+            uint16 hexY = 0;
+            uint8  dir = 0;
+            InviteToEncounter( cr.GetGlobalGroup(), cars[ 0 ], encounterDescriptor, COMBAT_MODE_ANY, mapId, hexX, hexY, dir );
+            if( mapId != 0 && cr.TransitToMap( mapId, hexX, hexY, dir ) )
+                transferred = true;
+        }
+
+        // Encounter not founded or transfer fail, delete cars
+        if( !transferred )
+        {
+            for( uint i = 0; i < cars.length(); i++ )
+                DeleteItem( cars[ i ] );
+        }
+
+        // Continue dead
+        cr.TimeoutBase[ TO_REPLICATION ] = __FullSecond + REAL_MINUTE( 1 );
+        return;
+    }
+
+    if( cr.IsPlayer() )
+    {
+        bool dieMapIsHell = ( valid( dieMap ) && IsHellMap( dieMap.GetProtoId() ) );
+        bool customReplMap = false;
+        if( cr.Stat[ ST_NEXT_REPLICATION_MAP ] > 0 )
+            customReplMap = true;             // репликация на других картах
+
+        if( not customReplMap && cr.Stat[ ST_REPLICATION_MONEY ] < 0 )
+        {
+            @map = GetMapByPid( HellMapPid, 0 );
+
+            if( not dieMapIsHell )
+            {
+                // Permanent death
+                if( __PermanentDeath > 0 && 100000 > __PermanentDeath )
+                {
+                    AddPermanentDeath( cr.Id );
+                    cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_NET_PERMANENT_DEATH );
+                    cr.Disconnect();
+                }
+            }
+        }
+        else
+        {
+            if( customReplMap )
+            {
+                @map = GetMap( cr.Stat[ ST_NEXT_REPLICATION_MAP ] );
+            }
+            else
+                @map = GetNearReplicatorMap( cr );
+        }
+
+        if( not valid( map ) || not GetEntireFreeHex( map, ( customReplMap ? cr.Stat[ ST_NEXT_REPLICATION_ENTIRE ] : ENTIRE_REPLICATION ), hx, hy ) )
+        {
+            // Continue dead
+            cr.TimeoutBase[ TO_REPLICATION ] = __FullSecond + REAL_MINUTE( 1 );
+            return;
+        }
+
+        if( _CritCanDropItemsOnDead( cr ) )
+        {
+            Map@ dropMap = cr.GetMap();
+            Item@[] items;
+            cr.GetItems( -1, items );
+
+            // Disable drop of hidden items and delete gag items (sandbags)
+            for( uint i = 0, j = items.length(); i < j; i++ )
+            {
+                if( FLAG( items[ i ].Flags, ITEM_GAG ) )
+                {
+                    DeleteItem( items[ i ] );
+                    @items[ i ] = null;
+                }
+                else if( FLAG( items[ i ].Flags, ITEM_HIDDEN ) )
+                {
+                    @items[ i ] = null;
+                }
+            }
+
+            // Drop
+            if( valid( dropMap ) )
+                MoveItems( items, dropMap, cr.HexX, cr.HexY );
+            else
+                DeleteItems( items );
+        }
+        if( !customReplMap )
+        {
+            if( not dieMapIsHell )
+            {
+                cr.StatBase[ ST_REPLICATION_MONEY ] -= cr.Stat[ ST_REPLICATION_COST ];
+                _CritAddItem( cr, PID_FLOWER, 1 );
+                if( cr.Stat[ ST_REPLICATION_MONEY ] >= 100 )
+                    _CritAddItem( cr, PID_RADIO, 1 );                                                // Add radio
+            }
+            cr.StatBase[ ST_REPLICATION_COUNT ]++;
+        }
+        else
+        {
+            // Очистка данных по нестандартной репликации
+            cr.StatBase[ ST_NEXT_REPLICATION_MAP ] = 0;
+            cr.StatBase[ ST_NEXT_REPLICATION_ENTIRE ] = 0;
+        }
+    }
+    else
+    {
+        cr.DropPlanes();
+        cr.ClearEnemyStackNpc();
+        cr.StatBase[ ST_LAST_WEAPON_ID ] = 0;
+        @map = cr.GetMap();
+        if( not valid( map ) )     // On global, delete
+        {
+            DeleteNpc( cr );
+            return;
+        }
+        hx = cr.HexX;
+        hy = cr.HexY;
+
+        if( cr.Stat[ ST_DEAD_BLOCKER_ID ] != 0 )
+        {
+            Item@ block = GetItem( cr.Stat[ ST_DEAD_BLOCKER_ID ] );
+            if( valid( block ) )
+                DeleteItem( block );
+            cr.StatBase[ ST_DEAD_BLOCKER_ID ] = 0;
+        }
+
+        if( not map.IsHexPassed( hx, hy ) )
+        {
+            bool founded = false;
+            for( int x = -1; x <= 1; x++ )
+            {
+                for( int y = -1; y <= 1; y++ )
+                {
+                    if( x == 0 && y == 0 )
+                        continue;                                  // Skip direct position
+
+                    if( __MapHexagonal )
+                    {
+                        if( ( hx % 2 ) == 1 && ( ( x == -1 && y == 1 ) || ( x == 1 && y == 1 ) ) )
+                            continue;
+                        if( ( hx % 2 ) == 0 && ( ( x == -1 && y == -1 ) || ( x == 1 && y == -1 ) ) )
+                            continue;
+                    }
+
+                    if( map.IsHexPassed( hx + x, hy + y ) )
+                    {
+                        hx += x;
+                        hy += y;
+                        founded = true;
+                        break;
+                    }
+                }
+                if( founded )
+                    break;
+            }
+
+            if( not founded )
+            {
+                // Continue dead
+                cr.TimeoutBase[ TO_REPLICATION ] = __FullSecond + REAL_MINUTE( 1 );
+                return;
+            }
+        }
+    }
+
+    cr.TransitToMap( map.Id, hx, hy, Random( 0, 5 ) );
+    cr.DamageBase[ DAMAGE_EYE ] = 0;
+    cr.DamageBase[ DAMAGE_RIGHT_ARM ] = 0;
+    cr.DamageBase[ DAMAGE_LEFT_ARM ] = 0;
+    cr.DamageBase[ DAMAGE_RIGHT_LEG ] = 0;
+    cr.DamageBase[ DAMAGE_LEFT_LEG ] = 0;
+    if( cr.Stat[ ST_NEXT_CRTYPE ] > 0 )
+    {
+        cr.ChangeCrType( cr.Stat[ ST_NEXT_CRTYPE ] );
+        cr.StatBase[ ST_BASE_CRTYPE ] = cr.Stat[ ST_NEXT_CRTYPE ];
+        cr.StatBase[ ST_NEXT_CRTYPE ] = 0;
+    }
+    cr.ToLife();
+    cr.StatBase[ ST_CURRENT_HP ] = cr.Stat[ ST_MAX_LIFE ];
+    cr.StatBase[ ST_CURRENT_AP ] = cr.Stat[ ST_ACTION_POINTS ] * 100;
+    DropPoison( cr );
+    DropRadiation( cr );
+    if( cr.IsNpc() || map.GetProtoId() != HellMapPid )
+        DropDrugEffects( cr );                                              // Note: This function clear effects of all active drugs/radiation/poison!
+    cr.DropTimers();
+    for( uint i = TIMEOUT_BEGIN; i <= TIMEOUT_END; i++ )
+        if( i != TO_KARMA_VOTING )
+            cr.TimeoutBase[ i ] = 0;
+}
+
+//
+// Turret
+//
+void _TurretInit( Critter& turret, bool firstTime )
+{
+    turret.StatBase[ ST_PERCEPTION ] = 10;
+    turret.SkillBase[ SK_BIG_GUNS ] = 300;
+    turret.SkillBase[ SK_ENERGY_WEAPONS ] = 300;
+    turret.ModeBase[ MODE_NO_ENEMY_STACK ] = 1;
+    turret.ModeBase[ MODE_UNLIMITED_AMMO ] = 1;
+}
+
+//
+// Hubologist
+//
+void _HubologistInit( Critter& hubologist, bool firstTime )
+{
+    hubologist.ModeBase[ MODE_NO_ENEMY_STACK ] = 1;
+}

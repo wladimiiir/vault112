@@ -1,0 +1,84 @@
+void _Idle(Critter& critter)
+{
+	actionManager.Idle(critter);
+}
+
+void _Finish(Critter& critter, bool deleted)
+{
+	actionManager.Finish(critter, deleted);
+}
+
+int _PlaneBegin(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem)
+{
+	return actionManager.PlaneBegin(critter, plane, reason, someCr, someItem);
+}
+
+int _PlaneRun(Critter& critter, NpcPlane& plane, int reason, uint& result0, uint& result1, uint& result2)
+{
+	return actionManager.PlaneRun(critter, plane, reason, result0, result1, result2);
+}
+ 
+int _PlaneEnd(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem)
+{
+	return actionManager.PlaneEnd(critter, plane, reason, someCr, someItem);
+}
+
+void _SeeSomeoneAttack(Critter& critter, Critter& attacker, Critter& attacked)
+{
+	actionManager.SeeSomeoneAttack(critter, attacker, attacked);
+}
+
+void _SeeSomeoneDead(Critter& critter, Critter& killed, Critter@ killer)
+{
+	actionManager.SeeSomeoneDead(critter, killed, killer);
+}
+
+void _SeeSomeoneAttacked(Critter& critter, Critter& attacked, Critter& attacker)
+{
+	actionManager.SeeSomeoneAttacked(critter, attacked, attacker);
+}
+
+void _SeeSomeoneStealing(Critter& critter, Critter& victim, Critter& thief, bool success, Item& item, uint count)
+{
+	actionManager.SeeSomeoneStealing(critter, victim, thief, success, item, count);
+}
+
+void _ShowCritter(Critter& critter, Critter& showCritter)
+{
+	actionManager.ShowCritter(critter, showCritter);
+}
+
+void _HideCritter(Critter& critter, Critter& hideCritter)
+{
+	actionManager.HideCritter(critter, hideCritter);
+}
+
+bool _Attack(Critter& critter, Critter& target)
+{
+	return actionManager.Attack(critter, target);
+}
+
+bool _Attacked(Critter& critter, Critter& attacker)
+{
+	return actionManager.Attacked(critter, attacker);
+}
+
+void _Dead(Critter& critter, Critter@ killer)
+{
+	actionManager.Dead(critter, killer);
+}
+
+void _Message(Critter& critter, Critter& messenger, int message, int value)
+{
+	actionManager.Message(critter, messenger, message, value);
+}
+
+void _Respawn(Critter& critter)
+{
+	actionManager.Respawn(critter);
+}
+
+void _SeeSomeoneUseSkill(Critter& critter, Critter& skillCritter, int skill, Critter@ onCritter, Item@ onItem, Scenery@ onScenery)
+{
+	actionManager.SeeSomeoneUseSkill(critter, skillCritter, skill, onCritter, onItem, onScenery);
+}

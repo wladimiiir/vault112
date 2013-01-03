@@ -1,0 +1,1616 @@
+Image    Default.png
+YAdvance 1
+
+Letter 19 # ''
+  PositionX 39
+  PositionY 1
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 20 # ''
+  PositionX 48
+  PositionY 1
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 21 # ''
+  PositionX 57
+  PositionY 1
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 24 # ''
+  PositionX 70
+  PositionY 1
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 25 # ''
+  PositionX 78
+  PositionY 1
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 32 # ' '
+  PositionX 98
+  PositionY 1
+  Width     4
+  OffsetY   -9
+  XAdvance  4
+
+Letter 33 # '!'
+  PositionX 104
+  PositionY 1
+  Width     2
+  Height    9
+  XAdvance  3
+
+Letter 34 # '"'
+  PositionX 108
+  PositionY 1
+  Width     5
+  Height    9
+  XAdvance  6
+
+Letter 35 # '#'
+  PositionX 115
+  PositionY 1
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 36 # '$'
+  PositionX 124
+  PositionY 1
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 37 # '%'
+  PositionX 132
+  PositionY 1
+  Width     7
+  Height    8
+  OffsetY   -1
+  XAdvance  8
+
+Letter 38 # '&'
+  PositionX 141
+  PositionY 1
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 39 # '''
+  PositionX 150
+  PositionY 1
+  Width     2
+  Height    9
+  XAdvance  3
+
+Letter 40 # '('
+  PositionX 154
+  PositionY 1
+  Width     4
+  Height    9
+  XAdvance  5
+
+Letter 41 # ')'
+  PositionX 160
+  PositionY 1
+  Width     4
+  Height    9
+  XAdvance  5
+
+Letter 42 # '*'
+  PositionX 166
+  PositionY 1
+  Width     7
+  Height    8
+  OffsetY   -1
+  XAdvance  8
+
+Letter 43 # '+'
+  PositionX 175
+  PositionY 1
+  Width     6
+  Height    8
+  OffsetY   -1
+  XAdvance  7
+
+Letter 44 # ','
+  PositionX 183
+  PositionY 1
+  Width     3
+  Height    4
+  OffsetY   -5
+  XAdvance  4
+
+Letter 45 # '-'
+  PositionX 188
+  PositionY 1
+  Width     6
+  Height    6
+  OffsetY   -3
+  XAdvance  7
+
+Letter 46 # '.'
+  PositionX 196
+  PositionY 1
+  Width     2
+  Height    4
+  OffsetY   -5
+  XAdvance  3
+
+Letter 47 # '/'
+  PositionX 200
+  PositionY 1
+  Width     7
+  Height    8
+  OffsetY   -1
+  XAdvance  8
+
+Letter 48 # '0'
+  PositionX 209
+  PositionY 1
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 49 # '1'
+  PositionX 217
+  PositionY 1
+  Width     4
+  Height    9
+  XAdvance  5
+
+Letter 50 # '2'
+  PositionX 223
+  PositionY 1
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 51 # '3'
+  PositionX 231
+  PositionY 1
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 52 # '4'
+  PositionX 239
+  PositionY 1
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 53 # '5'
+  PositionX 247
+  PositionY 1
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 54 # '6'
+  PositionX 1
+  PositionY 12
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 55 # '7'
+  PositionX 9
+  PositionY 12
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 56 # '8'
+  PositionX 17
+  PositionY 12
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 57 # '9'
+  PositionX 25
+  PositionY 12
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 58 # ':'
+  PositionX 33
+  PositionY 12
+  Width     2
+  Height    8
+  OffsetY   -1
+  XAdvance  3
+
+Letter 59 # ';'
+  PositionX 37
+  PositionY 12
+  Width     3
+  Height    8
+  OffsetY   -1
+  XAdvance  4
+
+Letter 60 # '<'
+  PositionX 42
+  PositionY 12
+  Width     5
+  Height    9
+  XAdvance  6
+
+Letter 61 # '='
+  PositionX 49
+  PositionY 12
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 62 # '>'
+  PositionX 57
+  PositionY 12
+  Width     5
+  Height    9
+  XAdvance  6
+
+Letter 63 # '?'
+  PositionX 64
+  PositionY 12
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 64 # '@'
+  PositionX 72
+  PositionY 12
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 65 # 'A'
+  PositionX 81
+  PositionY 12
+  Width     8
+  Height    9
+  XAdvance  9
+
+Letter 66 # 'B'
+  PositionX 91
+  PositionY 12
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 67 # 'C'
+  PositionX 100
+  PositionY 12
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 68 # 'D'
+  PositionX 10
+  PositionY 88
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 69 # 'E'
+  PositionX 117
+  PositionY 12
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 70 # 'F'
+  PositionX 125
+  PositionY 12
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 71 # 'G'
+  PositionX 133
+  PositionY 12
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 72 # 'H'
+  PositionX 142
+  PositionY 12
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 73 # 'I'
+  PositionX 24
+  PositionY 88
+  Width     4
+  Height    9
+  XAdvance  5
+
+Letter 74 # 'J'
+  PositionX 155
+  PositionY 12
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 75 # 'K'
+  PositionX 164
+  PositionY 12
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 76 # 'L'
+  PositionX 173
+  PositionY 12
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 77 # 'M'
+  PositionX 181
+  PositionY 12
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 78 # 'N'
+  PositionX 190
+  PositionY 12
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 79 # 'O'
+  PositionX 199
+  PositionY 12
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 80 # 'P'
+  PositionX 208
+  PositionY 12
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 81 # 'Q'
+  PositionX 217
+  PositionY 12
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 82 # 'R'
+  PositionX 226
+  PositionY 12
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 83 # 'S'
+  PositionX 235
+  PositionY 12
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 84 # 'T'
+  PositionX 244
+  PositionY 12
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 85 # 'U'
+  PositionX 1
+  PositionY 23
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 86 # 'V'
+  PositionX 10
+  PositionY 23
+  Width     8
+  Height    9
+  XAdvance  9
+
+Letter 87 # 'W'
+  PositionX 20
+  PositionY 23
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 88 # 'X'
+  PositionX 29
+  PositionY 23
+  Width     8
+  Height    9
+  XAdvance  9
+
+Letter 89 # 'Y'
+  PositionX 39
+  PositionY 23
+  Width     8
+  Height    9
+  XAdvance  9
+
+Letter 90 # 'Z'
+  PositionX 49
+  PositionY 23
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 91 # '['
+  PositionX 58
+  PositionY 23
+  Width     4
+  Height    9
+  XAdvance  5
+
+Letter 92 # '\'
+  PositionX 64
+  PositionY 23
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 93 # ']'
+  PositionX 73
+  PositionY 23
+  Width     4
+  Height    9
+  XAdvance  5
+
+Letter 94 # '^'
+  PositionX 79
+  PositionY 23
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 95 # '_'
+  PositionX 88
+  PositionY 23
+  Width     7
+  Height    3
+  OffsetY   -6
+  XAdvance  8
+
+Letter 96 # '`'
+  PositionX 97
+  PositionY 23
+  Width     3
+  Height    9
+  XAdvance  4
+
+Letter 97 # 'a'
+  PositionX 2
+  PositionY 88
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 98 # 'b'
+  PositionX 110
+  PositionY 23
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 99 # 'c'
+  PositionX 118
+  PositionY 23
+  Width     5
+  Height    7
+  OffsetY   -2
+  XAdvance  6
+
+Letter 100 # 'd'
+  PositionX 125
+  PositionY 23
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 101 # 'e'
+  PositionX 133
+  PositionY 23
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 102 # 'f'
+  PositionX 141
+  PositionY 23
+  Width     5
+  Height    9
+  XAdvance  6
+
+Letter 103 # 'g'
+  PositionX 148
+  PositionY 23
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 104 # 'h'
+  PositionX 156
+  PositionY 23
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 105 # 'i'
+  PositionX 30
+  PositionY 88
+  Width     2
+  Height    7
+  XAdvance  3
+
+Letter 106 # 'j'
+  PositionX 34
+  PositionY 88
+  Width     5
+  Height    9
+  XAdvance  6
+
+Letter 107 # 'k'
+  PositionX 175
+  PositionY 23
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 108 # 'l'
+  PositionX 19
+  PositionY 88
+  Width     3
+  Height    9
+  XAdvance  4
+
+Letter 109 # 'm'
+  PositionX 187
+  PositionY 23
+  Width     7
+  Height    7
+  OffsetY   -2
+  XAdvance  8
+
+Letter 110 # 'n'
+  PositionX 196
+  PositionY 23
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 111 # 'o'
+  PositionX 204
+  PositionY 23
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 112 # 'p'
+  PositionX 212
+  PositionY 23
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 113 # 'q'
+  PositionX 220
+  PositionY 23
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 114 # 'r'
+  PositionX 228
+  PositionY 23
+  Width     5
+  Height    7
+  OffsetY   -2
+  XAdvance  6
+
+Letter 115 # 's'
+  PositionX 235
+  PositionY 23
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 116 # 't'
+  PositionX 243
+  PositionY 23
+  Width     6
+  Height    8
+  OffsetY   -1
+  XAdvance  7
+
+Letter 117 # 'u'
+  PositionX 1
+  PositionY 34
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 118 # 'v'
+  PositionX 9
+  PositionY 34
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 119 # 'w'
+  PositionX 17
+  PositionY 34
+  Width     7
+  Height    7
+  OffsetY   -2
+  XAdvance  8
+
+Letter 120 # 'x'
+  PositionX 26
+  PositionY 34
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 121 # 'y'
+  PositionX 34
+  PositionY 34
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 122 # 'z'
+  PositionX 42
+  PositionY 34
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 123 # '{'
+  PositionX 50
+  PositionY 34
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 124 # '|'
+  PositionX 58
+  PositionY 34
+  Width     2
+  Height    9
+  XAdvance  3
+
+Letter 125 # '}'
+  PositionX 62
+  PositionY 34
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 126 # '~'
+  PositionX 70
+  PositionY 34
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 130 # '‚'
+  PositionX 85
+  PositionY 34
+  Width     3
+  Height    4
+  OffsetY   -5
+  XAdvance  4
+
+Letter 131 # 'ƒ'
+  PositionX 90
+  PositionY 34
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 132 # '„'
+  PositionX 98
+  PositionY 34
+  Width     7
+  Height    4
+  OffsetY   -5
+  XAdvance  8
+
+Letter 133 # '…'
+  PositionX 107
+  PositionY 34
+  Width     8
+  Height    4
+  OffsetY   -5
+  XAdvance  9
+
+Letter 134 # '†'
+  PositionX 117
+  PositionY 34
+  Width     5
+  Height    9
+  XAdvance  6
+
+Letter 135 # '‡'
+  PositionX 124
+  PositionY 34
+  Width     5
+  Height    9
+  XAdvance  6
+
+Letter 136 # 'ˆ'
+  PositionX 131
+  PositionY 34
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 137 # '‰'
+  PositionX 140
+  PositionY 34
+  Width     10
+  Height    8
+  OffsetY   -1
+  XAdvance  11
+
+Letter 138 # 'Š'
+  PositionX 152
+  PositionY 34
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 139 # '‹'
+  PositionX 160
+  PositionY 34
+  Width     5
+  Height    8
+  OffsetY   -1
+  XAdvance  6
+
+Letter 140 # 'Œ'
+  PositionX 167
+  PositionY 34
+  Width     8
+  Height    9
+  XAdvance  9
+
+Letter 145 # '‘'
+  PositionX 185
+  PositionY 34
+  Width     3
+  Height    9
+  XAdvance  4
+
+Letter 146 # '’'
+  PositionX 190
+  PositionY 34
+  Width     3
+  Height    9
+  XAdvance  4
+
+Letter 147 # '“'
+  PositionX 195
+  PositionY 34
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 148 # '”'
+  PositionX 204
+  PositionY 34
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 149 # '•'
+  PositionX 213
+  PositionY 34
+  Width     5
+  Height    8
+  OffsetY   -1
+  XAdvance  6
+
+Letter 150 # '–'
+  PositionX 220
+  PositionY 34
+  Width     5
+  Height    6
+  OffsetY   -3
+  XAdvance  6
+
+Letter 151 # '—'
+  PositionX 227
+  PositionY 34
+  Width     8
+  Height    6
+  OffsetY   -3
+  XAdvance  9
+
+Letter 152 # '˜'
+  PositionX 237
+  PositionY 34
+  Width     7
+  Height    6
+  OffsetY   -3
+  XAdvance  8
+
+Letter 153 # '™'
+  PositionX 1
+  PositionY 45
+  Width     9
+  Height    9
+  XAdvance  10
+
+Letter 154 # 'š'
+  PositionX 12
+  PositionY 45
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 155 # '›'
+  PositionX 20
+  PositionY 45
+  Width     5
+  Height    8
+  OffsetY   -1
+  XAdvance  6
+
+Letter 156 # 'œ'
+  PositionX 27
+  PositionY 45
+  Width     10
+  Height    7
+  OffsetY   -2
+  XAdvance  11
+
+Letter 159 # 'Ÿ'
+  PositionX 43
+  PositionY 45
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 161 # '¡'
+  PositionX 53
+  PositionY 45
+  Width     2
+  Height    9
+  XAdvance  3
+
+Letter 162 # '¢'
+  PositionX 57
+  PositionY 45
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 163 # '£'
+  PositionX 66
+  PositionY 45
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 164 # '¤'
+  PositionX 75
+  PositionY 45
+  Width     8
+  Height    8
+  OffsetY   -1
+  XAdvance  9
+
+Letter 165 # '¥'
+  PositionX 85
+  PositionY 45
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 166 # '¦'
+  PositionX 93
+  PositionY 45
+  Width     1
+  Height    9
+  XAdvance  2
+
+Letter 167 # '§'
+  PositionX 96
+  PositionY 45
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 168 # '¨'
+  PositionX 105
+  PositionY 45
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 169 # '©'
+  PositionX 113
+  PositionY 45
+  Width     9
+  Height    9
+  XAdvance  10
+
+Letter 170 # 'ª'
+  PositionX 124
+  PositionY 45
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 171 # '«'
+  PositionX 132
+  PositionY 45
+  Width     6
+  Height    8
+  OffsetY   -1
+  XAdvance  7
+
+Letter 172 # '¬'
+  PositionX 140
+  PositionY 45
+  Width     7
+  Height    6
+  OffsetY   -3
+  XAdvance  8
+
+Letter 173 # '­'
+  PositionX 149
+  PositionY 45
+  Width     5
+  Height    6
+  OffsetY   -3
+  XAdvance  6
+
+Letter 174 # '®'
+  PositionX 156
+  PositionY 45
+  Width     9
+  Height    9
+  XAdvance  10
+
+Letter 175 # '¯'
+  PositionX 167
+  PositionY 45
+  Width     8
+  Height    9
+  XAdvance  9
+
+Letter 176 # '°'
+  PositionX 177
+  PositionY 45
+  Width     5
+  Height    7
+  OffsetY   -2
+  XAdvance  6
+
+Letter 177 # '±'
+  PositionX 184
+  PositionY 45
+  Width     6
+  Height    8
+  OffsetY   -1
+  XAdvance  7
+
+Letter 178 # '²'
+  PositionX 192
+  PositionY 45
+  Width     4
+  Height    9
+  XAdvance  5
+
+Letter 179 # '³'
+  PositionX 198
+  PositionY 45
+  Width     3
+  Height    9
+  XAdvance  4
+
+Letter 180 # '´'
+  PositionX 203
+  PositionY 45
+  Width     4
+  Height    9
+  XAdvance  5
+
+Letter 181 # 'µ'
+  PositionX 209
+  PositionY 45
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 182 # '¶'
+  PositionX 217
+  PositionY 45
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 183 # '·'
+  PositionX 225
+  PositionY 45
+  Width     2
+  Height    6
+  OffsetY   -3
+  XAdvance  3
+
+Letter 184 # '¸'
+  PositionX 229
+  PositionY 45
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 185 # '¹'
+  PositionX 237
+  PositionY 45
+  Width     10
+  Height    9
+  XAdvance  11
+
+Letter 186 # 'º'
+  PositionX 249
+  PositionY 45
+  Width     4
+  Height    9
+  XAdvance  5
+
+Letter 187 # '»'
+  PositionX 1
+  PositionY 56
+  Width     7
+  Height    8
+  OffsetY   -1
+  XAdvance  8
+
+Letter 188 # '¼'
+  PositionX 10
+  PositionY 56
+  Width     8
+  Height    9
+  XAdvance  9
+
+Letter 189 # '½'
+  PositionX 20
+  PositionY 56
+  Width     9
+  Height    9
+  XAdvance  10
+
+Letter 190 # '¾'
+  PositionX 31
+  PositionY 56
+  Width     9
+  Height    9
+  XAdvance  10
+
+Letter 191 # '¿'
+  PositionX 42
+  PositionY 56
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 192 # 'À'
+  PositionX 50
+  PositionY 56
+  Width     8
+  Height    9
+  XAdvance  9
+
+Letter 193 # 'Á'
+  PositionX 60
+  PositionY 56
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 194 # 'Â'
+  PositionX 69
+  PositionY 56
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 195 # 'Ã'
+  PositionX 78
+  PositionY 56
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 196 # 'Ä'
+  PositionX 86
+  PositionY 56
+  Width     9
+  Height    9
+  XAdvance  10
+
+Letter 197 # 'Å'
+  PositionX 97
+  PositionY 56
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 198 # 'Æ'
+  PositionX 105
+  PositionY 56
+  Width     12
+  Height    9
+  XAdvance  13
+
+Letter 199 # 'Ç'
+  PositionX 119
+  PositionY 56
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 200 # 'È'
+  PositionX 127
+  PositionY 56
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 201 # 'É'
+  PositionX 136
+  PositionY 56
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 202 # 'Ê'
+  PositionX 145
+  PositionY 56
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 203 # 'Ë'
+  PositionX 154
+  PositionY 56
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 204 # 'Ì'
+  PositionX 163
+  PositionY 56
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 205 # 'Í'
+  PositionX 172
+  PositionY 56
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 206 # 'Î'
+  PositionX 181
+  PositionY 56
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 207 # 'Ï'
+  PositionX 190
+  PositionY 56
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 208 # 'Ð'
+  PositionX 199
+  PositionY 56
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 209 # 'Ñ'
+  PositionX 208
+  PositionY 56
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 210 # 'Ò'
+  PositionX 216
+  PositionY 56
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 211 # 'Ó'
+  PositionX 224
+  PositionY 56
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 212 # 'Ô'
+  PositionX 233
+  PositionY 56
+  Width     10
+  Height    9
+  XAdvance  11
+
+Letter 213 # 'Õ'
+  PositionX 245
+  PositionY 56
+  Width     8
+  Height    9
+  XAdvance  9
+
+Letter 214 # 'Ö'
+  PositionX 1
+  PositionY 67
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 215 # '×'
+  PositionX 10
+  PositionY 67
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 216 # 'Ø'
+  PositionX 19
+  PositionY 67
+  Width     8
+  Height    9
+  XAdvance  9
+
+Letter 217 # 'Ù'
+  PositionX 29
+  PositionY 67
+  Width     9
+  Height    9
+  XAdvance  10
+
+Letter 218 # 'Ú'
+  PositionX 40
+  PositionY 67
+  Width     9
+  Height    9
+  XAdvance  10
+
+Letter 219 # 'Û'
+  PositionX 51
+  PositionY 67
+  Width     10
+  Height    9
+  XAdvance  11
+
+Letter 220 # 'Ü'
+  PositionX 63
+  PositionY 67
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 221 # 'Ý'
+  PositionX 72
+  PositionY 67
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 222 # 'Þ'
+  PositionX 80
+  PositionY 67
+  Width     10
+  Height    9
+  XAdvance  11
+
+Letter 223 # 'ß'
+  PositionX 92
+  PositionY 67
+  Width     7
+  Height    9
+  XAdvance  8
+
+Letter 224 # 'à'
+  PositionX 2
+  PositionY 88
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 225 # 'á'
+  PositionX 109
+  PositionY 67
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 226 # 'â'
+  PositionX 117
+  PositionY 67
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 227 # 'ã'
+  PositionX 125
+  PositionY 67
+  Width     5
+  Height    7
+  OffsetY   -2
+  XAdvance  6
+
+Letter 228 # 'ä'
+  PositionX 132
+  PositionY 67
+  Width     8
+  Height    7
+  OffsetY   -2
+  XAdvance  9
+
+Letter 229 # 'å'
+  PositionX 142
+  PositionY 67
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 230 # 'æ'
+  PositionX 150
+  PositionY 67
+  Width     10
+  Height    7
+  OffsetY   -2
+  XAdvance  11
+
+Letter 231 # 'ç'
+  PositionX 162
+  PositionY 67
+  Width     5
+  Height    7
+  OffsetY   -2
+  XAdvance  6
+
+Letter 232 # 'è'
+  PositionX 169
+  PositionY 67
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 233 # 'é'
+  PositionX 177
+  PositionY 67
+  Width     6
+  Height    9
+  XAdvance  7
+
+Letter 234 # 'ê'
+  PositionX 185
+  PositionY 67
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 235 # 'ë'
+  PositionX 193
+  PositionY 67
+  Width     7
+  Height    7
+  OffsetY   -2
+  XAdvance  8
+
+Letter 236 # 'ì'
+  PositionX 202
+  PositionY 67
+  Width     7
+  Height    7
+  OffsetY   -2
+  XAdvance  8
+
+Letter 237 # 'í'
+  PositionX 211
+  PositionY 67
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 238 # 'î'
+  PositionX 219
+  PositionY 67
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 239 # 'ï'
+  PositionX 227
+  PositionY 67
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 240 # 'ð'
+  PositionX 235
+  PositionY 67
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 241 # 'ñ'
+  PositionX 243
+  PositionY 67
+  Width     5
+  Height    7
+  OffsetY   -2
+  XAdvance  6
+
+Letter 242 # 'ò'
+  PositionX 1
+  PositionY 78
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 243 # 'ó'
+  PositionX 9
+  PositionY 78
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 244 # 'ô'
+  PositionX 17
+  PositionY 78
+  Width     10
+  Height    7
+  OffsetY   -2
+  XAdvance  11
+
+Letter 245 # 'õ'
+  PositionX 29
+  PositionY 78
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 246 # 'ö'
+  PositionX 37
+  PositionY 78
+  Width     7
+  Height    7
+  OffsetY   -2
+  XAdvance  8
+
+Letter 247 # '÷'
+  PositionX 46
+  PositionY 78
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 248 # 'ø'
+  PositionX 54
+  PositionY 78
+  Width     10
+  Height    7
+  OffsetY   -2
+  XAdvance  11
+
+Letter 249 # 'ù'
+  PositionX 66
+  PositionY 78
+  Width     11
+  Height    7
+  OffsetY   -2
+  XAdvance  12
+
+Letter 250 # 'ú'
+  PositionX 79
+  PositionY 78
+  Width     8
+  Height    7
+  OffsetY   -2
+  XAdvance  9
+
+Letter 251 # 'û'
+  PositionX 89
+  PositionY 78
+  Width     9
+  Height    7
+  OffsetY   -2
+  XAdvance  10
+
+Letter 252 # 'ü'
+  PositionX 100
+  PositionY 78
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+
+Letter 253 # 'ý'
+  PositionX 108
+  PositionY 78
+  Width     5
+  Height    7
+  OffsetY   -2
+  XAdvance  6
+
+Letter 254 # 'þ'
+  PositionX 115
+  PositionY 78
+  Width     9
+  Height    7
+  OffsetY   -2
+  XAdvance  10
+
+Letter 255 # 'ÿ'
+  PositionX 126
+  PositionY 78
+  Width     6
+  Height    7
+  OffsetY   -2
+  XAdvance  7
+

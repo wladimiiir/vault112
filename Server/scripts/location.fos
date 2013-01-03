@@ -1,0 +1,72 @@
+
+#ifndef _LOCATIONZ_
+#define _LOCATIONZ_
+// Author: rifleman17
+// Различные вспомогательные скрипты при работе с локациями.
+#include "_macros.fos"
+
+// *****************************************************
+//  Локация, которая автоматически удаляется через определенное время.
+// *****************************************************
+
+// Установка даты удаления локации в переменную. Внимание, одной установки переменной недостаточно для удаления локации.
+// Для одной из карт локации необходимо также вызватьпри инициализации скрипт _DeletableMapInit.
+// Location - локация, для которой назначается переменная
+// time - игровое время в секундах,
+void SetLocationDeleteTime( Location& loc, uint time )
+{
+    GameVar@ locDelete = GetLocalVar( LLVAR_loc_delete_time, loc.Id );
+    if( valid( locDelete ) )
+        locDelete = __FullSecond + time;
+}
+
+// Скрипт для карты, которая должна быть удалена в время, указанное в локальной переменной для локации LLVAR_loc_delete_time
+// по событию MAP_EVENT_LOOP_1 проверяется, что время удаления не наступило, если это произошло, у локации снимается флаг AutoGarbage.
+void _DeletableMapInit( Map& map, bool firstTime )
+{
+    Location@ loc = map.GetLocation();
+    if( !valid( loc ) )
+        return;
+    GameVar@ locDelete = GetLocalVar( LLVAR_loc_delete_time, loc.Id );
+    if( !valid( locDelete ) || locDelete == 0 )
+        return;
+    map.SetEvent( MAP_EVENT_LOOP_1, "_DeletableMapLoop1" );
+}
+
+void _DeletableMapLoop1( Map& map )
+{
+    Location@ loc = map.GetLocation();
+    if( !valid( loc ) )
+        return;
+    GameVar@ locDelete = GetLocalVar( LLVAR_loc_delete_time, loc.Id );
+    if( !valid( locDelete ) || locDelete > __FullSecond )
+        return;
+    // Время жизни локации истекло, локацию нужно удалять
+    loc.AutoGarbage = true;
+}
+
+// Создание видимой для игрока локации и запоминание ее Id  в переменную, если номер переменной > 0.
+// player - персонаж, для которого будет сохранена локация
+// locPid - код прототипа локации
+// worldX, worldY - координаты локации на глобальной карте
+// delta - максимальное смещение локации относительно указанных координат
+// varNum - номер переменной игрока в которую сохраняется код Id локации
+Location@ CreateLocationForCritter( Critter& player, int locPid, int worldX, int worldY, int delta, int varNum )
+{
+    uint locId = CreateLocation( locPid, worldX + Random( -1 * delta, delta ), worldY + Random( -1 * delta, delta ), null );
+    if( locId == 0 )
+        return null;
+    Location@ loc = GetLocation( locId );
+    if( !valid( loc ) )
+        return null;
+    loc.AutoGarbage = false;
+    player.SetKnownLoc( true, loc.Id );
+    if( varNum > 0 )
+    {
+        GameVar@ var = GetLocalVar( varNum, player.Id );
+        if( valid( var ) )
+            var = loc.Id;
+    }
+    return loc;
+}
+#endif

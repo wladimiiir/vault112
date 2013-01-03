@@ -1,0 +1,1045 @@
+#ifndef __CRITTER_ACTION__
+#define __CRITTER_ACTION__
+
+#include "_macros.fos"
+#include "critter_action_events.fos"
+#include "utils_for_array.fos"
+
+ActionManager actionManager;
+class ActionManager
+{
+	#define _SetRunningAction		# (critter, action)	runningActions.set("" + critter.Id, action)
+	#define _GetRunningAction		# (critter, action)	runningActions.get("" + critter.Id, @action)
+	#define _RemoveRunningAction	# (critter)			runningActions.delete("" + critter.Id)
+	#define _SetQueuedAction		# (critter, action)	queuedActions.set("" + critter.Id, action)
+	#define _GetQueuedAction		# (critter, action)	queuedActions.get("" + critter.Id, @action)
+	#define _RemoveQueuedAction		# (critter)			queuedActions.delete("" + critter.Id)
+	
+	dictionary runningActions;
+	dictionary queuedActions;
+	
+	void Start(Critter& critter, Action& action)
+	{
+		InitCritterEvents(critter);
+		_SetQueuedAction(critter, @action);
+	}
+	
+	void StartImmediately(Critter& critter, Action& action)
+	{
+		InitCritterEvents(critter);
+		_SetRunningAction(critter, @action);
+		action.Start(critter);
+	}
+	
+	private void InitCritterEvents(Critter& critter)
+	{
+		critter.SetEvent(CRITTER_EVENT_ATTACK, "_Attack");
+		critter.SetEvent(CRITTER_EVENT_ATTACKED, "_Attacked");
+		critter.SetEvent(CRITTER_EVENT_DEAD, "_Dead");
+		critter.SetEvent(CRITTER_EVENT_FINISH, "_Finish");
+		critter.SetEvent(CRITTER_EVENT_SHOW_CRITTER, "_ShowCritter");
+		critter.SetEvent(CRITTER_EVENT_HIDE_CRITTER, "_HideCritter");
+		critter.SetEvent(CRITTER_EVENT_IDLE, "_Idle");
+		critter.SetEvent(CRITTER_EVENT_MESSAGE, "_Message");
+		critter.SetEvent(CRITTER_EVENT_RESPAWN, "_Respawn");
+		critter.SetEvent(CRITTER_EVENT_SMTH_ATTACK, "_SeeSomeoneAttack");
+		critter.SetEvent(CRITTER_EVENT_SMTH_ATTACKED, "_SeeSomeoneAttacked");
+		critter.SetEvent(CRITTER_EVENT_SMTH_DEAD, "_SeeSomeoneDead");
+		//critter.SetEvent(CRITTER_EVENT_SMTH_DROP_ITEM, "_SeeSomeoneDropItem");
+		//critter.SetEvent(CRITTER_EVENT_SMTH_MOVE_ITEM, "_SeeSomeoneMoveItem");
+		critter.SetEvent(CRITTER_EVENT_SMTH_STEALING, "_SeeSomeoneStealing");
+		//critter.SetEvent(CRITTER_EVENT_SMTH_USE_ITEM, "_SeeSomeoneUseItem");
+		critter.SetEvent(CRITTER_EVENT_SMTH_USE_SKILL, "_SeeSomeoneUseSkill");
+		critter.SetEvent(CRITTER_EVENT_PLANE_BEGIN, "_PlaneBegin");
+		critter.SetEvent(CRITTER_EVENT_PLANE_RUN, "_PlaneRun");
+		critter.SetEvent(CRITTER_EVENT_PLANE_END, "_PlaneEnd");
+		
+	}
+	
+	Action@[] GetListeningActions(Critter& critter)
+	{
+		Action@[] listeningActions;
+		Action@ action;
+		//uint time = GetTick();
+		_GetRunningAction(critter, action);
+		//time = GetTick() - time;
+		//if(time > 1)
+			//Log("Getting running action took "+time +" ms.");
+		
+		Info("Collecting listening actions for critter: "+critter.Id);
+		if(valid(action))
+		{
+			//time = GetTick();
+			action.CollectListeningActions(listeningActions);
+			//time = GetTick() - time;
+			//if(time > 1)
+				//Log("Getting "+listeningActions.length()+" listening actions took "+time +" ms.");
+		}
+		
+		//Log("Found "+listeningActions.length()+" listening actions:");
+		//for (uint i = 0; i < listeningActions.length(); i++)
+		//{
+		//	Log((i+1) +". action: "+listeningActions[i].GetInfo());
+		//}
+			
+		return listeningActions;
+	}
+	
+	void Idle(Critter& critter)
+	{
+		Info("Critter idle.");
+		
+		Action@[] actions = GetListeningActions(critter);
+		//~ uint time = GetTick();
+		for (uint i = 0; i < actions.length(); i++)
+			actions[i].IdleEvent(critter);
+		//time = GetTick() - time;
+		//if(time > 1)
+			//Log("Performing idle action took "+time +" ms.");
+			
+		StartQueuedAction(critter);
+	}
+	
+	private void StartQueuedAction(Critter& critter)
+	{
+		Action@ action;
+		_GetQueuedAction(critter, action);
+		_RemoveQueuedAction(critter);
+		if(valid(action))
+		{
+			Info("Found queued valid action: starting...");
+			_SetRunningAction(critter, @action);
+			action.Start(critter);
+		}
+	}
+	
+	void Finish(Critter& critter, bool deleted)
+	{
+		if(!deleted)
+			return;
+			
+		Info("Removing critter actions...");
+		_RemoveQueuedAction(critter);
+		Action@ action;
+		//uint time = GetTick();
+		_GetRunningAction(critter, action);
+		if(valid(action))
+			action.Cancel(critter);
+		_RemoveRunningAction(critter);
+	}
+	
+	void ShowCritter(Critter& critter, Critter& showCritter)
+	{
+		if(critter.IsDead())
+			return;
+		Action@[] actions = GetListeningActions(critter);
+		//~ uint time = GetTick();
+		for (uint i = 0; i < actions.length(); i++)
+			actions[i].ShowCritterEvent(critter, showCritter);
+		//~ time = GetTick() - time;
+		//~ if(time > 1)
+			//~ Log("Performing show critter action took "+time +" ms.");
+	}
+	
+	void HideCritter(Critter& critter, Critter& hideCritter)
+	{
+		if(critter.IsDead())
+			return;
+		Action@[] actions = GetListeningActions(critter);
+		//~ uint time = GetTick();
+		for (uint i = 0; i < actions.length(); i++)
+			actions[i].HideCritterEvent(critter, hideCritter);
+		//~ time = GetTick() - time;
+		//~ if(time > 1)
+			//~ Log("Performing hide critter action took "+time +" ms.");
+	}
+	
+	bool Attack(Critter& critter, Critter& target)
+	{
+		if(critter.IsDead())
+			return false;
+		bool result = false;
+		Action@[] actions = GetListeningActions(critter);
+		//~ uint time = GetTick();
+		for (uint i = 0; i < actions.length(); i++)
+			result = actions[i].AttackEvent(critter, target) || result;
+		//~ time = GetTick() - time;
+		//~ if(time > 1)
+			//~ Log("Performing attack action took "+time +" ms.");
+		return result;
+	}
+	
+	bool Attacked(Critter& critter, Critter& attacker)
+	{
+		if(critter.IsDead())
+			return false;
+		bool result = false;
+		Action@[] actions = GetListeningActions(critter);
+		//~ uint time = GetTick();
+		for (uint i = 0; i < actions.length(); i++)
+			result = actions[i].AttackedEvent(critter, attacker) || result;
+		//~ time = GetTick() - time;
+		//~ if(time > 1)
+			//~ Log("Performing attacked action took "+time +" ms.");
+		return result;
+	}
+	
+	void Dead(Critter& critter, Critter@ killer)
+	{
+		Action@[] actions = GetListeningActions(critter);
+		for (uint i = 0; i < actions.length(); i++)
+			actions[i].DeadEvent(critter, killer);
+	}
+
+	void Message(Critter& critter, Critter& messenger, int message, int value)
+	{
+		if(critter.IsDead())
+			return;
+		Action@[] actions = GetListeningActions(critter);
+		//~ uint time = GetTick();
+		for (uint i = 0; i < actions.length(); i++)
+			actions[i].MessageEvent(critter, messenger, message, value);
+		//~ time = GetTick() - time;
+		//~ if(time > 1)
+			//~ Log("Performing message action took "+time +" ms.");
+	}
+
+	void SeeSomeoneAttack(Critter& critter, Critter& attacker, Critter& attacked)
+	{
+		if(critter.IsDead())
+			return;
+		Action@[] actions = GetListeningActions(critter);
+		//~ uint time = GetTick();
+		for (uint i = 0; i < actions.length(); i++)
+			actions[i].SeeSomeoneAttackEvent(critter, attacker, attacked);
+		//~ time = GetTick() - time;
+		//~ if(time > 1)
+			//~ Log("Performing see someone attack action took "+time +" ms.");
+	}
+	
+	void SeeSomeoneAttacked(Critter& critter, Critter& attacked, Critter& attacker)
+	{
+		if(critter.IsDead())
+			return;
+		Action@[] actions = GetListeningActions(critter);
+		//~ uint time = GetTick();
+		for (uint i = 0; i < actions.length(); i++)
+			actions[i].SeeSomeoneAttackedEvent(critter, attacked, attacker);
+		//~ time = GetTick() - time;
+		//~ if(time > 1)
+			//~ Log("Performing see someone attacked action took "+time +" ms.");
+	}
+	
+	void SeeSomeoneDead(Critter& critter, Critter& killed, Critter@ killer)
+	{
+		if(critter.IsDead())
+			return;
+		Action@[] actions = GetListeningActions(critter);
+		for (uint i = 0; i < actions.length(); i++)
+			actions[i].SeeSomeoneDeadEvent(critter, killed, killer);
+	}
+
+	void SeeSomeoneStealing(Critter& critter, Critter& victim, Critter& thief, bool success, Item& item, uint count)
+	{
+		if(critter.IsDead())
+			return;
+		Action@[] actions = GetListeningActions(critter);
+		for (uint i = 0; i < actions.length(); i++)
+			actions[i].SeeSomeoneStealingEvent(critter, victim, thief, success, item, count);
+	}
+	
+	void SeeSomeoneUseSkill(Critter& critter, Critter& skillCritter, int skill, Critter@ onCritter, Item@ onItem, Scenery@ onScenery)
+	{
+		if(critter.IsDead())
+			return;
+		Action@[] actions = GetListeningActions(critter);
+		for (uint i = 0; i < actions.length(); i++)
+			actions[i].SeeSomeoneUseSkill(critter, skillCritter, skill, onCritter, onItem, onScenery);
+	}
+	
+	int PlaneBegin(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem)
+	{
+		if(critter.IsDead())
+			return PLANE_RUN_GLOBAL;
+		Action@[] actions = GetListeningActions(critter);
+		int result = PLANE_RUN_GLOBAL;
+		//~ uint time = GetTick();
+		for (uint i = 0; i < actions.length(); i++)
+		{
+			int actionResult = actions[i].PlaneBeginEvent(critter, plane, reason, someCr, someItem);
+			if(actionResult != PLANE_RUN_GLOBAL)
+				result = actionResult;
+		}
+		//~ time = GetTick() - time;
+		//~ if(time > 1)
+			//~ Log("Performing plane end action took "+time +" ms.");
+		return result;
+	}
+	
+	int PlaneRun(Critter& critter, NpcPlane& plane, int reason, uint& result0, uint& result1, uint& result2)
+	{
+		if(critter.IsDead())
+			return PLANE_RUN_GLOBAL;
+			
+		Action@[] actions = GetListeningActions(critter);
+		int result = PLANE_RUN_GLOBAL;
+		//~ uint time = GetTick();
+		for (uint i = 0; i < actions.length(); i++)
+		{
+			int actionResult = actions[i].PlaneRunEvent(critter, plane, reason, result0, result1, result2);
+			if(actionResult != PLANE_RUN_GLOBAL)
+				result = actionResult;
+		}
+		//~ time = GetTick() - time;
+		//~ if(time > 1)
+			//~ Log("Performing plane run action took "+time +" ms.");
+		return result;
+	}
+	
+	int PlaneEnd(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem)
+	{
+		Info("Plane ended: " + critter.Id + ", reason="+reason);
+		if(critter.IsDead())
+			return PLANE_RUN_GLOBAL;
+		Action@[] actions = GetListeningActions(critter);
+		int result = PLANE_RUN_GLOBAL;
+		//~ uint time = GetTick();
+		for (uint i = 0; i < actions.length(); i++)
+		{
+			int actionResult = actions[i].PlaneEndEvent(critter, plane, reason, someCr, someItem);
+			if(actionResult != PLANE_RUN_GLOBAL)
+				result = actionResult;
+		}
+		//~ time = GetTick() - time;
+		//~ if(time > 1)
+			//~ Log("Performing plane end action took "+time +" ms.");
+		return result;
+	}
+	
+	void Respawn(Critter& critter)
+	{
+		Info("Respawing...");
+		Action@ action;
+		_GetRunningAction(critter, action);
+		
+		if(valid(action))
+		{
+			action.Cancel(critter);
+			Start(critter, action);
+		}
+		
+		//TODO: action events
+	}
+}
+
+interface Action
+{
+	Action@ GetSuperAction();
+	void SetSuperAction(Action@ action);
+	Action@ AddSubAction(Action@ action);
+	Action@[] GetSubActions();
+	void CollectListeningActions(Action@[]& collection);
+	Action@ And(Action@ andAction);
+	Action@ If(Condition@ condition);
+	Action@ IfNot(Condition@ condition);
+	void PerformAndAction(Critter& critter, Critter@ otherCritter, Item@ item);
+	bool Check(Critter& critter, Critter@ otherCritter, Item@ item);
+	
+	bool IsRunning();
+	void SetRunning(bool running);
+	bool IsListening();
+	void SetListening(bool listening);
+	
+	bool Start(Critter& critter);
+	void Perform(Critter& critter);
+	void Finish(Critter& critter);
+	void Cancel(Critter& critter);
+	void StartNextAction(Critter& critter);
+	
+	string GetInfo();
+	
+	void IdleEvent(Critter& critter);
+	void ShowCritterEvent(Critter& critter, Critter& showCritter);
+	void HideCritterEvent(Critter& critter, Critter& hideCritter);
+	bool AttackEvent(Critter& critter, Critter& target);
+	bool AttackedEvent(Critter& critter, Critter& attacker);
+	void DeadEvent(Critter& critter, Critter@ killer);
+	void MessageEvent(Critter& critter, Critter& messenger, int message, int value);
+	void SeeSomeoneAttackEvent(Critter& critter, Critter& attacker, Critter& attacked);
+	void SeeSomeoneDeadEvent(Critter& critter, Critter& killed, Critter@ killer);
+	void SeeSomeoneAttackedEvent(Critter& critter, Critter& attacked, Critter& attacker);
+	void SeeSomeoneStealingEvent(Critter& critter, Critter& victim, Critter& thief, bool success, Item& item, uint count);
+	void SeeSomeoneUseSkill(Critter& critter, Critter& skillCritter, int skill, Critter@ onCritter, Item@ onItem, Scenery@ onScenery);
+	int PlaneBeginEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem);
+	int PlaneRunEvent(Critter& critter, NpcPlane& plane, int reason, uint& result0, uint& result1, uint& result2);
+	int PlaneEndEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem);
+}
+
+class DefaultAction : Action
+{
+	Action@ SuperAction;
+	Action@[] SubActions;
+	Action@ AndAction;
+
+	Condition@[] Conditions;
+	Condition@[] NegativeConditions;
+
+	float Chance;
+	
+	private bool Running;
+	private bool Listening;
+	private bool BlockingSubActions;
+	
+	private int CurrentActionIndex;
+	
+	DefaultAction()
+	{
+		Running = false;
+		Listening = false;
+		BlockingSubActions = false;
+		Chance = 101;
+	}
+	
+	Action@ GetSuperAction() { return @SuperAction; }
+	void SetSuperAction(Action@ action) { @SuperAction = @action; }
+		
+	Action@ AddSubAction(Action@ action)
+	{
+		action.SetSuperAction(this);
+		SubActions.insertLast(action);
+		return @this;
+	}
+	Action@[] GetSubActions() { return SubActions; }
+	
+	void CollectListeningActions(Action@[]& collection)
+	{
+		if(IsListening())
+			collection.insertLast(this);
+		if(!IsRunning())
+			return;
+			
+		for (uint i = 0; i < SubActions.length(); i++)
+			SubActions[i].CollectListeningActions(collection);
+	}
+	
+	Action@ WithChance(float chance)
+	{
+		Chance = chance;
+		return @this;
+	}
+	
+	Action@ And(Action@ andAction)
+	{
+		@AndAction = andAction;
+		return @this;
+	}
+	
+	Action@ If(Condition@ condition)
+	{
+		Conditions.insertLast(condition);
+		return @this;
+	}
+	
+	Action@ IfNot(Condition@ condition)
+	{
+		NegativeConditions.insertLast(condition);
+		return @this;
+	}
+	
+	bool IsRunning() { return Running; }
+	void SetRunning(bool running) { Running = running; }
+	
+	bool IsListening() { return Listening; }
+	void SetListening(bool listening) { Listening = listening; }
+	
+	void BlockSubActions() { BlockingSubActions = true; }
+	void UnblockSubActions() { BlockingSubActions = false; }
+	
+	bool Start(Critter& critter) final
+	{
+		if(!HAS_CHANCE(Chance))
+		{
+			Info("No chance for action: "+GetInfo()+", chance="+Chance);
+			StartNextSuperAction(critter);
+			return false;
+		}
+		
+		Info("Action starting: " + GetInfo());
+		CurrentActionIndex = -1;
+		SetRunning(true);
+		Perform(critter);
+		return true;
+	}
+	
+	void Perform(Critter& critter) { Finish(critter); /*do your action stuff in overriden function*/}
+	
+	void Finish(Critter& critter) final
+	{
+		Info("Action finishing: " + GetInfo());
+		StartNextAction(critter);
+	}
+	
+	void StartNextAction(Critter& critter)
+	{
+		if(!BlockingSubActions && StartNextSubAction(critter))
+			return;
+		
+		StartNextSuperAction(critter);
+	}
+	
+	bool StartNextSubAction(Critter& critter)
+	{
+		CurrentActionIndex++;
+		Info("Trying to start sub action with index: " + CurrentActionIndex+", "+SubActions.length());
+		if(CurrentActionIndex >= int(SubActions.length()))
+			return false;
+		
+		Info("Starting next sub action: " + SubActions[CurrentActionIndex].GetInfo());
+		SubActions[CurrentActionIndex].Start(critter);
+		return true;
+	}
+	
+	void StartNextSuperAction(Critter& critter)
+	{
+		SetRunning(false);
+		if(valid(SuperAction))
+		{
+			Info("Sending to super action: "+SuperAction.GetInfo());
+			SuperAction.StartNextAction(critter);
+		}
+	}
+	
+	void Cancel(Critter& critter)
+	{
+		SetRunning(false);
+		for (uint i = 0; i < SubActions.length(); i++)
+		{
+			SubActions[i].Cancel(critter);
+		}
+	}
+	
+	void PerformAndAction(Critter& critter, Critter@ otherCritter, Item@ item) final
+	{
+		if(!valid(AndAction) || !AndAction.Check(critter, otherCritter, item))
+			return;
+			
+		AndAction.Start(critter);
+	}
+	
+	bool Check(Critter& critter, Critter@ otherCritter, Item@ item) final
+	{
+		for (uint i = 0; i < Conditions.length(); i++)
+			if(!Conditions[i].Check(critter, otherCritter, item))
+				return false;
+
+		for (uint i = 0; i < NegativeConditions.length(); i++)
+			if(NegativeConditions[i].Check(critter, otherCritter, item))
+				return false;
+		
+		return true;
+	}
+
+	string GetInfo() {return "DefaultAction";}
+	
+	//event section
+	void IdleEvent(Critter& critter) {}
+	void ShowCritterEvent(Critter& critter, Critter& showCritter) {}
+	void HideCritterEvent(Critter& critter, Critter& hideCritter) {}
+	bool AttackEvent(Critter& critter, Critter& target) {return false;}
+	bool AttackedEvent(Critter& critter, Critter& attacker) {return false;}
+	void DeadEvent(Critter& critter, Critter@ killer) {}
+	void MessageEvent(Critter& critter, Critter& messenger, int message, int value) {}
+	void SeeSomeoneAttackEvent(Critter& critter, Critter& attacker, Critter& attacked) {}
+	void SeeSomeoneDeadEvent(Critter& critter, Critter& killed, Critter@ killer) {}
+	void SeeSomeoneAttackedEvent(Critter& critter, Critter& attacked, Critter& attacker) {}
+	void SeeSomeoneStealingEvent(Critter& critter, Critter& victim, Critter& thief, bool success, Item& item, uint count) {}
+	void SeeSomeoneUseSkill(Critter& critter, Critter& skillCritter, int skill, Critter@ onCritter, Item@ onItem, Scenery@ onScenery) {}
+	int PlaneBeginEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem) {return PLANE_RUN_GLOBAL;}
+	int PlaneRunEvent(Critter& critter, NpcPlane& plane, int reason, uint& result0, uint& result1, uint& result2) {return PLANE_RUN_GLOBAL;}
+	int PlaneEndEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem) {return PLANE_RUN_GLOBAL;}
+}
+
+class Say : DefaultAction
+{
+	private uint8 HowSay;
+	private uint16 TextMsg;
+	private uint StringNum;
+	private string@ Message;
+	private string@ Lexems;
+	private LexemGetterFunction@ GetLexems;
+	
+	Say(string@ message)
+	{
+		HowSay = SAY_NORM_ON_HEAD;
+		@Message = message;
+		@Lexems = null;
+	}
+	
+	Say(uint8 howSay, string@ message)
+	{
+		HowSay = howSay;
+		@Message = message;
+		@Lexems = null;
+	}
+	
+	Say(uint16 textMsg, uint stringNum)
+	{
+		HowSay = SAY_NORM_ON_HEAD;
+		TextMsg = textMsg;
+		StringNum = stringNum;
+		@Message = null;
+		@Lexems = null;
+	}
+	
+	Say(uint8 howSay, uint16 textMsg, uint stringNum)
+	{
+		HowSay = howSay;
+		TextMsg = textMsg;
+		StringNum = stringNum;
+		@Message = null;
+		@Lexems = null;
+	}
+	
+	Say(uint8 howSay, uint16 textMsg, uint stringNum, string lexems)
+	{
+		HowSay = howSay;
+		TextMsg = textMsg;
+		StringNum = stringNum;
+		@Message = null;
+		@Lexems = lexems;
+	}
+	
+	Say(uint8 howSay, uint16 textMsg, uint stringNum, LexemGetterFunction& getLexems)
+	{
+		HowSay = howSay;
+		TextMsg = textMsg;
+		StringNum = stringNum;
+		@Message = null;
+		@Lexems = null;
+		@GetLexems = getLexems;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		if(critter.IsDead() || critter.IsKnockout())
+		{
+			Finish(critter);
+			return;
+		}
+			
+		if(!Check(critter, null, null))
+		{
+			Finish(critter);
+			return;
+		}
+		if(valid(Message))
+			critter.Say(HowSay, Message);
+		else if(valid(Lexems))
+			critter.SayMsg(HowSay, TextMsg, StringNum, Lexems);
+		else if(valid(GetLexems))
+		{
+			string@ lexems = GetLexems(critter, null);
+			if(valid(lexems))
+				critter.SayMsg(HowSay, TextMsg, StringNum, lexems);
+			else
+				critter.SayMsg(HowSay, TextMsg, StringNum);
+		}
+		else
+			critter.SayMsg(HowSay, TextMsg, StringNum);
+		Finish(critter);
+	}
+	
+	string GetInfo() {return "Say";}
+}
+
+class RunningAction : DefaultAction 
+{
+	bool IsRunning() override {	return true; }
+} 
+
+class ListeningAction : DefaultAction
+{
+	bool IsListening() override { return true; }
+}
+
+class ChooseRandom : DefaultAction
+{
+	private bool Processed;
+	
+	void Perform(Critter& critter) override 
+	{
+		Processed = false;
+		Finish(critter);
+	}
+		
+	bool StartNextSubAction(Critter& critter) override
+	{
+		if(SubActions.length() == 0 || Processed)
+			return false;
+			
+		Processed = true;
+		SubActions[Random(0, SubActions.length() - 1)].Start(critter);
+		return true;
+	}
+}
+
+class ChooseOnlyOne : DefaultAction
+{
+	private bool Processed;
+	
+	void Perform(Critter& critter) override 
+	{
+		Processed = false;
+		Finish(critter);
+	}
+		
+	bool StartNextSubAction(Critter& critter) override
+	{
+		CurrentActionIndex++;
+		if(CurrentActionIndex >= int(SubActions.length()) || Processed)
+			return false;
+		
+		if(SubActions[CurrentActionIndex].Start(critter))
+			Processed = true;
+		return true;
+	}
+}
+
+class LoopAction : CrittersHolderAction
+{
+	#define INFINITE_LOOP_COUNT	(0)
+	
+	private uint CurrentLoop;
+	private uint LoopCount; //0 for infinite loop
+	private bool OnlyIfPlayerOnMap;
+	private bool LoopRunning;
+	
+	LoopAction()
+	{
+		LoopCount = INFINITE_LOOP_COUNT;
+		CurrentLoop = 0;
+		OnlyIfPlayerOnMap = false;
+		LoopRunning = true;
+	}
+	
+	LoopAction(bool onlyIfPlayerOnMap)
+	{
+		LoopCount = INFINITE_LOOP_COUNT;
+		CurrentLoop = 0;
+		OnlyIfPlayerOnMap = onlyIfPlayerOnMap;
+		LoopRunning = true;
+	}
+	
+	LoopAction(uint loopCount)
+	{
+		LoopCount = loopCount;
+		CurrentLoop = 0;
+		OnlyIfPlayerOnMap = false;
+		LoopRunning = true;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		SetListening(true);
+		CrittersHolderAction::Perform(critter);
+	}
+	
+	bool IsRunning()
+	{
+		if(LoopCount == INFINITE_LOOP_COUNT)
+			return LoopRunning;
+		else if(LoopCount > CurrentLoop)
+			return true;
+		else
+			return false;
+	}
+	
+	void IdleEvent(Critter& critter) override
+	{
+		Info("CurrentActionIndex = "+CurrentActionIndex +", SubActions: "+SubActions.length());
+		if(CurrentActionIndex >= int(SubActions.length())
+			&& (LoopCount == INFINITE_LOOP_COUNT))
+		{
+			if(OnlyIfPlayerOnMap && NoPlayersFound(critter))
+			{
+				LoopRunning = false;
+				return;
+			}
+			else
+			{
+				LoopRunning = true;
+			}
+			Info("Starting loop number: "+ CurrentLoop);
+			Start(critter); //run again this action
+		}
+	}
+	
+	private bool NoPlayersFound(Critter& critter)
+	{
+		Map@ map = critter.GetMap();
+		if(!valid(map))
+			return true;
+			
+		return map.GetCritters(0, FIND_ALL | FIND_ONLY_PLAYERS, null) == 0;
+	}
+	
+	void StartNextSuperAction(Critter& critter) override
+	{
+		if(LoopCount != INFINITE_LOOP_COUNT && ++CurrentLoop >= LoopCount)
+		{
+			SetListening(false);
+			SetRunning(false);
+			if(valid(SuperAction))
+			{
+				CurrentLoop = 0;
+				SuperAction.StartNextAction(critter);
+			}
+		}
+		else if(LoopCount == INFINITE_LOOP_COUNT)
+		{
+			return;
+		}
+		
+		Start(critter);
+	}
+	
+	void Cancel(Critter& critter) override
+	{
+		CurrentLoop = 0;
+		DefaultAction::Cancel(critter);
+	}
+	
+	string GetInfo() {return "LoopAction";}
+}
+
+class CrittersHolderAction : DefaultAction
+{
+	private Critter@[] Critters;
+	
+	const Critter@[] GetCritters() 
+	{
+		Critter@[] validCritters;
+		for (uint i = 0; i < Critters.length(); i++)
+		{
+			if(valid(Critters[i]) && !Critters[i].IsNotValid)
+				validCritters.insertLast(Critters[i]);
+		}
+		return validCritters;
+	}
+	
+	Critter@ GetHolderCritter(uint critterId)
+	{
+		for (uint i = 0; i < Critters.length(); i++)
+			if(Critters[i].Id == critterId)
+				return Critters[i];
+		
+		return null;
+	}
+	
+	void AddCritter(Critter@ critter)
+	{
+		Critters.insertLast(critter);
+		for (uint i = 0; i < SubActions.length(); i++)
+		{
+			CrittersHolderAction@ action = cast<CrittersHolderAction>(SubActions[i]);
+			if(valid(action))
+				action.AddCritter(critter);
+		}
+	}
+	
+	void RemoveCritter(Critter@ critter)
+	{
+		for (uint i = 0; i < Critters.length(); i++)
+		{
+			if(Critters[i].Id == critter.Id)
+			{
+				Critters.removeAt(i);
+				break;
+			}
+		}
+		for (uint i = 0; i < SubActions.length(); i++)
+		{
+			CrittersHolderAction@ action = cast<CrittersHolderAction>(SubActions[i]);
+			if(valid(action))
+				action.RemoveCritter(critter);
+		}
+	}
+	
+	Critter@ GetClosestCritter(Critter& toCritter)
+	{
+		uint distance;
+		uint closestDistance = 0;
+		Critter@ closestCritter;
+		for (uint i = 0; i < GetCritters().length(); i++)
+		{
+			Critter@ critter = GetCritters()[i];
+			distance = GetDistantion(toCritter.HexX, toCritter.HexY, critter.HexX, critter.HexY);
+			if(closestCritter is null || distance < closestDistance)
+			{
+				closestDistance = distance;
+				@closestCritter = critter;
+			}
+		}
+		return closestCritter;
+	}
+	
+	bool HasValidCritters()
+	{
+		return GetCritters().length() > 0;
+	}
+	
+	void ClearCritters()
+	{
+		Critters.resize(0);
+		//propagate to sub actions
+		for (uint i = 0; i < SubActions.length(); i++)
+		{
+			CrittersHolderAction@ action = cast<CrittersHolderAction>(SubActions[i]);
+			if(valid(action))
+				action.ClearCritters();
+		}
+	}
+}
+
+class ItemsHolderAction : DefaultAction
+{
+	private Item@[] Items;
+	
+	const Item@[] GetItems() {
+		Item@[] validItems;
+		for (uint i = 0; i < Items.length(); i++)
+		{
+			if(valid(Items[i]) && !Items[i].IsNotValid)
+				validItems.insertLast(Items[i]);
+		}
+		return validItems;
+	}
+	
+	void AddItem(Item@ item)
+	{
+		Items.insertLast(item);
+		for (uint i = 0; i < SubActions.length(); i++)
+		{
+			ItemsHolderAction@ action = cast<ItemsHolderAction>(SubActions[i]);
+			if(valid(action))
+				action.AddItem(item);
+		}
+	}
+	
+	bool HasValidItems()
+	{
+		return GetItems().length() > 0;
+	}
+	
+	void ClearItems()
+	{
+		Items.resize(0);
+		//propagate to sub actions
+		for (uint i = 0; i < SubActions.length(); i++)
+		{
+			ItemsHolderAction@ action = cast<ItemsHolderAction>(SubActions[i]);
+			if(valid(action))
+				action.ClearItems();
+		}
+	}
+}
+
+funcdef string@ LexemGetterFunction(Critter&, Critter@);
+class SetLexems : CrittersHolderAction
+{
+	private string@ LexemId;
+	private LexemGetterFunction@ LexemGetter;
+	
+	SetLexems(string@ lexemId, LexemGetterFunction@ lexemGetter)
+	{
+		@LexemId = lexemId;
+		@LexemGetter = lexemGetter;
+	}
+	
+	void Perform(Critter& critter)
+	{
+		string lexems;
+		if(HasValidCritters())
+		{
+			for (uint i = 0; i < GetCritters().length(); i++)
+			{
+				string@ lexem = LexemGetter(critter, GetCritters()[i]);
+				if(!valid(lexem))
+					continue;
+				
+				if(lexems.length() > 0)
+					lexems += ", ";
+				lexems += lexem;
+			}
+		}
+		else
+		{
+			string@ lexem = LexemGetter(critter, null);
+			if(valid(lexem))
+				lexems += lexem; 
+		}
+		//Log("Setting lexems for critter: "+critter.Id+" - $"+LexemId+lexems);
+		critter.SetLexems("$" + LexemId + lexems);
+		Finish(critter);
+	}
+}
+
+string@ GetName(Critter& critter, Critter@ otherCritter)
+{
+	if(!valid(otherCritter))
+		return null;
+	return "" + otherCritter.Name;
+}
+
+interface Condition
+{
+	bool Check(Critter& critter, Critter@ otherCritter, Item@ item);
+}
+
+void Info(string& message)
+{
+	//Log(message);
+}
+
+void ListActions(Critter& cr, int, int, int)
+{
+	string@[] keys;
+	actionManager.runningActions.keys(keys);
+	
+	cr.Say(SAY_NETMSG, "Total action count: " + keys.length());
+}
+
+void SayYourAction(Critter& cr, int, int, int)
+{
+	Map@ map = cr.GetMap();
+	if(!valid(map))
+		return;
+		
+	Critter@[] npcs;
+	map.GetCritters(0, FIND_ALL | FIND_ONLY_NPC, npcs);
+	
+	for (uint i = 0; i < npcs.length(); i++)
+	{
+		SayYourAction(npcs[i]);
+	}
+}
+
+void SayYourAction(Critter& npc)
+{
+	Action@[] actions = actionManager.GetListeningActions(npc);
+	if(actions.length() == 0)
+		npc.Say(SAY_NORM_ON_HEAD, "None");
+	else
+	{
+		string sayString = "";
+		for (uint i = 0; i < actions.length(); i++)
+		{
+			if(i > 0)
+				sayString += ", ";
+			sayString += actions[i].GetInfo();
+		}
+		npc.Say(SAY_NORM_ON_HEAD, sayString);
+	}
+}
+
+#endif

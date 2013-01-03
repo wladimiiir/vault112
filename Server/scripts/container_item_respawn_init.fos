@@ -1,0 +1,70 @@
+/**
+ * Created: 5.7.2012
+ * Author: mikewall
+ */
+ 
+#include "_time.fos"
+#include "_itempid.fos"
+#include "loot_items.fos"
+
+ContainerSpawnInfo@[] CreateContainerSpawnInfos()
+{
+	ContainerSpawnInfo@[] infos = {
+	
+		ContainerSpawnInfo(1, REAL_MINUTE(30), REAL_MINUTE(2), 0, 25)
+			.AddSpawnItem(PID_LEATHER_ARMOR, 80, 1, 1)
+			.AddSpawnItem(PID_SNIPER_RIFLE, 0.5, 1, 1)
+			.AddSpawnItem(PID_223_FMJ, 25, 50, 100),
+			
+		ContainerSpawnInfo(2, REAL_MINUTE(10), REAL_MINUTE(15), 0, 25)
+			.AddSpawnItem(PID_METAL_ARMOR, 100, 1, 1)
+			.AddSpawnItem(PID_MAGNETO_LASER_PISTOL, 10, 1, 1)
+			.AddSpawnItem(PID_SMALL_ENERGY_CELL, 25, 50, 100)
+	};
+	return infos;
+}
+
+class ContainerSpawnInfo 
+{
+	uint Id;	//id of this spawn info (must be unique)
+	private uint MinRespawnTime; //min respawn time in seconds
+	private uint MaxRespawnTime; //man respawn time in seconds
+	private uint16 MinLockerComplexity; //min complexity for locker on container
+	private uint16 MaxLockerComplexity; //max complexity for locker on container
+	LootItem@[] SpawnItems; //items to be spawned
+		
+	ContainerSpawnInfo(uint id, uint minRespawnTime, uint maxRespawnTime, uint16 minLockerComplexity, uint16 maxLockerComplexity) 
+	{
+		Id = id;
+		MinRespawnTime = minRespawnTime;
+		MaxRespawnTime = maxRespawnTime;
+		MinLockerComplexity = minLockerComplexity;
+		MaxLockerComplexity = maxLockerComplexity;
+	}
+	
+	ContainerSpawnInfo@ AddSpawnItem(uint16 itemPid, double chance, uint16 minCount, uint16 maxCount)
+	{
+		SpawnItems.insertLast(LootItem(itemPid, chance, minCount, maxCount));
+		return this;
+	}
+	
+	uint GetRespawnTime()
+	{
+		return Random(MinRespawnTime, MaxRespawnTime);
+	}
+	
+	uint GetLockerComplexity()
+	{
+		return Random(MinLockerComplexity, MaxLockerComplexity);
+	}
+	
+	void AddItemsToContainer(Item& container)
+	{
+		for (uint i = 0; i < SpawnItems.length(); i++)
+		{
+			LootItem@ spawnItem = SpawnItems[i];
+			if(spawnItem.IsChosen())
+				container.AddItem(spawnItem.ProtoId, spawnItem.GetCount(), 0);
+		}
+	}
+};

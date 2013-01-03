@@ -1,0 +1,247 @@
+#include "critter_action.fos"
+#include "critter_action_h.fos"
+
+import uint GetOffence(Critter& offender, uint areaId) from "custom_data";
+
+class IsSeen : Condition
+{
+	bool Check(Critter& critter, Critter@ otherCritter, Item@ item) override
+	{
+		if(!valid(otherCritter))
+			return true;
+		return otherCritter.IsSeenBy(critter);
+	}
+}
+
+class IsSeenBy : Condition
+{
+	bool Check(Critter& critter, Critter@ otherCritter, Item@ item) override
+	{
+		if(!valid(otherCritter))
+			return true;
+		return critter.IsSeenBy(otherCritter);
+	}
+}
+
+class IsEnemy : Condition
+{
+	bool Check(Critter& critter, Critter@ otherCritter, Item@ item) override
+	{
+		if(!valid(otherCritter))
+			return true;
+		return critter.CheckEnemyInStack(otherCritter.Id);
+	}
+}
+
+class IsInRange : Condition
+{
+	private uint Range;
+	
+	IsInRange(uint range)
+	{
+		Range = range;
+	}
+	
+	bool Check(Critter& critter, Critter@ otherCritter, Item@ item) override
+	{
+		if(valid(otherCritter))
+			return GetDistantion(critter.HexX, critter.HexY, otherCritter.HexX, otherCritter.HexY) <= Range;
+		if(valid(item))
+			return GetDistantion(critter.HexX, critter.HexY, item.HexX, item.HexY) <= Range;
+		return true;
+	}
+}
+
+class IsArmed : Condition 
+{
+	bool Check(Critter& critter, Critter@ otherCritter, Item@ item) override
+	{
+		if(valid(otherCritter))
+			@item = otherCritter.GetItem(0, SLOT_HAND1);
+			
+		if(!valid(item))
+			return false;
+		
+		return item.GetType() == ITEM_TYPE_WEAPON;
+	}
+}
+
+class IsPlayer : Condition 
+{
+	bool Check(Critter& critter, Critter@ otherCritter, Item@ item) override
+	{
+		return valid(otherCritter) && otherCritter.IsPlayer();
+	}
+}
+
+#define MAX_OFFENCE_NO_LIMIT	(0)
+class IsOffender : Condition
+{
+	private uint OffenceArea;
+	private uint MinOffence;
+	private uint MaxOffence;
+	
+	IsOffender(uint offenceArea, uint minOffence, uint maxOffence)
+	{
+		OffenceArea = offenceArea;
+		MinOffence = minOffence;
+		MaxOffence = maxOffence;
+	}
+	
+	bool Check(Critter& critter, Critter@ otherCritter, Item@ item) override
+	{
+		if(!valid(otherCritter))
+			return true;
+		uint offence = GetOffence(otherCritter, OffenceArea);
+		return offence >= MinOffence && (MaxOffence == MAX_OFFENCE_NO_LIMIT || offence <= MaxOffence);
+	}
+}
+
+class IsTeamMember : Condition
+{
+	bool Check(Critter& critter, Critter@ otherCritter, Item@ item) override
+	{
+		if(!valid(otherCritter))
+			return true;
+		Info("Checking team member: "+otherCritter.Id + " = "+(critter.Stat[ST_TEAM_ID] == otherCritter.Stat[ST_TEAM_ID]));
+		return critter.Stat[ST_TEAM_ID] == otherCritter.Stat[ST_TEAM_ID];
+	}
+}
+
+class NotAttacking : Condition 
+{
+	bool Check(Critter& critter, Critter@ otherCritter, Item@ item) override
+	{
+		return critter.GetPlanes(AI_PLANE_ATTACK, null) == 0;
+	}
+}
+
+class IsHuman : Condition
+{
+	bool Check(Critter& critter, Critter@ otherCritter, Item@ item) override
+	{
+		if(!valid(otherCritter))
+			@otherCritter = critter;
+		
+		uint bodyType = otherCritter.Stat[ST_BODY_TYPE];
+		return bodyType >= BT_MEN && bodyType <= BT_GHOUL;
+	}
+}
+
+class IsInjured : Condition
+{
+	private uint InjuredHpPercentage;
+	private bool CheckOnlyHp;
+	
+	IsInjured()
+	{
+		InjuredHpPercentage = 90;
+		CheckOnlyHp = false;
+	}
+	
+	IsInjured(uint injuredHpPercentage)
+	{
+		InjuredHpPercentage = injuredHpPercentage;
+		CheckOnlyHp = false;
+	}
+	
+	IsInjured(uint injuredHpPercentage, bool checkOnlyHp)
+	{
+		InjuredHpPercentage = injuredHpPercentage;
+		CheckOnlyHp = checkOnlyHp;
+	}
+	
+	bool Check(Critter& critter, Critter@ otherCritter, Item@ item) override
+	{
+		Critter@ patient = valid(otherCritter) ? @otherCritter : critter;
+		int injuredHp = patient.Stat[ST_MAX_LIFE] * (double(InjuredHpPercentage) / 100);
+		
+		return (!CheckOnlyHp && patient.IsInjured())
+			|| patient.Stat[ST_CURRENT_HP] < injuredHp;
+	}
+}
+
+class NoLoots : Condition
+{
+	bool Check(Critter& critter, Critter@ otherCritter, Item@ item) override
+	{
+		return critter.GetPlanes(LOOT_PLANE_IDENTIFIER, null) == 0;
+	}
+}
+
+class NoLooters : Condition
+{
+	bool Check(Critter& critter, Critter@ otherCritter, Item@ item) override
+	{
+		if(!valid(otherCritter))
+			return true;
+			
+		Map@ map = critter.GetMap();
+		if(!valid(map))
+			return true;
+			
+		Critter@[] npcs;
+		map.GetCritters(0, FIND_LIFE | FIND_ONLY_NPC, npcs);
+		for (uint i = 0; i < npcs.length(); i++)
+			if(npcs[i].GetPlanes(LOOT_PLANE_IDENTIFIER, otherCritter.Id, null) > 0)
+				return false;
+		
+		return true;
+	}
+}
+
+class IsMyLoot : Condition
+{
+	bool Check(Critter& critter, Critter@ otherCritter, Item@ item) override
+	{
+		if(!valid(otherCritter))
+			return true;
+		
+		return critter.GetPlanes(LOOT_PLANE_IDENTIFIER, otherCritter.Id, null) > 0;
+	}
+}
+
+class HasItem : Condition 
+{
+	private uint16[] ItemPids;
+	
+	HasItem(uint16 itemPid)
+	{
+		uint16[] pids = {itemPid};
+		ItemPids = pids;
+	}
+	
+	HasItem(uint16[] itemPids)
+	{
+		ItemPids = itemPids;
+	}
+	
+	bool Check(Critter& critter, Critter@ otherCritter, Item@ item) override
+	{
+		if(!valid(otherCritter))
+			@otherCritter = critter;
+			
+		for (uint i = 0; i < ItemPids.length(); i++)
+			if(otherCritter.CountItem(ItemPids[i]) > 0)
+				return true;
+		
+		return false;
+	}
+}
+
+funcdef bool ConditionFunction(Critter&, Critter@, Item@);
+
+class FunctionCheck : Condition 
+{
+	private ConditionFunction@ Function;
+	
+	FunctionCheck(ConditionFunction& function)
+	{
+		@Function = function;
+	}
+	
+	bool Check(Critter& critter, Critter@ otherCritter, Item@ item) override
+	{
+		return Function(critter, otherCritter, item);
+	}
+}

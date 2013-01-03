@@ -1,0 +1,402 @@
+// Author: cvet, JohnPL
+// Client GUI header
+
+#define CLIENT_GUI_MOD_V04
+
+#ifndef __CLIENT_GUI__
+#define __CLIENT_GUI__
+
+#include "_client_defines.fos"
+#include "_colors.fos"
+
+//
+// API
+//
+#ifndef CLIENT_GUI
+
+// Create new screen
+import IGUIScreenOpt@ GUI_CreateScreen(int screenIndex, string@ sprName) from "client_gui";
+// Delete old screen, hardcoded screens included
+import void GUI_DeleteScreen(int screenIndex) from "client_gui";
+// Add element on screen
+import IGUIElementOpt@				GUI_AddScreenElement(int screenIndex) from "client_gui";
+import IGUIElementButtonOpt@		GUI_AddButton(int screenIndex) from "client_gui"; 
+import IGUIElementCheckBoxOpt@		GUI_AddCheckBox(int screenIndex) from "client_gui"; 
+import IGUIElementSliderControlOpt@ GUI_AddSlidderControl(int screenIndex) from "client_gui"; 
+import IGUIElementImageOpt@			GUI_AddImage(int screenIndex) from "client_gui"; 
+import IGUIElementTextOpt@			GUI_AddText(int screenIndex) from "client_gui"; 
+import IGUIElementEditBoxOpt@		GUI_AddEditBox(int screenIndex) from "client_gui"; 
+
+import IGUIElementOpt@ GUI_AddScreenElement(int screenIndex, int x, int y, int width, int height) from "client_gui";
+import IGUIElementButtonOpt@ GUI_AddButton(int screenIndex, int x, int y) from "client_gui"; 
+import IGUIElementCheckBoxOpt@ GUI_AddCheckBox(int screenIndex, int x, int y) from "client_gui"; 
+import IGUIElementSliderControlOpt@ GUI_AddSlidderControl(int screenIndex, int x, int y) from "client_gui"; 
+import IGUIElementImageOpt@ GUI_AddImage(int screenIndex, string@ sprName, int patch, int x, int y) from "client_gui"; 
+import IGUIElementTextOpt@ GUI_AddText(int screenIndex, string@ text, int x, int y) from "client_gui"; 
+import IGUIElementEditBoxOpt@ GUI_AddEditBox(int screenIndex, int x, int y) from "client_gui"; 
+import IGUIElementTextOpt@ AddScreenText(int textID, string@ text, int x, int y)  from "client_gui"; 
+// Delete Screen element
+import void DelateScreenText(int textID)  from "client_gui"; 
+import void DeleteGUIElement(int screenIndex, uint elementIndex) from "client_gui";
+import void DeleteGUIElement(int screenIndex, IGUIElementOpt@ element) from "client_gui";
+import int GetScreenPosX(int screenIndex) from "client_gui";
+import int GetScreenPosY(int screenIndex) from "client_gui";
+import void SetScreenPos(int screenIndex, int posX, int posY) from "client_gui";
+import int GetClientMainScreenGamePosX() from "client_gui";
+import int GetClientMainScreenGamePosY() from "client_gui";
+import void SetPipBoyCallbackShow(IGUIScreenCallbackShow@ callback) from "client_gui";
+import void SetMenuCallbackShow(IGUIScreenCallbackShow@ callback) from "client_gui";
+import void SetBarterCallbackShow(IGUIScreenCallbackShow@ callback) from "client_gui";
+import int GetLastScreenElementIndex(int screenIndex) from "client_gui";
+// Get options for last created screen, valid only on IGUIScreenCallbackShow::OnShow callback
+import IGUIScreenOpt@ GUI_GetScreenOptions() from "client_gui";
+// Get options for last created element, valid only on IGUIElementCallbackInit::OnInit callback
+import IGUIElementOpt@ GUI_GetElementOptions() from "client_gui";
+import IGUIElementCheckBoxOpt@ GUI_GetElementCheckBoxOptions() from "client_gui";
+import IGUIElementSliderControlOpt@ GUI_GetElementSliderControlOptions() from "client_gui";
+import IGUIElementEditBoxOpt@ GUI_GetElementEditBoxOptions() from "client_gui";
+
+
+#endif
+
+//
+// Screen
+//
+
+shared interface IGUIScreenCallbackShow { void OnShow(int p0, int p1, int p2); }
+shared interface IGUIScreenCallbackHide { void OnHide(int p0, int p1, int p2); }
+shared interface IGUIScreenCallbackMove { void OnMove(int posX, int posY); }
+shared interface IGUIScreenCallbackKeyPress { bool OnKeyPress(uint8 key); }
+
+shared interface IGUIScreenOpt
+{
+	IGUIScreenOpt@ CallbackShow(IGUIScreenCallbackShow@ callback);       // delault null
+	IGUIScreenOpt@ CallbackHide(IGUIScreenCallbackHide@ callback);       // delault null
+	IGUIScreenOpt@ CallbackMove(IGUIScreenCallbackMove@ callback);       // delault null
+	IGUIScreenOpt@ CallbackKeyPress(IGUIScreenCallbackKeyPress@ callback);// delault null
+	IGUIScreenOpt@ Position(int x, int y);                               // delault center of screen
+	IGUIScreenOpt@ CanMove(bool enabled);                                // delault true
+	IGUIScreenOpt@ Modal(bool enabled);                                  // delault true
+	IGUIScreenOpt@ Multiinstance(bool enabled);                          // delault false
+	IGUIScreenOpt@ IgnoreBorders(bool enabled);                          // default false
+	IGUIScreenOpt@ SizeByMultipleImages(int horizontalCount, int verticalCount);     // default 1x1
+	IGUIScreenOpt@ CloseOnMiss(bool enabled);                            // default false
+	IGUIScreenOpt@ AutoCursor(bool enabled, int cursorType);             // default false
+
+	// Info
+	int getPosX();
+	int getPosY();
+}
+
+//
+// Element
+//
+
+shared interface IGUIElementCallbackInit       { void OnInit(int id); }
+shared interface IGUIElementCallbackDraw       { void OnDraw(int id); }
+shared interface IGUIElementCallbackMouseClick { void OnMouseClick(int id, int click); }
+shared interface IGUIElementCallbackKeyPress   { bool OnKeyPress(uint8 key, uint8 letter); }
+shared interface IGUIElementCallbackMouseMove  { void OnMouseMove(int x, int y); }
+shared interface IGUIElementCallbackValueChange  { void OnValueChange(int newValue); }
+shared interface IGUIElementCallbackStateChange { void OnStateChange(bool state); }
+
+shared interface IGUIElementOpt
+{
+	IGUIElementOpt@ CallbackInit(IGUIElementCallbackInit@ callback);                         // default null
+	IGUIElementOpt@ CallbackDraw(IGUIElementCallbackDraw@ callback);                         // default null
+	IGUIElementOpt@ CallbackMouseClick(IGUIElementCallbackMouseClick@ callback);             // default null
+	IGUIElementOpt@ CallbackKeyPress(IGUIElementCallbackKeyPress@ callback);                 // default null
+	IGUIElementOpt@ CallbackMouseMove(IGUIElementCallbackMouseMove@ callback);
+	IGUIElementOpt@ Position(int x, int y);                                                  // default zeros                                         // default picture off
+	IGUIElementOpt@ Position(int x, int y, int w, int h);
+	IGUIElementOpt@ Position(string& iniKey);      
+	IGUIElementOpt@ Visible(bool visible);    
+	IGUIElementOpt@ AbsolutePosition(bool absolutePosition);   
+	IGUIElementOpt@ AbsolutePosition(int x, int y);  
+	IGUIElementOpt@ CollisionTransparent(bool collisionTransparent);    
+	IGUIElementOpt@ AddText(int id, string@ text, int x, int y, int width, int height, int font, uint color, int flags);
+	IGUIElementOpt@ AddImage(int id, string@ sprName, int x, int y);
+	IGUIElementOpt@ AddImage(int id, int patch, string@ sprName, int x, int y);
+	IGUIElementCallbackInit@ GetCallbackInit();
+	
+	void MouseDown(int click);
+	void MouseUp(int click, bool isCollision);
+	void MouseMove(int x, int y);
+	
+	
+	void Draw(int screenX, int screenY);
+	void setFocused(bool state);
+	void setVisible(bool visible);
+	void setAbsolutePosition(bool absolutePosition);
+	void setCollisionTransparent(bool collisionTransparent);
+	void InputLost();
+
+	IGUIElementOpt@ GetNewInstance();
+
+	// Info
+	bool isVisible();
+	bool IsFocused();
+	bool IsAbsolutePosition();
+	bool IsCollisionTransparent();
+	bool IsCollision(int screenX, int screenY, int mouseX, int mouseY);
+	int getId();
+	int getPosX();
+	int getPosY();
+	int getHeight();
+	int getWidth();
+	bool KeyPress(uint8 key);
+}
+
+
+shared interface IGUIElementButtonOpt 
+{
+	IGUIElementButtonOpt@ CallbackInit(IGUIElementCallbackInit@ callback);                         // default null
+	IGUIElementButtonOpt@ CallbackDraw(IGUIElementCallbackDraw@ callback);                         // default null
+	IGUIElementButtonOpt@ CallbackMouseClick(IGUIElementCallbackMouseClick@ callback);             // default null
+
+	IGUIElementButtonOpt@ Position(int x, int y);
+	IGUIElementButtonOpt@ Position(int x, int y, int w, int h);
+	IGUIElementButtonOpt@ Position(string& iniKey);
+	IGUIElementButtonOpt@ setAbsolutePosition(bool absolute);
+	IGUIElementButtonOpt@ Text(string@ text);
+	IGUIElementButtonOpt@ Text(string@ text, int font, uint color);
+	IGUIElementButtonOpt@ Text(string@ text, int font, uint color, int flags);
+	IGUIElementButtonOpt@ Text(string@ text, int font, uint color, uint downColor, int flags);
+	IGUIElementButtonOpt@ Visible(bool visible);
+	IGUIElementButtonOpt@ TextShift(int deltaX, int deltaY, int deltaDownX, int deltaDownY);
+	IGUIElementButtonOpt@ TextWidth(int width);
+	IGUIElementButtonOpt@ UpPic(string@ sprName);
+	IGUIElementButtonOpt@ UpPic(int path, string@ sprName);
+	IGUIElementButtonOpt@ DownPic(string@ sprName);
+	IGUIElementButtonOpt@ ClickableZone(int width, int height); 
+	IGUIElementButtonOpt@ ClickableZone(int x, int y, int width, int height);
+
+	void setVisible(bool visible);
+	void setFocused(bool state);
+	void Hide();
+	void Show();
+	
+	//info
+	bool isVisible();
+	string getText();
+	int GetPosX();
+	int GetPosY();
+}
+
+shared interface IGUIElementCheckBoxOpt 
+{
+	IGUIElementCheckBoxOpt@ CallbackInit(IGUIElementCallbackInit@ callback);                         // default null
+	IGUIElementCheckBoxOpt@ CallbackDraw(IGUIElementCallbackDraw@ callback);                         // default null
+	IGUIElementCheckBoxOpt@ CallbackMouseClick(IGUIElementCallbackMouseClick@ callback);             // default null
+	IGUIElementCheckBoxOpt@ CallbackStateChange(IGUIElementCallbackStateChange@ callback);             // default null
+	
+	IGUIElementCheckBoxOpt@ Position(int x, int y);
+	IGUIElementCheckBoxOpt@ Position(int x, int y, int w, int h);
+	IGUIElementCheckBoxOpt@ Position(string& iniKey);
+	IGUIElementCheckBoxOpt@ Text(string@ text);
+	IGUIElementCheckBoxOpt@ Text(string@ text, int font, uint color);
+	IGUIElementCheckBoxOpt@ Text(string@ text, int font, uint color, int flags);
+	IGUIElementCheckBoxOpt@ Text(string@ text, int font, uint color, uint downColor, int flags);
+	IGUIElementCheckBoxOpt@ Visible(bool visible);
+	IGUIElementCheckBoxOpt@ TextShift(int deltaX, int deltaY, int deltaDownX, int deltaDownY);
+	IGUIElementCheckBoxOpt@ TextWidth(int width);
+	IGUIElementCheckBoxOpt@ UnCheckedPic(string@ sprName);
+	IGUIElementCheckBoxOpt@ CheckedPic(string@ sprName);
+	IGUIElementCheckBoxOpt@ AutoStateChange(bool autoStateChange);
+
+
+	void setState(bool state);
+	void setVisible(bool visible);
+	void Draw(int screenX, int screenY);
+	void setFocused(bool state);
+
+	//Info
+	bool isVisible();
+	bool IsChecked();
+}
+
+
+shared interface IGUIElementImageOpt 
+{
+	IGUIElementImageOpt@ CallbackInit(IGUIElementCallbackInit@ callback);                         // default null
+	IGUIElementImageOpt@ CallbackDraw(IGUIElementCallbackDraw@ callback);                         // default null
+	IGUIElementImageOpt@ CallbackMouseClick(IGUIElementCallbackMouseClick@ callback);             // default null
+	
+	IGUIElementImageOpt@ Position(int x, int y);
+	IGUIElementImageOpt@ Position(int x, int y, int w, int h);
+	IGUIElementImageOpt@ Position(string& iniKey);
+	IGUIElementImageOpt@ Visible(bool visible);
+	IGUIElementImageOpt@ Stretch(bool stretch);
+	
+	void loadImage(uint nameHash, uint8 dir);
+	void clearImage();
+	void setVisible(bool visible);
+	void setPosX(int x);
+	void setPosY(int y);
+	void setFocused(bool state);
+	void setAbsolutePosition(bool absolute);
+	void Draw(int screenX, int screenY);
+
+	
+	//Info
+	bool isVisible();
+	int getPosX();
+	int getPosY();
+	int getImageWidth();
+	int getImageHeight();
+
+	bool IsCollision(int screenX, int screenY, int mouseX, int mouseY);
+}
+
+shared interface IGUIElementTextOpt 
+{
+	IGUIElementTextOpt@ CallbackInit(IGUIElementCallbackInit@ callback);                         // default null
+	IGUIElementTextOpt@ CallbackDraw(IGUIElementCallbackDraw@ callback);                         // default null
+	IGUIElementTextOpt@ CallbackMouseClick(IGUIElementCallbackMouseClick@ callback);             // default null
+	IGUIElementTextOpt@ CallbackMouseMove(IGUIElementCallbackMouseMove@ callback);
+
+	IGUIElementTextOpt@ Position(int x, int y);
+	IGUIElementTextOpt@ Position(int x, int y, int w, int h);
+	IGUIElementTextOpt@ Position(string& iniKey);
+	IGUIElementTextOpt@ AbsolutePosition(int x, int y);
+	IGUIElementTextOpt@ AbsolutePosition(bool absolutePosition); 
+	IGUIElementTextOpt@ Text(string@ text);
+	IGUIElementTextOpt@ Text(string@ text, int font, uint color);
+	IGUIElementTextOpt@ Text(string@ text, int font, uint color, int flags);
+	IGUIElementTextOpt@ Text(string@ text, int font, uint color, uint downColor, int flags);
+	IGUIElementTextOpt@ Visible(bool visible);
+	IGUIElementTextOpt@ TextBoxSize(int width, int height);
+	IGUIElementTextOpt@ TextOptions(int font, uint color);
+	IGUIElementTextOpt@ TextOptions(int font, uint color, int flags);
+	IGUIElementTextOpt@ TextOptions(int font, uint color, uint colorDown, int flags);
+	IGUIElementTextOpt@ TextColor(uint color); 
+
+	void Draw(int screenX, int screenY);
+	void setText(string& text);
+	int getWidth();
+	int getHeight();
+	int getPosX();
+	int getPosY();
+	void setVisible(bool visible);
+	void setFocused(bool state);
+
+	//Info
+	bool isVisible();
+	string@ getText();
+	int getFont();
+	uint getTextColor();
+
+
+	int getId();
+}
+
+shared interface IGUIElementEditBoxOpt 
+{
+	IGUIElementEditBoxOpt@ CallbackInit(IGUIElementCallbackInit@ callback);                         // default null
+	IGUIElementEditBoxOpt@ CallbackDraw(IGUIElementCallbackDraw@ callback);                         // default null
+	IGUIElementEditBoxOpt@ CallbackMouseClick(IGUIElementCallbackMouseClick@ callback);             // default null
+	IGUIElementEditBoxOpt@ CallbackMouseMove(IGUIElementCallbackMouseMove@ callback);
+	IGUIElementEditBoxOpt@ CallbackKeyPress(IGUIElementCallbackKeyPress@ callback);  
+
+	IGUIElementEditBoxOpt@ Position(int x, int y);
+	IGUIElementEditBoxOpt@ Position(int x, int y, int w, int h);
+	IGUIElementEditBoxOpt@ Position(string& iniKey);
+	IGUIElementEditBoxOpt@ Text(string@ text);
+	IGUIElementEditBoxOpt@ Text(string@ text, int font, uint color);
+	IGUIElementEditBoxOpt@ Text(string@ text, int font, uint color, int flags);
+	IGUIElementEditBoxOpt@ Text(string@ text, int font, uint color, uint downColor, int flags);
+	IGUIElementEditBoxOpt@ Visible(bool visible);
+	IGUIElementEditBoxOpt@ TextBoxSize(int width, int height);
+	IGUIElementEditBoxOpt@ TextOptions(int font, uint color);
+	IGUIElementEditBoxOpt@ TextOptions(int font, uint color, int flags);
+	IGUIElementEditBoxOpt@ TextOptions(int font, uint color, uint colorDown, int flags);
+	IGUIElementEditBoxOpt@ TextColor(uint color); 
+	IGUIElementEditBoxOpt@ VisibleText(string@ text);
+	IGUIElementEditBoxOpt@ BackgroundPic(string@ sprName);
+	IGUIElementEditBoxOpt@ MaxLen(int maxLen);
+	IGUIElementEditBoxOpt@ EditBoxSize(int width, int height);
+	IGUIElementEditBoxOpt@ LeftMargin(int lMargin);
+	IGUIElementEditBoxOpt@ RightMargin(int rMargin);
+	IGUIElementEditBoxOpt@ UpMargin(int uMargin);
+	IGUIElementEditBoxOpt@ DownMargin(int dMargin);
+	IGUIElementEditBoxOpt@ Margins(int lMargin, int rMargin, int uMargin, int dMargin);
+	IGUIElementEditBoxOpt@ PasswordMode(bool isPasswordMode);  
+	IGUIElementEditBoxOpt@ PasswordChar(string@ passChar); 
+	IGUIElementEditBoxOpt@ NumericMode(bool isNumericMode);  
+
+	void Draw(int screenX, int screenY);
+	void setVisible(bool visible);
+	void setFocused(bool state);
+	void NoInput(bool var);
+	//Info
+	string@ getText();
+	bool isVisible();
+
+	int getId();
+}
+
+shared interface IGUIElementSliderControlOpt
+{
+	IGUIElementSliderControlOpt@ CallbackInit(IGUIElementCallbackInit@ callback);                         // default null
+	IGUIElementSliderControlOpt@ CallbackDraw(IGUIElementCallbackDraw@ callback);                         // default null
+	IGUIElementSliderControlOpt@ CallbackMouseClick(IGUIElementCallbackMouseClick@ callback);             // default null
+	IGUIElementSliderControlOpt@ CallbackValueChange(IGUIElementCallbackValueChange@ callback);
+
+	IGUIElementSliderControlOpt@ Position(int x, int y);
+	IGUIElementSliderControlOpt@ Position(int x, int y, int w, int h);
+	IGUIElementSliderControlOpt@ Position(string& iniKey);
+	IGUIElementSliderControlOpt@ ElementBoxSize(int width, int height);
+	IGUIElementSliderControlOpt@ ElementBoxPosition(int x, int y);   // == Position(x, y)
+	IGUIElementSliderControlOpt@ TicZeroPosition(int x, int y);
+	IGUIElementSliderControlOpt@ TicTrackWidth(int width);
+	IGUIElementSliderControlOpt@ RangeMin(int minRange);
+	IGUIElementSliderControlOpt@ RangeMax(int maxRange);
+	IGUIElementSliderControlOpt@ Range(int minRange, int maxRange);
+	IGUIElementSliderControlOpt@ TicFreq(int freq);
+	IGUIElementSliderControlOpt@ Pos(int pos);
+	IGUIElementSliderControlOpt@ TitleText(string@ title);
+	IGUIElementSliderControlOpt@ TitleTextPosition(int x, int y);
+	IGUIElementSliderControlOpt@ TitleTextOptions(int font, uint color, int flags);
+	IGUIElementSliderControlOpt@ LeftText(string@ leftLabel);
+	IGUIElementSliderControlOpt@ LeftTextPosition(int x, int y);
+	IGUIElementSliderControlOpt@ LeftTextOptions(int font, uint color, int flags);
+	IGUIElementSliderControlOpt@ MidleText(string@ midleLabel);
+	IGUIElementSliderControlOpt@ MidleTextPosition(int x, int y);
+	IGUIElementSliderControlOpt@ MidleTextOptions(int font, uint color, int flags);
+	IGUIElementSliderControlOpt@ RightText(string@ rightLabel);
+	IGUIElementSliderControlOpt@ RightTextPosition(int x, int y);
+	IGUIElementSliderControlOpt@ RightTextOptions(int font, uint color, int flags);
+	IGUIElementSliderControlOpt@ TicPic(string@ sprName);
+	IGUIElementSliderControlOpt@ ActiveTicPic(string@ sprName);
+	IGUIElementSliderControlOpt@ BackgroundPic(string@ sprName);
+	IGUIElementSliderControlOpt@ TickTrackPic(string@ sprName);
+	IGUIElementSliderControlOpt@ TickTrackPosition(int x, int y);
+
+	
+	void Draw(int screenX, int screenY);
+	void setVisible(bool visible);
+	void setFocused(bool state);
+
+	//Info
+	bool isVisible();
+	int getTicPos();
+	int getValue();
+}
+
+#endif // __CLIENT_GUI__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

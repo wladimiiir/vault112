@@ -1,0 +1,2914 @@
+// Author: cvet, JohnPL
+// Client GUI
+
+#define CLIENT_GUI
+#include "client_gui_h.fos"
+#include "_defines.fos"
+#include "_client_defines.fos"
+#include "sprite.fos"
+#include "_colors.fos"
+#include "_msgstr.fos"
+
+//#define PUSH_BACK_HANDLE #(a,e)          { a.resize(a.length()+1); @a[a.length()-1] = e; }
+//#define REMOVE_FROM_ARRAY #(a,idx)       { if (a.length() > 0 && uint(idx) < a.length()) for (uint iter=idx; iter<a.length()-1; iter++) { a[iter]=a[iter+1]; }; a.resize(a.length()-1); }
+#define IS_COLLISION #(x1,y1,x2,y2,w,h)  ((x1)>=(x2) && (x1)<=(x2)+(w) && (y1)>=(y2) && (y1)<=(y2)+(h))
+
+GUIScreen@[] AllScreens;
+GUIScreen@[] ActiveScreens;
+bool[] KeyPressed;
+KeybData@[] KbData;
+IGUIScreenOpt@ LastScreenOpt=null;
+IGUIElementOpt@ LastElementOpt=null;
+IGUIElementTextOpt@[] screenTexts;
+int ClientMainScreenGamePosX;
+int ClientMainScreenGamePosY;
+
+class KeybData
+{
+	KeybData(int8 r, int8 rs, int8 e, int8 es){Char.resize(4); Char[0]=r; Char[1]=rs; Char[2]=e; Char[3]=es;}
+	uint8[] Char; // Russian, Rissian Shift, English, English Shift
+}
+
+
+class GUIElement : IGUIElementOpt
+{
+
+	GUIElement(int width, int height)
+	{
+		InitGUIElement(0,0,width,height);
+	}
+
+	void InitGUIElement(int x, int y, int width, int height)
+	{
+		this.id=0;
+		this.posX=x;
+		this.posY=y;
+		this.elementWidth = width;
+		this.elementHeight = height;
+		this.FocusedIs=false;
+		this.absolutePosition = false;
+		this.collisionTransparent = false;
+		this.readyForClickEvent = false;
+		this.visible=true;
+		this.MousePressed.resize(MOUSE_CLICK_EXT4+1);
+		this.texts.resize(0);
+		this.images.resize(0);
+
+		
+		for(uint i=0,j=MousePressed.length();i<j;i++) 
+			MousePressed[i]=false;
+		
+		@InitCallback=null;
+		@DrawCallback=null;
+		@MouseClickCallback=null;
+		@KeyPressCallback=null;
+		@MouseMoveCallback=null;
+		@ValueChangeCallback=null;
+		@StateChangeCallback=null;
+	}
+
+
+	void Draw(int screenX, int screenY)
+	{
+		if(visible)
+		{
+			this.screenX=screenX;
+			this.screenY=screenY;
+
+			if(not (DrawCallback is null)) DrawCallback.OnDraw(id);
+
+			for (uint i=0; i<images.length(); i++) 
+				images[i].Draw(screenX+posX, screenY+posY);
+
+			for (uint i=0; i<texts.length(); i++) 
+				texts[i].Draw(screenX+posX, screenY+posY);	
+		}
+	}
+
+	void MouseDown(int click)
+	{
+		this.MousePressed[click]=true;
+		this.readyForClickEvent = true;
+		
+		if((click == MOUSE_CLICK_WHEEL_DOWN || click == MOUSE_CLICK_WHEEL_UP)
+			&& not (MouseClickCallback is null))
+		{
+			MouseClickCallback.OnMouseClick(id, click);
+		}
+	}
+
+	void MouseUp(int click, bool isCollision)
+	{
+		if(not (MouseClickCallback is null) && MousePressed[click] && isCollision && readyForClickEvent) 
+		{
+			MouseClickCallback.OnMouseClick(id, click);
+
+			for (uint i=0; i<images.length(); i++)
+			{
+				if(IS_COLLISION(mousePosX,mousePosY,screenX+posX+images[i].getPosX(),screenY+posY+images[i].getPosY(),images[i].getWidth(),images[i].getHeight()))
+				{
+					MouseClickCallback.OnMouseClick(images[i].getId(), click);
+				}
+			}
+		
+			for (uint i=0; i<texts.length(); i++)
+			{
+				if(IS_COLLISION(mousePosX,mousePosY,screenX+posX+texts[i].getPosX(),screenY+posY+texts[i].getPosY(),texts[i].getWidth(),texts[i].getHeight()))
+				{
+					MouseClickCallback.OnMouseClick(texts[i].getId(), click);
+				}
+			}
+		}
+		this.MousePressed[click]=false;
+		this.readyForClickEvent = false;
+	}
+
+	void MouseMove(int x, int y)
+	{
+		this.mousePosX=x;
+		this.mousePosY=y;
+		if(@MouseMoveCallback!=null) MouseMoveCallback.OnMouseMove(x, y);
+	}
+
+	bool KeyPress(uint8 key)
+	{
+		return false;
+	}
+
+	void InputLost()
+	{
+		for(uint i=0,j=MousePressed.length();i<j;i++)
+			MousePressed[i]=false;
+	}
+
+	IGUIElementOpt@ GetNewInstance()
+	{
+		IGUIElementOpt @newElement=this;
+		return @newElement;
+	}
+
+	// Options
+	IGUIElementOpt@ CallbackInit(IGUIElementCallbackInit@ callback) { @InitCallback=callback; return this; }
+	IGUIElementOpt@ CallbackDraw(IGUIElementCallbackDraw@ callback) { @DrawCallback=callback; return this; }
+	IGUIElementOpt@ CallbackMouseClick(IGUIElementCallbackMouseClick@ callback) { @MouseClickCallback=callback; return this; }
+	IGUIElementOpt@ CallbackKeyPress(IGUIElementCallbackKeyPress@ callback) { @KeyPressCallback=callback; return this; }
+	IGUIElementOpt@ CallbackMouseMove(IGUIElementCallbackMouseMove@ callback) { @MouseMoveCallback=callback; return this; }
+
+	IGUIElementOpt@ Position(int x, int y)
+	{
+		posX=x;
+		posY=y;
+		return this;
+	}
+
+	IGUIElementOpt@ Position(int x, int y, int w, int h)
+	{
+		elementWidth=w;
+		elementHeight=h;
+		return Position(x, y);
+	}
+
+	IGUIElementOpt@ Position(string& iniKey)
+	{
+		posX=0;
+		posY=0;
+		elementWidth=0;
+		elementHeight=0;
+
+		// Parse four values from ini option
+		string@ str=GetIfaceIniStr(iniKey);
+		if(@str==null || str=="") return this;
+
+		string@[]@ valuesStr=splitEx(str," ");
+		if(valuesStr.length()!=4) return this;
+
+		int[] values(4);
+		for(int i=0;i<4;i++)
+			if(not StrToInt(valuesStr[i],values[i])) return this;
+
+		posX=values[0];
+		posY=values[1];
+		elementWidth=values[2]-values[0]+1;
+		elementHeight=values[3]-values[1]+1;
+		return this;
+	}
+
+	IGUIElementOpt@ Visible(bool visible)
+	{
+		this.visible = visible;
+		return this;
+	}
+
+	IGUIElementOpt@ AbsolutePosition(bool absolutePosition) 
+	{
+		this.absolutePosition = absolutePosition;
+		return this;
+	}
+
+	IGUIElementOpt@ AbsolutePosition(int x, int y)
+	{
+		this.absolutePosition = true;
+		return Position(x, y);
+	}
+
+	IGUIElementOpt@ CollisionTransparent(bool collisionTransparent)
+	{
+		this.collisionTransparent = collisionTransparent;
+		return this;
+	}
+
+	IGUIElementOpt@ AddText(int id, string@ text, int x, int y, int width, int height, int font, uint color, int flags)
+	{
+		uint textsLength = texts.length();
+		texts.resize(textsLength+1);
+		@texts[textsLength] = @GUIElementText(id, text, x, y, width, height, font, color, flags);
+		return this;
+	}
+
+	IGUIElementOpt@ AddImage(int id, string@ sprName, int x, int y)
+	{
+		return AddImage(id, PT_ART_INTRFACE, sprName, x, y);
+	}
+
+	IGUIElementOpt@ AddImage(int id, int patch, string@ sprName, int x, int y)
+	{
+		uint imagesLength = images.length();
+		images.resize(imagesLength+1);
+		@images[imagesLength] = @GUIElementImage(id, patch, sprName, x, y);
+		return this;
+	}
+
+	void setFocused(bool state){
+		this.FocusedIs=state;
+	}
+
+	void setVisible(bool visible){
+		this.visible = visible;
+	}
+
+	void setAbsolutePosition(bool absolutePosition){
+		this.absolutePosition = absolutePosition;
+	}
+
+	void setCollisionTransparent(bool collisionTransparent){
+		this.collisionTransparent = collisionTransparent;
+	}
+
+	IGUIElementCallbackInit@ GetCallbackInit(){
+		return @InitCallback;
+	}
+
+	
+
+	// Info
+	int getId() { return id; }
+	int getPosX() { return posX; }
+	int getPosY() { return posY; }
+	int getWidth() { return elementWidth; }
+	int getHeight() { return elementHeight; }
+	bool IsFocused() { return FocusedIs; }
+	bool IsAbsolutePosition() { return absolutePosition; }
+	bool IsCollisionTransparent() { return collisionTransparent; }
+
+	bool IsCollision(int screenX, int screenY, int mouseX, int mouseY)
+	{
+		if(absolutePosition)
+		{
+			screenX = 0;
+			screenY = 0;
+		}
+		return ((mouseX)>=(screenX+posX) && (mouseX)<=(screenX+posX + elementWidth) && (mouseY)>=(screenY+posY) && (mouseY)<=(screenY+posY + elementHeight));
+	}
+
+	bool isVisible()
+	{
+		return visible;
+	}
+	
+	// Data
+	int id;
+	uint elementWidth;
+	uint elementHeight;
+	int posX;
+	int posY;
+	int mousePosX;
+	int mousePosY;
+	int screenX;
+	int screenY;
+	
+	bool FocusedIs;
+	bool visible;
+	bool collisionTransparent;
+	bool absolutePosition; // Is Absolute position
+	bool readyForClickEvent;
+	bool[] MousePressed;
+
+	IGUIElementOpt@[] images;
+	IGUIElementOpt@[] texts;
+
+	IGUIElementCallbackInit@ InitCallback;
+	IGUIElementCallbackDraw@ DrawCallback;
+	IGUIElementCallbackMouseClick@ MouseClickCallback;
+	IGUIElementCallbackKeyPress@ KeyPressCallback;
+	IGUIElementCallbackMouseMove@ MouseMoveCallback;
+	IGUIElementCallbackValueChange@ ValueChangeCallback;
+	IGUIElementCallbackStateChange@ StateChangeCallback;
+}
+
+class GUIElementImage : GUIElement, IGUIElementImageOpt
+{
+	GUIElementImage()
+	{
+		this.id = -1;
+	}
+
+	GUIElementImage(int id, string@ sprName, int x, int y)
+	{
+		InitImage(id, sprName, PT_ART_INTRFACE, x, y);
+	}
+
+	GUIElementImage(int id, int patch, string@ sprName, int x, int y)
+	{
+		InitImage(id, sprName, patch, x, y);
+	}	
+
+	GUIElementImage(string@ sprName, int patch, int x, int y)
+	{
+		InitImage(0, sprName, patch, x, y);
+	}	
+
+	void InitImage(int id, string@ sprName, int patch, int x, int y)
+	{
+		GUIElement::InitGUIElement(x, y, 0, 0);
+
+		this.id=id;
+		if(@sprName!=null){
+			this.patch = patch;
+			image.Load(sprName, patch);
+			this.elementWidth  = image.Width;
+			this.elementHeight = image.Height;
+			if(image.Id==0) Message("ERROR: Unable to load: "+sprName+".");
+		}
+
+		this.posX = x;
+		this.posY = y;
+		
+		collisionTransparent = true;
+		this.visible=true;
+		
+		this.PositionAbsolute=false;
+		this.stretch = false;
+	}
+
+	void Draw(int screenX, int screenY)
+	{
+		if(absolutePosition || PositionAbsolute) {
+			screenX = 0;
+			screenY = 0;
+		}
+		if(visible)
+		{
+			if(this.image.Id!=0)
+			{
+				if(stretch)
+					DrawSprite(this.image.Id, -1, screenX + posX, screenY + posY, elementWidth, elementHeight, false, true, 0);
+				else
+					DrawSprite(this.image.Id, -1, screenX + posX, screenY + posY, 0);
+			}
+		}
+	}
+
+	IGUIElementImageOpt@ Position(int x, int y)
+	{
+		return cast<IGUIElementImageOpt>(GUIElement::Position(x, y));
+	}
+
+	IGUIElementImageOpt@ Position(int x, int y, int w, int h)
+	{
+		return cast<IGUIElementImageOpt>(GUIElement::Position(x, y, w, h));
+	}
+
+	IGUIElementImageOpt@ Position(string& iniKey)
+	{
+		return cast<IGUIElementImageOpt>(GUIElement::Position(iniKey));
+	}
+
+	IGUIElementImageOpt@ Visible(bool visible)
+	{
+		return cast<IGUIElementImageOpt>(GUIElement::Visible(visible));
+	}
+	
+	IGUIElementImageOpt@ Stretch(bool stretch)
+	{
+		this.stretch = stretch;
+		return this;
+	}
+	
+	void setPosX(int x)
+	{
+		this.posX = x;
+	}
+
+	void setPosY(int y)
+	{
+		this.posY = y;
+	}
+
+	void setVisible(bool visible){
+		GUIElement::setVisible(visible);
+	}
+
+	void setFocused(bool state){
+		GUIElement::setFocused(state);
+	}
+	
+	void setAbsolutePosition(bool absolute){
+		PositionAbsolute=absolute;
+	}
+
+	void loadImage(uint nameHash, uint8 dir)
+	{
+		this.patch = dir;
+		image.Load(nameHash, dir);
+		if(!stretch)
+		{
+			this.elementWidth  = image.Width;
+			this.elementHeight = image.Height;
+		}
+		if(image.Id==0) Message("ERROR: Unable to load: "+nameHash+".");
+	}
+	
+	void clearImage()
+	{
+		image.Id = 0;
+	}
+
+	int getPosX()
+	{
+		return posX;
+	}
+
+	int getPosY()
+	{
+		return posY;
+	}
+
+	int getImageWidth()
+	{
+		return image.Width;
+	}
+
+	int getImageHeight()
+	{
+		return image.Height;
+	}
+
+	bool IsCollision(int screenX, int screenY, int mouseX, int mouseY)
+	{
+		return GUIElement::IsCollision(screenX, screenY, mouseX, mouseY);
+	}
+
+	bool isVisible()
+	{
+		return GUIElement::isVisible();
+	}
+
+	IGUIElementImageOpt@ CallbackInit(IGUIElementCallbackInit@ callback) { @InitCallback=callback; return this; }
+	IGUIElementImageOpt@ CallbackDraw(IGUIElementCallbackDraw@ callback) { @DrawCallback=callback; return this; }
+	IGUIElementImageOpt@ CallbackMouseClick(IGUIElementCallbackMouseClick@ callback) { @MouseClickCallback=callback; return this; }
+
+
+	Sprite image;
+	int patch;
+	bool PositionAbsolute;
+	bool stretch;
+}
+
+class GUIElementText : GUIElement, IGUIElementTextOpt
+{
+	GUIElementText()
+	{
+		InitText(0, "", 0, 0, 50, 10, FONT_FALLOUT, COLOR_TEXT, COLOR_TEXT, 0);
+	}
+	
+	GUIElementText(int id, string@ text, int x, int y)
+	{
+		InitText(id, text, x, y, 50, 10, FONT_FALLOUT, COLOR_TEXT, COLOR_TEXT, 0);
+	}	
+
+	GUIElementText(string@ text, int x, int y)
+	{
+		InitText(0, text, x, y, 50, 10, FONT_FALLOUT, COLOR_TEXT, COLOR_TEXT, 0);
+	}	
+
+	GUIElementText(string@ text, int x, int y, int width, int height)
+	{
+		InitText(0, text, x, y, width, height, FONT_FALLOUT, COLOR_TEXT, COLOR_TEXT, 0);
+	}	
+
+	GUIElementText(int id, string@ text, int x, int y, int width, int height, int font, uint color, int flags)
+	{
+		InitText(id, text, x, y, width, height, font, color, color, flags);
+	}	
+
+	GUIElementText(int id, string@ text, int x, int y, int width, int height, int font, uint color, uint colorDown, int flags)
+	{
+		InitText(id, text, x, y, width, height, font, color, colorDown, flags);
+	}	
+
+	void InitText(int id, string@ text, int x, int y, int width, int height, int font, uint color, uint colorDown, int flags)
+	{
+
+		GUIElement::InitGUIElement(x, y, 0, 0);
+
+		this.id=id;
+		this.posX = x;
+		this.posY = y;
+		this.elementWidth = width;
+		this.elementHeight = height;
+
+		this.dX = 0;
+		this.dY = 0; 
+		this.upDX = 0;
+		this.upDY = 0; 
+		this.downDX = 0;
+		this.downDY = 0;
+
+		if(text is null) this.text="null";
+		else this.text=text; 
+
+		this.font = font;
+		this.textColor = color;
+		this.textColorUp = color;
+		this.textColorDown = colorDown;
+		this.textFlags = flags;
+		
+		collisionTransparent = true;
+		this.visible=true;
+	}
+
+	void Draw(int screenX, int screenY)
+	{
+		if(visible)
+		{
+			if(!(DrawCallback is null))
+				DrawCallback.OnDraw(this.id);
+			if(not absolutePosition)
+				DrawText(text, screenX+posX+dX, screenY+posY+dY, elementWidth, elementHeight, textColor, font, textFlags);
+			else 
+				DrawText(text, posX, posY, elementWidth, elementHeight, textColor, font, textFlags);
+		}
+	}
+
+	IGUIElementTextOpt@ Position(int x, int y)
+	{
+		return cast<IGUIElementTextOpt>(GUIElement::Position(x, y));
+	}
+
+	IGUIElementTextOpt@ Position(int x, int y, int w, int h)
+	{
+		return cast<IGUIElementTextOpt>(GUIElement::Position(x, y, w, h));
+	}
+
+	IGUIElementTextOpt@ Position(string& iniKey)
+	{
+		return cast<IGUIElementTextOpt>(GUIElement::Position(iniKey));
+	}
+
+	IGUIElementTextOpt@ AbsolutePosition(int x, int y)
+	{
+		return cast<IGUIElementTextOpt>(GUIElement::AbsolutePosition(x, y));
+	}
+
+	IGUIElementTextOpt@ AbsolutePosition(bool absolutePosition)
+	{
+		return cast<IGUIElementTextOpt>(GUIElement::AbsolutePosition(absolutePosition));
+	}
+
+	IGUIElementTextOpt@ Visible(bool visible)
+	{
+		return cast<IGUIElementTextOpt>(GUIElement::Visible(visible));
+	}
+ 
+	IGUIElementTextOpt@ Text(string@ text)
+	{
+		return Text(text, font, textColor);
+	}
+
+	IGUIElementTextOpt@ Text(string@ text, int font, uint color)
+	{
+		return Text(text, font, color, textFlags);
+	}
+
+	IGUIElementTextOpt@ Text(string@ text, int font, uint color, int flags)
+	{
+		return Text(text, font, color, color, flags);
+	}
+
+	IGUIElementTextOpt@ Text(string@ text, int font, uint color, uint downColor, int flags)
+	{
+		if(text is null) this.text="";
+		else this.text=text; 
+
+		this.font = font;
+		this.textColor = color;
+		this.textColorUp = color;
+		this.textColorDown = downColor;
+		this.textFlags = flags;
+		return this;
+	}
+	
+	IGUIElementTextOpt@ TextBoxSize(int width, int height)
+	{
+		this.elementWidth = width;
+		this.elementHeight = height;
+
+		return this;
+	}
+
+	IGUIElementTextOpt@ TextOptions(int font, uint color)
+	{
+		return TextOptions(font, color, color, 0);
+	}
+
+	IGUIElementTextOpt@ TextOptions(int font, uint color, int flags)
+	{
+		return TextOptions(font, color, color, flags);
+	}
+
+	IGUIElementTextOpt@ TextOptions(int font, uint color, uint colorDown, int flags)
+	{
+		this.font = font;
+		this.textColor = color;
+		this.textColorUp = color;
+		this.textColorDown = colorDown;
+		this.textFlags = flags;
+
+		return this;
+	}
+
+	IGUIElementTextOpt@ TextColor(uint color)
+	{
+		this.textColor = color;
+		return this;
+	}
+	
+	
+    void setTextShift(int deltaX, int deltaY, int deltaDownX, int deltaDownY) 
+	{
+		this.dX = deltaX;
+		this.dY = deltaY;
+        this.upDX = deltaX;
+		this.upDY = deltaY; 
+		this.downDX = deltaDownX;
+		this.downDY = deltaDownY;
+    }
+
+	void setTextWidth(int width) 
+	{
+        this.elementWidth = width;
+    }
+
+	void setTextDown(bool down) {
+        this.textColor = down?textColorDown:textColorUp;
+		this.dX =  down?(upDX+downDX):(upDX);
+		this.dY =  down?(upDY+downDY):(upDY);
+    }
+
+	void setText(string& text)
+	{
+		this.text=text;
+	}
+
+	void setVisible(bool visible){
+		GUIElement::setVisible(visible);
+	}
+
+	void setFocused(bool state){
+		GUIElement::setFocused(state);
+	}
+
+	int getId()
+	{
+		return id;
+	}
+
+	string@ getText()
+	{
+		return text;
+	}
+
+	int getFont()
+	{
+		return font;
+	}
+
+	uint getTextColor()
+	{
+		return textColor;
+	}
+	
+	int getWidth()
+	{
+		return this.elementWidth;
+	}
+	
+	int getHeight()
+	{
+		return this.elementHeight;
+	}
+	
+	int getPosX()
+	{
+		return this.posX;
+	}
+	
+	int getPosY()
+	{
+		return this.posY;
+	}
+
+	bool isVisible()
+	{
+		return GUIElement::isVisible();
+	}
+
+	IGUIElementTextOpt@ CallbackMouseMove(IGUIElementCallbackMouseMove@ callback) { @MouseMoveCallback=callback; return this; }
+	IGUIElementTextOpt@ CallbackInit(IGUIElementCallbackInit@ callback) { @InitCallback=callback; return this; }
+	IGUIElementTextOpt@ CallbackDraw(IGUIElementCallbackDraw@ callback) { @DrawCallback=callback; return this; }
+	IGUIElementTextOpt@ CallbackMouseClick(IGUIElementCallbackMouseClick@ callback) { @MouseClickCallback=callback; return this; }
+
+
+	string text;
+	int font;
+	
+	int dX;
+	int dY;
+	int upDX;
+	int upDY;
+	int downDX;
+	int downDY;
+	uint textColor;
+	uint textColorUp;
+	uint textColorFocused;
+	uint textColorDown;
+	int textFlags;
+}
+
+class GUIElementButton : GUIElement, IGUIElementButtonOpt
+{
+	IGUIElementButtonOpt@ CallbackInit(IGUIElementCallbackInit@ callback) { @InitCallback=callback; return this; }
+	IGUIElementButtonOpt@ CallbackDraw(IGUIElementCallbackDraw@ callback) { @DrawCallback=callback; return this; }
+	IGUIElementButtonOpt@ CallbackMouseClick(IGUIElementCallbackMouseClick@ callback) { @MouseClickCallback=callback; return this; }
+
+
+	GUIElementButton(int x, int y)
+	{
+		@ButtonText = GUIElementText();
+		InitGUIElement(x, y, 0, 0);
+	}
+
+	void Draw(int screenX, int screenY)
+	{
+	if(absolutePosition) {
+			screenX = 0;
+			screenY = 0;
+		}
+		if(visible)
+		{
+			isDown=MousePressed[MOUSE_CLICK_LEFT];
+
+			if(isDown)
+			{
+				if(not (downSprite is null)) downSprite.Draw(screenX, screenY);
+				ButtonText.setTextDown(true);
+			}
+			else 
+			{
+				if(not (upSprite is null)) upSprite.Draw(screenX, screenY);
+				ButtonText.setTextDown(false);
+			}
+			ButtonText.Draw(screenX, screenY);
+
+			if(not (DrawCallback is null)) DrawCallback.OnDraw(this.id);
+		}
+	}
+
+	IGUIElementButtonOpt@ Position(int x, int y)
+	{
+		GUIElement::Position(x, y);
+		UpdateElementsPositions();
+		return this;
+	}
+
+	IGUIElementButtonOpt@ Position(int x, int y, int w, int h)
+	{
+		GUIElement::Position(x, y, w, h);
+		UpdateElementsPositions();
+		return this;
+	}
+	
+
+	IGUIElementButtonOpt@ Position(string& iniKey)
+	{
+		GUIElement::Position(iniKey);
+		UpdateElementsPositions();
+		return this;
+	}
+	
+	IGUIElementButtonOpt@ setAbsolutePosition(bool absolute)
+	{
+		GUIElement::setAbsolutePosition(absolute);
+		return this;
+	}
+
+	IGUIElementButtonOpt@ Visible(bool visible)
+	{
+		return cast<IGUIElementButtonOpt>(GUIElement::Visible(visible));
+	}
+
+	IGUIElementButtonOpt@ Text(string@ text)
+	{
+		int font = FONT_FALLOUT;
+		uint color = COLOR_SAND;
+		uint downColor = COLOR_DRED;
+		int flags = FT_CENTERY | FT_CENTERX;
+		return Text(text, font, color, downColor, flags);
+	}
+
+	IGUIElementButtonOpt@ Text(string@ text, int font, uint color)
+	{
+		return Text(text, font, color, color, FT_CENTERX|FT_CENTERY);
+	}
+
+	IGUIElementButtonOpt@ Text(string@ text, int font, uint color, int flags)
+	{
+		uint downColor = COLOR_DRED;
+		return Text(text, font, color, downColor, flags);
+	}
+
+	IGUIElementButtonOpt@ Text(string@ text, int font, uint color, uint downColor, int flags)
+	{
+		@ButtonText = GUIElementText(0, text, posX, posY, elementWidth, elementHeight, font, color, downColor, flags);
+		return this; 
+	}
+
+	IGUIElementButtonOpt@ TextShift(int deltaX, int deltaY, int deltaDownX, int deltaDownY)
+	{
+		ButtonText.setTextShift(deltaX,deltaY,deltaDownX,deltaDownY);
+		return this;
+	}
+
+	IGUIElementButtonOpt@ TextWidth(int width)
+	{
+		ButtonText.setTextWidth(width);
+		return this;
+	}
+
+	IGUIElementButtonOpt@ UpPic(string@ sprName)
+	{
+		@upSprite = @GUIElementImage(id, sprName, posX, posY);
+		this.elementWidth = upSprite.image.Width;
+		this.elementHeight = upSprite.image.Height;
+		return cast<IGUIElementButtonOpt>(this);
+	}
+	
+	IGUIElementButtonOpt@ UpPic(int path, string@ sprName)
+	{
+		@upSprite = @GUIElementImage(id, path, sprName, posX, posY);
+		this.elementWidth = upSprite.image.Width;
+		this.elementHeight = upSprite.image.Height;
+		return cast<IGUIElementButtonOpt>(this);
+	}	
+
+	IGUIElementButtonOpt@ DownPic(string@ sprName)
+	{
+		@downSprite = @GUIElementImage(id, sprName, posX, posY);
+		this.elementWidth = downSprite.image.Width;
+		this.elementHeight = downSprite.image.Height;
+		return cast<IGUIElementButtonOpt>(this);
+	}
+
+	IGUIElementButtonOpt@ ClickableZone(int width, int height)
+	{
+		this.elementWidth = width;
+		this.elementHeight = height;
+
+		return this;
+	}
+
+	IGUIElementButtonOpt@ ClickableZone(int x, int y, int width, int height)
+	{
+		this.posX = x;
+		this.posY = y;
+
+		this.elementWidth = width;
+		this.elementHeight = height;
+
+		return this;
+	}
+
+	void setVisible(bool visible){
+		GUIElement::setVisible(visible);
+	}
+
+	void setFocused(bool state){
+		GUIElement::setFocused(state);
+	}
+
+	void Hide()
+	{
+		if(this.posX!=-1000000) this.last_posX=this.posX;
+		if(this.posY!=-1000000) this.last_posY=this.posY;
+		GUIElement::Position(-1000000,-1000000);
+		GUIElement::setVisible(false);
+		UpdateElementsPositions();
+	}
+	
+	void Show()
+	{
+		GUIElement::Position(this.last_posX,this.last_posY);
+		GUIElement::setVisible(true);
+		UpdateElementsPositions();
+	}
+	
+	// private functions
+	void UpdateElementsPositions()
+	{
+		if(@upSprite!= null)
+		{
+			upSprite.posX = posX;
+			upSprite.posY = posY;
+		}
+		if(@downSprite!= null)
+		{
+			downSprite.posX = posX;
+			downSprite.posY = posY;
+		}
+		if(@ButtonText!= null)
+		{
+			ButtonText.posX = posX;
+			ButtonText.posY = posY;
+		}
+	}
+
+	bool isVisible()
+	{
+		return GUIElement::isVisible();
+	}
+	
+	string getText()
+	{
+		return ButtonText.getText();
+	}
+	
+	int GetPosX()
+	{
+		return this.posX;
+	}
+	
+	int GetPosY()
+	{
+		return this.posY;
+	}
+	
+	GUIElementImage @upSprite;
+	GUIElementImage @downSprite;
+	GUIElementText @ButtonText;
+	bool isDown;
+	int last_posX;
+	int last_posY;
+}
+
+class GUIElementEditBox : GUIElement, IGUIElementEditBoxOpt
+{
+
+	GUIElementEditBox(int x, int y)
+	{
+		InitEditBox(0, x, y);
+	}
+
+
+	void InitEditBox(int id, int x, int y)
+	{
+
+		this.passwordChar = "*";
+		this.visibleText = "";
+		this.password = false;
+		this.numeric = false;
+		this.noinput = false;
+
+		GUIElement::InitGUIElement(x, y, 0, 0);
+
+		this.id=id;
+		this.posX = x;
+		this.posY = y;
+		this.elementWidth = 0;
+		this.elementHeight = 0;
+
+		this.dX = 0;
+		this.dY = 0; 
+		this.upDX = 0;
+		this.upDY = 0; 
+		this.downDX = 0;
+		this.downDY = 0;
+
+		this.text=""; 
+
+		this.firstTime = true;
+
+		this.lMargin = 0;
+		this.rMargin = 0;
+		this.uMargin = 0;
+		this.dMargin = 0;
+
+		this.font = FONT_FALLOUT;
+		this.textColor = COLOR_TEXT;
+		this.textColorUp = COLOR_DGREEN;
+		this.textColorDown = COLOR_TEXT;
+		this.textFlags = 0;
+		this.inputMaxLen = 100;
+		
+		collisionTransparent = true;
+		this.visible=true;
+	}
+
+	void Draw(int screenX, int screenY)
+	{
+		if(visible)
+		{
+			if(@PicBackground != null) PicBackground.Draw(screenX + posX, screenY + posY);
+			if(FocusedIs) textColor = textColorDown;
+			else textColor = textColorUp;
+			if(!FocusedIs || noinput) DrawText(visibleText, screenX+posX+dX+lMargin, screenY+posY+dY+uMargin, elementWidth-rMargin, elementHeight-dMargin, textColor, font, textFlags);
+			else if((__FullSecond/10)%2==0) DrawText(visibleText+".", screenX+posX+dX+lMargin, screenY+posY+dY+uMargin, elementWidth-rMargin, elementHeight-dMargin, textColor, font, textFlags);
+			else DrawText(visibleText+"!", screenX+posX+dX+lMargin, screenY+posY+dY+uMargin, elementWidth-rMargin, elementHeight-dMargin, textColor, font, textFlags);
+		}
+	}
+
+	bool isNumberKey(uint8 key)
+	{
+		if (key>=DIK_1 && key<=DIK_0)
+		{
+			return true;
+		}
+		else if (key==DIK_NUMPAD0)
+		{
+			return true;
+		}
+		else if (key==DIK_NUMPAD1)
+		{
+			return true;
+		}
+		else if (key==DIK_NUMPAD2)
+		{
+			return true;
+		}
+		else if (key==DIK_NUMPAD3)
+		{
+			return true;
+		}
+		else if (key==DIK_NUMPAD4)
+		{
+			return true;
+		}
+		else if (key==DIK_NUMPAD5)
+		{
+			return true;
+		}
+		else if (key==DIK_NUMPAD6)
+		{
+			return true;
+		}
+		else if (key==DIK_NUMPAD7)
+		{
+			return true;
+		}
+		else if (key==DIK_NUMPAD8)
+		{
+			return true;
+		}
+		else if (key==DIK_NUMPAD9)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	bool KeyPress(uint8 key)
+	{
+		uint8 letter=0;
+		
+		if(key==DIK_ESCAPE) return false;
+		if(noinput) return true;
+		if(numeric)
+		{
+			if(key!=DIK_BACK && key!=DIK_NUMPADENTER && key!=DIK_RETURN && (not isNumberKey(key))) 
+				return false;
+		}
+
+		bool result=false;
+		if(key!=DIK_RETURN) ProcessKey(key,text,letter);
+
+		if(text.length()>inputMaxLen) 
+		{
+			text.resize(inputMaxLen);
+			visibleText.resize(inputMaxLen);
+		}
+		
+		if(password)
+		{
+			if(firstTime) 
+			{
+				firstTime = false;
+				visibleText.resize(0); // To delate start password Text
+			}
+			if(key==DIK_BACK)
+			{
+				if(visibleText.length()>0) visibleText.resize(visibleText.length()-1);
+			}
+			else 
+			{
+				visibleText="";
+				for(uint i=0; i<text.length(); i++)
+					visibleText+=passwordChar;
+			}
+		}
+		else 
+			visibleText=text;
+		
+		if(@KeyPressCallback != null) return KeyPressCallback.OnKeyPress(key,letter);
+
+		return false;
+	}
+
+	IGUIElementEditBoxOpt@ Position(int x, int y)
+	{
+		return cast<IGUIElementEditBoxOpt>(GUIElement::Position(x, y));
+	}
+
+	IGUIElementEditBoxOpt@ Position(int x, int y, int w, int h)
+	{
+		return cast<IGUIElementEditBoxOpt>(GUIElement::Position(x, y, w, h));
+	}
+
+	IGUIElementEditBoxOpt@ Position(string& iniKey)
+	{
+		return cast<IGUIElementEditBoxOpt>(GUIElement::Position(iniKey));
+	}
+
+	IGUIElementEditBoxOpt@ Text(string@ text)
+	{
+		return Text(text, FONT_FALLOUT, COLOR_TEXT);
+	}
+
+	IGUIElementEditBoxOpt@ Text(string@ text, int font, uint color)
+	{
+		return Text(text, font, color, 0);
+	}
+
+	IGUIElementEditBoxOpt@ Text(string@ text, int font, uint color, int flags)
+	{
+		return Text(text, font, color, color, flags);
+	}
+
+	IGUIElementEditBoxOpt@ Text(string@ text, int font, uint color, uint downColor, int flags)
+	{
+		if(text is null) this.text="";
+		else this.text=text; 
+
+		this.font = font;
+		this.textColor = color;
+		this.textColorUp = color;
+		this.textColorDown = downColor;
+		this.textFlags = flags;
+		return VisibleText(text);
+	}
+	
+	IGUIElementEditBoxOpt@ Visible(bool visible)
+	{
+		return cast<IGUIElementEditBoxOpt>(GUIElement::Visible(visible));
+	}
+
+	IGUIElementEditBoxOpt@ TextBoxSize(int width, int height)
+	{
+		this.elementWidth = width;
+		this.elementHeight = height;
+
+		return this;
+	}
+
+	IGUIElementEditBoxOpt@ TextOptions(int font, uint color)
+	{
+		return TextOptions(font, color, color, 0);
+	}
+
+	IGUIElementEditBoxOpt@ TextOptions(int font, uint color, int flags)
+	{
+		return TextOptions(font, color, color, flags);
+	}
+
+	IGUIElementEditBoxOpt@ TextOptions(int font, uint color, uint colorDown, int flags)
+	{
+		this.font = font;
+		this.textColor = color;
+		this.textColorUp = color;
+		this.textColorDown = colorDown;
+		this.textFlags = flags;
+
+		return this;
+	}
+
+	IGUIElementEditBoxOpt@ TextColor(uint color)
+	{
+		this.textColor = color;
+		return this;
+	}
+
+	IGUIElementEditBoxOpt@ VisibleText(string@ text)
+	{
+		this.text = text;
+		this.visibleText = text;
+		return this;
+	}
+
+	IGUIElementEditBoxOpt@ BackgroundPic(string@ sprName)
+	{
+		@PicBackground = @GUIElementImage(1, sprName, 0, 0);
+		this.elementWidth = PicBackground.getImageWidth();
+		this.elementHeight = PicBackground.getImageHeight();
+		return this;
+	}
+
+	IGUIElementEditBoxOpt@ MaxLen(int maxLen)
+	{
+		this.inputMaxLen = maxLen;
+		return this;
+	}
+
+	IGUIElementEditBoxOpt@ EditBoxSize(int width, int height) 
+	{
+        this.elementWidth = width;
+		this.elementHeight = height;
+
+		return this;
+    }
+
+	IGUIElementEditBoxOpt@ LeftMargin(int lMargin)
+	{
+		this.lMargin = lMargin;
+		return this;
+	}
+
+	IGUIElementEditBoxOpt@ RightMargin(int rMargin)
+	{
+		this.rMargin = rMargin;
+		return this;
+	}
+
+	IGUIElementEditBoxOpt@ UpMargin(int uMargin)
+	{
+		this.uMargin = uMargin;
+		return this;
+	}
+
+	IGUIElementEditBoxOpt@ DownMargin(int dMargin)
+	{
+		this.dMargin = dMargin;
+		return this;
+	}
+
+	IGUIElementEditBoxOpt@ Margins(int lMargin, int rMargin, int uMargin, int dMargin)
+	{
+		this.lMargin = lMargin;
+		this.rMargin = rMargin;
+		this.uMargin = uMargin;
+		this.dMargin = dMargin;
+		return this;
+	}
+
+	IGUIElementEditBoxOpt@ PasswordMode(bool isPasswordMode)
+	{
+		this.password = isPasswordMode;
+		return this;
+	}
+	
+	IGUIElementEditBoxOpt@ PasswordChar(string@ passChar)
+	{
+		this.passwordChar = passChar;
+		return this;
+	}
+
+	IGUIElementEditBoxOpt@ NumericMode(bool isNumericMode)
+	{
+		this.numeric = isNumericMode;
+		return this;
+	}  
+
+	string@ getText()
+	{
+		return text;
+	}
+
+
+	void setVisible(bool visible){
+		GUIElement::setVisible(visible);
+	}
+
+	void setFocused(bool state){
+		GUIElement::setFocused(state);
+	}
+	
+	void NoInput(bool var){
+		noinput=var;
+	}
+
+	int getId()
+	{
+		return id;
+	}
+
+	bool isVisible()
+	{
+		return GUIElement::isVisible();
+	}
+
+	IGUIElementEditBoxOpt@ CallbackMouseMove(IGUIElementCallbackMouseMove@ callback) { @MouseMoveCallback=callback; return this; }
+	IGUIElementEditBoxOpt@ CallbackInit(IGUIElementCallbackInit@ callback) { @InitCallback=callback; return this; }
+	IGUIElementEditBoxOpt@ CallbackDraw(IGUIElementCallbackDraw@ callback) { @DrawCallback=callback; return this; }
+	IGUIElementEditBoxOpt@ CallbackMouseClick(IGUIElementCallbackMouseClick@ callback) { @MouseClickCallback=callback; return this; }
+	IGUIElementEditBoxOpt@ CallbackKeyPress(IGUIElementCallbackKeyPress@ callback){ @KeyPressCallback=callback; return this; }
+
+	string text;
+	string visibleText;
+	string passwordChar;
+	bool password;
+	bool numeric;
+	bool noinput;
+	GUIElementImage @PicBackground;
+	int font;
+	uint inputMaxLen;
+	bool firstTime;
+	
+	int dX;
+	int dY;
+	int upDX;
+	int upDY;
+	int downDX;
+	int downDY;
+	uint textColor;
+	uint textColorUp;
+	uint textColorFocused;
+	uint textColorDown;
+	int textFlags;
+	uint lMargin;
+	uint rMargin;
+	uint uMargin;
+	uint dMargin;
+}
+
+class GUIElementCheckBox : GUIElement, IGUIElementCheckBoxOpt
+{
+	GUIElementCheckBox(int x, int y)
+	{
+		@TextCheckBox = GUIElementText();
+		@PicChecked = GUIElementImage();
+		@PicUnChecked = GUIElementImage();
+		IsCheckBoxChecked=false;
+		isAutoStateChange = true;
+		InitGUIElement(x, y, 0, 0);
+		this.visible=true;
+		this.readyForCheck = false;
+	}
+
+	void Draw(int screenX, int screenY)
+	{
+		if(visible)
+		{
+			if(absolutePosition) {
+				screenX = 0;
+				screenY = 0;
+			}
+			
+			if(IsCheckBoxChecked)
+			{
+				PicChecked.Draw(screenX, screenY);
+			}
+			else 
+			{
+				PicUnChecked.Draw(screenX, screenY);
+			}
+			TextCheckBox.Draw(screenX, screenY);
+
+			if(not (DrawCallback is null)) DrawCallback.OnDraw(this.id);
+		}
+	}
+
+	
+
+	void MouseUp(int click, bool isCollision)
+	{
+		TextCheckBox.setTextDown(false);
+
+		if(isCollision && readyForCheck) 
+		{
+			IsCheckBoxChecked = not IsCheckBoxChecked;
+			if(not (StateChangeCallback is null)) StateChangeCallback.OnStateChange(IsCheckBoxChecked); 
+		}
+
+		readyForCheck = false;
+
+		GUIElement::MouseUp(click, isCollision);
+	}
+
+	void MouseDown(int click)
+	{
+		TextCheckBox.setTextDown(true);
+
+		if(isAutoStateChange) 
+		{
+			readyForCheck = true;
+		}
+
+		GUIElement::MouseDown(click);
+	}
+
+	void setState(bool state){
+		IsCheckBoxChecked = state;
+		if(not (StateChangeCallback is null)) StateChangeCallback.OnStateChange(IsCheckBoxChecked); 
+	}
+
+	void setVisible(bool visible){
+		GUIElement::setVisible(visible);
+	}
+
+	bool IsChecked(){
+		return IsCheckBoxChecked;
+	}
+
+	IGUIElementCheckBoxOpt@ Position(int x, int y)
+	{
+		GUIElement::Position(x, y);
+		UpdateElementsPositions();
+		return this;
+	}
+
+	IGUIElementCheckBoxOpt@ Position(int x, int y, int w, int h)
+	{
+		GUIElement::Position(x, y, w, h);
+		UpdateElementsPositions();
+		return this;
+	}
+
+	IGUIElementCheckBoxOpt@ Position(string& iniKey)
+	{
+		GUIElement::Position(iniKey);
+		UpdateElementsPositions();
+		return this;
+	}
+
+	IGUIElementCheckBoxOpt@ Visible(bool visible)
+	{
+		return cast<IGUIElementCheckBoxOpt>(GUIElement::Visible(visible));
+	}
+
+	IGUIElementCheckBoxOpt@ UnCheckedPic(string@ sprName)
+	{
+		@PicUnChecked = @GUIElementImage(id, sprName, posX, posY);
+		this.elementWidth = PicUnChecked.image.Width;
+		this.elementHeight = PicUnChecked.image.Height;
+		return cast<IGUIElementCheckBoxOpt>(this);
+	}
+
+	IGUIElementCheckBoxOpt@ CheckedPic(string@ sprName)
+	{
+		@PicChecked = @GUIElementImage(id, sprName, posX, posY);
+		this.elementWidth = PicChecked.image.Width;
+		this.elementHeight = PicChecked.image.Height;
+		return cast<IGUIElementCheckBoxOpt>(this);
+	}
+
+	IGUIElementCheckBoxOpt@ Text(string@ text)
+	{
+		int font = FONT_FALLOUT;
+		uint color = COLOR_SAND;
+		uint downColor = COLOR_DRED;
+		int flags = FT_CENTERY;
+		return Text(text, font, color, downColor, flags);
+	}
+
+	IGUIElementCheckBoxOpt@ Text(string@ text, int font, uint color)
+	{
+		return Text(text, font, color, color, FT_CENTERY);
+	}
+
+	IGUIElementCheckBoxOpt@ Text(string@ text, int font, uint color, int flags)
+	{
+		uint downColor = COLOR_DRED;
+		return Text(text, font, color, downColor, flags);
+	}
+
+	IGUIElementCheckBoxOpt@ Text(string@ text, int font, uint color, uint downColor, int flags)
+	{
+		@TextCheckBox = GUIElementText(0, text, posX, posY, elementWidth, elementHeight, font, color, downColor, flags);
+		 TextCheckBox.setTextWidth(100);
+		 TextCheckBox.setTextShift(PicChecked.image.Width + 3, -2, 0, 0);
+		return this; 
+	}
+
+	IGUIElementCheckBoxOpt@ TextShift(int deltaX, int deltaY, int deltaDownX, int deltaDownY)
+	{
+		TextCheckBox.setTextShift(deltaX,deltaY,deltaDownX,deltaDownY);
+		return this;
+	}
+
+	IGUIElementCheckBoxOpt@ TextWidth(int width)
+	{
+		TextCheckBox.setTextWidth(width);
+		return this;
+	}
+
+	IGUIElementCheckBoxOpt@ AutoStateChange(bool autoStateChange)
+	{
+		isAutoStateChange = autoStateChange;
+		return this;
+	}
+
+
+	IGUIElementCheckBoxOpt@ CallbackInit(IGUIElementCallbackInit@ callback) { @InitCallback=callback; return this; }
+	IGUIElementCheckBoxOpt@ CallbackDraw(IGUIElementCallbackDraw@ callback) { @DrawCallback=callback; return this; }
+	IGUIElementCheckBoxOpt@ CallbackMouseClick(IGUIElementCallbackMouseClick@ callback) { @MouseClickCallback=callback; return this; }
+	IGUIElementCheckBoxOpt@ CallbackStateChange(IGUIElementCallbackStateChange@ callback) { @StateChangeCallback=callback; return this; }
+
+	
+	void setFocused(bool state){
+		GUIElement::setFocused(state);
+	}
+	
+
+	// private functions
+	void UpdateElementsPositions()
+	{
+		if(@PicUnChecked!= null)
+		{
+			PicUnChecked.posX = posX;
+			PicUnChecked.posY = posY;
+		}
+		if(@PicChecked!= null)
+		{
+			PicChecked.posX = posX;
+			PicChecked.posY = posY;
+		}
+		if(@TextCheckBox!= null)
+		{
+			TextCheckBox.posX = posX;
+			TextCheckBox.posY = posY;
+		}
+	}
+
+	//info
+	bool isVisible()
+	{
+		return GUIElement::isVisible();
+	}
+
+	bool IsCheckBoxChecked;
+	GUIElementImage @PicUnChecked;
+	GUIElementImage @PicChecked;
+	GUIElementText @TextCheckBox;
+
+	// Private
+	bool readyForCheck;
+	bool isAutoStateChange;
+}
+
+class GUIElementSliderControl : GUIElement, IGUIElementSliderControlOpt
+{
+	GUIElementSliderControl(int x, int y)
+	{
+		InitGUIElement(x, y, 0, 0);
+		@TextTitle = GUIElementText().TextBoxSize(200,200);
+		@DownLeftText = GUIElementText().TextBoxSize(200,200);
+		@DownRightText = GUIElementText().TextBoxSize(200,200);
+		@DownCenterText = GUIElementText().TextBoxSize(200,200);
+		this.elementWidth = 175;
+		this.elementHeight = 45;
+		this.minValue = 0;
+		this.maxValue = 100;
+		this.ticFreq = 1;
+		this.currentPosition = 0;
+		this.ticZeroPosX = 0;
+		this.ticZeroPosY = 0;
+		this.ticTrackWidth = 100;
+		this.moving = false;
+		this.visible=true;
+		SliderDefaultInit();
+	}
+
+	void SliderDefaultInit()
+	{
+		ElementBoxSize(175,45);
+		TickTrackPic("preftrck.frm");
+		TickTrackPosition(5,22);
+		TicTrackWidth(136);
+		TicPic("prfsldof.frm");
+		ActiveTicPic("prfsldon.frm");
+		TicZeroPosition(8,20);
+		TitleTextPosition(5,0);
+		TitleTextOptions(FONT_FAT, COLOR_SAND, 0);
+		LeftTextPosition(0,35);
+		LeftTextOptions(FONT_FALLOUT, COLOR_SAND, 0);
+		MidleTextPosition(70,35);
+		MidleTextOptions(FONT_FALLOUT, COLOR_SAND, 0);
+		RightTextPosition(145,35);
+		RightTextOptions(FONT_FALLOUT, COLOR_SAND, 0);
+		Range(0,100);
+		TicFreq(1);
+	}
+
+	void Draw(int screenX, int screenY)
+	{
+		this.screenX=screenX;
+		this.screenY=screenY;
+
+		if(visible)
+		{
+			if(absolutePosition) {
+				screenX = 0;
+				screenY = 0;
+			}
+			if(@PicBackground != null) PicBackground.Draw(screenX + posX, screenY + posY);
+			if(@PicTickTrack != null) PicTickTrack.Draw(screenX + posX, screenY + posY);
+			if(@PicBackground != null) PicBackground.Draw(screenX + posX, screenY + posY);
+			if(@TextTitle != null) TextTitle.Draw(screenX + posX, screenY + posY);
+			if(@DownLeftText != null) DownLeftText.Draw(screenX + posX, screenY + posY);
+			if(@DownRightText != null)DownRightText.Draw(screenX + posX, screenY + posY);
+			if(@DownCenterText != null) DownCenterText.Draw(screenX + posX, screenY + posY);
+			if(@UnCheckedPic != null) UnCheckedPic.Draw(screenX + posX, screenY + posY);
+			if(@CheckedPic != null && moving) CheckedPic.Draw(screenX + posX, screenY + posY);
+			if(not (DrawCallback is null)) DrawCallback.OnDraw(this.id);
+		}
+	}
+
+	void MouseMove(int x, int y)
+	{
+		if(moving)
+		{
+			if(x > ticZeroPosX+ticTrackWidth+posX+screenX + shiftX)
+			{
+				CheckedPic.setPosX(ticZeroPosX+ticTrackWidth);
+				UnCheckedPic.setPosX(ticZeroPosX+ticTrackWidth);
+			}
+			else if (x < ticZeroPosX+posX+screenX + shiftX)
+			{
+				CheckedPic.setPosX(ticZeroPosX);
+				UnCheckedPic.setPosX(ticZeroPosX);
+			}
+			else 
+			{
+				CheckedPic.setPosX(x - posX - screenX - shiftX);
+				UnCheckedPic.setPosX(x - posX - screenX - shiftX);
+			}
+			this.currentPosition = CheckedPic.getPosX() - ticZeroPosX;
+			this.value = minValue + currentPosition*(maxValue - minValue)/ticTrackWidth;
+			if(@ValueChangeCallback != null) ValueChangeCallback.OnValueChange(value);
+		}
+		GUIElement::MouseMove(x, y);
+	}
+
+	void MouseUp(int click, bool isCollision)
+	{
+		moving = false;
+		if(isCollision) 
+		{
+
+		}
+
+		GUIElement::MouseUp(click, isCollision);
+	}
+
+	void MouseDown(int click)
+	{
+		if(click == MOUSE_CLICK_WHEEL_UP)
+		{
+			Pos(value+1);
+		}
+		else if(click == MOUSE_CLICK_WHEEL_DOWN)
+		{
+			Pos(value-1);
+		}
+		else if (UnCheckedPic.IsCollision(posX+screenX, posY+screenY, mousePosX, mousePosY))
+		{
+			moving = true;
+			shiftX = mousePosX - (UnCheckedPic.getPosX()+posX+screenX);
+		}
+		GUIElement::MouseDown(click);
+	}
+
+	IGUIElementSliderControlOpt@ Position(int x, int y)
+	{
+		return cast<IGUIElementSliderControlOpt>(GUIElement::Position(x, y));
+	}
+
+	IGUIElementSliderControlOpt@ Position(int x, int y, int w, int h)
+	{
+		return cast<IGUIElementSliderControlOpt>(GUIElement::Position(x, y, w, h));
+	}
+
+	IGUIElementSliderControlOpt@ Position(string& iniKey)
+	{
+		return cast<IGUIElementSliderControlOpt>(GUIElement::Position(iniKey));
+	}
+
+	IGUIElementSliderControlOpt@ RangeMin(int minRange)
+	{
+		this.minValue = minRange;
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ RangeMax(int maxRange)
+	{
+		this.maxValue = maxRange;
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ Range(int minRange, int maxRange)
+	{
+		this.minValue = minRange;
+		this.maxValue = maxRange;
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ TicFreq(int freq)
+	{
+		this.ticFreq = freq;
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ Pos(int pos)
+	{
+		if(pos>maxValue) pos = maxValue;
+		if(pos<minValue) pos = minValue;
+
+		if(pos != value)
+		{
+			value = pos;
+			this.currentPosition = ticTrackWidth*(pos - minValue)/(maxValue - minValue);
+			if(@CheckedPic != null) CheckedPic.setPosX(currentPosition + ticZeroPosX);
+			if(@UnCheckedPic != null) UnCheckedPic.setPosX(currentPosition + ticZeroPosX);
+			if(@ValueChangeCallback != null) ValueChangeCallback.OnValueChange(value);
+		}
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ TitleText(string@ title)
+	{
+		TextTitle.setText(title);
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ LeftText(string@ leftLabel)
+	{
+		DownLeftText.setText(leftLabel);
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ MidleText(string@ midleLabel)
+	{
+		DownCenterText.setText(midleLabel);
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ RightText(string@ rightLabel)
+	{
+		DownRightText.setText(rightLabel);
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ TicTrackWidth(int width)
+	{
+		this.ticTrackWidth = width;
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ TicZeroPosition(int x, int y)
+	{
+		this.ticZeroPosX = x;
+		this.ticZeroPosY = y;
+		if(@CheckedPic != null)
+		{
+			CheckedPic.Position(x, y);
+		}
+		if(@UnCheckedPic != null)
+		{
+			UnCheckedPic.Position(x, y);
+		}
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ TicPic(string@ sprName)
+	{
+		@UnCheckedPic = @GUIElementImage(1, sprName, 0, 0);
+		UnCheckedPic.Position(ticZeroPosX, ticZeroPosY);
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ ActiveTicPic(string@ sprName)
+	{
+		@CheckedPic = @GUIElementImage(1, sprName, 0, 0);
+		CheckedPic.Position(ticZeroPosX, ticZeroPosY);
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ TickTrackPic(string@ sprName)
+	{
+		@PicTickTrack = @GUIElementImage(1, sprName, ticTrackPositionX, ticTrackPositionY);
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ BackgroundPic(string@ sprName)
+	{
+		@PicBackground = @GUIElementImage(1, sprName, 0, 0);
+		this.elementWidth = PicBackground.getImageWidth();
+		this.elementHeight = PicBackground.getImageHeight();
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ ElementBoxSize(int width, int height)
+	{
+		this.elementWidth = width;
+		this.elementHeight = height;
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ ElementBoxPosition(int x, int y)
+	{
+		this.posX = x;
+		this.posY = y;
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ TickTrackPosition(int x, int y)
+	{
+		this.ticTrackPositionX = x;
+		this.ticTrackPositionY = y;
+		if(@PicTickTrack != null) PicTickTrack.Position(x, y);
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ TitleTextPosition(int x, int y)
+	{
+		TextTitle.Position(x, y);
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ TitleTextOptions(int font, uint color, int flags)
+	{
+		TextTitle.TextOptions(font, color, color, flags);
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ LeftTextPosition(int x, int y)
+	{
+		DownLeftText.Position(x, y);
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ LeftTextOptions(int font, uint color, int flags)
+	{
+		DownLeftText.TextOptions(font, color, color, flags);
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ MidleTextPosition(int x, int y)
+	{
+		DownCenterText.Position(x, y);
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ MidleTextOptions(int font, uint color, int flags)
+	{
+		DownCenterText.TextOptions(font, color, color, flags);
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ RightTextPosition(int x, int y)
+	{
+		DownRightText.Position(x, y);
+		return this;
+	}
+
+	IGUIElementSliderControlOpt@ RightTextOptions(int font, uint color, int flags)
+	{
+		DownRightText.TextOptions(font, color, color, flags);
+		return this;
+	}
+
+	void setVisible(bool visible){
+		GUIElement::setVisible(visible);
+	}
+
+	void setFocused(bool state){
+		GUIElement::setFocused(state);
+	}
+
+	//Info
+	int getTicPos()
+	{
+		return currentPosition;
+	}
+
+	int getValue()
+	{
+		return value;
+	}
+
+	bool isVisible()
+	{
+		return GUIElement::isVisible();
+	}
+
+	IGUIElementSliderControlOpt@ CallbackInit(IGUIElementCallbackInit@ callback) { @InitCallback=callback; return this; }
+	IGUIElementSliderControlOpt@ CallbackDraw(IGUIElementCallbackDraw@ callback) { @DrawCallback=callback; return this; }
+	IGUIElementSliderControlOpt@ CallbackMouseClick(IGUIElementCallbackMouseClick@ callback) { @MouseClickCallback=callback; return this; }
+	IGUIElementSliderControlOpt@ CallbackValueChange(IGUIElementCallbackValueChange@ callback) { @ValueChangeCallback=callback; return this; }
+
+	int ticZeroPosX;
+	int ticZeroPosY;
+	int ticTrackPositionX;
+	int ticTrackPositionY;
+	int titleTextPositionX;
+	int titleTextPositionY;
+	int ticTrackWidth;
+	int minValue;
+	int maxValue;
+	int ticFreq;
+	int currentPosition;
+	int value;
+	int shiftX;
+	bool moving;
+	IGUIElementImageOpt @UnCheckedPic;
+	IGUIElementImageOpt @CheckedPic;
+	IGUIElementImageOpt @PicTickTrack;
+	IGUIElementImageOpt @PicBackground;
+	IGUIElementTextOpt @TextTitle;
+	IGUIElementTextOpt @DownLeftText;
+	IGUIElementTextOpt @DownRightText;
+	IGUIElementTextOpt @DownCenterText;
+}
+
+class GUIScreen : IGUIScreenOpt
+{
+	GUIScreen(string@ sprName, int path)
+	{
+		if(@sprName!=null) 
+		{
+			Surface.Load(sprName,path);
+			screenWidth = Surface.Width;
+			screenHeight = Surface.Height;
+		}
+		else
+		{
+			screenWidth = 0;
+			screenHeight = 0;
+		}
+
+		Index=0;
+		IsCanMove=true;
+		IsModal=true;
+		IsMultiinstance=false;
+		IsIgnoreBorders=false;
+		IsHardcoded=false;
+		IsLMouseDown=false;
+		IsCloseOnMiss=false;
+		IsAutoCursor=false;
+		PosX=__ScreenWidth/2-screenWidth/2;
+		PosY=__ScreenHeight/2-screenHeight/2;
+		LastX=0;
+		LastY=0;
+		horizontalCount=1;
+		verticalCount=1;
+		@ShowCallback=null;
+		@HideCallback=null;
+		@MoveCallback=null;
+		@KeyPressCallback=null;
+	}
+
+	void Draw()
+	{
+		if(Index==CLIENT_MAIN_SCREEN_GAME)
+		{
+			ClientMainScreenGamePosX=PosX;
+			ClientMainScreenGamePosY=PosY;
+		}
+		if(Surface.Id!=0)
+		{
+			for (uint h=0; h < horizontalCount ; h++ )
+			{
+				for (uint v=0; v < verticalCount ; v++ )
+				{
+					DrawSprite(Surface.Id,-1, PosX+(h*Surface.Width) , PosY+(v*Surface.Height) ,0);
+				}
+			}
+		}
+		for(uint i=0,j=Elements.length();i<j;i++)
+		{
+			Elements[i].Draw(PosX,PosY);
+		}
+	}
+
+	bool MouseDown(int click, int x, int y)
+	{
+		bool collision = false;
+
+		for(uint i=0,j=Elements.length();i<j;i++) Elements[i].setFocused(false);
+		for(uint i=Elements.length();i>0;)
+		{
+			i--;
+			IGUIElementOpt@ e=Elements[i];
+			if(e.IsCollision(PosX, PosY, x, y))
+			{
+				e.MouseDown(click);
+				e.setFocused(true);
+				if(e.IsCollisionTransparent()) collision = true;
+				else return true;
+			}
+		}
+
+		if(not IsHardcoded && click==MOUSE_CLICK_LEFT && IS_COLLISION(x,y,PosX,PosY,screenWidth,screenHeight))
+		{
+			IsLMouseDown=true;
+			LastX=x;
+			LastY=y;
+			return true;
+		}
+		else if(IsCloseOnMiss && not IS_COLLISION(x,y,PosX,PosY,screenWidth,screenHeight))
+		{
+			::HideScreen(0,0,0,0);
+			return true;
+		}
+
+		//if(collision) return true; // Zwrocenie false wlaczy zdarzenia hardcodowane w silniku
+
+		return false;
+	}
+
+	bool MouseUp(int click, int x, int y)
+	{
+		IsLMouseDown=false;
+		bool result=false;
+		for(uint i=Elements.length();i>0;)
+		{
+			i--;
+			IGUIElementOpt@ e=Elements[i];
+			if(e.IsCollision(PosX, PosY, x, y))
+			{
+				e.MouseUp(click,true);
+				if(not e.IsCollisionTransparent()) result=true; // Zwrocenie true wylacza zdarzenia hardcodowane w enginie.
+			}
+			else
+			{
+				e.MouseUp(click,false);
+			}
+		}
+		return result;
+	}
+
+	void MouseMove(int x, int y)
+	{
+		if(IsCanMove && IsLMouseDown) 
+		{
+			int lastPosX=PosX;
+			int lastPosY=PosY;
+			int offsX=x-LastX;
+			int offsY=y-LastY;
+			LastX=x;
+			LastY=y;
+			PosX+=offsX;
+			PosY+=offsY;
+
+			// Check screen borders
+			if(not IsIgnoreBorders)
+			{
+				int px=PosX;
+				int py=PosY;
+				if(PosX<0) PosX=0;
+				if(PosY<0) PosY=0;
+				if(PosX+screenWidth>__ScreenWidth) PosX=__ScreenWidth-screenWidth;
+				if(PosY+screenHeight>__ScreenHeight) PosY=__ScreenHeight-screenHeight;
+				LastX+=PosX-px;
+				LastY+=PosY-py;
+			}
+			if(not (MoveCallback is null) && (lastPosX!=PosX || lastPosY!=PosY)) MoveCallback.OnMove(PosX,PosY);
+		}
+
+		for(uint i=0,j=Elements.length();i<j;i++) Elements[i].MouseMove(x,y);
+	}
+
+	bool KeyPress(uint8 key)
+	{
+		IGUIElementOpt@ e;
+		
+		if(@KeyPressCallback != null && !KeyPressCallback.OnKeyPress(key))
+			return false;
+
+		for(uint i=0,j=Elements.length();i<j;i++)
+		{
+			@e=Elements[i];
+			if(e.IsFocused()) return e.KeyPress(key);
+		}
+		return false;
+	}
+
+	void InputLost()
+	{
+		IsLMouseDown=false;
+		for(uint i=0,j=Elements.length();i<j;i++) Elements[i].InputLost();
+	}
+
+	GUIScreen@ GetNewInstance()
+	{
+		GUIScreen screen=this;
+		IGUIScreenCallbackShow@ newCallback=ShowCallback;
+		for(uint i=0,j=Elements.length();i<j;i++) @screen.Elements[i]=Elements[i].GetNewInstance();
+		return @screen;
+	}
+
+	// Options
+	IGUIScreenOpt@ CallbackShow(IGUIScreenCallbackShow@ callback){@ShowCallback=callback; return this;}
+	IGUIScreenOpt@ CallbackHide(IGUIScreenCallbackHide@ callback){@HideCallback=callback; return this;}
+	IGUIScreenOpt@ CallbackMove(IGUIScreenCallbackMove@ callback){@MoveCallback=callback; return this;}
+	IGUIScreenOpt@ CallbackKeyPress(IGUIScreenCallbackKeyPress@ callback){@KeyPressCallback=callback; return this;}
+	IGUIScreenOpt@ Position(int x, int y){PosX=x; PosY=y; return this;}
+	IGUIScreenOpt@ CanMove(bool enabled){IsCanMove=enabled; return this;}
+	IGUIScreenOpt@ Modal(bool enabled){IsModal=enabled; return this;}
+	IGUIScreenOpt@ Multiinstance(bool enabled){IsMultiinstance=enabled; return this;}
+	IGUIScreenOpt@ IgnoreBorders(bool enabled){IsIgnoreBorders=enabled; return this;}
+	IGUIScreenOpt@ CloseOnMiss(bool enabled){IsCloseOnMiss=enabled; return this;}
+	IGUIScreenOpt@ AutoCursor(bool enabled, int cursorType){IsAutoCursor=enabled; AutoCursorType=cursorType; return this;}
+	
+	IGUIScreenOpt@ SizeByMultipleImages(int horizontalCount, int verticalCount)
+	{
+		this.horizontalCount = horizontalCount;
+		this.verticalCount = verticalCount;
+		this.screenWidth  = Surface.Width * horizontalCount;
+		this.screenHeight = Surface.Height * verticalCount;
+		this.PosX=__ScreenWidth/2-screenWidth/2;
+		this.PosY=__ScreenHeight/2-screenHeight/2;
+		return this;
+	}
+
+	// Info
+	int getPosX() { return PosX; }
+	int getPosY() { return PosY; }
+
+	// Data
+	int Index;
+	int PosX;
+	int PosY;
+	int LastX;
+	int LastY;
+	int screenWidth;
+	int screenHeight;
+	uint horizontalCount;
+	uint verticalCount;
+	Sprite Surface;
+	bool IsCanMove;
+	bool IsModal;
+	bool IsMultiinstance;
+	bool IsIgnoreBorders;
+	bool IsHardcoded;
+	bool IsLMouseDown;
+	bool IsCloseOnMiss;
+	bool IsAutoCursor;
+	
+	int AutoCursorType;
+	int AutoCursorPrev;
+
+	IGUIScreenCallbackShow@ ShowCallback;
+	IGUIScreenCallbackHide@ HideCallback;
+	IGUIScreenCallbackMove@ MoveCallback;
+	IGUIScreenCallbackKeyPress@ KeyPressCallback;
+	IGUIElementOpt@[] Elements;
+}
+
+//
+// API
+//
+
+// Create new screen
+IGUIScreenOpt@ GUI_CreateScreen(int screenIndex, string@ sprName)
+{
+	if(screenIndex==0) return null;
+	DeleteScreen(screenIndex);
+	return CreateScreen(screenIndex,sprName);
+}
+
+// Delete old screen, hardcoded screens included
+void GUI_DeleteScreen(int screenIndex)
+{
+	if(screenIndex==0) return;
+	DeleteScreen(screenIndex);
+}
+
+
+// Add element on screen
+IGUIElementOpt@ GUI_AddScreenElement(int screenIndex)
+{
+	int zero = 0;
+	return GUI_AddScreenElement(screenIndex, zero, zero, zero, zero);
+}
+
+IGUIElementButtonOpt@ GUI_AddButton(int screenIndex)
+{
+	int zero = 0;
+	return GUI_AddButton(screenIndex, zero, zero);
+}
+
+IGUIElementCheckBoxOpt@ GUI_AddCheckBox(int screenIndex)
+{
+	int zero = 0;
+	return GUI_AddCheckBox(screenIndex, zero, zero);
+}
+
+IGUIElementSliderControlOpt@ GUI_AddSlidderControl(int screenIndex)
+{
+	int zero = 0;
+	return GUI_AddSlidderControl(screenIndex, zero, zero);
+}
+
+IGUIElementImageOpt@	GUI_AddImage(int screenIndex)
+{
+	int zero = 0;
+	return GUI_AddImage(screenIndex, null, zero, zero, zero);
+}
+
+IGUIElementTextOpt@ GUI_AddText(int screenIndex)
+{
+	int zero = 0;
+	return GUI_AddText(screenIndex, "", zero, zero);
+}
+
+IGUIElementEditBoxOpt@ GUI_AddEditBox(int screenIndex)
+{
+	int zero = 0;
+	return GUI_AddEditBox(screenIndex, zero, zero);
+}
+
+
+
+IGUIElementOpt@ GUI_AddScreenElement(int screenIndex, int x, int y, int width, int height)
+{
+	if(screenIndex==0) return null;
+	if(GetScreen(screenIndex) is null) CreateScreen(screenIndex,null);
+	GUIScreen@ screen=GetScreen(screenIndex);
+
+	IGUIElementOpt@ element = GUIElement(width, height);  
+		
+	element.Position(x,y);
+	screen.Elements.insertLast(@element);
+	return @element;
+}
+
+IGUIElementImageOpt@ GUI_AddImage(int screenIndex, string@ sprName, int patch, int x, int y)
+{
+	if(screenIndex==0) return null;
+	if(GetScreen(screenIndex) is null) CreateScreen(screenIndex,null);
+	GUIScreen@ screen=GetScreen(screenIndex);
+	
+	IGUIElementOpt@ element;
+	@element = GUIElementImage(sprName, patch, x, y);  
+
+	screen.Elements.insertLast(@element);
+
+	return cast<IGUIElementImageOpt@>(element);
+}
+
+
+IGUIElementEditBoxOpt@ GUI_AddEditBox(int screenIndex, int x, int y)
+{
+	if(screenIndex==0) return null;
+	if(GetScreen(screenIndex) is null) CreateScreen(screenIndex,null);
+	GUIScreen@ screen=GetScreen(screenIndex);
+	
+	IGUIElementOpt@ element;
+	@element = GUIElementEditBox(x, y);  
+
+	screen.Elements.insertLast(@element);
+
+	return cast<IGUIElementEditBoxOpt@>(element);
+}
+
+IGUIElementTextOpt@ GUI_AddText(int screenIndex, string@ text, int x, int y)
+{
+	if(screenIndex==0) return null;
+	if(GetScreen(screenIndex) is null) CreateScreen(screenIndex,null);
+	GUIScreen@ screen=GetScreen(screenIndex);
+	
+	IGUIElementOpt@ element;
+	@element = GUIElementText(text, x, y);  
+
+    screen.Elements.insertLast(@element);
+
+	@screen=GetActiveScreen(screenIndex);
+	if(@screen!=null)
+	{
+		if(@screen.Elements !=null)
+		{
+			screen.Elements.insertLast(@element);
+		}
+	}
+	
+    return cast<IGUIElementTextOpt@>(element);
+}
+
+IGUIElementTextOpt@ AddScreenText(int textID, string@ text, int x, int y)
+{
+	IGUIElementTextOpt@ element;
+	@element = GUIElementText(textID, text, x, y); 
+        screenTexts.insertLast(@element);
+	return element; 
+}
+
+void DelateScreenText(int textID)  
+{
+	uint iDoUsuniecia;
+	for (iDoUsuniecia=0; iDoUsuniecia<screenTexts.length()-1; iDoUsuniecia++ )
+	{
+		if (screenTexts[iDoUsuniecia].getId() == textID)
+		{
+			break;
+		}
+	}
+	for (uint i=iDoUsuniecia; i<screenTexts.length(); i++ )
+	{
+		@screenTexts[i] = @screenTexts[i+1];
+	}
+	screenTexts.resize(screenTexts.length()-1);
+}
+ 
+
+IGUIElementButtonOpt@ GUI_AddButton(int screenIndex, int x, int y)
+{
+	if(screenIndex==0) return null;
+	if(GetScreen(screenIndex) is null) CreateScreen(screenIndex,null);
+	GUIScreen@ screen=GetScreen(screenIndex);
+	
+	IGUIElementOpt@ element;
+	@element = GUIElementButton(x, y);  
+
+	screen.Elements.insertLast(@element);
+
+	return cast<IGUIElementButtonOpt@>(element);
+}
+
+IGUIElementCheckBoxOpt@ GUI_AddCheckBox(int screenIndex, int x, int y)
+{
+	if(screenIndex==0) return null;
+	if(GetScreen(screenIndex) is null) CreateScreen(screenIndex,null);
+	GUIScreen@ screen=GetScreen(screenIndex);
+	
+	IGUIElementOpt@ element;
+	@element = GUIElementCheckBox(x, y);  
+
+	screen.Elements.insertLast(@element);
+
+	return cast<IGUIElementCheckBoxOpt@>(element);
+}
+
+IGUIElementSliderControlOpt@ GUI_AddSlidderControl(int screenIndex, int x, int y)
+{
+	if(screenIndex==0) return null;
+	if(GetScreen(screenIndex) is null) CreateScreen(screenIndex,null);
+	GUIScreen@ screen=GetScreen(screenIndex);
+	
+	IGUIElementOpt@ element;
+	@element = GUIElementSliderControl(x, y);  
+
+	screen.Elements.insertLast(@element);
+
+	return cast<IGUIElementSliderControlOpt@>(element);
+}
+
+// Valid only on IGUIScreenCallbackShow::OnShow callback
+IGUIScreenOpt@ GUI_GetScreenOptions()
+{
+	return LastScreenOpt;
+}
+
+// Valid only on IGUIElementCallbackInit::OnInit callback
+IGUIElementOpt@ GUI_GetElementOptions()
+{
+	return LastElementOpt;
+}
+
+IGUIElementCheckBoxOpt@ GUI_GetElementCheckBoxOptions()
+{
+	return cast<IGUIElementCheckBoxOpt>(LastElementOpt);
+}
+
+IGUIElementEditBoxOpt@ GUI_GetElementEditBoxOptions()
+{
+	return cast<IGUIElementEditBoxOpt>(LastElementOpt);
+}
+
+IGUIElementSliderControlOpt@ GUI_GetElementSliderControlOptions()
+{
+	return cast<IGUIElementSliderControlOpt>(LastElementOpt);
+}
+
+
+//
+// Engine callbacks
+//
+
+void GUI_Init()
+{
+	screenTexts.resize(0);
+
+	AllScreens.resize(0);
+	ActiveScreens.resize(0);
+	KeyPressed.resize(0x100);
+	for(uint i=0,j=KeyPressed.length();i<j;i++) KeyPressed[i]=false;
+
+	// Register hardcoded screens
+	CreateScreen(CLIENT_MAIN_SCREEN_LOGIN,null);
+	CreateScreen(CLIENT_MAIN_SCREEN_REGISTRATION,null);
+	CreateScreen(CLIENT_MAIN_SCREEN_OPTIONS,null);
+	CreateScreen(CLIENT_MAIN_SCREEN_CREDITS,null);
+	CreateScreen(CLIENT_MAIN_SCREEN_GAME,null);
+	CreateScreen(CLIENT_MAIN_SCREEN_GLOBAL_MAP,null);
+	CreateScreen(CLIENT_MAIN_SCREEN_WAIT,null);
+	CreateScreen(CLIENT_SCREEN_INVENTORY,null);
+	CreateScreen(CLIENT_SCREEN_PICKUP,null);
+	CreateScreen(CLIENT_SCREEN_MINIMAP,null);
+	CreateScreen(CLIENT_SCREEN_CHARACTER,null);
+	CreateScreen(CLIENT_SCREEN_DIALOG,null);
+	CreateScreen(CLIENT_SCREEN_BARTER,null);
+	CreateScreen(CLIENT_SCREEN_PIP_BOY,null);
+	CreateScreen(CLIENT_SCREEN_FIX_BOY,null);
+	CreateScreen(CLIENT_SCREEN_MENU,null);
+	CreateScreen(CLIENT_SCREEN_AIM,null);
+	//CreateScreen(CLIENT_SCREEN_TEST,null); 
+	//CreateScreen(CLIENT_SCREEN_MENU_1,null); 
+	CreateScreen(CLIENT_SCREEN_SPLIT,null);
+	CreateScreen(CLIENT_SCREEN_TIMER,null);
+	CreateScreen(CLIENT_SCREEN_DIALOGBOX,null);
+	CreateScreen(CLIENT_SCREEN_ELEVATOR,null);
+	CreateScreen(CLIENT_SCREEN_SAY,null);
+	CreateScreen(CLIENT_SCREEN_CHA_NAME,null);
+	CreateScreen(CLIENT_SCREEN_CHA_AGE,null);
+	CreateScreen(CLIENT_SCREEN_CHA_SEX,null);
+	CreateScreen(CLIENT_SCREEN_GM_TOWN,null);
+	CreateScreen(CLIENT_SCREEN_INPUT_BOX,null);
+	CreateScreen(CLIENT_SCREEN_SKILLBOX,null);
+	CreateScreen(CLIENT_SCREEN_USE,null);
+	CreateScreen(CLIENT_SCREEN_PERK,null);
+	CreateScreen(CLIENT_SCREEN_TOWN_VIEW,null);
+	CreateScreen(CLIENT_SCREEN_SAVE_LOAD,null);
+	for(uint i=0,j=AllScreens.length();i<j;i++) AllScreens[i].IsHardcoded=true;
+
+	// Keyboard init
+	KbData.resize(0x100);
+	@KbData[DIK_1]=				KeybData('1','!','1','!');
+	@KbData[DIK_2]=				KeybData('2','"','2','@');
+	@KbData[DIK_3]=				KeybData('3','#','3','#');
+	@KbData[DIK_4]=				KeybData('4','$','4','$');
+	@KbData[DIK_5]=				KeybData('5','%','5','%');
+	@KbData[DIK_6]=				KeybData('6','^','6','^');
+	@KbData[DIK_7]=				KeybData('7','&','7','&');
+	@KbData[DIK_8]=				KeybData('8','*','8','*');
+	@KbData[DIK_9]=				KeybData('9','(','9','(');
+	@KbData[DIK_0]=				KeybData('0',')','0',')');
+	@KbData[DIK_MINUS]=			KeybData('-','_','-','_');
+	@KbData[DIK_EQUALS]=		KeybData('=','+','=','+');
+	@KbData[DIK_Q]=				KeybData('q','Q','q','Q');
+	@KbData[DIK_W]=				KeybData('w','W','w','W');
+	@KbData[DIK_E]=				KeybData('e','E','e','E');
+	@KbData[DIK_R]=				KeybData('r','R','r','R');
+	@KbData[DIK_T]=				KeybData('t','T','t','T');
+	@KbData[DIK_Y]=				KeybData('y','Y','y','Y');
+	@KbData[DIK_U]=				KeybData('u','U','u','U');
+	@KbData[DIK_I]=				KeybData('i','I','i','I');
+	@KbData[DIK_O]=				KeybData('o','O','o','O');
+	@KbData[DIK_P]=				KeybData('p','P','p','P');
+	@KbData[DIK_LBRACKET]=		KeybData('[','{','[','{');
+	@KbData[DIK_RBRACKET]=		KeybData(']','}',']','}');
+	@KbData[DIK_A]=				KeybData('a','A','a','A');
+	@KbData[DIK_S]=				KeybData('s','S','s','S');
+	@KbData[DIK_D]=				KeybData('d','D','d','D');
+	@KbData[DIK_F]=				KeybData('f','F','f','F');
+	@KbData[DIK_G]=				KeybData('g','G','g','G');
+	@KbData[DIK_H]=				KeybData('h','H','h','H');
+	@KbData[DIK_J]=				KeybData('j','J','j','J');
+	@KbData[DIK_K]=				KeybData('k','K','k','K');
+	@KbData[DIK_L]=				KeybData('l','L','l','L');
+	@KbData[DIK_SEMICOLON]=		KeybData(';',':',';',':');
+	@KbData[DIK_APOSTROPHE]=	KeybData('ý','Ý', 39, 39); // 39 == '
+	@KbData[DIK_Z]=				KeybData('z','Z','z','Z');
+	@KbData[DIK_X]=				KeybData('x','X','x','X');
+	@KbData[DIK_C]=				KeybData('c','C','c','C');
+	@KbData[DIK_V]=				KeybData('v','V','v','V');
+	@KbData[DIK_B]=				KeybData('b','B','b','B');
+	@KbData[DIK_N]=				KeybData('n','N','n','N');
+	@KbData[DIK_M]=				KeybData('m','M','m','M');
+	@KbData[DIK_COMMA]=			KeybData(',','<',',','<');
+	@KbData[DIK_PERIOD]=		KeybData('.','>','.','>');
+	@KbData[DIK_SLASH]=			KeybData('/','?','/','?');
+	@KbData[DIK_MULTIPLY]=		KeybData('*','*','*','*');
+	@KbData[DIK_SPACE]=			KeybData(' ',' ',' ',' ');
+	@KbData[DIK_GRAVE]=			KeybData('`','~','`','~');
+	@KbData[DIK_NUMPAD1]=		KeybData('1','1','1','1');
+	@KbData[DIK_NUMPAD2]=		KeybData('2','2','2','2');
+	@KbData[DIK_NUMPAD3]=		KeybData('3','3','3','3');
+	@KbData[DIK_NUMPAD4]=		KeybData('4','4','4','4');
+	@KbData[DIK_NUMPAD5]=		KeybData('5','5','5','5');
+	@KbData[DIK_NUMPAD6]=		KeybData('6','6','6','6');
+	@KbData[DIK_NUMPAD7]=		KeybData('7','7','7','7');
+	@KbData[DIK_NUMPAD8]=		KeybData('8','8','8','8');
+	@KbData[DIK_NUMPAD9]=		KeybData('9','9','9','9');
+	@KbData[DIK_NUMPAD0]=		KeybData('0','0','0','0');
+	@KbData[DIK_SUBTRACT]=		KeybData('-','-','-','-');
+	@KbData[DIK_ADD]=			KeybData('+','+','+','+');
+	@KbData[DIK_DECIMAL]=		KeybData('.','.','.','.');
+	@KbData[DIK_NUMPADEQUALS]=	KeybData('=','=','=','=');
+	@KbData[DIK_NUMPADCOMMA]=	KeybData(',',',',',',',');
+	@KbData[DIK_DIVIDE]=		KeybData('/','/','/','/');
+	@KbData[DIK_RETURN]=		KeybData('\n','\n','\n','\n');
+	@KbData[DIK_NUMPADENTER]=	KeybData('\n','\n','\n','\n');
+	@KbData[DIK_TAB]=			KeybData('\t','\t','\t','\t');
+}
+
+int GUI_GetActiveMainScreen()
+{
+	return ActiveScreens.length() > 0 ? ActiveScreens.first().Index : CLIENT_SCREEN_NONE;
+}
+
+int GUI_GetActiveScreen()
+{
+	return ActiveScreens.length() > 0 ? ActiveScreens.last().Index : CLIENT_SCREEN_NONE;
+}
+
+
+void GUI_GetActiveScreens(int[]& result)
+{
+	result.resize(ActiveScreens.length());
+	for(uint i=0,j=result.length();i<j;i++) result[i]=ActiveScreens[i].Index;
+}
+
+void GUI_ShowScreen(int screenIndex, int p0, int p1, int p2)
+{
+	GUIScreen@ screen=GetScreen(screenIndex);
+	if(not (screen is null))
+	{
+		if(not screen.IsMultiinstance)
+		{
+			// Close all another instances
+			for(uint i=ActiveScreens.length();i>0;) // From end
+			{
+				i--;
+				if(ActiveScreens[i].Index==screenIndex)
+				{
+					ActiveScreens.removeAt(i);
+					if(not (screen.HideCallback is null)) screen.HideCallback.OnHide(p0,p1,p2);
+				}
+			}
+		}
+
+		// Create new instance
+		@screen=screen.GetNewInstance();
+		ActiveScreens.insertLast(@screen);
+
+		// Set screen cursor
+		if(screen.IsAutoCursor)
+		{
+			screen.AutoCursorPrev=::GetCurrentCursor();
+			::ChangeCursor(screen.AutoCursorType);
+		}
+
+		// Call init callbacks
+		@LastScreenOpt=screen;
+		// First init elements
+		for(uint i=0,j=screen.Elements.length();i<j;i++)
+		{
+			IGUIElementOpt@ e=screen.Elements[i];
+			if(not (e.GetCallbackInit() is null))
+			{
+				@LastElementOpt=e;
+				e.GetCallbackInit().OnInit(e.getId());
+				@LastElementOpt=null;
+			}
+		}
+		// Then show
+		if(not (screen.ShowCallback is null))
+		{
+			screen.ShowCallback.OnShow(p0,p1,p2);
+		}
+		@LastScreenOpt=null;
+	}
+}
+
+
+void GUI_HideScreen(int screenIndex, int p0, int p1, int p2)
+{
+	for(uint i=ActiveScreens.length();i>0;) // From end
+	{
+		i--;
+		GUIScreen@ screen=ActiveScreens[i];
+		if(screen.Index==screenIndex)
+		{
+			// Remove
+			ActiveScreens.removeAt(i);
+
+			// Hide callback
+			if(not (screen.HideCallback is null))
+			{
+				screen.HideCallback.OnHide(p0,p1,p2);
+			}
+
+			// Restore cursor
+			if(screen.IsAutoCursor)
+			{
+				::ChangeCursor(screen.AutoCursorPrev);
+			}
+
+			// Store position for non-multiinstance screens
+			if(not screen.IsMultiinstance)
+			{
+				GUIScreen@ instance=GetScreen(screenIndex);
+				instance.PosX=screen.PosX;
+				instance.PosY=screen.PosY;
+			}
+			break;
+		}
+	}
+}
+
+void ScreenText_Render()
+{
+	for (uint i=0; i<screenTexts.length(); i++ )
+	{
+		screenTexts[i].Draw(0,0);
+	}
+}
+
+void GUI_Render()
+{
+	ScreenText_Render();
+
+	for(uint i=0,j=ActiveScreens.length();i<j;i++)
+	{
+		GUIScreen@ screen=ActiveScreens[i];
+		if(screen.IsHardcoded)
+		{
+			::DrawHardcodedScreen(screen.Index);
+			::GetHardcodedScreenPos(screen.Index,screen.PosX,screen.PosY);
+		}
+		screen.Draw();
+	}
+}
+
+bool GUI_MouseDown(int click, int x, int y)
+{
+	//Message(" " + x + " : " + y );
+	uint len=ActiveScreens.length();
+	if(len!=0)
+	{
+		GUIScreen@ screen=ActiveScreens[len-1];
+		bool result=screen.MouseDown(click,x,y);
+		if(result)
+		{
+			if(click==MOUSE_CLICK_WHEEL_UP || click==MOUSE_CLICK_WHEEL_DOWN) return GUI_MouseUp(click,x,y);
+			return true;
+		}
+
+		if(len>1 && not screen.IsHardcoded && not screen.IsModal && click==MOUSE_CLICK_LEFT
+		&& not IS_COLLISION(x,y,screen.PosX,screen.PosY,screen.screenWidth,screen.screenHeight))
+		{
+			for(uint i=ActiveScreens.length()-1;i>0;) // From end
+			{
+				i--;
+				GUIScreen@ nextScreen=ActiveScreens[i];
+				if(IS_COLLISION(x,y,nextScreen.PosX,nextScreen.PosY,nextScreen.screenWidth,nextScreen.screenHeight))
+				{
+					// Swap screens
+					GUIScreen@ tmpScreen=ActiveScreens[i];
+					@ActiveScreens[i]=ActiveScreens[len-1];
+					@ActiveScreens[len-1]=tmpScreen;
+					return GUI_MouseDown(click,x,y); // Click new screen
+				}
+			}
+		}
+	}
+	return false;
+}
+
+bool GUI_MouseUp(int click, int x, int y)
+{
+	uint len=ActiveScreens.length();
+	if(len!=0) return ActiveScreens[len-1].MouseUp(click,x,y);
+	return false;
+}
+
+void GUI_MouseMove(int x, int y)
+{
+	uint len=ActiveScreens.length();
+	if(len!=0) ActiveScreens[len-1].MouseMove(x,y);
+}
+
+bool GUI_KeyDown(uint8 key)
+{
+	if(KeyPressed.length()!=0) KeyPressed[key]=true;
+	uint len=ActiveScreens.length();
+	if(len!=0) return ActiveScreens[len-1].KeyPress(key);
+	
+	return false;
+}
+
+bool GUI_KeyUp(uint8 key)
+{
+	if(KeyPressed.length()!=0) KeyPressed[key]=false;
+	return false;
+}
+
+void GUI_InputLost()
+{
+	for(uint i=0,j=KeyPressed.length();i<j;i++) KeyPressed[i]=false;
+	uint len=ActiveScreens.length();
+	if(len!=0) ActiveScreens[len-1].InputLost();
+}
+
+//
+// Internal
+//
+
+IGUIScreenOpt@ CreateScreen(int screenIndex, string@ sprName)
+{
+	GUIScreen screen(sprName,PT_ART_INTRFACE);
+	screen.CanMove(true);
+	screen.Position(__ScreenWidth/2-screen.screenWidth/2,__ScreenHeight/2-screen.screenHeight/2);
+	screen.Index=screenIndex;
+    AllScreens.insertLast(@screen);
+	return @screen;
+}
+
+void DeleteScreen(int screenIndex)
+{
+	for(uint i=0;i<ActiveScreens.length();)
+	{
+		if(ActiveScreens[i].Index==screenIndex)
+		{
+			ActiveScreens.removeAt(i);
+			i=0;
+		}
+		else
+		{
+			i++;
+		}
+	}
+
+	for(uint i=0,j=AllScreens.length();i<j;i++)
+	{
+		if(AllScreens[i].Index==screenIndex)
+		{
+			AllScreens.removeAt(i);
+			break;
+		}
+	}
+}
+
+GUIScreen@ GetScreen(int screenIndex)
+{
+	if(screenIndex==0) return null;
+	for(uint i=0,j=AllScreens.length();i<j;i++) 
+	{
+		if(AllScreens[i].Index==screenIndex) return @AllScreens[i];
+	}
+	return null;
+}
+
+GUIScreen@ GetActiveScreen(int screenIndex)
+{
+	if(screenIndex==0) return null;
+	for(uint i=0,j=ActiveScreens.length();i<j;i++) 
+	{
+		if(ActiveScreens[i].Index==screenIndex) return @ActiveScreens[i];
+	}
+	return null;
+}
+
+bool ProcessKey(uint8 key, string& text, uint8& letter)
+{
+	if(KeyPressed.length()==0) return false;
+
+	if(key==DIK_BACK)
+	{
+		if(text.length()>0) text.resize(text.length()-1);
+		return true;
+	}
+
+	KeybData@ k=KbData[key];
+	if(not (k is null))
+	{
+		bool shiftDown=(KeyPressed[DIK_LSHIFT] || KeyPressed[DIK_RSHIFT]);
+		uint len=text.length();
+		text.resize(text.length()+1);
+		text[len]=k.Char[::GetKeybLang()*2+(shiftDown?1:0)];
+		letter=text[len];
+		return true;
+	}
+	return false;
+}
+
+void DeleteGUIElement(int screenIndex, uint elementIndex)
+{
+	if(screenIndex==0) return;
+	if(GetScreen(screenIndex) is null) return;
+	
+	GUIScreen@ screen=GetScreen(screenIndex);
+	if(elementIndex>=screen.Elements.length()) return;
+	screen.Elements.removeAt(elementIndex);
+}
+
+void DeleteGUIElement(int screenIndex, IGUIElementOpt@ element)
+{
+	if(screenIndex==0) return;
+	if(GetScreen(screenIndex) is null) return;
+	
+	GUIScreen@ screen=GetScreen(screenIndex);
+	
+	for (uint i = 0; i < screen.Elements.length(); i++)
+		if(@screen.Elements[i] is element)
+		{
+			screen.Elements.removeAt(i);
+			break;
+		}
+}
+
+int GetLastScreenElementIndex(int screenIndex)
+{
+	if(screenIndex==0) return -1;
+	if(GetScreen(screenIndex) is null) return -1;
+	
+	GUIScreen@ screen=GetScreen(screenIndex);
+	return screen.Elements.length()-1;
+}
+
+int GetScreenPosX(int screenIndex)
+{
+	if(screenIndex==0) return -1;
+	if(GetScreen(screenIndex) is null) return -1;
+	
+	GUIScreen@ screen=GetScreen(screenIndex);
+	return screen.PosX;
+}
+
+int GetScreenPosY(int screenIndex)
+{
+	if(screenIndex==0) return -1;
+	if(GetScreen(screenIndex) is null) return -1;
+	
+	GUIScreen@ screen=GetScreen(screenIndex);
+	return screen.PosY;
+}
+
+void SetScreenPos(int screenIndex, int posX, int posY)
+{
+	if(screenIndex==0) return;
+	if(GetScreen(screenIndex) is null) return;
+	
+	GUIScreen@ screen=GetScreen(screenIndex);
+	screen.Position(posX,posY);
+}
+
+int GetClientMainScreenGamePosX()
+{
+	return ClientMainScreenGamePosX;
+}
+
+int GetClientMainScreenGamePosY()
+{
+	return ClientMainScreenGamePosY;
+}
+
+void SetPipBoyCallbackShow(IGUIScreenCallbackShow@ callback)
+{
+	if(GetScreen(CLIENT_SCREEN_PIP_BOY) is null) return;
+	GUIScreen@ screen=GetScreen(CLIENT_SCREEN_PIP_BOY);
+	screen.CallbackShow(callback);
+}
+
+void SetMenuCallbackShow(IGUIScreenCallbackShow@ callback)
+{
+	if(GetScreen(CLIENT_MAIN_SCREEN_LOGIN) is null) return;
+	GUIScreen@ screen=GetScreen(CLIENT_MAIN_SCREEN_LOGIN);
+	screen.CallbackShow(callback);
+}
+
+void SetBarterCallbackShow(IGUIScreenCallbackShow@ callback)
+{
+	if(GetScreen(CLIENT_SCREEN_BARTER) is null) return;
+	GUIScreen@ screen=GetScreen(CLIENT_SCREEN_BARTER);
+	screen.CallbackShow(callback);
+}

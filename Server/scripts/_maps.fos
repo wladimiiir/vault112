@@ -1,0 +1,151 @@
+#ifndef __MAPS__
+#define __MAPS__
+
+// ************************************************************************/
+// * Locations                                                            */
+// ************************************************************************/
+
+
+#define LOCATION_IS_CITY                       # (locPid)                 ( false )
+#define LOCATION_IS_OCEAN                      # (locPid)                 ( ( locPid ) >= LOCATION_OceanEncounter1 && ( locPid ) <= LOCATION_OceanTrader )
+
+#define LOCATION_Vault112						( 1 )
+#define LOCATION_Vault112_Start					( 2 )
+
+#define LOCATION_DesertEncounter1              ( 101 )
+#define LOCATION_DesertEncounter2              ( 102 )
+#define LOCATION_DesertEncounter3              ( 103 )
+#define LOCATION_DesertEncounter4              ( 104 )
+#define LOCATION_DesertEncounter5              ( 105 )
+#define LOCATION_DesertEncounter6              ( 106 )
+#define LOCATION_DesertEncounter7              ( 107 )
+#define LOCATION_DesertEncounter8              ( 108 )
+#define LOCATION_DesertEncounter9              ( 109 )
+#define LOCATION_DesertEncounter10             ( 110 )
+#define LOCATION_DesertEncounter11             ( 111 )
+#define LOCATION_DesertEncounter12             ( 112 )
+
+#define LOCATION_MountainEncounter1            ( 121 )
+#define LOCATION_MountainEncounter2            ( 122 )
+#define LOCATION_MountainEncounter3            ( 123 )
+#define LOCATION_MountainEncounter4            ( 124 )
+#define LOCATION_MountainEncounter5            ( 125 )
+#define LOCATION_MountainEncounter6            ( 126 )
+#define LOCATION_MountainEncounter7            ( 127 )
+
+#define LOCATION_CavernEncounter0              ( 140 )
+#define LOCATION_CavernEncounter1              ( 141 )
+#define LOCATION_CavernEncounter2              ( 142 )
+#define LOCATION_CavernEncounter3              ( 143 )
+#define LOCATION_CavernEncounter4              ( 144 )
+#define LOCATION_CavernEncounter5              ( 145 )
+
+#define LOCATION_CityEncounter1                ( 161 )
+#define LOCATION_CityEncounter2                ( 162 )
+#define LOCATION_CityEncounter3                ( 163 )
+#define LOCATION_CityEncounter4                ( 164 )
+#define LOCATION_CityEncounter5                ( 165 )
+#define LOCATION_CityEncounter6                ( 166 )
+#define LOCATION_CityEncounter7                ( 167 )
+#define LOCATION_CityEncounter8                ( 168 )
+
+#define LOCATION_CoastEncounter1               ( 181 )
+#define LOCATION_CoastEncounter2               ( 182 )
+#define LOCATION_CoastEncounter3               ( 183 )
+#define LOCATION_CoastEncounter4               ( 184 )
+#define LOCATION_CoastEncounter5               ( 185 )
+// #define LOCATION_CoastEncounter6                  (186)
+#define LOCATION_CoastEncounter7               ( 187 )
+#define LOCATION_CoastEncounter8               ( 188 )
+#define LOCATION_CoastEncounter9               ( 189 )
+#define LOCATION_CoastEncounter10              ( 190 )
+#define LOCATION_CoastEncounter11              ( 191 )
+
+#define LOCATION_OceanEncounter1               ( 193 )
+#define LOCATION_OceanEncounter2               ( 194 )
+#define LOCATION_OceanEncounter3               ( 195 )
+#define LOCATION_OceanRaft                     ( 196 )
+#define LOCATION_OceanTrader                   ( 197 )
+
+// ************************************************************************/
+// * Maps                                                                 */
+// ************************************************************************/
+
+
+#define MAP_v112_out							( 1 )
+#define MAP_v112_0								( 2 )
+#define MAP_v112_1								( 3 )
+#define MAP_v112_2								( 4 )
+#define MAP_v112_3								( 5 )
+#define MAP_v13_out2							( 6 )
+#define MAP_v112_start							( 7 )
+
+#define MAP_e_city1                            ( 190 )
+#define MAP_e_city2                            ( 191 )
+#define MAP_e_city3                            ( 192 )
+#define MAP_e_city4                            ( 193 )
+#define MAP_e_city5                            ( 194 )
+#define MAP_e_city6                            ( 195 )
+#define MAP_e_city7                            ( 196 )
+#define MAP_e_city8                            ( 197 )
+#define MAP_e_city4_sewer                      ( 198 )
+
+#define MAP_e_desert1                          ( 301 )
+#define MAP_e_desert2                          ( 302 )
+#define MAP_e_desert3                          ( 303 )
+#define MAP_e_desert4                          ( 304 )
+#define MAP_e_desert5                          ( 305 )
+#define MAP_e_desert6                          ( 306 )
+#define MAP_e_desert7                          ( 307 )
+#define MAP_e_desert8                          ( 308 )
+#define MAP_e_desert9                          ( 309 )
+#define MAP_e_desert10                         ( 310 )
+#define MAP_e_desert11                         ( 311 )
+#define MAP_e_desert12                         ( 312 )
+
+#define MAP_e_mountain1                        ( 331 )
+#define MAP_e_mountain2                        ( 332 )
+#define MAP_e_mountain3                        ( 333 )
+#define MAP_e_mountain4                        ( 334 )
+#define MAP_e_mountain5                        ( 335 )
+#define MAP_e_mountain6                        ( 336 )
+#define MAP_e_mountain7                        ( 337 )
+
+#define MAP_e_cave0_out                        ( 348 )
+#define MAP_e_cave0_in                         ( 349 )
+#define MAP_e_cave1_out                        ( 350 )
+#define MAP_e_cave1_in                         ( 351 )
+#define MAP_e_cave2_out                        ( 352 )
+#define MAP_e_cave2_in                         ( 353 )
+#define MAP_e_cave3_out                        ( 353 )
+#define MAP_e_cave3_in                         ( 355 )
+#define MAP_e_cave4_out                        ( 354 )
+#define MAP_e_cave4_in                         ( 357 )
+#define MAP_e_cave5_out                        ( 355 )
+#define MAP_e_cave5_in                         ( 359 )
+
+#define MAP_e_ocean1                           ( 371 )
+#define MAP_e_ocean2                           ( 372 )
+#define MAP_e_ocean3                           ( 373 )
+#define MAP_e_ocean_raft                       ( 374 )
+#define MAP_e_ocean_trader                     ( 375 )
+
+#define MAP_e_coast1                           ( 381 )
+#define MAP_e_coast2                           ( 382 )
+#define MAP_e_coast3                           ( 383 )
+#define MAP_e_coast4                           ( 384 )
+#define MAP_e_coast5                           ( 385 )
+#define MAP_e_coast6                           ( 386 )
+#define MAP_e_coast7                           ( 387 )
+#define MAP_e_coast8                           ( 388 )
+#define MAP_e_coast9                           ( 389 )
+#define MAP_e_coast10                          ( 390 )
+#define MAP_e_coast11                          ( 391 )
+#define MAP_e_coast5_cave                      ( 392 )
+
+
+// ************************************************************************/
+// *                                                                      */
+// ************************************************************************/
+
+#endif // __MAPS__

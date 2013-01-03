@@ -1,0 +1,113 @@
+#include "_macros.fos"
+#include "_client_defines.fos"
+#include "client_gui_h.fos"
+
+IGUIElementTextOpt@ TitleUI;
+IGUIElementEditBoxOpt@ TextUI;
+
+string@ AnswerScript;
+int[]@ Values;
+bool CloseOnDone = true;
+
+void ShowSayScreen(int onlyNumbers, int closeOnDone, int, string@ titleTextAnswer, int[]@ values)
+{
+	if(!valid(titleTextAnswer))
+		return;
+	
+	string@[] splitted = split(titleTextAnswer, "^");
+	if(splitted.length() != 3)
+		return;
+	
+	if(!valid(TitleUI) || !valid(TextUI))
+		InitCustomSayScreen();
+	
+	TitleUI.setText(splitted[0]);
+	TextUI.VisibleText(splitted[1]);
+	TextUI.setFocused(true);
+	TextUI.NumericMode(onlyNumbers > 0);
+	@AnswerScript = splitted[2];
+	@Values = values;
+	CloseOnDone = closeOnDone > 0;
+	
+	ShowScreen(CLIENT_SCREEN_CUSTOM_SAY, 0, 0, 0);
+}
+
+void InitCustomSayScreen()
+{
+	GUI_CreateScreen(CLIENT_SCREEN_CUSTOM_SAY, GetIfaceIniStr("SayMainPic"))
+		.AutoCursor(true, CURSOR_HAND)
+		.Modal(false);
+	
+	@TitleUI = GUI_AddText(CLIENT_SCREEN_CUSTOM_SAY)
+				.TextOptions(FONT_FAT, COLOR_YELLOW, FT_CENTERY)
+				.Position("SayMainText");
+	@TextUI = GUI_AddEditBox(CLIENT_SCREEN_CUSTOM_SAY)
+				.TextOptions(FONT_FALLOUT, COLOR_GREEN, FT_CENTERY)
+				.Position("SaySay")
+				.CallbackKeyPress(EnterAction())
+				;
+	GUI_AddButton(CLIENT_SCREEN_CUSTOM_SAY)
+		.Position("SayOk")
+		.DownPic(GetIfaceIniStr("SayOkPicDn"))
+		.CallbackMouseClick(DoneAction());
+	GUI_AddButton(CLIENT_SCREEN_CUSTOM_SAY)
+		.Position("SayCancel")
+		.DownPic(GetIfaceIniStr("SayCancelPicDn"))
+		.CallbackMouseClick(CancelAction());
+	GUI_AddText(CLIENT_SCREEN_CUSTOM_SAY, "Done", 0, 0)
+		.TextOptions(FONT_FAT, COLOR_YELLOW, FT_CENTERY)
+		.Position("SayOkText");
+	GUI_AddText(CLIENT_SCREEN_CUSTOM_SAY, "Cancel", 0, 0)
+		.TextOptions(FONT_FAT, COLOR_YELLOW, FT_CENTERY)
+		.Position("SayCancelText");
+}
+
+void SendAnswer()
+{
+	if(!valid(AnswerScript))
+		return;
+		
+	RunServerScriptUnsafe(AnswerScript, 0, 0, 0, TextUI.getText(), Values);
+	if(CloseOnDone)
+		HideScreen(CLIENT_SCREEN_CUSTOM_SAY, 0, 0, 0);
+	else
+	{
+		TextUI.VisibleText("");
+		TextUI.setFocused(true);
+	}
+}
+
+class EnterAction : IGUIElementCallbackKeyPress
+{
+	bool OnKeyPress(uint8 key, uint8 letter) override
+	{
+		if(key != DIK_RETURN && key != DIK_NUMPADENTER)
+			return false;
+			
+		if(TextUI.getText().length() == 0)
+			HideScreen(CLIENT_SCREEN_CUSTOM_SAY, 0, 0, 0);
+		else
+			SendAnswer();
+		return true;
+	}
+}
+
+class DoneAction : IGUIElementCallbackMouseClick
+{
+	void OnMouseClick(int id, int click) override
+	{
+		if(click != MOUSE_CLICK_LEFT)
+			return;
+		SendAnswer();
+	}
+}
+
+class CancelAction : IGUIElementCallbackMouseClick
+{
+	void OnMouseClick(int id, int click) override
+	{
+		if(click != MOUSE_CLICK_LEFT)
+			return;
+		HideScreen(CLIENT_SCREEN_CUSTOM_SAY, 0, 0, 0);
+	}
+}

@@ -1,0 +1,198 @@
+// Author: cvet
+#include "_macros.fos"
+#include "_npc_pids.fos"
+#include "_msgstr.fos"
+#include "loot_items.fos"
+#include "trader_init.fos"
+#include "utils_for_array.fos"
+
+import void SetDeterioration( Item& item, int deteriorationProcent ) from "repair";
+
+#define TRADER_ID_JunktownTrader		     ( 60 ) //TODO: trader ids
+#define TRADER_ID_JunktownDoctor		     ( 88 )
+
+//import bool TraderAccepts(Critter& npc, Critter& player, Item@[]& saleItems, uint[]& saleItemsCount, uint[]& saleItemsCost, Item@[]& buyItems, uint[]& buyItemsCount, uint[]& buyItemsCost) from "trader";
+bool TraderAccepts(Critter& npc, Critter& player, Item@[]& saleItems, uint[]& saleItemsCount, uint[]& saleItemsCost, Item@[]& buyItems, uint[]& buyItemsCount, uint[]& buyItemsCost)
+{
+	Trader@ trader = GetTrader(npc);
+	if(!valid(trader))
+		return true;
+		
+	for (uint i = 0; i < saleItems.length(); i++)
+		if(valid(saleItems[i]) && saleItems[i].GetProtoId() != PID_BOTTLE_CAPS && !trader.IsBuyItem(saleItems[i]))
+		{
+			Log("Not buy item: "+saleItems[i].GetProtoId());
+			npc.SayMsg(SAY_DIALOG, TEXTMSG_GAME, STR_BARTER_ITEM_NOT_ALLOWED);
+			return false;
+		}
+		
+	int caps = GetCaps(saleItems, saleItemsCount);
+	Item@[] itemsForCaps;
+	for (uint i = 0; i < buyItems.length(); i++)
+		if(valid(buyItems[i]) && trader.IsOnlyForCapsItem(buyItems[i]))
+		{
+			itemsForCaps.insertLast(buyItems[i]);
+			caps -= buyItemsCount[i] * buyItemsCost[i];
+		}
+	
+	if(caps < 0)
+	{
+		player.SayMsg(SAY_NETMSG, TEXTMSG_GAME, STR_BARTER_ITEM_FOR_CAPS_NOT_ENOUGH, "$items" + GetItemsString(itemsForCaps));
+		player.SayMsg(SAY_DIALOG, TEXTMSG_GAME, STR_BARTER_ITEM_FOR_CAPS_NOT_ENOUGH, "$items" + GetItemsString(itemsForCaps));
+		npc.SayMsg(SAY_DIALOG, TEXTMSG_GAME, STR_BARTER_ITEM_FOR_CAPS_NOT_ENOUGH, "$items" + GetItemsString(itemsForCaps));
+		return false;
+	}
+		
+	return true;
+} 
+
+string GetItemsString(Item@[]& items)
+{
+	string itemsString = "";
+	for (uint i = 0; i < items.length(); i++)
+	{
+		if(i != 0 && i == items.length() - 1)
+			itemsString += " and ";
+		else if(i > 0)
+			itemsString += ", ";
+		itemsString += "@msg ITEM " + items[i].GetProtoId() * 100 + "@"; 
+	}
+	return itemsString;
+}
+
+int GetCaps(Item@[]& items, uint[]& counts)
+{
+	int caps = 0;
+	for (uint i = 0; i < items.length(); i++)
+		if(valid(items[i]) && items[i].GetProtoId() == PID_BOTTLE_CAPS)
+			caps += counts[i];
+			
+	return caps;
+}
+
+void TraderInit(Critter& npc, bool)
+{
+    Trader@ trader = GetTrader(npc);
+    if(!valid(trader))
+		return;
+    
+	npc.StatBase[ ST_TALK_DISTANCE ]      = 5;
+	npc.StatBase[ ST_MAX_TALKERS ]        = 1;
+	npc.StatBase[ ST_REPLICATION_TIME ]   = 30;
+	npc.SkillBase[ SK_BARTER ]            = trader.GetBarterSkill();
+	npc.ModeBase[ MODE_NO_ITEM_GARBAGER ] = 1;
+	npc.ModeBase[ MODE_NO_BARTER ]        = 0;
+	npc.ModeBase[ MODE_NO_DROP ]          = 1;
+	npc.ModeBase[ MODE_NO_STEAL ]         = 1;
+	npc.ModeBase[ MODE_NO_LOOT ]          = 1;
+	npc.ModeBase[ MODE_NO_ENEMY_STACK ]   = 1;
+	
+	npc.SetEvent(CRITTER_EVENT_BARTER, "_TraderBarter");
+
+	if( npc.GetTimeEvents( CTE_TRADER, null, null, null ) == 0 )
+	{
+		uint nextCall = trader.UpdateItems(npc);
+		if(nextCall > 0)
+			npc.AddTimeEvent( "cte_UpdateTraderItems", nextCall, CTE_TRADER );
+	}
+}
+
+bool _TraderBarter(Critter& npc, Critter& player, bool attach, uint barterCount)
+{
+	Trader@ trader = GetTrader(npc);
+	if(!valid(trader))
+		return true;
+	
+	player.RunClientScript("barter@SetBuyItems", npc.Id, 0, 0, null, attach ? trader.GetBuyItems() : int[](0));
+		
+	return true;
+}
+
+uint cte_UpdateTraderItems(Critter& npc, int identifier, uint& stage)
+{
+    if(npc.IsDead())
+        return npc.Timeout[TO_REPLICATION] + REAL_MINUTE(1);
+    
+    Trader@ trader = GetTrader(npc);
+    if(valid(trader))
+		return trader.UpdateItems(npc);
+	else
+		return 0;
+}
+
+class Trader 
+{
+	private uint TraderId;
+	private uint RefreshTimeMin;
+	private uint RefreshTimeMax;
+	private uint BarterSkill;
+	private bool ClearInventory;
+	private LootDefinition Items;
+	private uint16[] ItemPidsOnlyForCaps;
+	private uint16[] BuyItemPids;
+	
+	Trader(uint traderId, uint refreshTimeMin, uint refreshTimeMax, uint barterSkill, bool clearInventory)
+	{
+		TraderId = traderId;
+		RefreshTimeMin = refreshTimeMin;
+		RefreshTimeMax = refreshTimeMax;
+		BarterSkill = barterSkill;
+		ClearInventory = clearInventory;
+	}
+	
+	Trader@ AddItem(uint16 itemPid, float chance, uint minCount, uint maxCount, bool onlyForCaps)
+	{
+		Items.AddItem(itemPid, chance, minCount, maxCount);
+		if(onlyForCaps)
+			ItemPidsOnlyForCaps.insertLast(itemPid);
+		return this;
+	}
+	
+	Trader@ AddBuyItem(uint16 itemPid)
+	{
+		BuyItemPids.insertLast(itemPid);
+		return this;
+	}
+	
+	int[] GetBuyItems()
+	{
+		int[] buyItems;
+		for (uint i = 0; i < BuyItemPids.length(); i++)
+			buyItems.insertLast(BuyItemPids[i]);
+		return buyItems;
+	}
+	
+	bool IsBuyItem(Item& item)
+	{
+		return Present(item.GetProtoId(), BuyItemPids);
+	}
+	
+	bool IsOnlyForCapsItem(Item& item)
+	{
+		return Present(item.GetProtoId(), ItemPidsOnlyForCaps);
+	}
+	
+	uint GetTraderId()
+	{
+		return TraderId;
+	}
+	
+	uint GetBarterSkill()
+	{
+		return BarterSkill;
+	}
+	
+	uint UpdateItems(Critter& trader)
+	{
+		if(ClearInventory)
+		{
+			Item@[] items;
+		    trader.GetItems(SLOT_INV, items);
+		    DeleteItems(items);
+		}
+		
+		Items.AddItems(trader);
+		
+		return Random(RefreshTimeMin, RefreshTimeMax);
+	}
+}

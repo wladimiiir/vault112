@@ -1,0 +1,12 @@
+#ifndef __TIME__
+#define __TIME__
+
+#define REAL_MS        # (x) ( ( x ) * __TimeMultiplier / 1000 )
+#define REAL_SECOND    # (x) ( ( x ) * __TimeMultiplier )
+#define REAL_MINUTE    # (x) ( ( x ) * __TimeMultiplier * 60 )
+#define REAL_HOUR      # (x) ( ( x ) * __TimeMultiplier * 3600 )
+#define REAL_DAY       # (x) ( ( x ) * __TimeMultiplier * 86400 )
+#define REAL_MONTH     # (x) ( ( x ) * __TimeMultiplier * 2592000 )
+#define REAL_YEAR      # (x) ( ( x ) * __TimeMultiplier * 31536000 )
+
+#endif // __TIME__

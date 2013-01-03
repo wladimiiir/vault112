@@ -1,0 +1,1 @@
+FOR /r .\ %%f IN (.svn) DO RD /s /q "%%f

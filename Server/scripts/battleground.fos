@@ -1,0 +1,837 @@
+#include "_macros.fos"
+#include "battleground_dialog.fos"
+#include "battleground_h.fos"
+#include "admin_h.fos"
+
+const string[] TEAMS = {"Team Alpha", "Team Beta", "Team Gamma", "Team Delta"};
+
+/**
+* Battles
+*/
+Battle@[] Battles;
+
+Battle@ GetCreatedBattle(Critter& creator)
+{
+	for (uint i = 0; i < Battles.length(); i++)
+		if(valid(Battles[i]) && Battles[i].IsCreator(creator))
+			return @Battles[i];
+		
+	return null;
+}
+
+Battle@ GetBattle(Critter& player)
+{
+	for (uint i = 0; i < Battles.length(); i++)
+		if(valid(Battles[i]) && Battles[i].IsPlayer(player))
+			return @Battles[i];
+		
+	return null;
+}
+
+Battle@ GetBattle(Map& map)
+{
+	for (uint i = 0; i < Battles.length(); i++)
+		if(valid(Battles[i]) && Battles[i].IsMap(map))
+			return @Battles[i];
+		
+	return null;
+}
+
+bool DeleteBattle(Critter& creator)
+{
+	for (uint i = 0; i < Battles.length(); i++)
+		if(valid(Battles[i]) && Battles[i].IsCreator(creator))
+		{
+			Battles.removeAt(i);
+			return true;
+		}
+		
+	return false;
+}
+
+/**
+* Admin panel
+*/
+void ShowBattleMenu(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	string@ menuItems = "";
+	switch(actionType)
+	{
+		case ACTION_TYPE_CRITTER:
+			menuItems += "Join:battleground@Join;";
+			menuItems += "Invite:battleground@Invite;";
+			break;
+		case ACTION_TYPE_ITEM:
+			break;
+		case ACTION_TYPE_HEX:
+			break;
+	}
+	ShowAdminMenu(critter, actionType, menuItems, values);
+}
+
+void Join(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_CRITTER)
+		return;
+	
+	Critter@ cr = GetCritter(values[0]);
+	if(!valid(cr))
+		return;
+	
+	Battle@ battle = GetBattle(cr);
+	if(!valid(battle))
+		return;
+	
+	battle.Join(critter);
+}
+
+void Invite(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_CRITTER)
+		return;
+	
+	Battle@ battle = GetBattle(critter);
+	if(!valid(battle))
+		return;
+	Critter@ player = GetCritter(values[0]);
+	if(!valid(player))
+		return;
+	
+	battle.Join(player);
+}
+
+/**
+* Unsafe server functions
+*/
+void unsafe_Join(Critter& player, int teamIndex, int, int, string@, int[]@)
+{
+	Battle@ battle = GetBattle(player);
+	if(!valid(battle))
+		return;
+		
+	battle.ChangeTeam(player, teamIndex);
+}
+
+void unsafe_Start(Critter& player, int, int, int, string@, int[]@)
+{
+	Battle@ battle = GetCreatedBattle(player);
+	if(!valid(battle))
+		return;
+		
+	battle.Start();
+}
+
+void unsafe_Cancel(Critter& player, int, int, int, string@, int[]@)
+{
+	CancelBattle(player);
+}
+
+void unsafe_RequestRefresh(Critter& player, int, int, int, string@, int[]@)
+{
+	Battle@ battle = GetBattle(player);
+	if(!valid(battle))
+	{
+		player.ParamBase[BATTLEGROUND] = BATTLEGROUND_NONE;
+		return;
+	}
+		
+	battle.RefreshClient(player);
+}
+
+/**
+* Safe server functions
+*/
+void ShowBattlegroundDialog(Critter& player, int, int, int, string@, int[]@)
+{
+	RunDialog(player, DIALOG_battleground, 1, 1, true);
+}
+
+void StartBattle(Critter& player, int, int, int, string@, int[]@)
+{
+	Battle@ battle = GetCreatedBattle(player);
+	if(!valid(battle))
+		return;
+	
+	battle.Start();
+}
+
+/**
+* Run script functions
+*/
+void SetBattleground(Critter& cr, int critterId, int battleground, int)
+{
+	Critter@ critter = GetCritter(critterId);
+	if(!valid(critter))
+		return;
+		
+	critter.ParamBase[BATTLEGROUND] = battleground;
+}
+
+/**
+* Export functions
+*/
+//import void CancelBattle(Critter& player) from "battleground";
+void CancelBattle(Critter& player)
+{
+	Battle@ battle = GetBattle(player);
+	if(!valid(battle))
+		return;
+		
+	battle.Cancel(player);
+}
+
+/**
+* Map functions
+*/
+void _SmallTownInit(Map& map, bool)
+{
+	map.SetEvent(MAP_EVENT_CRITTER_DEAD, "PlayerKilled");
+	//~ map.SetEvent(MAP_EVENT_TURN_BASED_BEGIN, "_TurnBasedBegin"); //todo: some bug causing server to crash
+	//~ map.SetEvent(MAP_EVENT_TURN_BASED_PROCESS, "_TurnBasedProcess");
+}
+
+void PlayerKilled(Map& map, Critter& killed, Critter@ killer)
+{
+	Battle@ battle = GetBattle(killed);
+	if(!valid(battle))
+		return;
+	
+	battle.PlayerKilled(killed, killer);
+}
+
+//import void TurnBasedBegin(Map& map) from "battleground";
+void TurnBasedBegin(Map& map)
+{
+	Battle@ battle = GetBattle(map);
+	if(!valid(battle))
+		return;
+	
+	battle.RefreshTurnBased(map);
+}
+
+//import void TurnBasedEnd(Map& map) from "battleground";
+void TurnBasedEnd(Map& map)
+{
+	Battle@ battle = GetBattle(map);
+	if(!valid(battle))
+		return;
+	
+	battle.EndTurnBased(map);
+}
+
+void _TurnBasedProcess(Map& map, Critter& critter, bool beginTurn)
+{
+	Log("turn based process");
+	Battle@ battle = GetBattle(critter);
+	if(!valid(battle))
+		return;
+	
+	battle.RefreshTurnBased(map);
+}
+
+/**
+* Classes
+*/
+class Battle
+{
+	#define BATTLEGROUND_WORLD_X	(100)
+	#define BATTLEGROUND_WORLD_Y	(100)
+	#define BATTLE_RESPAWN_WAIT		(REAL_SECOND(3))
+	#define BATTLE_MAX_TEAM_KILLS	(3)
+	
+	private uint Creator;
+	private uint16 CombatMode;
+	private uint Duration;
+	private Team@[] Teams;
+	private uint LocationId;
+	private uint Cost;
+	private uint StartTime;
+	private uint EndTime;
+	
+	Battle(uint creator, uint16 combatMode)
+	{
+		Creator = creator;
+		CombatMode = combatMode;
+		Duration = REAL_MINUTE(10);
+		LocationId = 0;
+		Cost = 0;
+		StartTime = 0;
+		EndTime = 0;
+	}
+	
+	uint GetTeamScore(Team& team)
+	{
+		int totalKills = 0;
+		for (uint i = 0; i < team.GetPlayers().length(); i++)
+		{
+			totalKills += team.GetPlayers()[i].Kills;
+			totalKills -= team.GetPlayers()[i].TeamKills;
+		}
+		return MAX(0, totalKills);
+	}
+	
+	void SetCost(uint cost)
+	{
+		Cost = cost;
+	}
+	
+	void SetDuration(uint duration)
+	{
+		Duration = duration;
+	}
+	
+	void RefreshTurnBased(Map& map)
+	{
+		Log("rounds: "+map.TurnBasedRound);
+		if(Duration <= map.TurnBasedRound)
+		{
+			Critter@ creator = GetCritter(Creator);
+			if(valid(creator))
+				End(creator);
+		}
+		else
+			RefreshClients();
+	}
+	
+	void EndTurnBased(Map& map)
+	{
+		Log("end rounds: "+map.TurnBasedRound);
+		Duration -= map.TurnBasedRound;
+	}
+	
+	void SetLocation(uint location)
+	{
+		if(LocationId != 0)
+		{
+			DeleteLocation(LocationId);
+			LocationId = 0;
+		}
+			
+		if(Creator == 0)
+			return;
+		
+		LocationId = CreateLocation(location, BATTLEGROUND_WORLD_X, BATTLEGROUND_WORLD_Y, null);
+		Location@ loc = GetLocation(LocationId);
+		if(!valid(loc))
+			return;
+		loc.AutoGarbage = false;
+	}
+	
+	bool CanJoin()
+	{
+		for (uint i = 0; i < Teams.length(); i++)
+			if(Teams[i].CanJoin())
+				return true;
+		return false;
+	}
+	
+	void AddTeam()
+	{
+		Teams.insertLast(Team(Teams.length()));
+	}
+	
+	void ChangeTeam(Critter& player, uint teamIndex)
+	{
+		Player@ p = GetPlayer(player);
+		if(!valid(p))
+			return;
+		
+		for (uint i = 0; i < Teams.length(); i++)
+			if(Teams[i].RemovePlayer(p))
+				break;
+				
+		Teams[teamIndex].AddPlayer(p);
+		RefreshClients();
+	}
+	
+	void Start()
+	{
+		Map@ map = GetMap();
+		if(!valid(map))
+			return;
+		
+		if(CombatMode == COMBAT_MODE_TURN_BASED)
+			map.SetTurnBasedAvailability(true);
+		
+		for (uint i = 0; i < Teams.length(); i++)
+			Teams[i].Start(map);
+			
+		StartTime = __FullSecond + REAL_SECOND(10);
+		if(CombatMode == COMBAT_MODE_REAL_TIME)
+		{
+			EndTime = StartTime + Duration;
+			CreateTimeEvent(EndTime, "e_EndBattle", Creator, false);
+		}
+		else
+		{
+			EndTime = 0;
+		}
+		
+		RefreshClients();
+	}
+	
+	private Map@ GetMap()
+	{
+		if(LocationId == 0)
+			return null;
+		Location@ location = GetLocation(LocationId);
+		if(!valid(location))
+			return null;
+		
+		return location.GetMapByIndex(0);
+	}
+	
+	void End(Critter& creator)
+	{
+		EndTime = __FullSecond;
+		for (uint i = 0; i < Teams.length(); i++)
+			Teams[i].End();
+		RefreshClients();
+		DeleteBattle(creator);
+		if(LocationId != 0)
+			DeleteLocation(LocationId);
+	}
+	
+	void Join(Critter& critter)
+	{
+		Player@ player = GetPlayer(critter);
+		if(valid(player))
+			return;
+		
+		Team@ team = GetNextTeam();
+		if(!valid(team))
+			return;
+			
+		@player = Player(critter);
+		team.AddPlayer(player);
+		critter.ParamBase[BATTLEGROUND] = IsCreator(critter) ? BATTLEGROUND_CREATED : BATTLEGROUND_JOINED;
+		if(!IsCreator(critter))
+			RefreshClients();
+	}
+	
+	private Team@ GetNextTeam()
+	{
+		Team@ team;
+		for (uint i = 0; i < Teams.length(); i++)
+		{
+			if(!valid(team) || team.GetPlayerCount() > Teams[i].GetPlayerCount())
+				@team = Teams[i];
+		}
+		return team;
+	}
+	
+	void Cancel(Critter& critter)
+	{
+		if(IsCreator(critter))
+		{
+			if(LocationId != 0)
+			{	
+				DeleteLocation(LocationId);
+				LocationId = 0;
+			}
+			for (uint i = 0; i < Teams.length(); i++)
+				Teams[i].Cancel();
+			
+			DeleteBattle(critter);
+		}
+		else
+		{
+			Player@ player = GetPlayer(critter);
+			if(valid(player))
+			{
+				for (uint i = 0; i < Teams.length(); i++)
+					if(Teams[i].RemovePlayer(player))
+						break;
+				player.End();
+			}
+			
+			critter.ParamBase[BATTLEGROUND] = BATTLEGROUND_NONE;
+			critter.ParamBase[PVP_TEAM] = 0;
+		}
+		RefreshClients();
+	}
+	
+	void RefreshClients()
+	{
+		for (uint i = 0; i < Teams.length(); i++)
+			for (uint j = 0; j < Teams[i].GetPlayers().length(); j++)
+				if(valid(Teams[i].GetPlayers()[j].GetCritter()))
+					RefreshClient(Teams[i].GetPlayers()[j].GetCritter());
+	}
+	
+	void RefreshClient(Critter& critter)
+	{
+		if(_CritIsOffline(critter))
+			return;
+		RefreshTeamPlayers(critter);
+		RefreshTeamScore(critter);
+		RefreshTurnBased(critter);
+	}
+	
+	private void RefreshTeamPlayers(Critter& critter)
+	{
+		int[] teamPlayers;
+		string teams = "";
+		for (uint i = 0; i < Teams.length(); i++)
+		{
+			Teams[i].InsertPlayers(teamPlayers);
+			if(i > 0)
+				teams += ";";
+			teams += Teams[i].GetName();
+		}
+		
+		critter.RunClientScript("client_screen_battleground@SetBattleground", 
+			INFO_TYPE_TEAM_PLAYERS, StartTime, EndTime, teams, teamPlayers);
+	}
+	
+	private void RefreshTeamScore(Critter& critter)
+	{
+		int[] teamScore;
+		string teams = "";
+		for (uint i = 0; i < Teams.length(); i++)
+		{
+			teamScore.insertLast(GetTeamScore(Teams[i]));
+			if(i > 0)
+				teams += ";";
+			teams += Teams[i].GetName();
+		}
+		
+		critter.RunClientScript("client_screen_battleground@SetBattleground", 
+			INFO_TYPE_TEAM_SCORE, StartTime, EndTime, teams, teamScore);
+	}
+	
+	private void RefreshTurnBased(Critter& critter)
+	{
+		if(CombatMode != COMBAT_MODE_TURN_BASED)
+			return;
+		Map@ map = critter.GetMap();
+		if(!valid(map))
+			return;
+		
+		int[] rounds = {Duration - map.TurnBasedRound};
+		critter.RunClientScript("client_screen_battleground@SetBattleground", 
+			INFO_TYPE_TURN_BASED, StartTime, 0, null, rounds);
+	}
+	
+	private Team@ GetTeam(Critter& critter)
+	{
+		for (uint i = 0; i < Teams.length(); i++)
+			if(valid(Teams[i].GetPlayer(critter)))
+				return @Teams[i];
+				
+		return null;
+	}
+	
+	private Player@ GetPlayer(Critter& critter)
+	{
+		for (uint i = 0; i < Teams.length(); i++)
+		{
+			Player@ player = Teams[i].GetPlayer(critter);
+			if(valid(player))
+				return player;
+		}
+		
+		return null;
+	}
+	
+	bool IsCreator(Critter& player)
+	{
+		return Creator == player.Id;
+	}
+	
+	bool IsPlayer(Critter& player)
+	{
+		return valid(GetPlayer(player));
+	}
+	
+	bool IsMap(Map& map)
+	{
+		Map@ battleMap = GetMap();
+		if(!valid(battleMap))
+			return false;
+		return map.Id == battleMap.Id;
+	}
+	
+	string GetCreatorName()
+	{
+		return GetPlayerName(Creator);
+	}
+	
+	void PlayerKilled(Critter& killed, Critter@ killer)
+	{
+		Player@ killedPlayer = GetPlayer(killed);
+		if(valid(killedPlayer))
+		{
+			killedPlayer.Deaths++;
+			uint[] values = {killed.Id};
+			CreateTimeEvent(__FullSecond + BATTLE_RESPAWN_WAIT, "e_Respawn", values, false);
+		}
+			
+		Player@ killerPlayer = valid(killer) ? GetPlayer(killer) : null;
+		if(valid(killerPlayer))
+		{
+			Team@ killedTeam = GetTeam(killed);
+			Team@ killerTeam = GetTeam(killer);
+			if(valid(killedTeam) && valid(killerTeam))
+				if(killedTeam.GetIndex() == killerTeam.GetIndex())
+				{
+					killerPlayer.TeamKills++;
+					if(killerPlayer.TeamKills >= BATTLE_MAX_TEAM_KILLS)
+						Cancel(killer);
+				}
+				else
+					killerPlayer.Kills++;
+					
+		}
+		
+		RefreshClients();
+	}
+	
+	void Respawn(Critter& critter)
+	{
+		Team@ team = GetTeam(critter);
+		if(!valid(team))
+			return;
+		
+		team.Respawn(critter);
+	}
+}
+
+uint e_Respawn(uint[]@ values)
+{
+	Critter@ critter = GetCritter(values[0]);
+	if(!valid(critter))
+		return 0;
+	
+	Battle@ battle = GetBattle(critter);
+	if(!valid(battle))
+		return 0;
+	battle.Respawn(critter);
+	return 0;
+}
+
+uint e_EndBattle(uint[]@ values)
+{
+	Critter@ creator = GetCritter(values[0]);
+	if(!valid(creator))
+		return 0;
+		
+	Battle@ battle = GetBattle(creator);
+	if(!valid(battle))
+		return 0;
+		
+	battle.End(creator);
+	
+	return 0;
+}
+
+
+class TeamDeathmatch : Battle
+{
+	TeamDeathmatch(Critter& creator, uint16 combatMode)
+	{
+		super(creator.Id, combatMode);
+		AddTeam();
+		AddTeam();
+	}
+}
+
+
+class Team
+{
+	private uint Index;
+	private string Name;
+	private Player@[] Players;
+	private uint Score;
+	
+	Team(uint index)
+	{
+		Index = index;
+		Name = TEAMS[index];
+		Score = 0;
+	}
+	
+	uint GetIndex()
+	{
+		return Index;
+	}
+	
+	string GetName()
+	{
+		return Name;
+	}
+	
+	bool CanJoin()
+	{
+		for (uint i = 0; i < Players.length(); i++)
+			if(valid(Players[i].GetCritter()) && Players[i].GetCritter().Param[BATTLEGROUND] == BATTLEGROUND_CREATED)
+				return true;
+		return false;
+	}
+	
+	void AddPlayer(Player& player)
+	{
+		Players.insertLast(player);
+	}
+	
+	bool RemovePlayer(Player& player)
+	{
+		for (uint i = 0; i < Players.length(); i++)
+			if(Players[i].CritterId == player.CritterId)
+			{
+				Players.removeAt(i);
+				return true;
+			}
+		return false;
+	}
+	
+	Player@[] GetPlayers()
+	{
+		return Players;
+	}
+	
+	uint16 GetPlayerCount()
+	{
+		return Players.length();
+	}
+	
+	Player@ GetPlayer(Critter& player)
+	{
+		for (uint i = 0; i < Players.length(); i++)
+			if(Players[i].CritterId == player.Id)
+				return @Players[i];
+				
+		return null;
+	}
+	
+	void InsertPlayers(int[]& teamPlayers)
+	{
+		for (uint i = 0; i < Players.length(); i++)
+		{
+			teamPlayers.insertLast(Index);
+			teamPlayers.insertLast(Players[i].CritterId);
+		}
+	}
+	
+	void Start(Map& map)
+	{
+		for (uint i = 0; i < Players.length(); i++)
+			Players[i].Start(map, Index, Index + 1);
+	}
+	
+	void End()
+	{
+		for (uint i = 0; i < Players.length(); i++)
+			Players[i].End();
+	}
+	
+	void Respawn(Critter& critter)
+	{
+		Player@ player = GetPlayer(critter);
+		if(!valid(player))
+			return;
+			
+		player.Respawn(critter.GetMap(), Index);
+	}
+	
+	void Cancel()
+	{
+		for (uint i = 0; i < Players.length(); i++)
+			if(valid(Players[i].GetCritter()))
+				Players[i].GetCritter().ParamBase[BATTLEGROUND] = BATTLEGROUND_NONE;
+	}
+}
+
+
+class Player
+{
+	private Map@ map;
+	private uint16 HexX;
+	private uint16 HexY;
+	private uint HP;
+	private Critter@ Critter;
+	uint CritterId;
+	uint Kills;
+	uint TeamKills;
+	uint Deaths;
+	
+	Player(Critter& player)
+	{
+		CritterId = player.Id;
+		@Critter = player;
+		Kills = 0;
+		TeamKills = 0;
+		Deaths = 0;
+		@map = player.GetMap();
+		HexX = player.HexX;
+		HexY = player.HexY;
+		HP = player.StatBase[ST_CURRENT_HP];
+	}
+	
+	string GetName()
+	{
+		if(!valid(GetCritter()))
+			return "<error b2>";
+			
+		return GetCritter().Name;
+	}
+	
+	Critter@ GetCritter()
+	{
+		if(!valid(Critter))
+			@Critter = ::GetCritter(CritterId);
+	
+		return Critter;
+	}
+	
+	void Start(Map& map, uint entireNum, uint pvpTeam)
+	{
+		if(!valid(GetCritter()))
+			return;
+		
+		GetCritter().TransitToMap(map.Id, entireNum);
+		GetCritter().ParamBase[PVP_TEAM] = pvpTeam;
+		GetCritter().ParamBase[BATTLEGROUND] = BATTLEGROUND_STARTED;
+	}
+	
+	void Respawn(Map& map, uint entireNum)
+	{
+		if(!valid(GetCritter()))
+			return;
+		
+		if(GetCritter().IsDead())
+		{
+			Item@[] slotHand1Items;
+			Item@[] slotHand2Items;
+			GetCritter().GetItems(SLOT_HAND1, slotHand1Items);
+			GetCritter().GetItems(SLOT_HAND2, slotHand2Items);
+			Log("slot1: "+slotHand1Items.length());
+			GetCritter().TimeoutBase[TO_REPLICATION] = 0;
+			GetCritter().ToLife();
+			GetCritter().StatBase[ST_CURRENT_HP] = Critter.Stat[ST_MAX_LIFE];
+			if(slotHand1Items.length() > 0)
+				_CritMoveItem(GetCritter(), slotHand1Items[0], SLOT_HAND1);
+			if(slotHand2Items.length() > 0)
+				GetCritter().MoveItem(slotHand2Items[0].Id, slotHand2Items[0].GetCount(), SLOT_HAND2);
+		}
+		GetCritter().TransitToMap(map.Id, entireNum);
+	}
+	
+	void End()
+	{
+		if(!valid(map) || !valid(GetCritter()))
+			return;
+		
+		if(GetCritter().IsDead())
+			GetCritter().ToLife();
+		GetCritter().StatBase[ST_CURRENT_HP] = HP;
+		GetCritter().ParamBase[PVP_TEAM] = 0;
+		GetCritter().ParamBase[BATTLEGROUND] = BATTLEGROUND_NONE;
+		GetCritter().TransitToMap(map.Id, HexX, HexY, Critter.Dir);
+	}
+}
+
+class Flag
+{
+	Team@ CurrentTeam;
+}

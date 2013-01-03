@@ -1,0 +1,121 @@
+#include "_macros.fos"
+#include "_client_defines.fos"
+#include "client_gui_h.fos"
+#include "admin_h.fos"
+
+int LastMouseX = 0;
+int LastMouseY = 0;
+
+//import bool ShowAdminPanel() from "client_screen_admin_panel";
+bool ShowAdminPanel()
+{
+	int[] values;
+	int actionType = ACTION_TYPE_UNKNOWN;
+	
+	LastMouseX = __MouseX;
+	LastMouseY = __MouseY;
+	CritterCl@ critter = GetMonitorCritter(__MouseX, __MouseY);
+	if(valid(critter))
+	{
+		actionType = ACTION_TYPE_CRITTER;
+		values.insertLast(critter.Id);
+	}
+	if(actionType == ACTION_TYPE_UNKNOWN)
+	{
+		ItemCl@ item = GetMonitorItem(__MouseX, __MouseY);
+		if(valid(item))
+		{
+			actionType = ACTION_TYPE_ITEM;
+			values.insertLast(item.Id);
+		}
+	}
+	if(actionType == ACTION_TYPE_UNKNOWN)
+	{
+		uint16 hexX = 0, hexY = 0;
+		if(GetMonitorHex(__MouseX, __MouseY, hexX, hexY))
+		{
+			actionType = ACTION_TYPE_HEX;
+			values.insertLast(hexX);
+			values.insertLast(hexY);
+		}
+	}
+	
+	if(actionType != ACTION_TYPE_UNKNOWN)
+		RunServerScriptUnsafe("admin@unsafe_RequestAdminActions", actionType, 0, 0, null, values);
+		
+	return actionType != ACTION_TYPE_UNKNOWN;
+}
+
+void ShowMenu(int actionType, int, int, string@ menuItemScripts, int[]@ values)
+{
+	if(!valid(menuItemScripts))
+		return;
+	
+	//~ Message(menuItemScripts);
+	InitMenuItems(actionType, split(menuItemScripts, ";"), valid(values) ? values : int[](0));
+	ShowScreen(CLIENT_SCREEN_ADMIN_PANEL, 0, 0, 0);
+}
+
+void InitMenuItems(int actionType, string@[] menuItemScripts, int[] values)
+{
+	GUI_CreateScreen(CLIENT_SCREEN_ADMIN_PANEL, "")
+		.AutoCursor(true, CURSOR_HAND);
+	
+	uint index = 0;
+	for (uint i = 0; i < menuItemScripts.length(); i++)
+	{
+		if(menuItemScripts[i].length() == 0)
+			continue;
+		uint buttonX = MIN(LastMouseX, __ScreenWidth - 150);
+		uint buttonY = MIN(LastMouseY, __ScreenHeight - (menuItemScripts.length() - 1) * 34) + index * 34;
+		string@[] itemNameScript = split(menuItemScripts[i], ":");
+
+		GUI_AddButton(CLIENT_SCREEN_ADMIN_PANEL)
+			.UpPic("opbtnoff.frm")
+			.DownPic("opbtnon.frm")
+			.Position(buttonX, buttonY)
+			.CallbackMouseClick(RunScriptAction(actionType, itemNameScript[1], values))
+			.setAbsolutePosition(true)
+		;
+		GUI_AddText(CLIENT_SCREEN_ADMIN_PANEL, itemNameScript[0], 0, 0)
+			.TextOptions(FONT_FALLOUT, COLOR_YELLOW, FT_CENTERXY)
+			.AbsolutePosition(buttonX - 5, buttonY)
+			.TextBoxSize(150, 32)
+		;
+		index++;
+	}
+}
+
+class RunScriptAction : IGUIElementCallbackMouseClick
+{
+	private int ActionType;
+	private string@ Script;
+	private int[] Values;
+	
+	RunScriptAction(int actionType, string script, int[] values)
+	{
+		ActionType = actionType;
+		@Script = script;
+		for (uint i = 0; i < values.length(); i++)
+			Values.insertLast(values[i]);
+			
+		for (uint i = 0; i < Script.length(); i++)
+			if(Script[i] == '$')
+			{
+				int value = 0;
+				if(StrToInt(substring(Script, i + 1, Script.length() - i - 1), value))
+					Values.insertLast(value);
+				Script = substring(Script, 0, i);
+				break;
+			}
+	}
+	
+	void OnMouseClick(int id, int click) override
+	{
+		if(click != MOUSE_CLICK_LEFT)
+			return;
+
+		HideScreen(CLIENT_SCREEN_ADMIN_PANEL, 0, 0, 0);		
+		RunServerScript(Script, ActionType, 0, 0, null, Values);
+	}
+}

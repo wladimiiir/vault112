@@ -1,0 +1,1804 @@
+// Author: cvet
+// Mapper main script
+// Compile using fo_mapper.dll
+
+//
+// API specification
+//
+
+// / Reserved functions
+// void start()
+// uint loop()
+// bool console_message(string& message)
+// void render_iface(uint layer)
+// void render_map()
+// bool mouse_down(int click)
+// bool mouse_up(int click)
+// void mouse_move(int x, int y)
+// bool key_down(uint8 key)
+// bool key_up(uint8 key)
+// void input_lost()
+
+// / User functions
+// string FuncName(string str)
+// Call in console using '#'
+
+// / Global functions
+// void    SetDefaultCritterParam(uint index, int param)
+//  Init state: 0 ST_DIALOG_ID, 1 ST_AI_ID, 2 ST_BAG_ID, 3 ST_TEAM_ID, 4 ST_NPC_ROLE, 5 ST_REPLICATION_TIME, 6..14 -1
+// MapperMap@+ LoadMap(string& fileName, int pathType)
+// void    UnloadMap(MapperMap@+ map)
+// bool    SaveMap(MapperMap@+ map, string& fileName, int pathType)
+// bool    ShowMap(MapperMap@+ map)
+// int     GetLoadedMaps(MapperMap@[]@+ maps)
+// void    DeleteObject(MapperObject@+ obj)
+// void    DeleteObjects(MapperObject@[]& objects)
+// void    SelectObject(MapperObject@+ obj, bool set)
+// void    SelectObjects(MapperObject@[]& objects, bool set)
+// MapperObject@+ GetSelectedObject()
+// uint    GetSelectedObjects(MapperObject@[]@+ objects)
+// MapperObject@+ GetMonitorObject(int x, int y, bool ignoreInterface = false)
+// void    GetMousePosition(int& x, int& y)
+// uint    GetMapFileNames(string@+ dir, string@[]@+ names)
+//
+// ProtoItem@+ GetProtoItem(uint16 protoId)
+// bool    LoadDat(string& datName)
+// void    MoveScreen(uint16 hexX, uint16 hexY, uint speed)
+// int     GetKeybLang()
+// string@ GetIfaceIniStr(string& key)
+// bool    LoadFont(int font, string& fontFileName)
+// void    SetDefaultFont(int font, uint color)
+// void    MouseClick(int x, int y, int button, int cursor)
+// void    KeyboardPress(uint8 key1, uint8 key2)
+//
+// void    Log(string& text)
+// string@ GetLastError()
+// int     Random(int minimum, int maximum)
+// uint    GetTick()
+// uint    GetAngelScriptProperty(int property)
+// void    SetAngelScriptProperty(int property, uint value)
+//
+// void    GetHexCoord(uint16 fromHx, uint16 fromHy, uint16& toHx, uint16& toHy, float angle, uint dist)
+// uint    GetPathLength(uint16 fromHx, uint16 fromHy, uint16 toHx, uint16 toHy, uint cut)
+// bool    GetHexPos(uint16 hx, uint16 hy, int& x, int& y)
+// bool    GetMonitorHex(int x, int y, uint16& hx, uint16& hy)
+// void    MoveHexByDir(uint16& hexX, uint16& hexY, uint8 dir, uint steps)
+// uint    GetDistantion(uint16 hexX1, uint16 hexY1, uint16 hexX2, uint16 hexY2)
+// uint8   GetDirection(uint16 fromX, uint16 fromY, uint16 toX, uint16 toY)
+// uint8   GetOffsetDir(uint16 hx, uint16 hy, uint16 tx, uint16 ty, float offset)
+//
+// void    Message(string& text)
+// void    Message(int textMsg, uint strNum)
+// void    MapMessage(string& text, uint16 hx, uint16 hy, uint timeMs, uint color, bool fade, int offsX, int offsY)
+// string@ GetMsgStr(int textMsg, uint strNum)
+// string@ GetMsgStr(int textMsg, uint strNum, uint skipCount)
+// uint    GetMsgStrNumUpper(int textMsg, uint strNum)
+// uint    GetMsgStrNumLower(int textMsg, uint strNum)
+// uint    GetMsgStrCount(int textMsg, uint strNum)
+// bool    IsMsgStr(int textMsg, uint strNum)
+// string@ ReplaceText(const string& text, const string& replace, const string& str)
+// string@ ReplaceText(const string& text, const string& replace, int i)
+//
+// uint    LoadSprite(string& name, int pathIndex)
+// uint    LoadSprite(uint16 sprNum, uint8 dir, int pathIndex)
+// int     GetSpriteWidth(uint sprId, int sprIndex)
+// int     GetSpriteHeight(uint sprId, int sprIndex)
+// uint    GetSpriteCount(uint sprId)
+// void    DrawSprite(uint sprId, int sprIndex, int x, int y, uint color)
+// void    DrawSprite(uint sprId, int sprIndex, int x, int y, int w, int h, bool scratch, bool center, uint color)
+// void    DrawText(string& text, int x, int y, int w, int h, uint color, int font, int flags)
+// void    DrawPrimitive(int primitiveType, int[]& data)
+// void    DrawMapSprite(uint16 hx, uint16 hy, uint16 effectPid, uint sprId, int sprIndex, int offsX, int offsY)
+// void    DrawCritter2d(uint crType, uint anim1, uint anim2, uint8 dir, int l, int t, int r, int b, bool scratch, bool center, uint color)
+// void    DrawCritter3d(uint instance, uint crType, uint anim1, uint anim2, int[]@+ layers, float[]@+ position, uint color)
+//
+// uint    TabGetTileDirs(int tab, string@[]@+ dirNames, bool[]@+ includeSubdirs)
+// uint    TabGetItemPids(int tab, string@+ subTab, uint16[]@+ itemPids)
+// uint    TabGetCritterPids(int tab, string@+ subTab, uint16[]@+ critterPids)
+// void    TabSetTileDirs(int tab, string@[]@+ dirNames, bool[]@+ includeSubdirs)
+// void    TabSetItemPids(int tab, string@+ subTab, uint16[]@+ itemPids)
+// void    TabSetCritterPids(int tab, string@+ subTab, uint16[]@+ critterPids)
+// void    TabDelete(int tab)
+// void    TabSelect(int tab, string@+ subTab, bool show = false)
+// void    TabSetName(int tab, string@+ subName)
+
+// / MapperObject
+// Shared parameters
+// const uint8  MapObjType
+// const uint16 ProtoId
+// const uint16 MapX
+// const uint16 MapY
+// uint8   Dir
+// const uint UID;
+// const uint ContainerUID;
+// const uint ParentUID;
+// const uint ParentChildIndex;
+// string  ScriptName
+// string  FuncName
+// uint    LightColor
+// uint8   LightDay
+// uint8   LightDirOff
+// uint8   LightRadius
+// int8    LightIntensity
+// int     UserData0..9
+//  Critter parameters
+// uint8   Critter_Cond
+// uint8   Critter_CondExt
+// int16   Critter_ParamIndex0..14
+// int     Critter_ParamValue0..14
+//  Item/Scenery shared parameters
+// int16   OffsetX
+// int16   OffsetY
+// uint8   AnimStayBegin
+// uint8   AnimStayEnd
+// uint16  AnimWait
+// string  PicMap
+// string  PicInv
+// uint8   InfoOffset
+//  Item parameters
+// uint    Item_Count
+// uint8   Item_BrokenFlags
+// uint8   Item_BrokenCount
+// uint16  Item_Deterioration
+// uint8   Item_ItemSlot
+// uint16  ITEM_TYPE_AMMOPid
+// uint    ITEM_TYPE_AMMOCount
+// uint    Item_LockerDoorId
+// uint16  Item_LockerCondition
+// uint16  Item_LockerComplexity
+// int16   Item_TrapValue
+// int     Item_Val0..9
+//  Scenery parameters
+// bool    Scenery_CanUse
+// bool    Scenery_CanTalk
+// uint    Scenery_TriggerNum
+// uint8   Scenery_ParamsCount
+// int     Scenery_Param0..4
+// uint    Scenery_ToMapPid
+// uint    Scenery_ToEntire
+// uint8   Scenery_ToDir
+// uint8   Scenery_SpriteCut
+//
+// void    Update() const
+// uint    GetChilds(MapperObject@[]@+ objects) const
+// void    MoveToHex(uint16 hexX, uint16 hexY)
+// void    MoveToHexOffset(int x, int y)
+// void    MoveToDir(uint8 dir)
+
+// / MapperMap
+// const uint16 Width
+// const uint16 Height
+// const int    WorkHexX
+// const int    WorkHexY
+// int    Time
+// bool   NoLogOut
+// string ScriptModule
+// string ScriptFunc
+
+// MapperObject@+ AddObject(uint16 hexX, uint16 hexY, int mapObjType, uint16 pid)
+// MapperObject@+ GetObject(uint16 hexX, uint16 hexY, int mapObjType, uint16 pid, uint skip) const
+// uint    GetObjects(uint16 hexX, uint16 hexY, uint radius, int mapObjType, uint16 pid, MapperObject@[]@+ objects) const
+// void    UpdateObjects() const
+// uint    GetTilesCount(uint16 hexX, uint16 hexY, bool roof) const
+// void    DeleteTile(uint16 hexX, uint16 hexY, bool roof, uint index)
+// uint    GetTile(uint16 hexX, uint16 hexY, bool roof, uint index) const
+// void    AddTile(uint16 hexX, uint16 hexY, int offsX, int offsY, int layer, bool roof, uint picHash)
+// string@ GetTileName(uint16 hexX, uint16 hexY, bool roof, uint index) const
+// void    AddTileName(uint16 hexX, uint16 hexY, int offsX, int offsY, int layer, bool roof, string@+ picName)
+// uint    GetDayTime(uint dayPart) const
+// void    SetDayTime(uint dayPart, uint time)
+// void    GetDayColor(uint dayPart, uint8& r, uint8& g, uint8& b) const
+// void    SetDayColor(uint dayPart, uint8 r, uint8 g, uint8 b)
+// void    Resize(uint16 width, uint16 height)
+
+#include "_mapper_defines.fos"
+#include "_defines.fos"
+#include "_itempid.fos"
+
+import void InitializeGame() from "config";
+
+// //////////////////////////////////////////////////////////////////////////////////////////////////
+// Call on new mapper instance creating.
+// Return true to handle event and close new instance or
+// return false to allow creating of new mapper instance.
+bool new_instance( string commandLine )
+{
+    return false;
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////////////
+// Call on mapper loaded.
+void start()
+{
+    InitializeGame();
+    InitializeTabs();
+}
+
+/*void InitializeTabs()
+   {
+        // Fast item prototypes
+        TabDelete(TAB_FAST_ITEMS);
+        uint16[] pids;
+
+        // Special hexes
+        pids.resize(0);
+        pids.insertLast(3852); // Trigger
+        pids.insertLast(3853); // Entire
+        pids.insertLast(4012); // Scroll block
+        pids.insertLast(2141); // Light source
+        pids.insertLast(4592); // Light stopper
+        TabSetItemPids(TAB_FAST_ITEMS, "001 - special", pids);
+
+        // Blockers
+        pids.resize(0);
+        pids.insertLast(2067); // Secret Blocking Hex
+        pids.insertLast(2344); // Block Hex Auto Inviso
+        pids.insertLast(5621); // Wall blocker with light
+        pids.insertLast(5622); // Wall blocker without light
+        TabSetItemPids(TAB_FAST_ITEMS, "002 - blocker", pids);
+
+        // Wall corners
+        pids.resize(0);
+        for(uint i = 6800; i <= 6805; i++) pids.insertLast(i);
+        TabSetItemPids(TAB_FAST_ITEMS, "003 - wall corner", pids);
+
+        // Exit grids
+        pids.resize(0);
+        pids.insertLast(2049);
+        for(uint i = 4016; i <= 4023; i++) pids.insertLast(i);
+        for(uint i = 4031; i <= 4046; i++) pids.insertLast(i);
+        TabSetItemPids(TAB_FAST_ITEMS, "004 - exit grid", pids);
+
+        // Custom items
+        TabDelete(TAB_CUSTOM8);
+        TabSetName(TAB_CUSTOM8, "Cust");
+
+        // Cars
+        pids.resize(0);
+        pids.insertLast(PID_BUGGY);
+        pids.insertLast(PID_BUGGY_BAG);
+        pids.insertLast(PID_SCOUT);
+        pids.insertLast(PID_SCOUT_BAG);
+        pids.insertLast(PID_HUMMER);
+        pids.insertLast(PID_HUMMER_BAG);
+        pids.insertLast(PID_HIGHWAYMAN);
+        pids.insertLast(PID_HIGHWAYMAN_BAG);
+        pids.insertLast(PID_VERTIBIRD);
+        pids.insertLast(PID_VERTIBIRD_BAG);
+        pids.insertLast(PID_BOAT);
+        pids.insertLast(PID_BOAT_BAG);
+        TabSetItemPids(TAB_CUSTOM8, "001 - cars", pids);
+
+        // Dead bodies
+        pids.resize(0);
+        pids.insertLast(PID_ALIEN_SIDE);
+        pids.insertLast(PID_ALIEN_FORWARD);
+        pids.insertLast(PID_VAULT_DWELLER_BONES);
+        pids.insertLast(PID_HUMAN_BONES);
+        pids.insertLast(PID_DEAD_REDSHIRT_0);
+        pids.insertLast(PID_DEAD_REDSHIRT_1);
+        pids.insertLast(PID_DEAD_REDSHIRT_2);
+        TabSetItemPids(TAB_CUSTOM8, "002 - dead bodies", pids);
+
+        // Tactics tiles, tiles_0.bos
+        if(__GeometryType == GEOMETRY_TACTICS)
+        {
+                TabSetName(TAB_CUSTOM0, "TacT");
+                string@[] ftTiles = {"tiles/"};
+                bool[] includeSubdirs = {true};
+                TabSetTileDirs(TAB_CUSTOM0, ftTiles, includeSubdirs);
+        }
+
+        // Arcanum tiles, arcanum2.dat
+        if(__GeometryType == GEOMETRY_ARCANUM)
+        {
+                TabSetName(TAB_CUSTOM0, "ArcT");
+                string@[] arcanumTiles = {"art/tile/"};
+                bool[] includeSubdirs = {true};
+                TabSetTileDirs(TAB_CUSTOM0, arcanumTiles, includeSubdirs);
+        }
+   }*/
+
+void InitializeTabs()
+{
+    // FAST TAB
+    TabDelete( TAB_FAST_ITEMS );
+    uint16[] pids;
+
+    // Special hexes
+    pids.resize( 0 );
+    pids.insertLast( 2049 );   // Exit hex
+    pids.insertLast( 2067 );   // Secret Blocking Hex
+    pids.insertLast( 2141 );   // Light source
+    pids.insertLast( 2344 );   // Block Hex Auto Inviso
+    pids.insertLast( 3852 );   // Trigger
+    pids.insertLast( 3853 );   // Entire
+    pids.insertLast( 4012 );   // Scroll block
+    pids.insertLast( 4592 );   // Light stopper
+    pids.insertLast( 4800 );   // 
+    pids.insertLast( 5621 );   // Wall blocker with light
+    pids.insertLast( 5622 );   // Wall blocker without light
+    for( uint i = 6800; i <= 6805; i++ )
+        pids.insertLast( i );
+    for( uint i = 4016; i <= 4023; i++ )
+        pids.insertLast( i );
+    for( uint i = 4031; i <= 4046; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_FAST_ITEMS, "001 - special", pids );
+    pids.resize( 0 );
+    pids.insertLast( 2612 );
+    pids.insertLast( 2827 );
+    pids.insertLast( 2828 );
+    pids.insertLast( 2907 );
+    pids.insertLast( 2908 );
+    pids.insertLast( 2935 );
+    pids.insertLast( 2936 );
+    for( uint i = 3373; i <= 3376; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_FAST_ITEMS, "002 - light", pids );
+
+    // ARMOR TAB
+    TabDelete( TAB_CUSTOM0 );
+    pids.resize( 0 );
+    pids.insertLast( PID_LEATHER_ARMOR );
+    pids.insertLast( PID_METAL_ARMOR );
+    pids.insertLast( PID_POWERED_ARMOR );
+    pids.insertLast( PID_COMBAT_ARMOR );
+    pids.insertLast( PID_LEATHER_JACKET );
+    pids.insertLast( PID_PURPLE_ROBE );
+    pids.insertLast( PID_HARDENED_POWER_ARMOR );
+    pids.insertLast( PID_BROTHERHOOD_COMBAT_ARMOR );
+    pids.insertLast( PID_TESLA_ARMOR );
+    pids.insertLast( PID_CURED_LEATHER_ARMOR );
+    pids.insertLast( PID_ADVANCED_POWER_ARMOR );
+    pids.insertLast( PID_ADVANCED_POWER_ARMOR_MK2 );
+    pids.insertLast( PID_LEATHER_ARMOR_MK_II );
+    pids.insertLast( PID_METAL_ARMOR_MK_II );
+    pids.insertLast( PID_COMBAT_ARMOR_MK_II );
+    pids.insertLast( PID_KEEPBRIGE_ROBE );
+    TabSetItemPids( TAB_CUSTOM0, "001 - Fallout 2 armor", pids );
+    pids.resize( 0 );
+    pids.insertLast( PID_BLACK_COMBAT_ARMOR );
+    pids.insertLast( PID_JUMPSUIT );
+    pids.insertLast( PID_FAKE_JUMPSUIT );
+    pids.insertLast( PID_BLACK_ROBE );
+    pids.insertLast( PID_CHITIN_ARMOR );
+    pids.insertLast( PID_CHITIN_ARMOR_MK_II );
+    pids.insertLast( 1100 );
+    TabSetItemPids( TAB_CUSTOM0, "002 - FOnline armor", pids );
+    TabSetName( TAB_CUSTOM0, "Arm" );
+
+    // DRUGS TAB
+    TabDelete( TAB_CUSTOM1 );
+    pids.resize( 0 );
+    pids.insertLast( PID_STIMPAK );
+    pids.insertLast( PID_RADAWAY );
+    pids.insertLast( PID_ANTIDOTE );
+    pids.insertLast( PID_MENTATS );
+    pids.insertLast( PID_MUTATED_FRUIT );
+    pids.insertLast( PID_IGUANA_ON_A_STICK );
+    pids.insertLast( PID_BUFFOUT );
+    pids.insertLast( PID_MEAT_ON_A_STICK );
+    pids.insertLast( PID_NUKA_COLA );
+    pids.insertLast( PID_RAD_X );
+    pids.insertLast( PID_PSYCHO );
+    pids.insertLast( PID_BEER );
+    pids.insertLast( PID_BOOZE );
+    pids.insertLast( PID_SUPER_STIMPAK );
+    pids.insertLast( PID_JET );
+    pids.insertLast( PID_JET_ANTIDOTE );
+    pids.insertLast( PID_HEALING_POWDER );
+    pids.insertLast( PID_GAMMA_GULP_BEER );
+    pids.insertLast( PID_ROENTGEN_RUM );
+    pids.insertLast( PID_HYPO_POISON );
+    pids.insertLast( PID_COOKIE );
+    pids.insertLast( PID_MONUMENT_CHUNCK );
+    pids.insertLast( PID_ROT_GUT );
+    pids.insertLast( PID_MUTATED_TOE );
+    pids.insertLast( PID_KITTY_SEX_DRUG_AGILITY );
+    pids.insertLast( PID_KITTY_SEX_DRUG_INTELLIGENCE );
+    pids.insertLast( PID_KITTY_SEX_DRUG_STRENGTH );
+    pids.insertLast( PID_HYPO );
+    pids.insertLast( PID_BOX_OF_DOUGHNUTS );
+    TabSetItemPids( TAB_CUSTOM1, "001 - Drugs", pids );
+    TabSetName( TAB_CUSTOM1, "Drg" );
+
+    // WEAPON TAB
+    TabDelete( TAB_CUSTOM2 );
+
+    pids.resize( 0 );
+    pids.insertLast( PID_KNIFE );
+    pids.insertLast( PID_CLUB );
+    pids.insertLast( PID_SLEDGEHAMMER );
+    pids.insertLast( PID_SPEAR );
+    pids.insertLast( PID_10MM_PISTOL );
+    pids.insertLast( PID_10MM_SMG );
+    pids.insertLast( PID_HUNTING_RIFLE );
+    pids.insertLast( PID_FLAMER );
+    pids.insertLast( PID_MINIGUN );
+    pids.insertLast( PID_ROCKET_LAUNCHER );
+    pids.insertLast( PID_PLASMA_RIFLE );
+    pids.insertLast( PID_LASER_PISTOL );
+    pids.insertLast( PID_DESERT_EAGLE );
+    pids.insertLast( PID_ROCK );
+    pids.insertLast( PID_CROWBAR );
+    pids.insertLast( PID_BRASS_KNUCKLES );
+    pids.insertLast( PID_14MM_PISTOL );
+    pids.insertLast( PID_ASSAULT_RIFLE );
+    pids.insertLast( PID_PLASMA_PISTOL );
+    pids.insertLast( PID_FRAG_GRENADE );
+    pids.insertLast( PID_PLASMA_GRENADE );
+    pids.insertLast( PID_PULSE_GRENADE );
+    pids.insertLast( PID_GATLING_LASER );
+    pids.insertLast( PID_THROWING_KNIFE );
+    pids.insertLast( PID_FLARE );
+    pids.insertLast( PID_SHOTGUN );
+    pids.insertLast( PID_SUPER_SLEDGE );
+    pids.insertLast( PID_RIPPER );
+    pids.insertLast( PID_LASER_RIFLE );
+    pids.insertLast( PID_ALIEN_LASER_PISTOL );
+    pids.insertLast( PID_9MM_MAUSER );
+    pids.insertLast( PID_SNIPER_RIFLE );
+    pids.insertLast( PID_MOLOTOV_COCKTAIL );
+    pids.insertLast( PID_CATTLE_PROD );
+    pids.insertLast( PID_RED_RYDER_BB_GUN );
+    pids.insertLast( PID_RED_RYDER_LE_BB_GUN );
+    pids.insertLast( PID_ACTIVE_FLARE );
+    pids.insertLast( PID_TURBO_PLASMA_RIFLE );
+    pids.insertLast( PID_SPIKED_KNUCKLES );
+    pids.insertLast( PID_POWER_FIST );
+    pids.insertLast( PID_COMBAT_KNIFE );
+    pids.insertLast( PID_223_PISTOL );
+    pids.insertLast( PID_COMBAT_SHOTGUN );
+    pids.insertLast( PID_JONNY_BB_GUN );
+    pids.insertLast( PID_HK_CAWS );
+    pids.insertLast( PID_ROBO_ROCKET_LAUNCHER );
+    pids.insertLast( PID_SHARP_SPEAR );
+    pids.insertLast( PID_TOMMY_GUN );
+    pids.insertLast( PID_SCOPED_HUNTING_RIFLE );
+    pids.insertLast( PID_EYEBALL_FIST_1 );
+    pids.insertLast( PID_EYEBALL_FIST_2 );
+    pids.insertLast( PID_BOXING_GLOVES );
+    pids.insertLast( PID_PLATED_BOXING_GLOVES );
+    pids.insertLast( PID_HK_P90C );
+    pids.insertLast( PID_SPRINGER_RIFLE );
+    pids.insertLast( PID_ZIP_GUN );
+    pids.insertLast( PID_44_MAGNUM_REVOLVER );
+    pids.insertLast( PID_SWITCHBLADE );
+    pids.insertLast( PID_SHARPENED_POLE );
+    pids.insertLast( PID_GREASE_GUN );
+    pids.insertLast( PID_BOZAR );
+    pids.insertLast( PID_FN_FAL );
+    pids.insertLast( PID_HK_G11 );
+    pids.insertLast( PID_INDEPENDENT );
+    pids.insertLast( PID_PANCOR_JACKHAMMER );
+    pids.insertLast( PID_LIGHT_SUPPORT_WEAPON );
+    pids.insertLast( PID_PLANT_SPIKE );
+    pids.insertLast( PID_DEATHCLAW_CLAW_1 );
+    pids.insertLast( PID_DEATHCLAW_CLAW_2 );
+    pids.insertLast( PID_SHIV );
+    pids.insertLast( PID_WRENCH );
+    pids.insertLast( PID_SAWED_OFF_SHOTGUN );
+    pids.insertLast( PID_LOUISVILLE_SLUGGER );
+    pids.insertLast( PID_M60 );
+    pids.insertLast( PID_NEEDLER_PISTOL );
+    pids.insertLast( PID_AVENGER_MINIGUN );
+    pids.insertLast( PID_SOLAR_SCORCHER );
+    pids.insertLast( PID_HK_G11E );
+    pids.insertLast( PID_M72_GAUSS_RIFLE );
+    pids.insertLast( PID_PHAZER );
+    pids.insertLast( PID_PK12_GAUSS_PISTOL );
+    pids.insertLast( PID_VINDICATOR_MINIGUN );
+    pids.insertLast( PID_YK32_PULSE_PISTOL );
+    pids.insertLast( PID_YK42B_PULSE_RIFLE );
+    pids.insertLast( PID_44_MAGNUM_SPEEDLOADER );
+    pids.insertLast( PID_SUPER_CATTLE_PROD );
+    pids.insertLast( PID_IMPROVED_FLAMETHROWER );
+    pids.insertLast( PID_LASER_RIFLE_EXT_CAP );
+    pids.insertLast( PID_MAGNETO_LASER_PISTOL );
+    pids.insertLast( PID_FN_FAL_NIGHT_SCOPE );
+    pids.insertLast( PID_DESERT_EAGLE_EXT_MAG );
+    pids.insertLast( PID_ASSAULT_RIFLE_EXT_MAG );
+    pids.insertLast( PID_PLASMA_PISTOL_EXT_CART );
+    pids.insertLast( PID_MEGA_POWER_FIST );
+    pids.insertLast( PID_HOLY_HAND_GRENADE );
+    pids.insertLast( PID_GOLD_NUGGET );
+    pids.insertLast( PID_URANIUM_ORE );
+    pids.insertLast( PID_FIRE_GECKO_FLAME_WEAPON );
+    pids.insertLast( PID_REFINED_ORE );
+    pids.insertLast( PID_SPECIAL_BOXER_WEAPON );
+    pids.insertLast( PID_RING_BOXING_GLOVES );
+    pids.insertLast( PID_RING_PLATED_BOXING_GLOVES );
+    pids.insertLast( PID_GUN_TURRET_WEAPON );
+    pids.insertLast( PID_FN_FAL_HPFA );
+    pids.insertLast( PID_LIL_JESUS_WEAPON );
+    pids.insertLast( PID_DUAL_MINIGUN );
+    pids.insertLast( PID_HEAVY_DUAL_MINIGUN );
+    pids.insertLast( PID_WAKIZASHI_BLADE );
+    pids.insertLast( PID_END_BOSS_KIFE );
+    pids.insertLast( PID_END_BOSS_PLASMA_GUN );
+    TabSetItemPids( TAB_CUSTOM2, "001 - Fallout 2 weapons", pids );
+
+    pids.resize( 0 );
+    pids.insertLast( PID_HEAVY_DUAL_MINIGUN_LONG_RANGE );
+    pids.insertLast( PID_MAUSER_SMG );
+    pids.insertLast( PID_ELEPHANT_GUN );
+    TabSetItemPids( TAB_CUSTOM2, "002 - FOnline weapons", pids );
+
+    TabSetName( TAB_CUSTOM2, "Wpn" );
+
+    // AMMO TAB
+    TabDelete( TAB_CUSTOM3 );
+    pids.resize( 0 );
+    pids.insertLast( PID_10MM_JHP );
+    pids.insertLast( PID_10MM_AP );
+    pids.insertLast( PID_44_MAGNUM_JHP );
+    pids.insertLast( PID_FLAMETHROWER_FUEL );
+    pids.insertLast( PID_EXPLOSIVE_ROCKET );
+    pids.insertLast( PID_14MM_AP );
+    pids.insertLast( PID_223_FMJ );
+    pids.insertLast( PID_5MM_JHP );
+    pids.insertLast( PID_5MM_AP );
+    pids.insertLast( PID_ROCKET_AP );
+    pids.insertLast( PID_SMALL_ENERGY_CELL );
+    pids.insertLast( PID_MICRO_FUSION_CELL );
+    pids.insertLast( PID_SHOTGUN_SHELLS );
+    pids.insertLast( PID_44_FMJ_MAGNUM );
+    pids.insertLast( PID_9MM_BALL );
+    pids.insertLast( PID_BBS );
+    pids.insertLast( PID_ROBO_ROCKET_AMMO );
+    pids.insertLast( PID_45_CALIBER_AMMO );
+    pids.insertLast( PID_2MM_EC_AMMO );
+    pids.insertLast( PID_4_7MM_CASELESS );
+    pids.insertLast( PID_9MM_AMMO );
+    pids.insertLast( PID_HN_NEEDLER_CARTRIDGE );
+    pids.insertLast( PID_HN_AP_NEEDLER_CARTRIDGE );
+    pids.insertLast( PID_7_62MM_AMMO );
+    pids.insertLast( PID_FLAMETHROWER_FUEL_MK_II );
+    pids.insertLast( PID_700_NITRO_EXPRESS );
+    TabSetItemPids( TAB_CUSTOM3, "001 - Ammo", pids );
+    TabSetName( TAB_CUSTOM3, "Amm" );
+
+    // MSC TAB
+    TabDelete( TAB_CUSTOM4 );
+
+    pids.resize( 0 );
+    pids.insertLast( PID_BOTTLE_CAPS );
+    pids.insertLast( PID_FIRST_AID_KIT );
+    pids.insertLast( PID_STEEL );
+    pids.insertLast( PID_DYNAMITE );
+    pids.insertLast( PID_STEALTH_BOY );
+    pids.insertLast( PID_WATER_CHIP );
+    pids.insertLast( PID_DOG_TAGS );
+    pids.insertLast( PID_ELECTRONIC_BUG );
+    pids.insertLast( PID_HOLODISK );
+    pids.insertLast( PID_MOTION_SENSOR );
+    pids.insertLast( PID_BRIEFCASE );
+    pids.insertLast( PID_BIG_BOOK_OF_SCIENCE );
+    pids.insertLast( PID_MULTI_TOOL );
+    pids.insertLast( PID_DEANS_ELECTRONICS );
+    pids.insertLast( PID_ELECTRONIC_LOCKPICKS );
+    pids.insertLast( PID_FUZZY_PAINTING );
+    pids.insertLast( PID_FIRST_AID_BOOK );
+    pids.insertLast( PID_LOCKPICKS );
+    pids.insertLast( PID_PLASTIC_EXPLOSIVES );
+    pids.insertLast( PID_SCOUT_HANDBOOK );
+    pids.insertLast( PID_WATCH );
+    pids.insertLast( PID_MOTOR );
+    pids.insertLast( PID_DOCTORS_BAG );
+    pids.insertLast( PID_SCORPION_TAIL );
+    pids.insertLast( PID_PUMP_PARTS );
+    pids.insertLast( PID_GOLD_LOCKET );
+    pids.insertLast( PID_LIGHTER );
+    pids.insertLast( PID_GUNS_AND_BULLETS );
+    pids.insertLast( PID_TAPE_RECORDER );
+    pids.insertLast( PID_URN );
+    pids.insertLast( PID_TANGLERS_HAND );
+    pids.insertLast( PID_FLOWER );
+    pids.insertLast( PID_NECKLACE );
+    pids.insertLast( PID_PSYCHIC_NULLIFIER );
+    pids.insertLast( PID_WATER_FLASK );
+    pids.insertLast( PID_ROPE );
+    pids.insertLast( PID_ACCESS_CARD );
+    pids.insertLast( PID_BLACK_COC_BADGE );
+    pids.insertLast( PID_RED_COC_BADGE );
+    pids.insertLast( PID_DISK_FEV );
+    pids.insertLast( PID_DISK_SECURITY );
+    pids.insertLast( PID_DISK_ALPHA_EXPERIMENT );
+    pids.insertLast( PID_DISK_DELTA_EXPERIMENT );
+    pids.insertLast( PID_DISK_VREES_EXPERIMENT );
+    pids.insertLast( PID_DISK_BROTHERHOOD_HONOR_CODE );
+    pids.insertLast( PID_DISK_MUTANT_TRANSMISSIONS );
+    pids.insertLast( PID_ACTIVE_GEIGER_COUNTER );
+    pids.insertLast( PID_ACTIVE_MOTION_SENSOR );
+    pids.insertLast( PID_ACTIVE_STEALTH_BOY );
+    pids.insertLast( PID_BARTER_TANDI );
+    pids.insertLast( PID_DISK_BROTHERHOOD_HISTORY );
+    pids.insertLast( PID_DISK_MAXSON_HISTORY );
+    pids.insertLast( PID_DISK_MAXSON_JOURNAL );
+    pids.insertLast( PID_SECURITY_CARD );
+    pids.insertLast( PID_YELLOW_PASS_KEY );
+    pids.insertLast( PID_SMALL_STATUETTE );
+    pids.insertLast( PID_CATS_PAW );
+    pids.insertLast( PID_BOX_OF_NOODLES );
+    pids.insertLast( PID_FROZEN_DINNER );
+    pids.insertLast( PID_TECHNICAL_MANUAL );
+    pids.insertLast( PID_MOTIVATOR );
+    pids.insertLast( PID_DISK_VAULT_RECORDS );
+    pids.insertLast( PID_DISK_MILITARY_BASE_SEC_CODE );
+    pids.insertLast( PID_CHEMISTRY_MANUAL );
+    pids.insertLast( PID_DISK_REGULATOR_TRANSMISSIONS );
+    pids.insertLast( PID_ANNA_GOLD_LOCKET );
+    pids.insertLast( PID_CAR_FUEL_CELL_CONTROLLER );
+    pids.insertLast( PID_CAR_FUEL_INJECTION );
+    pids.insertLast( PID_DAY_PASS );
+    pids.insertLast( PID_FAKE_CITIZENSHIP );
+    pids.insertLast( PID_CORNELIUS_GOLD_WATCH );
+    pids.insertLast( PID_HY_MAG_PART );
+    pids.insertLast( PID_RUBBER_BOOTS );
+    pids.insertLast( PID_SLAG_MESSAGE );
+    pids.insertLast( PID_SMITH_COOL_ITEM );
+    pids.insertLast( PID_VIC_RADIO );
+    pids.insertLast( PID_VIC_WATER_FLASK );
+    pids.insertLast( PID_ROBOT_PARTS );
+    pids.insertLast( PID_BROC_FLOWER );
+    pids.insertLast( PID_XANDER_ROOT );
+    pids.insertLast( PID_TROPHY_OF_RECOGNITION );
+    pids.insertLast( PID_GECKO_PELT );
+    pids.insertLast( PID_GOLDEN_GECKO_PELT );
+    pids.insertLast( PID_FLINT );
+    pids.insertLast( PID_NEURAL_INTERFACE );
+    pids.insertLast( PID_DIXON_EYE );
+    pids.insertLast( PID_CLIFTON_EYE );
+    pids.insertLast( PID_MEAT_JERKY );
+    pids.insertLast( PID_RADSCORPION_PARTS );
+    pids.insertLast( PID_FIREWOOD );
+    pids.insertLast( PID_CAR_FUEL_CELL );
+    pids.insertLast( PID_SHOVEL );
+    pids.insertLast( PID_HOLODISK_FAKE_V13 );
+    pids.insertLast( PID_CHEEZY_POOFS );
+    pids.insertLast( PID_PLANK );
+    pids.insertLast( PID_TRAPPER_TOWN_KEY );
+    pids.insertLast( PID_CLIPBOARD );
+    pids.insertLast( PID_GECKO_DATA_DISK );
+    pids.insertLast( PID_REACTOR_DATA_DISK );
+    pids.insertLast( PID_DECK_OF_TRAGIC_CARDS );
+    pids.insertLast( PID_YELLOW_REACTOR_KEYCARD );
+    pids.insertLast( PID_RED_REACTOR_KEYCARD );
+    pids.insertLast( PID_PLASMA_TRANSFORMER );
+    pids.insertLast( PID_SUPER_TOOL_KIT );
+    pids.insertLast( PID_TALISMAN );
+    pids.insertLast( PID_PART_REQUISITION_FORM );
+    pids.insertLast( PID_BLUE_CONDOM );
+    pids.insertLast( PID_GREEN_CONDOM );
+    pids.insertLast( PID_RED_CONDOM );
+    pids.insertLast( PID_COSMETIC_CASE );
+    pids.insertLast( PID_HYPODERMIC_NEEDLE );
+    pids.insertLast( PID_CYBERNETIC_BRAIN );
+    pids.insertLast( PID_HUMAN_BRAIN );
+    pids.insertLast( PID_CHIMP_BRAIN );
+    pids.insertLast( PID_ABNORMAL_BRAIN );
+    pids.insertLast( PID_DICE );
+    pids.insertLast( PID_LOADED_DICE );
+    pids.insertLast( PID_EASTER_EGG );
+    pids.insertLast( PID_MAGIC_8_BALL );
+    pids.insertLast( PID_MUTAGENIC_SYRUM );
+    pids.insertLast( PID_CATS_PAW_ISSUE_5 );
+    pids.insertLast( PID_HEART_PILLS );
+    pids.insertLast( PID_MOORE_BAD_BRIEFCASE );
+    pids.insertLast( PID_MOORE_GOOD_BRIEFCASE );
+    pids.insertLast( PID_LYNETTE_HOLO );
+    pids.insertLast( PID_WESTIN_HOLO );
+    pids.insertLast( PID_SPY_HOLO );
+    pids.insertLast( PID_DR_HENRY_PAPERS );
+    pids.insertLast( PID_PRESIDENTIAL_PASS );
+    pids.insertLast( PID_RANGER_PIN );
+    pids.insertLast( PID_RANGER_MAP );
+    pids.insertLast( PID_COMPUTER_VOICE_MODULE );
+    pids.insertLast( PID_ROBOT_MOTIVATOR );
+    pids.insertLast( PID_GECK );
+    pids.insertLast( PID_V15_KEYCARD );
+    pids.insertLast( PID_V15_COMPUTER_PART );
+    pids.insertLast( PID_FIELD_MEDIC_KIT );
+    pids.insertLast( PID_PARAMEDICS_BAG );
+    pids.insertLast( PID_EXP_LOCKPICK_SET );
+    pids.insertLast( PID_ELEC_LOCKPICK_MKII );
+    pids.insertLast( PID_OIL_CAN );
+    pids.insertLast( PID_STABLES_ID_BADGE );
+    pids.insertLast( PID_VAULT_13_SHACK_KEY );
+    pids.insertLast( PID_SPECTACLES );
+    pids.insertLast( PID_EMPTY_JET );
+    pids.insertLast( PID_OXYGEN_TANK );
+    pids.insertLast( PID_POISON_TANK );
+    pids.insertLast( PID_MINE_PART );
+    pids.insertLast( PID_MORNING_STAR_MINE );
+    pids.insertLast( PID_EXCAVATOR_CHIP );
+    pids.insertLast( PID_STONE_HEAD );
+    pids.insertLast( PID_MEDICAL_SUPPLIES );
+    pids.insertLast( PID_GOLD_TOOTH );
+    pids.insertLast( PID_HOWITZER_SHELL );
+    pids.insertLast( PID_RAMIREZ_BOX_CLOSED );
+    pids.insertLast( PID_RAMIREZ_BOX_OPEN );
+    pids.insertLast( PID_MIRROR_SHADES );
+    pids.insertLast( PID_DECK_OF_CARDS );
+    pids.insertLast( PID_MARKED_DECK_OF_CARDS );
+    pids.insertLast( PID_TEMPLE_KEY );
+    pids.insertLast( PID_POCKET_LINT );
+    pids.insertLast( PID_BIO_GEL );
+    pids.insertLast( PID_BLONDIE_DOG_TAG );
+    pids.insertLast( PID_ANGEL_EYES_DOG_TAG );
+    pids.insertLast( PID_TUCO_DOG_TAG );
+    pids.insertLast( PID_RAIDERS_MAP );
+    pids.insertLast( PID_SHERIFF_BADGE );
+    pids.insertLast( PID_VERTIBIRD_PLANS );
+    pids.insertLast( PID_BISHOPS_HOLODISK );
+    pids.insertLast( PID_ACCOUNT_BOOK );
+    pids.insertLast( PID_BRAHMIN_SKIN );
+    pids.insertLast( PID_TORN_PAPER_1 );
+    pids.insertLast( PID_TORN_PAPER_2 );
+    pids.insertLast( PID_TORN_PAPER_3 );
+    pids.insertLast( PID_PASSWORD_PAPER );
+    pids.insertLast( PID_EXPLOSIVE_SWITCH );
+    pids.insertLast( PID_ELRON_FIELD_REP );
+    pids.insertLast( PID_ENCLAVE_HOLODISK_5 );
+    pids.insertLast( PID_ENCLAVE_HOLODISK_1 );
+    pids.insertLast( PID_ENCLAVE_HOLODISK_2 );
+    pids.insertLast( PID_ENCLAVE_HOLODISK_3 );
+    pids.insertLast( PID_ENCLAVE_HOLODISK_4 );
+    pids.insertLast( PID_EVACUATION_HOLODISK );
+    pids.insertLast( PID_EXPERIMENT_HOLODISK );
+    pids.insertLast( PID_MEDICAL_HOLODISK );
+    pids.insertLast( PID_PASSWORD_HOLODISK );
+    pids.insertLast( PID_SMITTY_MEAL );
+    pids.insertLast( PID_BALL_GAG );
+    pids.insertLast( PID_BECKY_BOOK );
+    pids.insertLast( PID_ELRON_MEMBER_HOLO );
+    pids.insertLast( PID_DAISIES );
+    pids.insertLast( PID_METAL_TRASH );
+    pids.insertLast( PID_ENLIGHTENED_ONE_LETTER );
+    pids.insertLast( PID_BROADCAST_HOLODISK );
+    pids.insertLast( PID_SIERRA_MISSION_HOLODISK );
+    pids.insertLast( PID_NAVCOM_PARTS );
+    pids.insertLast( PID_FALLOUT_2_HINTBOOK );
+    pids.insertLast( PID_PLAYERS_EAR );
+    pids.insertLast( PID_MASTICATORS_EAR );
+    pids.insertLast( PID_MEMO );
+    pids.insertLast( PID_K9_MOTIVATOR );
+    pids.insertLast( PID_NCR_HISTORY_HOLODISK );
+    pids.insertLast( PID_MR_NIXON_DOLL );
+    pids.insertLast( PID_TANKER_FOB );
+    pids.insertLast( PID_ELRON_TEACH_HOLO );
+    pids.insertLast( PID_KOKOWEEF_MINE_SCRIP );
+    pids.insertLast( PID_PRES_ACCESS_KEY );
+    pids.insertLast( PID_DERMAL_PIP_BOY_DISK );
+    pids.insertLast( PID_MEM_CHIP_BLUE );
+    pids.insertLast( PID_MEM_CHIP_GREEN );
+    pids.insertLast( PID_MEM_CHIP_RED );
+    pids.insertLast( PID_MEM_CHIP_YELLOW );
+    pids.insertLast( PID_DECOMPOSING_BODY );
+    pids.insertLast( PID_BLOW_UP_DOLL );
+    pids.insertLast( PID_POPPED_BLOW_UP_DOLL );
+    pids.insertLast( PID_PIP_BOY_MEDICAL_ENHANCER );
+    pids.insertLast( PID_REAL_BOTTLE_CAPS );
+    pids.insertLast( PID_MAP );
+    pids.insertLast( PID_BOTTLE_EMPTY );
+    pids.insertLast( PID_BOTTLE_FULL );
+    pids.insertLast( PID_PART_OF_ROPE );
+    pids.insertLast( PID_GUNPOWDER );
+    pids.insertLast( PID_METAL_ORE );
+    pids.insertLast( PID_MINERAL );
+    pids.insertLast( PID_TUBE );
+    pids.insertLast( PID_MEAT );
+    pids.insertLast( PID_MOUSE_SKIN );
+    pids.insertLast( PID_CIGARETTES );
+    pids.insertLast( PID_BOTTLE_GLASS );
+    pids.insertLast( PID_AXE );
+    pids.insertLast( PID_MINE );
+    pids.insertLast( PID_CHOSEN_HOLO );
+    pids.insertLast( PID_CHOSEN_HOLO_DECODED );
+    pids.insertLast( PID_LETTER_TO_LIN );
+    pids.insertLast( PID_LETTER_TO_TODD );
+    pids.insertLast( PID_EDWARD_REPORT );
+    pids.insertLast( PID_LETTER_TO_SINDY );
+    pids.insertLast( PID_LETTER_TO_CASSIDY );
+    pids.insertLast( PID_FIRE_GECKO_PELT );
+    pids.insertLast( PID_DANTON_POISON );
+    pids.insertLast( PID_ARROYO_SYRINGE );
+    pids.insertLast( PID_DEATH_STAR_PLANS );
+    pids.insertLast( PID_FALLOUT_3_HOLO );
+    pids.insertLast( PID_FAKE_GECK );
+    pids.insertLast( PID_USED_GECK );
+    pids.insertLast( PID_WELDING );
+    pids.insertLast( PID_WELDING_USED );
+    pids.insertLast( PID_RAGS );
+    pids.insertLast( PID_NITROGLYCERIN );
+    pids.insertLast( PID_CHEMICALS );
+    pids.insertLast( PID_TNT );
+    pids.insertLast( PID_HEXOGEN );
+    pids.insertLast( PID_PLASTIC_EXPLOSIVES_DULL );
+    pids.insertLast( PID_SANDBAG_EMPTY );
+    TabSetItemPids( TAB_CUSTOM4, "001 - Misc", pids );
+
+    pids.resize( 0 );
+    pids.insertLast( PID_EB_LONG_HOR );
+    pids.insertLast( PID_EB_LONG_VERT );
+    pids.insertLast( PID_EB_BLOCKER );
+    pids.insertLast( PID_ENERGY_BARIER_ACCESS_CARD );
+    pids.insertLast( PID_EB_TRIGGER );
+    pids.insertLast( PID_EB_SHORT_HOR1 );
+    pids.insertLast( PID_EB_SHORT_VERT1 );
+    pids.insertLast( PID_EB_SHORT_HOR1_RED );
+    pids.insertLast( PID_EB_SHORT_VERT1_RED );
+    pids.insertLast( PID_EB_SHORT_HOR2 );
+    pids.insertLast( PID_EB_SHORT_VERT2 );
+    pids.insertLast( PID_EB_SHORT_HOR2_RED );
+    pids.insertLast( PID_EB_SHORT_VERT2_RED );
+    pids.insertLast( PID_EB_SHORT_HOR3 );
+    pids.insertLast( PID_EB_SHORT_VERT3 );
+    pids.insertLast( PID_EB_SHORT_HOR3_RED );
+    pids.insertLast( PID_EB_SHORT_VERT3_RED );
+    pids.insertLast( PID_EB_EMITTER_HOR1 );
+    pids.insertLast( PID_EB_EMITTER_VERT1 );
+    pids.insertLast( PID_EB_EMITTER_HOR2 );
+    pids.insertLast( PID_EB_EMITTER_VERT2 );
+    pids.insertLast( PID_EB_EMITTER_HOR3 );
+    pids.insertLast( PID_EB_EMITTER_VERT3 );
+    TabSetItemPids( TAB_CUSTOM4, "002 - E. barriers", pids );
+
+    TabSetName( TAB_CUSTOM4, "Msc" );
+
+    // MSC2 TAB
+    TabDelete( TAB_CUSTOM5 );
+    // Key
+    pids.resize( 0 );
+    pids.insertLast( PID_KEY );
+    pids.insertLast( PID_KEYS );
+    pids.insertLast( PID_RED_PASS_KEY );
+    pids.insertLast( PID_BLUE_PASS_KEY );
+    pids.insertLast( PID_NUKE_KEY );
+    pids.insertLast( PID_YELLOW_PASS_KEY );
+    pids.insertLast( PID_TEMPLE_KEY );
+    pids.insertLast( PID_JAIL_KEY );
+    TabSetItemPids( TAB_CUSTOM5, "001 - keys", pids );
+
+    // Msc2 items
+    pids.resize( 0 );
+    pids.insertLast( PID_GEIGER_COUNTER );
+    pids.insertLast( PID_HOLODISK );
+    pids.insertLast( PID_RADIO );
+    pids.insertLast( PID_ACTIVE_DYNAMITE );
+    pids.insertLast( PID_ACTIVE_PLASTIC_EXPLOSIVE );
+    pids.insertLast( PID_TOGGLE_SWITCH );
+    pids.insertLast( PID_MEMO );
+    pids.insertLast( PID_MAP );
+    pids.insertLast( PID_ACTIVE_MINE );
+    pids.insertLast( PID_POSTMAN_LETTER );
+    pids.insertLast( PID_CHOSEN_HOLO );
+    pids.insertLast( PID_CHOSEN_HOLO_DECODED );
+    pids.insertLast( PID_LETTER_TO_LIN );
+    pids.insertLast( PID_LETTER_TO_TODD );
+    pids.insertLast( PID_EDWARD_REPORT );
+    pids.insertLast( PID_LETTER_TO_SINDY );
+    pids.insertLast( PID_LETTER_TO_CASSIDY );
+    pids.insertLast( PID_HUBOLOGIST_BOOK );
+    pids.insertLast( PID_REBEL_TAG );
+    pids.insertLast( PID_SANDBAG_1 );
+    pids.insertLast( PID_SANDBAG_2 );
+    pids.insertLast( PID_SANDBAG_3 );
+    pids.insertLast( PID_SANDBAG_4 );
+    pids.insertLast( PID_SANDBAG_5 );
+    pids.insertLast( PID_KOTW_BEER );
+    pids.insertLast( PID_CHITIN_ARMOR_RECIPE );
+    pids.insertLast( PID_FAKE_LETTER );
+    TabSetItemPids( TAB_CUSTOM5, "002 - Msc2", pids );
+
+    // custom
+    pids.resize( 0 );
+    pids.insertLast( 701 );
+    pids.insertLast( 702 );
+    TabSetItemPids( TAB_CUSTOM5, "003 - rifleman", pids );
+
+
+    // Cars
+    pids.resize( 0 );
+    pids.insertLast( PID_BUGGY );
+    pids.insertLast( PID_BUGGY_BAG );
+    pids.insertLast( PID_SCOUT );
+    pids.insertLast( PID_SCOUT_BAG );
+    pids.insertLast( PID_HUMMER );
+    pids.insertLast( PID_HUMMER_BAG );
+    pids.insertLast( PID_HIGHWAYMAN );
+    pids.insertLast( PID_HIGHWAYMAN_BAG );
+    pids.insertLast( PID_VERTIBIRD );
+    pids.insertLast( PID_VERTIBIRD_BAG );
+    pids.insertLast( PID_BOAT );
+    pids.insertLast( PID_BOAT_BAG );
+    TabSetItemPids( TAB_CUSTOM5, "003 - cars", pids );
+
+    // Etc.
+    pids.resize( 0 );
+    pids.insertLast( 3228 );
+    TabSetItemPids( TAB_CUSTOM5, "004 - etc.", pids );
+    TabSetName( TAB_CUSTOM5, "Msc2" );
+
+    // CONTAINERS AND DOORS TAB
+    TabDelete( TAB_CUSTOM6 );
+
+    // Containers
+    pids.resize( 0 );
+    pids.insertLast( PID_FRIDGE );
+    pids.insertLast( PID_ICE_CHEST_LEFT );
+    pids.insertLast( PID_ICE_CHEST_RIGHT );
+    pids.insertLast( PID_BOOKCASE_0 );
+    pids.insertLast( PID_BOOKCASE_1 );
+    pids.insertLast( PID_BOOKCASE_2 );
+    pids.insertLast( PID_BOOKCASE_3 );
+    pids.insertLast( PID_BOOKCASE_4 );
+    pids.insertLast( PID_BOOKCASE_5 );
+    pids.insertLast( PID_DESK_0 );
+    pids.insertLast( PID_DESK_1 );
+    pids.insertLast( PID_DRESSER_0 );
+    pids.insertLast( PID_DRESSER_1 );
+    pids.insertLast( PID_DRESSER_2 );
+    pids.insertLast( PID_BACKPACK );
+    pids.insertLast( PID_BROWN_BAG );
+    pids.insertLast( PID_ALIEN_SIDE );
+    pids.insertLast( PID_ALIEN_FORWARD );
+    pids.insertLast( PID_FOOTLOCKER_CLEAN_LEFT );
+    pids.insertLast( PID_FOOTLOCKER_RUSTY_LEFT );
+    pids.insertLast( PID_FOOTLOCKER_CLEAN_RIGHT );
+    pids.insertLast( PID_FOOTLOCKER_RUSTY_RIGHT );
+    pids.insertLast( PID_LOCKER_CLEAN_LEFT );
+    pids.insertLast( PID_LOCKER_RUSTY_LEFT );
+    pids.insertLast( PID_LOCKER_CLEAN_RIGHT );
+    pids.insertLast( PID_LOCKER_RUSTY_RIGHT );
+    pids.insertLast( PID_WALL_LOCKER_CLEAN_LEFT );
+    pids.insertLast( PID_WALL_LOCKER_CLEAN_RIGHT );
+    pids.insertLast( PID_WALL_LOCKER_RUSTY_LEFT );
+    pids.insertLast( PID_WALL_LOCKER_RUSTY_RIGHT );
+    pids.insertLast( PID_BOOKSELF_0 );
+    pids.insertLast( PID_BOOKSELF_1 );
+    pids.insertLast( PID_BOOKSELF_2 );
+    pids.insertLast( PID_MISC_BOOKCASE_0 );
+    pids.insertLast( PID_BOOKSELF_3 );
+    pids.insertLast( PID_MISC_BOOKCASE_1 );
+    pids.insertLast( PID_SHELVES_0 );
+    pids.insertLast( PID_SHELVES_1 );
+    pids.insertLast( PID_SHELVES_2 );
+    pids.insertLast( PID_MISC_SHELVES_0 );
+    pids.insertLast( PID_SHELVES_3 );
+    pids.insertLast( PID_MISC_SHELVES_1 );
+    pids.insertLast( PID_WORKBENCH );
+    pids.insertLast( PID_TOOL_BOARD );
+    pids.insertLast( PID_IGUANA_STAND );
+    pids.insertLast( PID_TABLE_0 );
+    pids.insertLast( PID_TABLE_1 );
+    pids.insertLast( PID_STUFF_0 );
+    pids.insertLast( PID_STUFF_1 );
+    pids.insertLast( PID_STUFF_2 );
+    pids.insertLast( PID_STUFF_3 );
+    pids.insertLast( PID_STUFF_4 );
+    pids.insertLast( PID_STUFF_5 );
+    pids.insertLast( PID_STUFF_6 );
+    pids.insertLast( PID_STUFF_7 );
+    pids.insertLast( PID_STUFF_8 );
+    pids.insertLast( PID_STUFF_9 );
+    pids.insertLast( PID_STUFF_10 );
+    pids.insertLast( PID_STUFF_11 );
+    pids.insertLast( PID_CONTAINER_WOOD_CRATE );
+    pids.insertLast( PID_DESK_3 );
+    pids.insertLast( PID_DESK_4 );
+    pids.insertLast( PID_DESK_5 );
+    pids.insertLast( PID_DESK_6 );
+    pids.insertLast( PID_DESK_7 );
+    pids.insertLast( PID_DESK_8 );
+    pids.insertLast( PID_DESK_9 );
+    pids.insertLast( PID_LOCKER_7 );
+    pids.insertLast( PID_LOCKER_8 );
+    pids.insertLast( PID_BOX_0 );
+    pids.insertLast( PID_BOX_1 );
+    pids.insertLast( PID_BOX_2 );
+    pids.insertLast( PID_BOX_3 );
+    pids.insertLast( PID_BOX_4 );
+    pids.insertLast( PID_BOX_5 );
+    pids.insertLast( PID_BOX_6 );
+    pids.insertLast( PID_BOX_7 );
+    pids.insertLast( PID_VAULT_DWELLER_BONES );
+    pids.insertLast( PID_REMAINSOF_GIZMO );
+    pids.insertLast( PID_DESK_10 );
+    pids.insertLast( PID_SMALL_POT );
+    pids.insertLast( PID_TALL_POT );
+    pids.insertLast( PID_CHEST );
+    pids.insertLast( PID_LEFT_ARROYO_BOOKCASE );
+    pids.insertLast( PID_RIGHT_ARROYO_BOOKCASE );
+    pids.insertLast( PID_OLIVE_POT );
+    pids.insertLast( PID_FLOWER_POT );
+    pids.insertLast( PID_HUMAN_BONES );
+    pids.insertLast( PID_CRASHED_VERTI_BIRD );
+    pids.insertLast( PID_GRAVESITE_1 );
+    pids.insertLast( PID_GRAVESITE_2 );
+    pids.insertLast( PID_GRAVESITE_3 );
+    pids.insertLast( PID_GRAVESITE_4 );
+    pids.insertLast( PID_LG_LT_AMMO_CRATE );
+    pids.insertLast( PID_SM_LT_AMMO_CRATE );
+    pids.insertLast( PID_LG_RT_AMMO_CRATE );
+    pids.insertLast( PID_SM_RT_AMMO_CRATE );
+    pids.insertLast( PID_LF_GRAVESITE_1 );
+    pids.insertLast( PID_LF_GRAVESITE_2 );
+    pids.insertLast( PID_LF_GRAVESITE_3 );
+    pids.insertLast( PID_STONE_HEAD );
+    pids.insertLast( PID_WAGON_RED );
+    pids.insertLast( PID_WAGON_GREY );
+    pids.insertLast( PID_CAR_TRUNK );
+    pids.insertLast( PID_HIDDEN_CONTAINER );
+    pids.insertLast( PID_WALL_SAFE );
+    pids.insertLast( PID_FLOOR_SAFE );
+    pids.insertLast( PID_POOL_TABLE_1 );
+    pids.insertLast( PID_POOL_TABLE_2 );
+    pids.insertLast( PID_POOL_TABLE_3 );
+    pids.insertLast( PID_POOL_TABLE_4 );
+    pids.insertLast( PID_POOL_TABLE_5 );
+    pids.insertLast( PID_POOL_TABLE_6 );
+    pids.insertLast( PID_POOR_BOX );
+    pids.insertLast( PID_DEAD_REDSHIRT_0 );
+    pids.insertLast( PID_DEAD_REDSHIRT_1 );
+    pids.insertLast( PID_DEAD_REDSHIRT_2 );
+    pids.insertLast( PID_MINING_MACHINE );
+    TabSetItemPids( TAB_CUSTOM6, "001 - Containers", pids );
+
+    // Door
+    pids.resize( 0 );
+    pids.insertLast( 2002 );
+    pids.insertLast( 2008 );
+    pids.insertLast( 2018 );
+    pids.insertLast( 2019 );
+    pids.insertLast( 2022 );
+    pids.insertLast( 2023 );
+    pids.insertLast( 2077 );
+    pids.insertLast( 2087 );
+    pids.insertLast( 2088 );
+    pids.insertLast( 2089 );
+    pids.insertLast( 2142 );
+    pids.insertLast( 2143 );
+    pids.insertLast( 2144 );
+    pids.insertLast( 2151 );
+    pids.insertLast( 2153 );
+    pids.insertLast( 2154 );
+    pids.insertLast( 2173 );
+    pids.insertLast( 2195 );
+    pids.insertLast( 2196 );
+    pids.insertLast( 2258 );
+    pids.insertLast( 2259 );
+    pids.insertLast( 2260 );
+    pids.insertLast( 2261 );
+    pids.insertLast( 2332 );
+    pids.insertLast( 2333 );
+    pids.insertLast( 2346 );
+    pids.insertLast( 2361 );
+    pids.insertLast( 2362 );
+    pids.insertLast( 2406 );
+    pids.insertLast( 2421 );
+    pids.insertLast( 2437 );
+    pids.insertLast( 2438 );
+    pids.insertLast( 2448 );
+    pids.insertLast( 2470 );
+    pids.insertLast( 2481 );
+    pids.insertLast( 2482 );
+    pids.insertLast( 2486 );
+    pids.insertLast( 2581 );
+    pids.insertLast( 2645 );
+    pids.insertLast( 2825 );
+    pids.insertLast( 2826 );
+    pids.insertLast( 2848 );
+    pids.insertLast( 2849 );
+    pids.insertLast( 2850 );
+    pids.insertLast( 2934 );
+    for( uint i = 2954; i <= 2962; i++ )
+        pids.insertLast( i );
+    pids.insertLast( 2978 );
+    pids.insertLast( 2981 );
+    pids.insertLast( 2982 );
+    pids.insertLast( 2983 );
+    pids.insertLast( 2984 );
+    pids.insertLast( 2995 );
+    pids.insertLast( 3159 );
+    pids.insertLast( 3160 );
+    pids.insertLast( 3169 );
+    pids.insertLast( 3170 );
+    pids.insertLast( 3337 );
+    pids.insertLast( 3338 );
+    pids.insertLast( 3358 );
+    for( uint i = 3387; i <= 3392; i++ )
+        pids.insertLast( i );
+    pids.insertLast( 3417 );
+    pids.insertLast( 3418 );
+    pids.insertLast( 3434 );
+    pids.insertLast( 3435 );
+    pids.insertLast( 3449 );
+    pids.insertLast( 3466 );
+    pids.insertLast( 3467 );
+    pids.insertLast( 3479 );
+    pids.insertLast( 3480 );
+    pids.insertLast( 3491 );
+    pids.insertLast( 3492 );
+    for( uint i = 3531; i <= 3536; i++ )
+        pids.insertLast( i );
+    for( uint i = 3573; i <= 3576; i++ )
+        pids.insertLast( i );
+    pids.insertLast( 3709 );
+    pids.insertLast( 3710 );
+    pids.insertLast( 3745 );
+    pids.insertLast( 3748 );
+    pids.insertLast( 3818 );
+    pids.insertLast( 3819 );
+    for( uint i = 3900; i <= 3904; i++ )
+        pids.insertLast( i );
+    for( uint i = 4757; i <= 4769; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM6, "002 - Doors", pids );
+
+    TabSetName( TAB_CUSTOM6, "C/D" );
+
+    // GRIDS TAB
+    TabDelete( TAB_CUSTOM7 );
+
+    // Scenery
+    pids.resize( 0 );
+    pids.insertLast( 2049 );
+    pids.insertLast( 2068 );
+    pids.insertLast( 2139 );
+    pids.insertLast( 2140 );
+    pids.insertLast( 2197 );
+    for( uint i = 2348; i <= 2356; i++ )
+        pids.insertLast( i );
+    pids.insertLast( 2583 );
+    pids.insertLast( 2584 );
+    pids.insertLast( 2977 );
+    pids.insertLast( 3293 );
+    pids.insertLast( 3297 );
+    pids.insertLast( 3298 );
+    pids.insertLast( 3645 );
+    pids.insertLast( 3647 );
+    pids.insertLast( 3648 );
+    pids.insertLast( 3655 );
+    pids.insertLast( 3660 );
+    pids.insertLast( 3685 );
+    pids.insertLast( 3835 );
+    pids.insertLast( 3853 );
+    TabSetItemPids( TAB_CUSTOM7, "001 - ladders", pids );
+
+    // Grids
+    pids.resize( 0 );
+    for( uint i = 4016; i <= 4023; i++ )
+        pids.insertLast( i );
+    for( uint i = 4031; i <= 4046; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM7, "002 - exit grids", pids );
+    TabSetName( TAB_CUSTOM7, "Grd" );
+
+    // GENERIC SCENERY TAB
+    TabDelete( TAB_CUSTOM8 );
+
+    pids.resize( 0 );
+    pids.insertLast( 2001 );
+    for( uint i = 2003; i <= 2007; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "000 - City Jink 1", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2009; i <= 2017; i++ )
+        pids.insertLast( i );
+    pids.insertLast( 2020 );
+    pids.insertLast( 2021 );
+    for( uint i = 2024; i <= 2048; i++ )
+        pids.insertLast( i );
+    for( uint i = 2050; i <= 2062; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "001 - Vault 13", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2063; i <= 2066; i++ )
+        pids.insertLast( i );
+    for( uint i = 2069; i <= 2076; i++ )
+        pids.insertLast( i );
+    for( uint i = 2078; i <= 2086; i++ )
+        pids.insertLast( i );
+    for( uint i = 2090; i <= 2093; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "002 - Stones and misc", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2094; i <= 2127; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "003 - Junktown", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2129; i <= 2138; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "004 - Necro sewer", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2145; i <= 2150; i++ )
+        pids.insertLast( i );
+    for( uint i = 2155; i <= 2172; i++ )
+        pids.insertLast( i );
+    for( uint i = 2174; i <= 2193; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "005 - Bro&Vault", pids );
+
+    pids.resize( 0 );
+    pids.insertLast( 2194 );
+    for( uint i = 2198; i <= 2257; i++ )
+        pids.insertLast( i );
+    for( uint i = 2262; i <= 2331; i++ )
+        pids.insertLast( i );
+    for( uint i = 2334; i <= 2343; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "006 - Necro city", pids );
+
+    pids.resize( 0 );
+    pids.insertLast( 2345 );
+    pids.insertLast( 2347 );
+    for( uint i = 2357; i <= 2360; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "007 - Cathedral", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2363; i <= 2383; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "008 - S. Sands", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2384; i <= 2405; i++ )
+        pids.insertLast( i );
+    for( uint i = 2407; i <= 2420; i++ )
+        pids.insertLast( i );
+    for( uint i = 2422; i <= 2423; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "009 - Tents&Indstr", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2425; i <= 2436; i++ )
+        pids.insertLast( i );
+    for( uint i = 2439; i <= 2447; i++ )
+        pids.insertLast( i );
+    pids.insertLast( 2449 );
+    TabSetItemPids( TAB_CUSTOM8, "010 - M.base/Cath", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2450; i <= 2466; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "011 - Gamble", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2467; i <= 2469; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "012 - Old elev.", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2471; i <= 2480; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "013 - Warehouse", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2483; i <= 2485; i++ )
+        pids.insertLast( i );
+    for( uint i = 2487; i <= 2508; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "014 - Pray@Follow", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2509; i <= 2515; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "015 - Crrap", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2516; i <= 2526; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "016 - Bro Elders", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2527; i <= 2532; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "017 - Carts", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2533; i <= 2543; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "018 - Bro sport", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2544; i <= 2580; i++ )
+        pids.insertLast( i );
+    pids.insertLast( 2582 );
+    for( uint i = 2585; i <= 2590; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "019 - Ind,Bro,Cath", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2591; i <= 2644; i++ )
+        pids.insertLast( i );
+    for( uint i = 2646; i <= 2685; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "020 - In&Out", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2686; i <= 2696; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "021 - Cliffs", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2697; i <= 2824; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "022 - Master", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2827; i <= 2847; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "023 - Robo", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2851; i <= 2900; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "024 - Signs", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2901; i <= 2908; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "025 - Robo2", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2909; i <= 2933; i++ )
+        pids.insertLast( i );
+    for( uint i = 2935; i <= 2953; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "026 - Arroyo", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2963; i <= 2975; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "027 - Klamath", pids );
+
+    pids.resize( 0 );
+    for( uint i = 2979; i <= 2980; i++ )
+        pids.insertLast( i );
+    for( uint i = 2985; i <= 2994; i++ )
+        pids.insertLast( i );
+    for( uint i = 2996; i <= 3018; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "028 - Gecko&Ind", pids );
+
+    pids.resize( 0 );
+    for( uint i = 3019; i <= 3141; i++ )
+        pids.insertLast( i );
+    pids.insertLast( 3448 );
+    TabSetItemPids( TAB_CUSTOM8, "029 - Reno", pids );
+
+    pids.resize( 0 );
+    for( uint i = 3142; i <= 3158; i++ )
+        pids.insertLast( i );
+    for( uint i = 3161; i <= 3168; i++ )
+        pids.insertLast( i );
+    for( uint i = 3171; i <= 3191; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "030 - Indstr", pids );
+
+    pids.resize( 0 );
+    for( uint i = 3192; i <= 3215; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "031 - Cav&Wall", pids );
+
+    pids.resize( 0 );
+    for( uint i = 3216; i <= 3227; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "032 - Bodies", pids );
+
+    pids.resize( 0 );
+    for( uint i = 3230; i <= 3236; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "033 - Sierra", pids );
+
+    pids.resize( 0 );
+    for( uint i = 3237; i <= 3253; i++ )
+        pids.insertLast( i );
+    for( uint i = 3294; i <= 3296; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "034 - Grvs&Grss", pids );
+
+    pids.resize( 0 );
+    for( uint i = 3254; i <= 3273; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "035 - NCR", pids );
+
+    pids.resize( 0 );
+    for( uint i = 3274; i <= 3292; i++ )
+        pids.insertLast( i );
+    for( uint i = 3305; i <= 3320; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "036 - Beams", pids );
+
+    pids.resize( 0 );
+    for( uint i = 3299; i <= 3304; i++ )
+        pids.insertLast( i );
+    for( uint i = 3321; i <= 3329; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "037 - Gore", pids );
+
+    pids.resize( 0 );
+    for( uint i = 3330; i <= 3336; i++ )
+        pids.insertLast( i );
+    for( uint i = 3338; i <= 3357; i++ )
+        pids.insertLast( i );
+    for( uint i = 3359; i <= 3379; i++ )
+        pids.insertLast( i );
+    for( uint i = 3468; i <= 3472; i++ )
+        pids.insertLast( i );
+    for( uint i = 3706; i <= 3708; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "038 - Bulk", pids );
+
+    pids.resize( 0 );
+    for( uint i = 3380; i <= 3386; i++ )
+        pids.insertLast( i );
+    for( uint i = 3436; i <= 3447; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "039 - VCity", pids );
+
+    pids.resize( 0 );
+    for( uint i = 3393; i <= 3416; i++ )
+        pids.insertLast( i );
+    for( uint i = 3419; i <= 3432; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "040 - Signs", pids );
+
+    pids.resize( 0 );
+    for( uint i = 3473; i <= 3478; i++ )
+        pids.insertLast( i );
+    for( uint i = 3481; i <= 3490; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "041 - Reno Bulk", pids );
+
+    pids.resize( 0 );
+    for( uint i = 3493; i <= 3530; i++ )
+        pids.insertLast( i );
+    pids.insertLast( 3537 );
+    for( uint i = 3636; i <= 3644; i++ )
+        pids.insertLast( i );
+    for( uint i = 3649; i <= 3651; i++ )
+        pids.insertLast( i );
+    for( uint i = 3746; i <= 3747; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "042 - Enclave", pids );
+
+    pids.resize( 0 );
+    for( uint i = 3450; i <= 3465; i++ )
+        pids.insertLast( i );
+    for( uint i = 3538; i <= 3572; i++ )
+        pids.insertLast( i );
+    for( uint i = 3577; i <= 3599; i++ )
+        pids.insertLast( i );
+    for( uint i = 3609; i <= 3619; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "043 - Frisco", pids );
+
+    pids.resize( 0 );
+    for( uint i = 3600; i <= 3608; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "044 - Temple&Ant", pids );
+
+    pids.resize( 0 );
+    for( uint i = 3620; i <= 3635; i++ )
+        pids.insertLast( i );
+    for( uint i = 3652; i <= 3654; i++ )
+        pids.insertLast( i );
+    pids.insertLast( 3656 );
+    for( uint i = 3684; i <= 3687; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "045 - Mining", pids );
+
+    pids.resize( 0 );
+    for( uint i = 3657; i <= 3659; i++ )
+        pids.insertLast( i );
+    for( uint i = 3661; i <= 3683; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "046 - NCR", pids );
+
+    pids.resize( 0 );
+    for( uint i = 3688; i <= 3705; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "047 - Vertywhat?", pids );
+
+    pids.resize( 0 );
+    for( uint i = 3711; i <= 3720; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "048 - Tanker", pids );
+
+    pids.resize( 0 );
+    for( uint i = 3721; i <= 3736; i++ )
+        pids.insertLast( i );
+    for( uint i = 3737; i <= 3744; i++ )
+        pids.insertLast( i );
+    for( uint i = 3749; i <= 3755; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "049 - Greece", pids );
+
+    pids.resize( 0 );
+    for( uint i = 3756; i <= 3792; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "050 - Moar Bulk ", pids );
+
+    pids.resize( 0 );
+    for( uint i = 3793; i <= 3817; i++ )
+        pids.insertLast( i );
+    for( uint i = 3820; i <= 3834; i++ )
+        pids.insertLast( i );
+    for( uint i = 3836; i <= 3852; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "051 - Colored stuff", pids );
+
+    pids.resize( 0 );
+    for( uint i = 4001; i <= 4010; i++ )
+        pids.insertLast( i );
+    for( uint i = 4013; i <= 4015; i++ )
+        pids.insertLast( i );
+    for( uint i = 4024; i <= 4030; i++ )
+        pids.insertLast( i );
+    for( uint i = 4047; i <= 4060; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "052 - Effects", pids );
+
+    pids.resize( 0 );
+    for( uint i = 4277; i <= 4282; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "053 - Craft", pids );
+
+    pids.resize( 0 );
+    for( uint i = 4500; i <= 4590; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "054 - Tactics", pids );
+
+    pids.resize( 0 );
+    for( uint i = 4594; i <= 4611; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "055 - Fallout:BGE", pids );
+
+    pids.resize( 0 );
+    for( uint i = 4612; i <= 4657; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "056 - Hell", pids );
+
+    pids.resize( 0 );
+    for( uint i = 4667; i <= 4756; i++ )
+        pids.insertLast( i );
+    for( uint i = 4770; i <= 4999; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM8, "FOnline latest", pids );
+
+    TabSetName( TAB_CUSTOM8, "Gen" );
+
+    // WALLS TAB
+    TabDelete( TAB_CUSTOM9 );
+    pids.resize( 0 );
+    for( uint i = 5000; i <= 9999; i++ )
+        pids.insertLast( i );
+    TabSetItemPids( TAB_CUSTOM9, "001 - Vault 13", pids );
+    TabSetName( TAB_CUSTOM9, "Wall" );
+
+    // Tactics tiles, tiles_0.bos
+    if( __GeometryType == GEOMETRY_TACTICS )
+    {
+        TabSetName( TAB_CUSTOM0, "TacT" );
+        string@[] ftTiles = { "tiles/" };
+        bool[] includeSubdirs = { true };
+        TabSetTileDirs( TAB_CUSTOM0, ftTiles, includeSubdirs );
+    }
+
+    // Arcanum tiles, arcanum2.dat
+    if( __GeometryType == GEOMETRY_ARCANUM )
+    {
+        TabSetName( TAB_CUSTOM0, "ArcT" );
+        string@[] arcanumTiles = { "art/tile/" };
+        bool[] includeSubdirs = { true };
+        TabSetTileDirs( TAB_CUSTOM0, arcanumTiles, includeSubdirs );
+    }
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////////////
+// Main loop function. Returned time of next call in milliseconds.
+uint loop()
+{
+    return 60000;
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////////////
+// Call on console message. Return true to disable engine processing.
+bool console_message( string& message )
+{
+    // Command prefixes
+    // ~ load map
+    // ^ save map
+    // @ critter animation
+    // # run script
+    // * other
+    return false;
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////////////
+// Render interface function. You can use Draw* functions only there.
+// Layer specification:
+//    0
+// Game map
+//    1
+// Mapper interface
+//    2
+// Console, Messbox
+//    3
+// Mapper object interface
+//    4
+// Cursor
+//    5
+void render_iface( uint layer )
+{}
+
+// //////////////////////////////////////////////////////////////////////////////////////////////////
+// Render map function. You can use DrawMap* functions only there. This drawing before 1 iface layer.
+void render_map()
+{}
+
+// //////////////////////////////////////////////////////////////////////////////////////////////////
+// Mouse behaviours. Click states look in _client_defines.fos, Mouse click states.
+// Return true to disable engine events.
+bool mouse_down( int click )
+{
+    return false;
+}
+
+bool mouse_up( int click )
+{
+    return false;
+}
+
+void mouse_move( int x, int y )
+{}
+
+// //////////////////////////////////////////////////////////////////////////////////////////////////
+// Keyboard behaviours. Key codes look in _mapper_defines.fos DirectInput keyboard scan codes.
+// Return true to disable engine events.
+bool key_down( uint8 key )
+{
+    return false;
+}
+
+bool key_up( uint8 key )
+{
+    return false;
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////////////
+// Called on mouse/keyboard input lost (alt-tab, minimize, lost focus).
+void input_lost()
+{}
+
+
+
+// //////////////////////////////////////////////////////////////////////////////////////////////////
+// Some useful functions.
+// #ConvertMaps
+// #ClearTiles
+// #MapTime         value
+// #MapNoLogOut     value
+// #MapScriptModule moduleName
+// #MapScriptFunc   funcName
+
+MapperMap@ GetActiveMap()
+{
+    MapperMap@[] maps;
+    int cur = GetLoadedMaps( maps );
+    if( cur == -1 )
+        return null;
+    return maps[ cur ];
+}
+
+// Maps convertation to text format
+string ConvertMaps( string str )
+{
+    string@[] mapNames;
+    GetMapFileNames( null, mapNames );
+
+    uint success = 0;
+    uint fail = 0;
+    for( uint i = 0; i < mapNames.length(); i++ )
+    {
+        MapperMap@ map = LoadMap( mapNames[ i ], PT_SERVER_MAPS );
+        if( not (map is null) )
+        {
+            if( SaveMap( map, mapNames[ i ], PT_SERVER_MAPS ) )
+            {
+                success++;
+            }
+            else
+            {
+                Message( "Fail to save " + mapNames[ i ] );
+                fail++;
+            }
+
+            UnloadMap( map );
+        }
+        else
+        {
+            Message( "Fail to load " + mapNames[ i ] );
+            fail++;
+        }
+    }
+
+    return "Done, maps converted " + ( success + fail ) + ", success " + success + ", fail " + fail + ".";
+}
+
+// Keep only one tile per hex
+string ClearTiles( string str )
+{
+    MapperMap@ map = GetActiveMap();
+    if( map is null )
+        return "Map not loaded.";
+
+    uint deleted = 0;
+    for( uint hx = 0; hx < map.Width; hx++ )
+    {
+        for( uint hy = 0; hy < map.Height; hy++ )
+        {
+            for( ; map.GetTilesCount( hx, hy, false ) > 1; deleted++ )
+                map.DeleteTile( hx, hy, false, 0 );
+            for( ; map.GetTilesCount( hx, hy, true )  > 1; deleted++ )
+                map.DeleteTile( hx, hy, true, 0 );
+        }
+    }
+
+    return "Done. Deleted " + deleted + " tiles.";
+}
+
+// Map parameters
+string MapTime( string str )
+{
+    MapperMap@ map = GetActiveMap();
+    if( map is null )
+        return "Map not loaded.";
+    int value = 0;
+    if( not StrToInt( str, value ) )
+        return "Wrong value.";
+
+    map.Time = value;
+    return "Done. Time setted to " + map.Time + ".";
+}
+
+string MapNoLogOut( string str )
+{
+    MapperMap@ map = GetActiveMap();
+    if( map is null )
+        return "Map not loaded.";
+    int value = 0;
+    if( not StrToInt( str, value ) )
+        return "Wrong value.";
+
+    map.NoLogOut = value != 0 ? true : false;
+    return "Done. NoLogOut setted to " + map.NoLogOut + ".";
+}
+
+string MapScriptModule( string str )
+{
+    MapperMap@ map = GetActiveMap();
+    if( map is null )
+        return "Map not loaded.";
+
+    map.ScriptModule = str;
+    return "Done. ScriptModule setted to " + map.ScriptModule + ".";
+}
+
+string MapScriptFunc( string str )
+{
+    MapperMap@ map = GetActiveMap();
+    if( map is null )
+        return "Map not loaded.";
+
+    map.ScriptFunc = str;
+    return "Done. ScriptFunc setted to " + map.ScriptFunc + ".";
+}

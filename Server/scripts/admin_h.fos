@@ -1,0 +1,10 @@
+#define ACTION_TYPE_UNKNOWN		(0)
+#define ACTION_TYPE_CRITTER		(1) //values[0] - critterId
+#define ACTION_TYPE_ITEM		(2) //values[0] - itemId
+#define ACTION_TYPE_HEX			(3) //values[0] - hexX, values[1] - hexY
+
+#ifdef __SERVER
+#ifndef _ADMIN_
+import void ShowAdminMenu(Critter& critter, int actionType, string menuItems, int[] values) from "admin";
+#endif
+#endif

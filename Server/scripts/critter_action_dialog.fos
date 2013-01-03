@@ -1,0 +1,382 @@
+#include "critter_action.fos"
+#include "utils_for_array.fos"
+
+#define	END_DIALOG_MESSAGE	(111)
+
+class Sentence
+{
+	private uint Participant;
+	private uint8 HowSay;
+	private uint16 TextMsg;
+	private uint StringNum;
+	
+	string@ Lexems;
+	Critter@ ParticipantCritter;
+	
+	Sentence(uint participant, uint8 howSay, uint16 textMsg, uint stringNum)
+	{
+		Participant = participant;
+		HowSay = howSay;
+		TextMsg = textMsg;
+		StringNum = stringNum;
+	}
+	
+	uint GetParticipant()
+	{
+		return Participant;
+	}
+	
+	Critter@ InitCritter(Critter& initiative, Critter@[] participants)
+	{
+		//Log("Initializing Sentence using "+initiative.Id + " as initiative.");
+		for (uint i = 0; i < participants.length(); i++)
+		{
+			Critter@ participant = participants[i];
+			if(valid(participant) && participant.Id != initiative.Id)
+			{
+				//Log("Found someone, checking distance...");
+				uint distance = GetDistantion(initiative.HexX, initiative.HexY, participant.HexX, participant.HexY);
+				if(distance <= __TalkDistance)
+				{
+					//Log("Distance ok...setting critter to sentence.");
+					@ParticipantCritter = participant;
+					return @participant;
+				}
+			}
+		}
+		return null;
+	}
+	
+	uint Say()
+	{
+		if(!valid(ParticipantCritter))
+			return 0;
+		
+		if(valid(Lexems))
+			ParticipantCritter.SayMsg(HowSay, TextMsg, StringNum, Lexems);
+		else
+			ParticipantCritter.SayMsg(HowSay, TextMsg, StringNum);
+		return REAL_SECOND(3);
+	}
+	
+	Sentence@ Copy()
+	{
+		Sentence@ copy = Sentence(Participant, HowSay, TextMsg, StringNum);
+		@copy.Lexems = @Lexems;
+		return @copy;
+	}
+}
+
+dictionary Dialogs;
+class Dialog 
+{
+	#define _GetParticipants		# (participant, participants)	Participants.get("" + participant, @participants)
+	#define _SetParticipants		# (participant, participants)	Participants.set("" + participant, participants)
+	
+	private Sentence@[] Sentences;
+	private dictionary Participants;
+	private uint CurrentSentence;
+	
+	Dialog()
+	{
+		CurrentSentence = 0;
+	}
+	
+	Dialog@ AddSentence(uint participant, uint8 howSay, uint16 textMsg, uint stringNum)
+	{
+		Sentences.insertLast(Sentence(participant, howSay, textMsg, stringNum));
+		return @this;
+	}
+	
+	bool AddParticipant(uint participant, Critter& critter) const
+	{
+		return AddParticipant(participant, critter, true);
+	}
+	
+	private bool AddParticipant(uint participant, Critter& critter, bool tryDialog)
+	{
+		array<Critter@>@ participants = GetParticipants(participant);
+		RemoveCritter(@participants, critter);
+		//Log("Adding critter "+ critter.Id +" as participant "+participant);
+		participants.insertLast(critter);
+		if(tryDialog && TryDialog(participant, critter))
+			return true;
+		else
+			return false;
+	}
+	
+	void RemoveParticipant(uint participant, Critter& critter) const
+	{
+		//Log("Removing critter "+critter.Id + " as participant "+participant);
+		array<Critter@>@ participants = GetParticipants(participant);
+		RemoveCritter(@participants, critter);
+	}
+	
+	void SetLexems(uint participant, string@ lexems) const
+	{
+		for (uint i = 0; i < Sentences.length(); i++)
+			if(Sentences[i].GetParticipant() == participant)
+				@Sentences[i].Lexems = lexems;
+	}
+	
+	bool IsInDialog(Critter& critter) const
+	{
+		for (uint i = 0; i < Sentences.length(); i++)
+			if(valid(Sentences[i].ParticipantCritter) && Sentences[i].ParticipantCritter.Id == critter.Id)
+				return true;
+		
+		string@[] keys;
+		Dialogs.keys(keys);
+		for (uint i = 0; i < keys.length(); i++)
+		{
+			Dialog@ dialog;
+			Dialogs.get(keys[i], @dialog);
+			if(valid(dialog))
+				for (uint i = 0; i < dialog.Sentences.length(); i++)
+					if(valid(dialog.Sentences[i].ParticipantCritter) && dialog.Sentences[i].ParticipantCritter.Id == critter.Id)
+						return true;
+		}
+		return false;
+	}
+	
+	private bool TryDialog(uint participant, Critter& initiative)
+	{
+		Dialog@ dialog = Copy();
+		bool rollback = false;
+		//Log("Trying dialog with "+dialog.Sentences.length()+" sentences.");
+		for (uint i = 0; i < dialog.Sentences.length(); i++)
+		{
+			Sentence@ sentence = dialog.Sentences[i];
+			if(sentence.GetParticipant() == participant)
+			{
+				@sentence.ParticipantCritter = initiative;
+				RemoveParticipant(participant, initiative);
+				continue;
+			}
+			array<Critter@> participants = GetParticipants(sentence.GetParticipant());
+			//if(participants.length() > 0)
+				//Log("Found " + participants.length() +" participants for "+dialog.Sentences[i].GetParticipant());
+			Critter@ critter = sentence.InitCritter(initiative, participants);
+			if(valid(critter))
+			{
+				RemoveCritter(@participants, critter);
+			}
+			else
+			{
+				rollback = true;
+				break;
+			}
+		}
+		if(rollback)
+		{
+			for (uint i = 0; i < dialog.Sentences.length(); i++)
+			{
+				array<Critter@> participants = GetParticipants(dialog.Sentences[i].GetParticipant());
+				if(valid(dialog.Sentences[i].ParticipantCritter))
+					AddParticipant(dialog.Sentences[i].GetParticipant(), dialog.Sentences[i].ParticipantCritter, false);
+				else
+					break;
+			}
+			return false;
+		}
+		dialog.Start(initiative);
+		
+		return true;
+	}
+	
+	private void Start(Critter& critter)
+	{
+		//Log("Starting dialog with "+Sentences.length() +" sentences.");
+		for (uint i = 0; i < Sentences.length(); i++)
+		{
+			Critter@ participant = @Sentences[i].ParticipantCritter;
+			//Log("Participant: " + Sentences[i].GetParticipant()+" : "+Sentences[i].ParticipantCritter.Id);
+			if(critter.Id != participant.Id)
+			{
+				critter.SetDir(GetDirection(critter.HexX, critter.HexY, participant.HexX, participant.HexY));
+				participant.SetDir(GetDirection(participant.HexX, participant.HexY, critter.HexX, critter.HexY));
+			}
+		}
+		
+		Dialogs.set("" + critter.Id, @this);
+		CreateTimeEvent(__FullSecond, "e_SaySentence", critter.Id, false);
+	}
+	
+	void End()
+	{
+		//Log("Ending dialog with " + Sentences.length() + " sentences.");
+		for (uint i = 0; i < Sentences.length(); i++)
+			Sentences[i].ParticipantCritter.EventMessage(Sentences[i].ParticipantCritter, END_DIALOG_MESSAGE, 0);
+	}
+	
+	uint SayNext()
+	{
+		if(CurrentSentence >= Sentences.length())
+			return 0;
+		//Log("Saying next : " +CurrentSentence+" - "+Sentences[CurrentSentence].ParticipantCritter.Id);
+		return Sentences[CurrentSentence++].Say();
+	}
+	
+	private array<Critter@>@ GetParticipants(uint participant)
+	{
+		if(!Participants.exists("" + participant))
+		{
+			array<Critter@> participants;
+			_SetParticipants(participant, participants);
+			return @participants;
+		}
+		else
+		{
+			array<Critter@>@ participants;
+			_GetParticipants(participant, participants);
+			return @participants;
+		}
+	}
+	
+	private Dialog@ Copy()
+	{
+		Dialog@ copy = Dialog();
+		for (uint i = 0; i < Sentences.length(); i++)
+			copy.Sentences.insertLast(Sentences[i].Copy());
+		return @copy;
+	}
+}
+
+uint e_SaySentence(uint[]@ values)
+{
+	Dialog@ dialog;
+	Dialogs.get("" + values[0], @dialog);
+	uint waitTime = 0;
+	if(valid(dialog))
+	{
+		waitTime = dialog.SayNext();
+		if(waitTime == 0)
+		{
+			Dialogs.delete("" + values[0]);
+			dialog.End();
+		}
+	}
+	return waitTime;
+}
+
+class AddDialog : DefaultAction
+{
+	private const Dialog@ Dlg;
+	private uint Participant;
+	private bool WaitUntilFinished;
+	
+	AddDialog(const Dialog@ dlg, uint participant)
+	{
+		@Dlg = dlg;
+		Participant = participant;
+		WaitUntilFinished = true;
+	}
+	
+	AddDialog(const Dialog@ dlg, uint participant, bool waitUntilFinished)
+	{
+		@Dlg = dlg;
+		Participant = participant;
+		WaitUntilFinished = waitUntilFinished;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		if(HAS_CHANCE(Chance) && Dlg.AddParticipant(Participant, critter))
+		{
+			if(WaitUntilFinished)
+			{
+				SetListening(true);
+				return;
+			}
+		}
+			
+		Finish(critter);
+	}
+	
+	void MessageEvent(Critter& critter, Critter& messenger, int message, int value) override
+	{
+		if(message != END_DIALOG_MESSAGE || critter.Id != messenger.Id)
+			return;
+		
+		SetListening(false);
+		Finish(critter);
+	}
+}
+
+class RemoveDialog : DefaultAction
+{
+	private const Dialog@ Dlg;
+	private uint Participant;
+	
+	RemoveDialog(const Dialog@ dlg, uint participant)
+	{
+		@Dlg = dlg;
+		Participant = participant;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		if(!HAS_CHANCE(Chance))
+			return;
+
+		if(Dlg.IsInDialog(critter))
+		{
+			SetListening(true);
+		}
+		else
+		{
+			Dlg.RemoveParticipant(Participant, critter);
+			Finish(critter);
+		}
+	}
+	
+	void MessageEvent(Critter& critter, Critter& messenger, int message, int value) override
+	{
+		if(message != END_DIALOG_MESSAGE)
+			return;
+		
+		Dlg.RemoveParticipant(Participant, critter);
+		SetListening(false);
+		Finish(critter);
+	}
+}
+
+class SetDialogLexems : CrittersHolderAction
+{
+	private const Dialog@ Dlg;
+	private uint Participant;
+	private string@ LexemId;
+	private LexemGetterFunction@ LexemGetter;
+	
+	SetDialogLexems(const Dialog@ dlg, uint participant, string@ lexemId, LexemGetterFunction@ lexemGetter)
+	{
+		@Dlg = dlg;
+		Participant = participant;
+		@LexemId = lexemId;
+		@LexemGetter = lexemGetter;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		if(!HasValidCritters())
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		
+		string lexems;
+		for (uint i = 0; i < GetCritters().length(); i++)
+		{
+			string@ lexem = LexemGetter(critter, GetCritters()[i]);
+			if(!valid(lexem))
+				continue;
+			if(lexems.length() > 0)
+				lexems += ", ";
+			lexems += lexem;
+		}
+		//Log("Setting lexem for critter: "+critter.Id+" - $"+LexemId+lexems);
+		Dlg.SetLexems(Participant, "$" + LexemId + lexems);
+		Finish(critter);
+	}
+}
+

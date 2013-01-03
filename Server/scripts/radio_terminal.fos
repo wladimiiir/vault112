@@ -1,0 +1,35 @@
+// Author: cvet
+#include "_macros.fos"
+
+bool s_Terminal( Critter& cr, Scenery& terminal, int skill, Item@ item )
+{
+    if( skill != -1 || valid( item ) )
+        return true;
+    Map@ map = cr.GetMap();
+    if( not valid( map ) )
+        return true;
+//	SetRadio(666,map,terminal.HexX,terminal.HexY);
+    return true;
+}
+
+void dlg_ChangeChannel( Critter& player, Critter@ npc, string@ channel )
+{
+//	if(not valid(channel)) return;
+//	int cha=0;
+//	if(not StrToInt(channel,cha)) return;
+//	Map@ map=player.GetMap();
+//	if(not valid(map)) return;
+//	SetRadio(cha,map,)
+}
+
+void dlg_SendMessage( Critter& player, Critter@ npc, string@ message )
+{
+    if( not IS_DIALOG_SAY_MODE( message ) )
+        return;
+
+    Map@ map = player.GetMap();
+    if( not valid( map ) )
+        return;
+
+    RadioMessage( 666, message );
+}

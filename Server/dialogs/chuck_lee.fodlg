@@ -1,0 +1,74 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 1 #
+2 1010 D _script caravan@d_NotIsFullParty 0  D _script caravan@d_IsCaravanStatus 1 1 D _script caravan@d_NotHasFailures 0  D _script caravan@d_NotPlayerHired 0  #
+3 1020 D _script caravan@d_IsCaravanStatus 1 1 D _script caravan@d_NotHasFailures 0  D _script caravan@d_NotPlayerHired 0  D _script caravan@d_IsFullParty 0  #
+4 1030 D _script caravan@d_HasFailures 0  #
+8 1040 D _script caravan@d_IsCaravanStatus 1 1 D _script caravan@d_PlayerHired 0  #
+9 1050 D _script caravan@d_IsCaravanStatus 1 4 D _script caravan@d_EnemiesExists 0  D _script caravan@d_IsCaravaneer 0  #
+10 1060 D _script caravan@d_IsCaravanStatus 1 4 D _script caravan@d_NotEnemiesExists 0  D _script caravan@d_IsCaravaneer 0  #
+11 1070 D _script caravan@d_IsCaravanStatus 1 5 D _script caravan@d_IsCaravaneer 0  D _script caravan@d_PlayerHasNoCaravanFailures 0  #
+12 1080 @
+2 2000 None 0 #
+5 2010 #
+0 2020 @
+3 3000 None 0 #
+0 3010 @
+4 4000 None 0 @
+5 5000 None 0 #
+6 5010 R _script caravan@r_PutPlayerRequest2Info 0  #
+7 5020 @
+6 6000 None 0 #
+7 6010 @
+7 7000 None 0 @
+8 8000 None 0 @
+9 9000 None 0 @
+10 10000 None 0 #
+0 10010 R _script caravan@r_ContinueCaravan 0  #
+0 10020 @
+11 11000 None 0 #
+0 11010 R _item p PID_BOTTLE_CAPS + 1000 R _script caravan@r_FinishCaravaneer 0  #
+0 11020 R _param p ST_KARMA + 300 R _script caravan@r_FinishCaravaneer 0  @
+12 12000 None 0 &
+
+[engl]
+{100}{}{Chuck Lee}
+{200}{}{Chuck Lee, caravan leader.}
+{210}{}{Chuck Lee, caravan leader.}
+{1000}{}{Predialogue installations}
+{1010}{}{prepare: no full party}
+{1020}{}{prepare: full party}
+{1030}{}{prepare: failure player}
+{1040}{}{prepare: already in party}
+{1050}{}{encounter: kill all first}
+{1060}{}{encounter: can continue}
+{1070}{}{success: gib moni}
+{1080}{}{- fallback}
+{2000}{}{Hi, are you here for the caravan escort job?}
+{2010}{}{Yes, I am your man.}
+{2020}{}{Uh, no, not really.}
+{3000}{}{If you are here for the caravan escort guard job, I am afraid we are full. You will have to try tomorrow. Or you can meet me in Vault City in couple of hours, we are going to Redding from there.}
+{3010}{}{Oh, bollocks.}
+{4000}{}{You?! You will rather get out of my sight. We cannot trust you anymore and I don't care what you have to say.}
+{5000}{}{Okey, you have to sign these papers for me [he shows you 2 pages of written text]. By signing it, you agree that you will protect caravan at all cost, that you are carefull with your firearms not to shoot any other guard and that your reward can be lowered or refused to pay when you fail to comply any conditions. And some more stuff, which you can read by yourself.}
+{5010}{}{Yeah, yeah, just show me where to sign.}
+{5020}{}{What?! I am not signing that.}
+{6000}{}{Great, be here exactly at 10 A.M. We have to be punctual, so if you are not here, that's your loss, we are not waiting for anyone.}
+{6010}{}{OK, thanks.}
+{7000}{}{No problem. Next!}
+{8000}{}{Don't forget, 10 A.M. We are not waiting for anyone, so be punctual.}
+{9000}{}{No time for chit-chat. Do what you are paid for.}
+{10000}{}{Can we continue?}
+{10010}{}{Yes.}
+{10020}{}{No.}
+{11000}{}{Great job. Here are your caps [he gives you 1000 caps]. I will be glad if I see you again for another job.}
+{11010}{}{Thanks. [take the caps]}
+{11020}{}{Oh, no, no, I don't need your caps. I am glad I could help.}
+{12000}{}{What do you want?@@We have job to do.@@Join us in Hub if you want.}
+

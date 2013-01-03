@@ -1,0 +1,194 @@
+#include "critter_action.fos"
+
+funcdef Critter@[] FindCrittersFunction(Critter&);
+class FindCritters : CrittersHolderAction 
+{
+	private FindCrittersFunction@ FindFunction;
+	private uint FindFlags;
+	private bool UseFunction;
+	private bool PickRandomFlag;
+
+	FindCritters(FindCrittersFunction@ findFunction)
+	{
+		@FindFunction = findFunction;
+		UseFunction = true;
+		PickRandomFlag = false;
+	}
+	
+	FindCritters(uint findFlags)
+	{
+		FindFlags = findFlags;
+		UseFunction = false;
+		PickRandomFlag = false;
+	}
+	
+	FindCritters@ PickRandom()
+	{
+		PickRandomFlag = true;
+		return @this;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		Info("Looking for critters...");
+		SetCritters(critter);
+		
+		if(HasValidCritters())
+		{
+			if(PickRandomFlag)
+			{
+				Critter@ critter = GetCritters()[Random(0, GetCritters().length() - 1)];
+				ClearCritters();
+				AddCritter(critter);
+			}
+
+			
+			Info("Found "+GetCritters().length()+" critters.");
+			Finish(critter);
+		}
+		else
+			StartNextSuperAction(critter);
+	}
+	
+	void SetCritters(Critter& critter)
+	{
+		Critter@[] foundCritters = UseFunction ? FindFunction(critter) : GetMapCritters(critter, FindFlags);
+		
+		ClearCritters();
+		for (uint i = 0; i < foundCritters.length(); i++)
+		{
+			if(Check(critter, foundCritters[i], null))
+				AddCritter(foundCritters[i]);
+		}
+	}
+	
+	string GetInfo() override {return "FindCritters";}
+}
+
+Critter@[] GetMapCritters(Critter& critter, uint flags)
+{
+	Critter@[] foundCritters;
+	Map@ map = critter.GetMap();
+	if(!valid(map))
+		return foundCritters;
+	
+	map.GetCritters(0, flags, foundCritters);
+	
+	return foundCritters;
+}
+
+Critter@[] ToJail(Critter& critter)
+{
+	Critter@[] critters = GetMapCritters(critter, FIND_KO_AND_DEAD);
+	if(critters.length() == 0)
+		return critters;
+	for (int i = int(critters.length()) - 1; i >= 0; i--)
+		if(critters[i].Timeout[TO_JAIL] <= 0 || critters[i].Param[JAILED] != 0)
+			critters.removeAt(i);
+	return critters;
+}
+
+Critter@[] FromJail(Critter& critter)
+{
+	Critter@[] critters = GetMapCritters(critter, FIND_LIFE);
+	if(critters.length() == 0)
+		return critters;
+	for (int i = int(critters.length()) - 1; i >= 0; i--)
+		if(critters[i].Timeout[TO_JAIL] > 0 || critters[i].Param[JAILED] == 0)
+			critters.removeAt(i);
+	return critters;
+}
+
+Critter@[] LifePlayers(Critter& critter)
+{
+	return GetMapCritters(critter, FIND_LIFE | FIND_ONLY_PLAYERS);
+}
+
+Critter@[] Life(Critter& critter)
+{
+	return GetMapCritters(critter, FIND_LIFE);
+}
+
+Critter@[] ClosestPlayer(Critter& critter)
+{
+	Critter@[] players = LifePlayers(critter);
+	uint distance;
+	uint closestDistance = 0;
+	Critter@ closestPlayer;
+	for (uint i = 0; i < players.length(); i++)
+	{
+		Critter@ player = players[i];
+		distance = GetDistantion(critter.HexX, critter.HexY, player.HexX, player.HexY);
+		if(closestPlayer is null || distance < closestDistance)
+		{
+			closestDistance = distance;
+			@closestPlayer = player;
+		}
+	}
+	
+	Critter@[] closest;
+	if(valid(closestPlayer))
+		closest.insertLast(closestPlayer);
+	return closest;
+}
+
+Critter@[] WeakestPlayer(Critter& critter)
+{
+	Critter@[] players = LifePlayers(critter);
+	uint hp;
+	uint lowestHP = 0;
+	Critter@ lowestHPPlayer;
+	for (uint i = 0; i < players.length(); i++)
+	{
+		Critter@ player = players[i];
+		hp = player.Stat[ST_CURRENT_HP];
+		if(lowestHPPlayer is null || hp < lowestHP)
+		{
+			lowestHP = hp;
+			@lowestHPPlayer = player;
+		}
+	}
+	
+	Critter@[] weakest;
+	if(valid(lowestHPPlayer))
+		weakest.insertLast(lowestHPPlayer);
+	return weakest;
+}
+
+class FindItems : ItemsHolderAction
+{
+	private uint16[] SearchItemPids;
+	
+	FindItems(uint16[] searchItemPids)
+	{
+		SearchItemPids = searchItemPids;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		SetItems(critter);
+		if(!HasValidItems())
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		Finish(critter);
+	}
+	
+	private void SetItems(Critter& critter)
+	{
+		ClearItems();
+		
+		Map@ map = critter.GetMap();
+		if(!valid(map))
+			return;
+			
+		Item@[] items;
+		for (uint i = 0; i < SearchItemPids.length(); i++)
+			map.GetItems(SearchItemPids[i], items);
+			
+		for (uint i = 0; i < items.length(); i++)
+			if(critter.IsSee(items[i]))
+				AddItem(items[i]);
+	}
+}

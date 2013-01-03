@@ -1,0 +1,256 @@
+// Author: cvet, heX, Tab10id
+#include "_macros.fos"
+#include "stdlib_h.fos"
+#include "_msgstr.fos"
+
+import bool AddAttackPlane( Critter& npc, uint priority, Critter& target ) from "npc_planes";
+import bool AddAttackPlane( Critter& npc, uint priority, Critter& target, bool run ) from "npc_planes";
+
+#define AI_PLANE_ATTACK_PRIORITY_MARK    ( AI_PLANE_ATTACK_PRIORITY + 1 )
+
+#define BLOCK_LEVEL_MESSAGE_WARNING	(5)
+#define BLOCK_LEVEL_GUARD_WARNING	(10)
+#define BLOCK_LEVEL_ATTACK			(13)
+#define BLOCK_LEVEL_MAX				(BLOCK_LEVEL_ATTACK)
+#define BLOCK_GUARD_SEARCH_RADIUS	(20)
+#define BLOCK_GUARD_NPC_ROLE		(2)
+#define _IsBlocking			# (blocker) (blocker.Stat[ST_VAR0] == 1)
+#define _SetBlocking		# (blocker) blocker.StatBase[ST_VAR0] = 1
+#define _SetNotBlocking		# (blocker) blocker.StatBase[ST_VAR0] = 0
+#define _GetBlockLevel		# (blocker) blocker.Stat[ST_VAR1]
+#define _IncreaseBlockLevel	# (blocker) (blocker.StatBase[ST_VAR1] = blocker.Stat[ST_VAR1] + (blocker.Stat[ST_VAR1] >= BLOCK_LEVEL_MAX ? 0 : 1))
+#define _DecreaseBlockLevel	# (blocker) blocker.StatBase[ST_VAR1] -= 1
+
+
+void t_Warn( Critter& player, Scenery& trigger, bool entered, uint8 dir, int npcRole )
+{
+    Warn( player, npcRole );
+}
+
+void t_Attack( Critter& player, Scenery& trigger, bool entered, uint8 dir, int npcRole )
+{
+    if( not player.IsPlayer() )
+        return;
+    Map@ map = player.GetMap();
+    uint count = map.GetNpcCount( npcRole, FIND_LIFE_AND_KO | FIND_ONLY_NPC );
+    for( uint i = 0; i < count; i++ )
+        AddAttackPlane( map.GetNpc( npcRole, FIND_LIFE_AND_KO | FIND_ONLY_NPC, i ), AI_PLANE_ATTACK_PRIORITY_MARK, player );
+}
+
+void t_AttackStop( Critter& player, Scenery& trigger, bool entered, uint8 dir, int npcRole )
+{
+    if( not player.IsPlayer() )
+        return;
+    Map@ map = player.GetMap();
+    uint count = map.GetNpcCount( npcRole, FIND_LIFE_AND_KO | FIND_ONLY_NPC );
+    NpcPlane@[] planes;
+    for( uint i = 0; i < count; i++ )
+    {
+        Critter@ npc = map.GetNpc( npcRole, FIND_LIFE_AND_KO | FIND_ONLY_NPC, i );
+        planes.resize( 0 );
+        uint     count = npc.GetPlanes( planes );
+        // проходимся по списку планов в поисках маркированного плана
+        for( uint j = 0; j < count; j++ )
+            if( ( planes[ j ].Attack_TargId == player.Id ) and
+                ( planes[ j ].Priority == AI_PLANE_ATTACK_PRIORITY_MARK ) )
+                if( npc.ErasePlane( j ) )
+                    npc.EraseEnemyFromStack( player.Id );
+    }
+}
+
+void t_Kill( Critter& player, Scenery& trigger, bool entered, uint8 dir, int type )
+{
+    Kill( player, type );
+}
+
+void t_Damage( Critter& player, Scenery& trigger, bool entered, uint8 dir, int dmg, int type )
+{
+    Damage( player, dmg, type, dir );
+}
+
+void t_DoorOpen( Critter& player, Scenery& trigger, bool entered, uint8 dir, int entireNum )
+{
+    DoorControl( player, entireNum, true );
+}
+
+void door_open( Critter& player, Scenery& trigger, bool entered, uint8 dir, int entireNum )
+{
+    t_DoorOpen( player, trigger, entered, dir, entireNum );
+}
+void t_DoorClose( Critter& player, Scenery& trigger, bool entered, uint8 dir, int entireNum )
+{
+    DoorControl( player, entireNum, false );
+}
+
+void door_close( Critter& player, Scenery& trigger, bool entered, uint8 dir, int entireNum )
+{
+    t_DoorClose( player, trigger, entered, dir, entireNum );
+}
+
+import void ShowElevator( Critter& player, uint8 elevatorType, uint[] mapPids, uint entireNum ) from "elevator";
+// лифт, всего существуют 8 типов лифтов. Максимум - 4 этажа
+// для четырехэтажного отдельный триггер
+// 1ый параметр - номер гекса, на который попадет игрок
+// остальные параметры - коды прототипов карт
+void t_Elevator4( Critter& player, Scenery& trigger, bool entered, uint8 dir, int entireExit, int map1Pid, int map2Pid, int map3Pid, int map4Pid )
+{
+    uint[] pids = { uint( map1Pid ), uint( map2Pid ), uint( map3Pid ), uint( map4Pid ) };
+    ShowElevator( player, 0, pids, entireExit );
+}
+// лифт, в котором меньше чем 4 этажа
+// 1ый параметр - номер гекса, на который попадет игрок
+// 2о1 параметр - типа лифта (от 1 до 8. см. _defines.fos, секцию // Elevators)
+// 3ий..5ый параметры - коды протоипов карт
+void t_Elevator( Critter& player, Scenery& trigger, bool entered, uint8 dir, int entireExit, int elevatorType, int map1Pid, int map2Pid, int map3Pid )
+{
+    if( entered )
+    {
+        if( player.Timeout[ TO_TRANSFER ] > 0 )
+            player.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_TIMEOUT_TRANSFER_WAIT );
+        else if( player.Timeout[ TO_BATTLE ] > 0 )
+            player.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_TIMEOUT_BATTLE_WAIT );
+        else
+        {
+            uint[] pids = { uint( map1Pid ) };
+            if( map2Pid > 0 )
+                pids.insertLast( uint( map2Pid ) );
+            if( map3Pid > 0 )
+                pids.insertLast( uint( map3Pid ) );
+            ShowElevator( player, elevatorType, pids, entireExit );
+        }
+    }
+}
+
+// Диалог с НПЦ рядом с триггером,  с определенной ролью. 1 параметр - роль НПЦ.
+void t_DialogNpc( Critter& player, Scenery& trigger, bool entered, uint8 dir, int npcRole )
+{
+    player.Wait( 0 );
+    DialogNpc( player, npcRole );
+}
+
+void t_WayBlocked(Critter& blocker, Scenery& trigger, bool entered, uint8 dir)
+{
+	if(entered)
+	{
+		_SetBlocking(blocker);
+		CreateTimeEvent(__FullSecond + REAL_SECOND(1), "e_WayBlocked", blocker.Id, false);
+	}
+	else
+	{
+		_SetNotBlocking(blocker);
+		CreateTimeEvent(__FullSecond + REAL_SECOND(1), "e_WayUnblocked", blocker.Id, false);
+	}
+}
+
+uint e_WayBlocked(uint[]@ values)
+{
+	Critter@ blocker = GetCritter(values[0]);
+	
+	if(!valid(blocker))
+		return 0;
+	if(!_IsBlocking(blocker))
+		return 0;
+
+	_IncreaseBlockLevel(blocker);
+	
+	if(_GetBlockLevel(blocker) == BLOCK_LEVEL_ATTACK)
+		AttackBlocker(blocker);
+	else if(_GetBlockLevel(blocker) >= BLOCK_LEVEL_GUARD_WARNING)
+		GuardWarnBlocker(blocker);
+	else if(_GetBlockLevel(blocker) >= BLOCK_LEVEL_MESSAGE_WARNING)
+		MessageWarnBlocker(blocker);
+		
+	return REAL_SECOND(1);
+}
+
+void AttackBlocker(Critter@ blocker)
+{
+	Critter@[] guards = GetBlockGuards(blocker);
+	for (uint i = 0; i < guards.length(); i++)
+	{
+		AddAttackPlane(guards[i], 0, blocker, true);
+	}
+}
+
+void MessageWarnBlocker(Critter@ blocker)
+{
+	blocker.SayMsg(SAY_NETMSG, TEXTMSG_TEXT,  70100);
+}
+
+void GuardWarnBlocker(Critter@ blocker)
+{
+	Critter@[] guards = GetBlockGuards(blocker);
+	string lexems = "$name" + (blocker.IsPlayer() 
+		? GetPlayerName(blocker.Id) 
+		: "@msg DLG " + STR_NPC_NAME(blocker.Stat[ST_DIALOG_ID], blocker.GetProtoId()) + "@");
+	for (uint i = 0; i < guards.length(); i++)
+	{
+		guards[i].SayMsg(SAY_SHOUT, TEXTMSG_TEXT, 70101, lexems);
+	}
+}
+
+Critter@[] GetBlockGuards(Critter@ blocker)
+{
+	Critter@[] critters;
+	Map@ map = blocker.GetMap();
+	if(!valid(map))
+		return critters;
+	
+	map.GetCrittersHex(blocker.HexX, blocker.HexY, BLOCK_GUARD_SEARCH_RADIUS, FIND_ALL | FIND_ONLY_NPC, critters);
+	
+	Critter@[] guards;
+	for (uint i = 0; i < critters.length(); i++)
+	{
+		if(critters[i].Stat[ST_NPC_ROLE] == BLOCK_GUARD_NPC_ROLE)
+			guards.insertLast(critters[i]);
+	}
+	return guards;
+}
+
+uint e_WayUnblocked(uint[]@ values)
+{
+	Critter@ blocker = GetCritter(values[0]);
+	
+	if(!valid(blocker))
+		return 0;
+	if(_IsBlocking(blocker) || _GetBlockLevel(blocker) == 0)
+		return 0;
+	
+	_DecreaseBlockLevel(blocker);
+	
+	if(_GetBlockLevel(blocker) <= BLOCK_LEVEL_MESSAGE_WARNING)
+		StopAttackingBlocker(blocker);
+	
+	return _GetBlockLevel(blocker) == 0 ? 0 : REAL_SECOND(1);
+}
+
+void StopAttackingBlocker(Critter@ blocker)
+{
+	Critter@[] guards = GetBlockGuards(blocker);
+	
+	for (uint i = 0; i < guards.length(); i++)
+	{
+		Critter@ guard = guards[i];
+		NpcPlane@[] planes;
+		uint count = guard.GetPlanes(planes);
+		uint erased = 0;
+		for (uint j = 0; j < count; j++)
+		{
+			NpcPlane@ plane = planes[j];
+			if(!valid(plane) || plane.Type != AI_PLANE_ATTACK || plane.Attack_TargId != blocker.Id)
+				continue;
+			if(guard.ErasePlane(j - erased))
+				erased++;
+			guard.SayMsg(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70102);
+		}
+	}
+}
+
+void t_GoBack( Critter& cr, Scenery& trigger, bool entered, uint8 dir, int npcRole )
+{
+	if(!cr.IsNpc() || cr.Stat[ST_NPC_ROLE] != npcRole || !entered)
+		return;
+
+	cr.DropPlanes();
+	cr.MoveToDir((dir + 3) % 6);
+}

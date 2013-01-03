@@ -1,0 +1,165 @@
+#include "_macros.fos"
+#include "_time.fos"
+#include "_math.fos"
+#include "_npc_roles.fos"
+#include "_teams.fos"
+
+#define MIN_KARMA				(-3000)
+#define MAX_KARMA				(3000)
+#define KARMA_GOOD_PERSON		(1000)
+#define KARMA_VERY_GOOD_PERSON	(2000)
+#define KARMA_BAD_PERSON		(-1500)
+#define KARMA_VERY_BAD_PERSON	(-2000)
+#define LEVEL_LOW				(10)
+#define LEVEL_MEDIUM			(20)
+#define MAX_DAILY_KARMA_GAIN	(100)
+#define DAILY_KARMA_GAIN_KEY	("daily_karma_gain")
+
+#define _GetKarmaGainLastTimeVar			#(karmaBoy) GetLocalVar(LVAR_karma_gain_last_time, karmaBoy.Id)
+#define _GetKarmaDailyGainVar				#(karmaBoy) GetLocalVar(LVAR_karma_daily_gain, karmaBoy.Id)
+#define _GetKarmaFirstAttackVar				#(attacker, attacked) GetUnicumVar(UVAR_karma_first_attack, attacker.Id, attacked.Id)
+#define _GetGroupLeader						#(critter) (critter.GetLeader() != null ? critter.GetLeader() : critter)
+#define _GetKarmaFirstAttackLocationVar		#(attacker, attacked) GetUnicumVar(UVAR_karma_first_attack_location, _GetGroupLeader(attacker).Id, _GetGroupLeader(_attacked).Id)
+
+class KarmaManager {
+
+	void ProcessAttack(Critter& attacker, Critter& attacked)
+	{
+		if(!attacker.IsPlayer())
+			return;
+			
+		if(attacked.IsNpc())
+			ProcessPlayerAttacksNPCs(attacker, attacked);
+		else if(attacked.IsPlayer())
+			ProcessPlayerAttacksPlayer(attacker, attacked);
+	}
+	
+	private void ProcessPlayerAttacksNPCs(Critter& attacker, Critter& attacked)
+	{
+		if(attacked.Stat[ST_NPC_ROLE] != 0)
+		{
+			switch(attacked.Stat[ST_NPC_ROLE])
+			{
+				case ROLE_ENCOUNTER_GUARD:
+				case ROLE_ENCOUNTER_HUMAN_GOOD:
+				case ROLE_ENCOUNTER_TRADER:
+					LoseKarma(attacker, 20);
+					break;
+				case ROLE_ENCOUNTER_HUMAN_EVIL:
+				case ROLE_ENCOUNTER_MOB:
+					GainKarma(attacker, 10);
+					break;
+			}
+		} 
+		else if(attacked.Stat[ST_TEAM_ID] != 0)
+		{
+			switch(attacked.Stat[ST_TEAM_ID])
+			{
+				case TEAM_Junktown:
+				case TEAM_Hub:
+					LoseKarma(attacker, 50);
+					break;
+			}
+		}
+	}
+	
+	private void ProcessPlayerAttacksPlayer(Critter& attacker, Critter& attacked)
+	{
+		if(!ProcessFirstAttack(attacker, attacked))
+		{
+			Info("Attacked critter attacked first. Skipping karma change for attacker.");
+			return;
+		}
+	}
+	
+	private bool ProcessFirstAttack(Critter& attacker, Critter& attacked)
+	{
+		//get first attack from attacked
+		GameVar@ firstAttack = _GetKarmaFirstAttackVar(attacked, attacker);
+		
+		if(firstAttack != 0)
+		{
+			Info("Attacked critter attacked first. Skipping karma change for attacker.");
+			return false;
+		}
+		
+		
+		
+		return true;
+	}
+		
+	void ProcessUseItemOnCritter(Critter& user, Item& item, Critter& target)
+	{
+	}
+	
+	void ProcessStealing(Critter& thief, Critter& victim, bool success)
+	{
+		uint victimLevel = victim.Stat[ST_LEVEL];
+		
+		if(victim.Stat[ST_KARMA] <= KARMA_BAD_PERSON)
+			GainKarma(thief, 20);
+		else
+		{
+			if(victimLevel <= LEVEL_LOW)
+				LoseKarma(thief, 25 + victim.Stat[ST_KARMA] / 100);
+			else if(victimLevel <= LEVEL_MEDIUM)
+				LoseKarma(thief, 15 + victim.Stat[ST_KARMA] / 100);
+			else
+				LoseKarma(thief, 10 + victim.Stat[ST_KARMA] / 100);			
+		}
+	}
+	
+	void ProcessHeal(Critter& healer, Critter& patient, int healPoints)
+	{
+		if(healPoints == 0 || patient.Stat[ST_LEVEL] > LEVEL_MEDIUM)
+			return;
+		GainKarma(healer, MAX(1, healPoints * 10 / patient.Stat[ST_MAX_LIFE]));
+	}
+	
+	void ProcessTreatInjury(Critter& doctor, Critter& patient, int treatedInjuries)
+	{
+		if(treatedInjuries == 0 || patient.Stat[ST_LEVEL] > LEVEL_MEDIUM)
+			return;
+		GainKarma(doctor, treatedInjuries * 20);
+	}
+	
+	void ProcessUseSkillOnCritter(Critter& user, int skill, Critter@ target)
+	{
+	}
+	
+	private void GainKarma(Critter& karmaBoy, uint karma)
+	{
+		if(karmaBoy.Stat[ST_KARMA] == MAX_KARMA)
+			return;
+		
+		GameVar@ dailyGain = _GetKarmaDailyGainVar(karmaBoy);
+		GameVar@ gainLastTime = _GetKarmaGainLastTimeVar(karmaBoy);
+		
+		//check if day has passed and reset
+		if(gainLastTime + REAL_DAY(1) < int(__FullSecond))
+			dailyGain = 0;
+
+		if(dailyGain >= MAX_DAILY_KARMA_GAIN)
+			return;
+		
+		if(dailyGain + karma > MAX_DAILY_KARMA_GAIN)
+			karma -=  dailyGain + karma - MAX_DAILY_KARMA_GAIN;
+		
+		karmaBoy.StatBase[ST_KARMA] = MIN(karmaBoy.Stat[ST_KARMA] + karma, MAX_KARMA);
+		dailyGain += karma;
+		gainLastTime = __FullSecond;
+	}
+	
+	private void LoseKarma(Critter& karmaBoy, uint karma)
+	{
+		if(karmaBoy.Stat[ST_KARMA] == MIN_KARMA)
+			return;
+			
+		karmaBoy.StatBase[ST_KARMA] = MAX(karmaBoy.Stat[ST_KARMA] - karma, MIN_KARMA);
+	}
+	
+	private void Info(string& message)
+	{
+		Log(message);
+	}
+}

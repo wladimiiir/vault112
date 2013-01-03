@@ -1,0 +1,119 @@
+#ifndef __MACROS__
+#define __MACROS__
+
+#include "_defines.fos"   // Generic constants
+#include "_math.fos"      // Math macros
+#include "_vars.fos"      // Game vars
+#include "_maps.fos"      // Maps and locations
+#include "_dialogs.fos"   // Dialogs
+#include "_itempid.fos"   // Items pids
+#include "_animation.fos" // Animations
+#include "_time.fos"      // Time
+
+// Pointer validation macro
+// Example: if(valid(ptr))... if(not valid(ptr))...
+#define valid                        # (ptr) ( @ptr != null )
+
+// Flags
+#define FLAG                         # ( x, flag )( ( ( x ) & ( flag ) ) != 0 )
+#define SETFLAG                      # ( x, flag )( x = ( x ) | ( flag ) )
+#define UNSETFLAG                    # ( x, flag )( x = ( ( x ) & ( ~( flag ) ) ) )
+
+// Move
+#define _NpcWalk                     # ( npc, hexX, hexY )npc.MoveToHex( hexX, hexY, 0xFF, false, 0 )
+#define _NpcRun                      # ( npc, hexX, hexY )npc.MoveToHex( hexX, hexY, 0xFF, true, 0 )
+
+// Items
+#define _CritCountItem               # ( cr, pid )cr.CountItem( pid )
+#define _CritAddItem                 # ( cr, pid, count )cr.AddItem( pid, count )
+#define _CritDeleteItem              # ( cr, pid, count )cr.DeleteItem( pid, count )
+#define _CritGetItem                 # ( cr, pid )cr.GetItem( pid, -1 )
+#define _CritGetItemHand             # (cr)             cr.GetItem( 0, SLOT_HAND1 )
+#define _CritGetItemHandExt          # (cr)             cr.GetItem( 0, SLOT_HAND2 )
+#define _CritGetItemArmor            # (cr)             cr.GetItem( 0, SLOT_ARMOR )
+#define _CritGetItemInv              # ( cr, pid )cr.GetItem( pid, SLOT_INV )
+#define _CritMoveItem                # ( cr, item, toSlot )cr.MoveItem( item.Id, item.GetCount(), toSlot )
+#define _CritDropItem                # ( cr, item )cr.MoveItem( item.Id, item.GetCount(), 0xFF )
+#define _CritDropItemCount           # ( cr, item, count )cr.MoveItem( item.Id, count, 0xFF )
+#define _CritChangeHand                                                                                                                  \
+    # ( cr )             do { Item@ item = cr.GetItem( 0, SLOT_HAND1 ); if( valid( item ) )                                              \
+                                  _CritMoveItem( cr, item, SLOT_HAND2 ); else { @item = cr.GetItem( 0, SLOT_HAND2 ); if( valid( item ) ) \
+                                                                                    _CritMoveItem( cr, item, SLOT_HAND1 ); } } while( false )
+#define _IncItem                     # ( item, count )item.SetCount( item.GetCount() + ( count ) )
+#define _SubItem                                                                      \
+    # ( item, count )     do { if( item.GetCount() > ( count ) )                      \
+                                   item.SetCount( item.GetCount() - ( count ) ); else \
+                                   DeleteItem( item ); } while( false )
+#define _CritCanDropItemsOnDead      # (cr)             ( cr.Mode[ MODE_NO_STEAL ] == 0 && cr.Mode[ MODE_NO_DROP ] == 0 )
+#define _ItemIsBroken                # (item)           ( item.IsDeteriorable() && FLAG( item.BrokenFlags, BI_BROKEN ) )
+#define _ItemIsHidden                # (item)           ( FLAG( item.Flags, ITEM_HIDDEN ) )
+#define _ItemSetHidden				 # (item)	( SETFLAG( item.Flags, ITEM_HIDDEN ) )
+#define _ItemUnsetHidden			 # (item)	( UNSETFLAG( item.Flags, ITEM_HIDDEN ) )
+#define _ItemIsNoLoot                # (item)           ( FLAG( item.Flags, ITEM_NO_LOOT ) )
+#define _ItemSetNoLoot				 # (item)	( SETFLAG( item.Flags, ITEM_NO_LOOT ) )
+#define _ItemUnsetNoLoot			 # (item)	( UNSETFLAG( item.Flags, ITEM_NO_LOOT ) )
+
+// Parameters
+#define _CritIsInjured               # (cr)          ( cr.Damage[ DAMAGE_EYE ] != 0 || cr.Damage[ DAMAGE_RIGHT_ARM ] != 0 || cr.Damage[ DAMAGE_LEFT_ARM ] != 0 || cr.Damage[ DAMAGE_RIGHT_LEG ] != 0 || cr.Damage[ DAMAGE_LEFT_LEG ] != 0 )
+#define _CritFingersDoorId           # (critterId)   ( 0x80000000 | ( critterId ) )
+#define _CritEyesDoorId              # (critterId)   ( 0x40000000 | ( critterId ) )
+#define _CritIsTagSkill              # ( cr, skillNum )( cr.TagSkill[ TAG_SKILL1 ] == int(skillNum) || cr.TagSkill[ TAG_SKILL2 ] == int(skillNum) || cr.TagSkill[ TAG_SKILL3 ] == int(skillNum) || cr.TagSkill[ TAG_SKILL4 ] == int(skillNum) )
+#define _CritIsFromEncounter		 # (cr)	(cr.Param[ENCOUNTER_CRITTER] > 0)
+#define _CritIsOffline				 # (cr)	(FLAG(cr.Flags, CRITTER_DISCONNECT))
+
+// Npc planes
+#define _NpcEraseFirstPlane          # (npc) npc.ErasePlane( -1, false )
+#define _NpcEraseAllPlanes           # (npc) npc.ErasePlane( -1, true )
+#define _NpcEraseFirstPlaneWalk      # (npc) npc.ErasePlane( AI_PLANE_WALK, false )
+#define _NpcEraseAllPlanesWalk       # (npc) npc.ErasePlane( AI_PLANE_WALK, true )
+#define _NpcEraseFirstPlaneAttack    # (npc) npc.ErasePlane( AI_PLANE_ATTACK, false )
+#define _NpcEraseAllPlanesAttack     # (npc) npc.ErasePlane( AI_PLANE_ATTACK, true )
+#define _NpcEraseFirstPlanePick      # (npc) npc.ErasePlane( AI_PLANE_PICK, false )
+#define _NpcEraseAllPlanesPick       # (npc) npc.ErasePlane( AI_PLANE_PICK, true )
+
+// Weapon
+#define _WeaponIsHtHAttack           # ( proto, use )( _WeaponSkill( proto, use ) == SK_UNARMED || _WeaponSkill( proto, use ) == SK_MELEE_WEAPONS )
+#define _WeaponIsGunAttack           # ( proto, use )( _WeaponSkill( proto, use ) == SK_SMALL_GUNS || _WeaponSkill( proto, use ) == SK_BIG_GUNS || _WeaponSkill( proto, use ) == SK_ENERGY_WEAPONS )
+#define _WeaponIsRangedAttack        # ( proto, use )( _WeaponIsGunAttack( weap, use ) || _WeaponSkill( proto, use ) == SK_THROWING )
+#define _WeaponIsPrimaryAviable      # (proto) ( ( proto.Weapon_ActiveUses & 1 ) != 0 )
+#define _WeaponIsSecondaryAviable    # (proto) ( ( proto.Weapon_ActiveUses & 2 ) != 0 )
+#define _WeaponIsThirdAviable        # (proto) ( ( proto.Weapon_ActiveUses & 4 ) != 0 )
+#define _WeaponSkill                 # ( proto, use )( ( use ) == 0 ? proto.Weapon_Skill_0  : ( ( use ) == 1 ? proto.Weapon_Skill_1  : ( ( use ) == 2 ? proto.Weapon_Skill_2  : 0 ) ) )
+#define _WeaponDmgType               # ( proto, use )( ( use ) == 0 ? proto.Weapon_DmgType_0 : ( ( use ) == 1 ? proto.Weapon_DmgType_1 : ( ( use ) == 2 ? proto.Weapon_DmgType_2 : 0 ) ) )
+#define _WeaponAnim2                 # ( proto, use )( ( use ) == 0 ? proto.Weapon_Anim2_0  : ( ( use ) == 1 ? proto.Weapon_Anim2_1  : ( ( use ) == 2 ? proto.Weapon_Anim2_2  : 0 ) ) )
+#define _WeaponDmgMin                # ( proto, use )( ( use ) == 0 ? proto.Weapon_DmgMin_0 : ( ( use ) == 1 ? proto.Weapon_DmgMin_1 : ( ( use ) == 2 ? proto.Weapon_DmgMin_2 : 0 ) ) )
+#define _WeaponDmgMax                # ( proto, use )( ( use ) == 0 ? proto.Weapon_DmgMax_0 : ( ( use ) == 1 ? proto.Weapon_DmgMax_1 : ( ( use ) == 2 ? proto.Weapon_DmgMax_2 : 0 ) ) )
+#define _WeaponMaxDist               # ( proto, use )( ( use ) == 0 ? proto.Weapon_MaxDist_0 : ( ( use ) == 1 ? proto.Weapon_MaxDist_1 : ( ( use ) == 2 ? proto.Weapon_MaxDist_2 : 0 ) ) )
+#define _WeaponEffect                # ( proto, use )( ( use ) == 0 ? proto.Weapon_Effect_0 : ( ( use ) == 1 ? proto.Weapon_Effect_1 : ( ( use ) == 2 ? proto.Weapon_Effect_2 : 0 ) ) )
+#define _WeaponRound                 # ( proto, use )( ( use ) == 0 ? proto.Weapon_Round_0  : ( ( use ) == 1 ? proto.Weapon_Round_1  : ( ( use ) == 2 ? proto.Weapon_Round_2  : 0 ) ) )
+#define _WeaponApCost                # ( proto, use )( ( use ) == 0 ? proto.Weapon_ApCost_0 : ( ( use ) == 1 ? proto.Weapon_ApCost_1 : ( ( use ) == 2 ? proto.Weapon_ApCost_2 : 0 ) ) )
+#define _WeaponSoundId               # ( proto, use )( ( use ) == 0 ? proto.Weapon_SoundId_0 : ( ( use ) == 1 ? proto.Weapon_SoundId_1 : ( ( use ) == 2 ? proto.Weapon_SoundId_2 : 0 ) ) )
+#define _WeaponRemove                # ( proto, use )( ( use ) == 0 ? proto.Weapon_Remove_0 : ( ( use ) == 1 ? proto.Weapon_Remove_1 : ( ( use ) == 2 ? proto.Weapon_Remove_2 : false ) ) )
+#define _WeaponAim                   # ( proto, use )( ( use ) == 0 ? proto.Weapon_Aim_0    : ( ( use ) == 1 ? proto.Weapon_Aim_1    : ( ( use ) == 2 ? proto.Weapon_Aim_2    : false ) ) )
+#define _WeaponModeUse               # (weaponMode) ( ( weaponMode ) & 0xF )
+#define _WeaponModeAim               # (weaponMode) ( ( ( weaponMode ) >> 4 ) & 0xF )
+#define _WeaponModeMake              # ( use, aim )( ( ( ( aim ) << 4 ) | ( ( use ) & 0xF ) ) & 0xFF )
+#define _WeaponSubType				 # (proto, use) (_WeaponSkill(proto, use)  == SK_SMALL_GUNS || _WeaponSkill(proto, use) == SK_BIG_GUNS || _WeaponSkill(proto, use) == SK_ENERGY_WEAPONS ) ? 4 : ( ( _WeaponSkill(proto, use) == SK_THROWING ) ? 3 : ( _WeaponSkill(proto, use) == SK_MELEE_WEAPONS ) ? 2 : 1)
+
+// Locker
+#define _LockerIsOpen                # (door) ( ( door.LockerCondition & LOCKER_ISOPEN ) != 0 )
+#define _LockerIsClose               # (door) ( not _LockerIsOpen( door ) )
+
+// Car
+#define _CarIsBioEngine              # (car) ( ( car.Val0 & CAR_BIO_ENGINE ) != 0 )
+#define _CarSetBioEngine             # (car) car.Val0 |= CAR_BIO_ENGINE
+#define _CarIsNoLockpick             # (car) ( ( car.Val0 & CAR_NO_LOCKPICK ) != 0 )
+#define _CarSetNoLockpick            # (car) car.Val0 |= CAR_NO_LOCKPICK
+
+// Light
+#define _LightIsIgnoreDir            # ( lightItem, dir )( FLAG( lightItem.LightFlags, 1 << CLAMP( dir, 0, 5 ) ) )
+#define _LightSetIgnoreDir           # ( lightItem, dir )( SETFLAG( lightItem.LightFlags, 1 << CLAMP( dir, 0, 5 ) ) )
+#define _LightUnsetIgnoreDir         # (lightItem)     ( UNSETFLAG( lightItem.LightFlags, 1 << CLAMP( dir, 0, 5 ) ) )
+#define _LightIsGlobal               # (lightItem)     ( FLAG( lightItem.LightFlags, 1 << 6 ) )
+#define _LightSetGlobal              # (lightItem)     ( SETFLAG( lightItem.LightFlags, 1 << 6 ) )
+#define _LightUnsetGlobal            # (lightItem)     ( UNSETFLAG( lightItem.LightFlags, 1 << 6 ) )
+#define _LightIsInverse              # (lightItem)     ( FLAG( lightItem.LightFlags, 1 << 7 ) )
+#define _LightSetInverse             # (lightItem)     ( SETFLAG( lightItem.LightFlags, 1 << 7 ) )
+#define _LightUnsetInverse           # (lightItem)     ( UNSETFLAG( lightItem.LightFlags, 1 << 7 ) )
+
+#endif // __MACROS__

@@ -1,0 +1,50 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 1 #
+2 1010 @
+2 2000 None 0 #
+65506 2010 D _script shopkeeper@d_IsNotSupplier 0  D _script shopkeeper@d_HasNoOldItems 0  #
+6 2020 D _script shopkeeper@d_HasOldItems 0  #
+3 2030 R _script shopkeeper@r_SetSupplier 1 7 #
+65506 2040 D _script shopkeeper@d_IsSupplier 0  #
+0 2050 D _script shopkeeper@d_IsSupplier 0  R _script shopkeeper@r_SetupItemCosts 0  #
+4 2060 D _script shopkeeper@d_IsSupplier 0  #
+0 2070 D _script shopkeeper@d_IsNotSupplier 0  D or D _script shopkeeper@d_IsSupplierForMoreThanDays 1 3 #
+5 2080 D _script shopkeeper@d_IsSupplierForLessThanDays 1 3 #
+2 2090 D _script shopkeeper@d_IsSupplierForLessThanDays 1 3 R _script shopkeeper@r_AddSupplyDays 1 7 @
+3 3000 None 0 @
+4 4000 shopkeeper@dlg_SetDaysLeft 0 @
+5 5000 None 0 @
+6 6000 None 0 #
+65506 6010 #
+0 6020 &
+
+[engl]
+{100}{}{Shopkeeper}
+{200}{}{You see a shopkeeper.}
+{210}{}{Shopkeeper, who is here to be hired by someone to sell his items.}
+{1000}{}{Predialogue installations}
+{1010}{}{-}
+{2000}{}{What do you want?}
+{2010}{}{Trade.}
+{2020}{}{Trade.}
+{2030}{}{[you are staring right into his eyes] I am your master, now.}
+{2040}{}{I want to give you some items.}
+{2050}{}{I want to change prices.}
+{2060}{}{How many days do I have left?}
+{2070}{}{Nothing, really.}
+{2080}{}{Nothing, really.}
+{2090}{}{I want to pay you for next 7 days.}
+{3000}{}{Yes, master.}
+{4000}{}{Let me see, I have it somewhere here [he checks his papers]. Aaah, here is it. You still have the shop for @lex daysLeft@ days.}
+{5000}{}{Ok, but our contract expires in 3 days, so don't forget to pay.}
+{6000}{}{OK, but take your stuff you left here, first.}
+{6010}{}{Uh, OK.}
+{6020}{}{Wait, I come back later.}
+

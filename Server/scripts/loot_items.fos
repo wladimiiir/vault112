@@ -1,0 +1,54 @@
+class LootItem {
+	uint16 ProtoId; //protoId of item
+	float Chance; //chance for item (in %)
+	private uint16 MinCount; //min count
+	private uint16 MaxCount; //max count
+	
+	LootItem(uint16 protoId, double chance, uint16 minCount, uint16 maxCount)
+	{
+		ProtoId = protoId;
+		Chance = chance;
+		MinCount = minCount;
+		MaxCount = maxCount;
+	}
+	
+	bool IsChosen()
+	{
+		float randomChance = float(Random(1, 10000)) / 100.0f;
+		return randomChance <= Chance;
+	}
+	
+	uint16 GetCount()
+	{
+		return Random(MinCount, MaxCount);
+	}
+}
+
+class LootDefinition {
+	LootItem@[] LootItems;
+	
+	LootDefinition@ AddItem(uint16 itemPid, float chance, uint16 minCount, uint16 maxCount)
+	{
+		LootItems.insertLast(LootItem(itemPid, chance, minCount, maxCount));
+		return this;
+	}
+	
+	LootDefinition@ AddItem(uint16 itemPid, uint16 count)
+	{
+		LootItems.insertLast(LootItem(itemPid, 100, count, count));
+		return this;
+	}
+	
+	void AddItems(Critter& critter)
+	{
+		for (uint i = 0; i < LootItems.length(); i++)
+		{
+			LootItem@ lootItem = LootItems[i];
+			if(lootItem.IsChosen())
+			{
+				//Log("Adding item with proto "+lootItem.ProtoId+" to loot.");
+				critter.AddItem(lootItem.ProtoId, lootItem.GetCount());
+			}
+		}
+	}
+}

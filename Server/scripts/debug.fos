@@ -1,0 +1,547 @@
+// Debug functions
+
+#include "_macros.fos"
+
+
+// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Trinitro
+// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#define FIND_DIST    ( 16 )
+void ViewPlanes( Critter& player, int param0, int param1, int param2 )
+{
+    if( param0 == 0 )
+        param0 = 20;
+
+    Map@ map = player.GetMap();
+    if( not valid( map ) )
+        return;
+
+    Critter@[] critters;
+    uint count = 0;
+    if( param1 == 0 )
+        count = map.GetCrittersHex( player.HexX, player.HexY, param0, FIND_ALL | FIND_ONLY_NPC, critters );
+    else
+    {
+        Critter@ cr = GetCritter( param1 );
+        if( not valid( cr ) )
+            return;
+        critters.resize( 1 );
+        @critters[ 0 ] = cr;
+    }
+
+    for( uint i = 0; i < count; i++ )
+    {
+        NpcPlane@[] p;
+        uint pcount = critters[ i ].GetPlanes( p );
+        for( uint j = 0; j < pcount; j++ )
+        {
+            uint[] param = { critters[ i ].Id, p[ j ].Type, p[ j ].Priority };
+            switch( p[ j ].Type )
+            {
+            case AI_PLANE_MISC:
+                param.resize( 5 );
+                param[ 3 ] = p[ j ].Misc_WaitSecond;
+                param[ 4 ] = p[ j ].Misc_ScriptId;
+                break;
+            case AI_PLANE_ATTACK:
+                param.resize( 5 );
+                param[ 3 ] = p[ j ].Attack_TargId;
+                param[ 4 ] = p[ j ].Attack_MinHp;
+                break;
+            case AI_PLANE_WALK:
+                param.resize( 8 );
+                param[ 3 ] = p[ j ].Walk_HexX;
+                param[ 4 ] = p[ j ].Walk_HexY;
+                param[ 5 ] = p[ j ].Walk_Dir;
+                if( p[ j ].Run )
+                    param[ 6 ] = 1;
+                else
+                    param[ 6 ] = 0;
+                param[ 7 ] = p[ j ].Walk_Cut;
+                break;
+            case AI_PLANE_PICK:
+                param.resize( 6 );
+                param[ 3 ] = p[ j ].Pick_HexX;
+                param[ 4 ] = p[ j ].Pick_HexY;
+                param[ 5 ] = p[ j ].Pick_Pid;
+                break;
+            }
+            CreateTimeEvent( __FullSecond + 60 + j, "e_ViewPlanes", param, false );
+        }
+    }
+}
+
+uint e_ViewPlanes( uint[] @ values )
+{
+    Critter@ crit = GetCritter( values[ 0 ] );
+    if( not valid( crit ) )
+        return 0;
+
+    string msg = "error";
+    switch( values[ 1 ] )
+    {
+    case AI_PLANE_MISC:
+        msg = "<<MISC>> Prior=" + values[ 2 ];
+        msg += " WaitMinute=" + values[ 3 ] + " ScriptId=" + values[ 4 ];
+        break;
+    case AI_PLANE_ATTACK:
+        msg = "<<ATTACK>> Prior=" + values[ 2 ];
+        msg += " TargId=" + values[ 3 ] + " MinHp=" + values[ 4 ];
+        break;
+    case AI_PLANE_WALK:
+        msg = "<<WALK>> Prior=" + values[ 2 ];
+        msg += " HexX=" + values[ 3 ] + " HexY=" + values[ 4 ] + " Dir=" + values[ 5 ];
+        msg += " Run=" + values[ 6 ] + " Cut=" + values[ 7 ];
+        break;
+    case AI_PLANE_PICK:
+        msg = "<<PICK>> Prior=" + values[ 2 ];
+        msg += " HexX=" + values[ 3 ] + " HexY=" + values[ 4 ] + " Pid=" + values[ 5 ];
+        break;
+    }
+
+    crit.Say( SAY_NORM_ON_HEAD, msg );
+    return 0;
+}
+
+// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// heX
+// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import void InjureCritter( Critter& cr, uint dmg, uint dmgType, uint8 dir, uint attackerId ) from "combat";
+
+#define def    # ( X, DEF )( X == 0 ? DEF : X )
+
+void lvl( Critter& player, int param0, int param1, int param2 )
+{
+    Critter@[] critters;
+    uint count = player.GetMap().GetCrittersHex( player.HexX, player.HexY, FIND_DIST, FIND_LIFE | FIND_ALL, critters );
+    for( uint i = 0; i < count; i++ )
+        critters[ i ].Say( SAY_NORM_ON_HEAD, "" + ( critters[ i ].Stat[ ST_LEVEL ] ) );
+}
+
+void team( Critter& player, int param0, int param1, int param2 )
+{
+    Critter@[] critters;
+    uint count = player.GetMap().GetCrittersHex( player.HexX, player.HexY, FIND_DIST, FIND_LIFE | FIND_ALL, critters );
+    for( uint i = 0; i < count; i++ )
+        critters[ i ].Say( SAY_NORM_ON_HEAD, "" + ( critters[ i ].Stat[ ST_TEAM_ID ] ) );
+}
+
+void role( Critter& player, int param0, int param1, int param2 )
+{
+    Critter@[] critters;
+    uint count = player.GetMap().GetCrittersHex( player.HexX, player.HexY, FIND_DIST, FIND_LIFE | FIND_ALL, critters );
+    for( uint i = 0; i < count; i++ )
+        critters[ i ].Say( SAY_NORM_ON_HEAD, "" + ( critters[ i ].Stat[ ST_NPC_ROLE ] ) );
+}
+
+void info( Critter& player, int param0, int param1, int param2 )
+{
+    Critter@[] critters;
+    uint count = player.GetMap().GetCrittersHex( player.HexX, player.HexY, FIND_DIST, FIND_LIFE | FIND_ALL, critters );
+    for( uint i = 0; i < count; i++ )
+        critters[ i ].Say( SAY_NORM_ON_HEAD, "" + ( critters[ i ].Stat[ param0 ] ) );
+}
+
+void hp( Critter& player, int param0, int param1, int param2 )
+{
+    Critter@[] critters;
+    uint count = player.GetMap().GetCrittersHex( player.HexX, player.HexY, FIND_DIST, FIND_LIFE | FIND_ALL, critters );
+    for( uint i = 0; i < count; i++ )
+        critters[ i ].Say( SAY_NORM_ON_HEAD, "" + ( critters[ i ].Stat[ ST_CURRENT_HP ] ) + "/" + "" + ( critters[ i ].Stat[ ST_MAX_LIFE ] ) );
+}
+
+// plan count
+void planc( Critter& player, int param0, int param1, int param2 )
+{
+    Critter@[] critters;
+    uint count = player.GetMap().GetCrittersHex( player.HexX, player.HexY, FIND_DIST, FIND_LIFE | FIND_ALL, critters );
+    for( uint i = 0; i < count; i++ )
+        critters[ i ].Say( SAY_NORM_ON_HEAD, "" + ( critters[ i ].GetPlanes( null ) ) );
+}
+
+// show plans list
+void plans( Critter& player, int param0, int param1, int param2 )
+{
+    NpcPlane@[] planes;
+    string str;
+    Critter@[] critters;
+    uint   count = player.GetMap().GetCrittersHex( player.HexX, player.HexY, FIND_DIST, FIND_LIFE | FIND_ALL, critters );
+    for( uint i = 0; i < count; i++ )
+    {
+        str = "";
+        uint count = critters[ i ].GetPlanes( planes );
+        for( uint j = 0; j < count; j++ )
+        {
+            switch( planes[ j ].Type )
+            {
+            case AI_PLANE_MISC:
+                str = str + "M ";
+                break;
+            case AI_PLANE_ATTACK:
+                str = str + "A ";
+                break;
+            case AI_PLANE_WALK:
+                str = str + "W ";
+                break;
+            case AI_PLANE_PICK:
+                str = str + "P ";
+                break;
+            case AI_PLANE_PATROL:
+                str = str + "P ";
+                break;
+            case AI_PLANE_COURIER:
+                str = str + "C ";
+                break;
+            }
+        }
+        critters[ i ].Say( SAY_NORM_ON_HEAD, str );
+    }
+}
+
+// player level info
+void lvli( Critter& player, int param0, int param1, int param2 )
+{
+    Critter@[] critters;
+    uint count = player.GetMap().GetCrittersHex( player.HexX, player.HexY, FIND_DIST * 2, FIND_LIFE | FIND_ONLY_PLAYERS, critters );
+    for( uint i = 0; i < count; i++ )
+        player.Say( SAY_NETMSG, GetPlayerName( critters[ i ].Id ) + ": " + "" + ( critters[ i ].Stat[ ST_LEVEL ] ) );
+}
+
+void dmg( Critter& player, int param0, int param1, int param2 )
+{
+    Critter@ target = GetCritter( param0 );
+    if( not valid( target ) )
+        return;
+    InjureCritter( target, param1, param2, 0, player.Id );
+}
+
+void kill( Critter& player, int param0, int param1, int param2 )
+{
+    Critter@ target = GetCritter( param0 );
+    if( not valid( target ) )
+        return;
+    target.Say( SAY_NETMSG, "Кара небесная поразила вас!" );
+    target.ToDead( def( param1, ANIM2_DEAD_PULSE_DUST ), player );
+    // target.SetTimeout(TO_REPLICATION, 3);
+}
+
+void body( Critter& player, int param0, int param1, int param2 )
+{
+    Critter@ target = GetCritter( def( param0, player.Id ) );
+    if( not valid( target ) )
+        return;
+    target.ChangeCrType( param1 );
+}
+
+void anim( Critter& player, int param0, int param1, int param2 )
+{
+    Critter@ target = GetCritter( def( param0, player.Id ) );
+    if( not valid( target ) )
+        return;
+    target.Animate( param1, param2, null, true, true );
+}
+
+void testmap( Critter& player, int param0, int param1, int param2 )
+{
+    Critter@[] groups;
+    groups.insertLast( @player );
+    uint      locid = CreateLocation(
+        def( param1, 400 ), player.WorldX, player.WorldY, groups );
+    Location@ loc = GetLocation( locid );
+    // if(not valid(loc)) GetMapByPid(mapProtoId, skipCount);
+    if( not valid( loc ) )
+    {
+        player.Say( SAY_NETMSG, "Location not found" );
+        return;
+    }
+    Map@ map;
+    if( param0 != 0 )
+        @map = loc.GetMap( param0 );
+    else
+        @map = loc.GetMapByIndex( 0 );
+    if( not valid( map ) )
+        return;
+    player.TransitToMap( map.Id, 0 );
+}
+
+// Come To Daddy
+void ctd( Critter& player, int param0, int param1, int param2 )
+{
+    Critter@ target = GetCritter( param0 );
+    if( not valid( target ) )
+        return;
+    Map@ map = player.GetMap();
+    if( not valid( map ) )
+        return;
+    if( not map.IsHexPassed( player.HexX + 1, player.HexY ) )
+        return;
+    target.TransitToMap( map.Id, player.HexX + 1, player.HexY, 0 );
+}
+
+void god( Critter& player, int, int, int )
+{
+    for( uint i = ST_STRENGTH; i <= ST_LUCK; i++ )
+        player.StatBase[ i ] = 10;
+    for( uint i = ST_NORMAL_ABSORB; i <= ST_EXPLODE_ABSORB; i++ )
+        player.StatBase[ i ] = 100;
+    for( uint i = ST_NORMAL_RESIST; i <= ST_POISON_RESISTANCE; i++ )
+        player.StatBase[ i ] = 100;
+    for( uint i = SK_SMALL_GUNS; i <= SK_OUTDOORSMAN; i++ )
+        player.SkillBase[ i ] = 300;
+    player.StatBase[ ST_MELEE_DAMAGE ] = 999;
+    player.StatBase[ ST_ARMOR_CLASS ] = 100;
+    player.StatBase[ ST_CURRENT_HP ] = 9999;
+    player.StatBase[ ST_MAX_LIFE ] = 9999;
+}
+
+void mapid( Critter& player, int, int, int )
+{
+    Map@ map = player.GetMap();
+    player.Say( SAY_NETMSG, "" + ( map.GetProtoId() ) );
+}
+
+void tele( Critter& player, int param0, int param1, int param2 )
+{
+    Critter@ target = GetCritter( def( param0, player.Id ) );
+    if( not valid( target ) )
+        return;
+    Location @ loc = GetLocationByPid( def( param1, player.GetMap().Id ), 0 );
+    if( not valid( loc ) )
+    {
+        player.Say( SAY_NETMSG, "Location not found" );
+        return;
+    }
+    Map @ map = loc.GetMapByIndex( param2 );
+    if( not valid( map ) )
+    {
+        player.Say( SAY_NETMSG, "Map index not found" );
+        @map = loc.GetMapByIndex( 0 );
+        if( not valid( map ) )
+            return;
+    }
+    target.TransitToMap( map.Id, 0 );
+}
+
+void items( Critter& player, int param0, int param1, int param2 )
+{
+    Item@[] items;
+    uint count = player.GetMap().GetItems( player.HexX, player.HexY, items );
+    for( uint i = 0; i < count; i++ )
+        player.Say( SAY_NETMSG, "" + items[ i ].GetProtoId() );
+}
+
+void id( Critter& player, int param0, int param1, int param2 )
+{
+    Critter@[] critters;
+    uint count = player.GetMap().GetCrittersHex( player.HexX, player.HexY, FIND_DIST, FIND_LIFE | FIND_ALL, critters );
+    for( uint i = 0; i < count; i++ )
+        critters[ i ].Say( SAY_NORM_ON_HEAD, "" + ( critters[ i ].Id ) );
+}
+
+// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ...
+// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// ~run debug ToMapEntire 42 0 0
+void ToMapEntire( Critter& player, int mapPid, int entire, int skip )
+{
+    Map@ map = ::GetMapByPid( mapPid, skip );
+    if( valid( map ) )
+    {
+        player.TransitToMap( map.Id, entire );
+    }
+    else
+    {
+        player.Say( SAY_NETMSG, "Карта с pid=" + mapPid + " не найдена" );
+    }
+}
+
+// ищет нпц по диалогу на карте указанного прототипа
+void NpcByDialog( Critter& player, int mapPid, int dialog, int )
+{
+    Map@ map = ::GetMapByPid( mapPid, 0 );
+    if( valid( map ) )
+    {
+        Critter @[] npc;
+
+        if( map.GetCritters( 0, FIND_ALL | FIND_ONLY_NPC, npc ) == 0 )
+        {
+
+            player.Say( SAY_NETMSG, "не найдено нпц с таким диалогом" );
+
+        }
+        else
+        {
+            uint idF = 0;
+            uint l = 0;
+            for( uint i = 0; i < npc.length(); i++ )
+            {
+                if( npc[ i ].Stat[ ST_DIALOG_ID ] == dialog )
+                {
+                    l++;
+                    idF = ( idF == 0 ? npc[ i ].Id : idF );
+                }
+            }
+            player.Say( SAY_NETMSG, "Найдено нпц, в штуках:" + l + " Id первого:" + idF );
+        }
+    }
+
+}
+
+void SetReputation( Critter& cr, int crId, int num, int val )
+{
+    Critter@ toCr = GetCritter( crId );
+    if( valid( toCr ) )
+        toCr.ReputationBase[ num ] = val;
+}
+
+void Siren( Critter& cr, int, int, int )
+{
+    Map @ map = cr.GetMap();
+    if( !valid( map ) )
+    {
+        cr.Say( SAY_NETMSG, "Невозможно проиграть звук на глобальной карте" );
+        return;
+    }
+    map.PlaySound( "AIRSIREN.OGG" );
+}
+
+void Mirelurk( Critter& cr, int, int, int )
+{
+    cr.GetMap().AddNpc( 487, cr.HexX - 3, cr.HexY - 3, 0, null, null, null );
+
+}
+
+/*
+   ~run debug ToMapEntire 137 0 0
+   ~run debug Siren 0 0 0
+   ~run debug Mirelurk 0 0 0
+   ~loadscript debug
+   ~run debug SetMode 1 527 1
+   ~run test SetStat
+
+ */
+void SetMode( Critter& cr, int id, int mode, int value )
+{
+    Critter @ crit = GetCritter( id );
+    crit.ModeBase[ mode ] = value;
+}
+
+void NetId( Critter& player, int searchRadius, int, int )
+{
+    Critter @[] crits;
+    player.GetMap().GetCrittersHex( player.HexX, player.HexY, searchRadius, FIND_ALL, crits );
+    player.Say( SAY_NETMSG, "my info: HexX=" + player.HexX + "; HexY=" + player.HexY + "; SearchRadius=" + searchRadius );
+    for( uint i = 0; i < crits.length(); i++ )
+    {
+        player.Say( SAY_NETMSG, "Critter Pid:" + crits[ i ].GetProtoId() + "; Dialog:" + crits[ i ].Stat[ ST_DIALOG_ID ] + "; Id:" + crits[ i ].Id );
+    }
+    player.Say( SAY_NETMSG, "Total: " + crits.length() );
+}
+
+void SetCritParam( Critter& player, int id, int param, int value )
+{
+    Critter @ cr = GetCritter( id );
+    if( valid( cr ) )
+    {
+        cr.ParamBase[ param ] = value;
+    }
+}
+
+void GetCritParam( Critter& player, int id, int param, int value )
+{
+    Critter @ cr = GetCritter( id );
+    if( valid( cr ) )
+    {
+        player.Say( SAY_NETMSG, "Param #" + param + " val= " + cr.Param[ param ] );
+    }
+}
+
+void ShowLocation( Critter& player, int, int, int )
+{
+    Map @ map = player.GetMap();
+    if( valid( map ) )
+    {
+        Location @ loc = map.GetLocation();
+        if( valid( loc ) && !loc.Visible )
+            loc.Visible = true;
+    }
+}
+
+void AddMine( Critter& cr, int, int, int )
+{
+    Item@ item = cr.GetMap().AddItem( cr.HexX + 1, cr.HexY + 1, PID_ACTIVE_MINE, 1 );
+    item.SetScript( "_MineInit" );
+}
+
+void _MineInit( Item& item, bool firstTime )
+{
+    item.TrapValue = 150;
+    SETFLAG( item.Flags, ITEM_TRAP );
+    item.SetEvent( ITEM_EVENT_WALK, "explode@_MineWalk" );
+    item.Update();
+}
+
+import void SkillUp( Critter& player, int skill ) from "stdlib";
+
+void UpSkill( Critter& cr, int crId, int skill, int )
+{
+    SkillUp( GetCritter( uint( crId ) ), skill );
+}
+
+void CancelInvul( Critter& player, int, int, int )
+{
+    Map@ map = player.GetMap();
+    if( valid( map ) )
+    {
+        Critter@[] critters;
+        if( map.GetCritters( 0, FIND_ALL | FIND_ONLY_NPC, critters ) > 0 )
+        {
+            for( uint i = 0, l = critters.length(); i < l; i++ )
+            {
+                Critter@ cr = critters[ i ];
+                if( valid( cr ) )
+                    cr.ModeBase[ MODE_INVULNERABLE ] = 0;
+            }
+        }
+    }
+    player.Say( SAY_NETMSG, "Success" );
+}
+
+// ~getaccess admin hh
+// ~run debug MarkCritter2 1 41 0
+void MarkCritter2( Critter& cr, int crId, int pid, int color )
+{
+    Item@ item = cr.AddItem( pid, 1 );
+    AllowSlot( 17, "noini" );
+    cr.MoveItem( item.Id, 1, 17 );
+    item.LightIntensity = Random( 30, 80 );
+    item.LightColor = ( color != 0 ? color : Random( 0, 0xFFFFFF ) );
+    item.LightDistance = 5;
+    SETFLAG( item.Flags, ITEM_LIGHT );
+    item.Update();
+}
+
+void MarkCritter( Critter& cr, int crId, int pid, int color )
+{
+
+    Item@ item = cr.AddItem( pid, 1 );
+    AllowSlot( 17, "" );
+    cr.MoveItem( item.Id, 1, 17 );
+    item.LightIntensity = Random( 30, 80 );
+    item.LightColor = ( color != 0 ? color : Random( 0, 0xFFFFFF ) );
+    item.LightDistance = 5;
+    SETFLAG( item.Flags, ITEM_LIGHT );
+    SETFLAG( item.Flags, ITEM_HIDDEN );
+    item.Update();
+}
+
+// ~run debug AddNpc 32 10121 0
+void AddNpc( Critter& cr, int pid, int dialog, int )
+{
+    if( pid <= 0 || dialog <= 0 )
+        return;
+    cr.GetMap().AddNpc( pid, cr.HexX - 3, cr.HexY - 2, 0, null, null, null ).StatBase[ ST_DIALOG_ID ] = dialog;
+}
+
+

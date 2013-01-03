@@ -1,0 +1,492 @@
+#ifndef _ADMIN_
+#define _ADMIN_
+#include "_macros.fos"
+#include "_ai.fos"
+#include "npc_ai.fos"
+#include "admin_h.fos"
+#include "stdlib_h.fos"
+
+import uint[] GetOnlinePlayers() from "online_players";
+import uint GetOffence(Critter& offender, uint areaId) from "custom_data";
+import void AddOffence(Critter& offender, uint areaId, uint offenceSeverity) from "custom_data";
+import void ClearOffence(Critter& offender, uint areaId) from "custom_data";
+import bool AddAttackPlane( Critter& npc, uint priority, Critter& target, int minHp, bool run ) from "npc_planes";
+
+void unsafe_RequestAdminActions(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(critter.GetAccess() == 0 )
+		return;
+	string@ menuItems = "";
+	
+	switch(actionType)
+	{
+		case ACTION_TYPE_CRITTER:
+			menuItems += "Critter menu:admin@ShowCritterMenu;";
+			break;
+		case ACTION_TYPE_ITEM:
+			menuItems += "Item menu:admin@ShowItemMenu;";
+			break;
+		case ACTION_TYPE_HEX:
+			menuItems += "Add Npc:admin@AddNpc;";
+			menuItems += "Teleport player:admin@TeleportPlayer;";
+			menuItems += "Move here:admin@MoveTo;";
+			menuItems += "Remove all items:admin@RemoveAllItems;";
+			menuItems += "Drop planes:admin@DropPlanes;";
+			break;
+	}
+	menuItems += "Server message:admin@ServerMessage;";
+	menuItems += "Faction menu:faction@ShowFactionMenu;";
+	menuItems += "Battle menu:battleground@ShowBattleMenu;";
+	
+	ShowAdminMenu(critter, actionType, menuItems, values);
+}
+
+void ShowAdminMenu(Critter& critter, int actionType, string menuItems, int[] values)
+{
+	if(menuItems.length() > 0)
+		critter.RunClientScript("client_screen_admin_panel@ShowMenu", actionType, 0, 0, menuItems, values);
+}
+
+void ShowCritterMenu(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_CRITTER)
+		return;
+		
+	Critter@ cr = GetCritter(values[0]);
+	if(!valid(cr))
+		return;
+	
+	string@ menuItems = "";
+	if(cr.IsDead())
+	{
+		menuItems += "Revive:admin@Revive;";
+	}
+	else
+	{
+		menuItems += "Heal:admin@Heal;";
+		menuItems += "Knock out:admin@KnockOut;";
+		menuItems += "Kill:admin@Kill;";
+	}
+	if(cr.IsNpc())
+	{
+		menuItems += "Delete Npc:admin@DeleteNpc;";
+		menuItems += "Drop planes:admin@DropPlanes;";
+	}
+	menuItems += "Say:admin@Say;";
+	menuItems += "Add item:admin@AddItem;";
+	menuItems += "Show inventory:admin@ShowInventory;";
+	menuItems += "Set param:admin@SetParam;";
+	menuItems += "Set offence:admin@SetOffence;";
+	menuItems += "Guard attack:admin@GuardAttack;";
+	
+	ShowAdminMenu(critter, actionType, menuItems, values);
+}
+
+void ShowItemMenu(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_ITEM)
+		return;
+		
+	string@ menuItems = "";
+
+	menuItems += "Delete:admin@DeleteItem;";
+	menuItems += "Duplicate:admin@DuplicateItem;";
+	
+	ShowAdminMenu(critter, actionType, menuItems, values);
+}
+
+void DeleteItem(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_ITEM)
+		return;
+		
+	Item@ item = GetItem(values[0]);
+	if(!valid(item))
+		return;
+		
+	DeleteItem(item);
+}
+
+void DuplicateItem(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_ITEM)
+		return;
+		
+	Item@ item = GetItem(values[0]);
+	if(!valid(item))
+		return;
+		
+	ShowSayScreen(critter, true, true, "How many?", "1", "admin@unsafe_DuplicateItemAnswer", values);
+}
+
+void unsafe_DuplicateItemAnswer(Critter& critter, int, int, int, string@ duplicateCount, int[]@ values)
+{
+	int count = 0;
+	if(!StrToInt(duplicateCount, count) || count < 0)
+		return;
+	
+	Item@ item = GetItem(values[0]);
+	if(!valid(item))
+		return;
+	
+	uint16 hexX = 0;
+    uint16 hexY = 0;
+    Map@ map = item.GetMapPosition(hexX, hexY);
+	if(!valid(map))
+		return;
+		
+	for (uint i = 0; i < uint(count); i++)
+		map.AddItem(hexX, hexY, item.GetProtoId(), item.GetCount());
+}
+
+void MoveTo(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_HEX)
+		return;
+	Map@ map = critter.GetMap();
+	if(!valid(map))
+		return;
+	
+	critter.TransitToMap(map.Id, values[0], values[1], critter.Dir);
+}
+
+void RemoveAllItems(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_HEX)
+		return;
+	Map@ map = critter.GetMap();
+	if(!valid(map))
+		return;
+	
+	Item@[] items;
+	map.GetItemsByType(ITEM_TYPE_ARMOR, items);
+	map.GetItemsByType(ITEM_TYPE_DRUG, items);
+	map.GetItemsByType(ITEM_TYPE_WEAPON, items);
+	map.GetItemsByType(ITEM_TYPE_AMMO, items);
+	for (uint i = 0; i < items.length(); i++)
+		DeleteItem(items[i]);
+}
+
+void DropPlanes(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType == ACTION_TYPE_HEX && values.length() == 2
+		|| actionType == ACTION_TYPE_CRITTER && values.length() == 1)
+	{
+		string@ menuItems = "";
+	
+		menuItems += "Attack:admin@DropPlanes$" + AI_PLANE_ATTACK + ";";
+		menuItems += "Walk:admin@DropPlanes$" + AI_PLANE_WALK + ";";
+		menuItems += "Pick:admin@DropPlanes$" + AI_PLANE_PICK + ";";
+		menuItems += "Misc:admin@DropPlanes$" + AI_PLANE_MISC + ";";
+		
+		ShowAdminMenu(critter, actionType, menuItems, values);
+	}
+	else if(actionType == ACTION_TYPE_HEX)
+	{
+		Map@ map = critter.GetMap();
+		if(!valid(map))
+			return;
+		
+		Critter@[] critters;
+		map.GetCritters(0, FIND_ALL | FIND_ONLY_NPC, critters);
+		for (uint i = 0; i < critters.length(); i++)
+			critters[i].ErasePlane(values[2], true);
+	}
+	else if(actionType == ACTION_TYPE_CRITTER)
+	{
+		Critter@ cr = GetCritter(values[0]);
+		if(!valid(cr) || !cr.IsNpc())
+			return;
+		cr.ErasePlane(values[1], true);
+	}
+}
+
+void TeleportPlayer(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_HEX)
+		return;
+	ShowSayScreen(critter, false, true, "Player name", "", "admin@unsafe_TeleportPlayerAnswer", values);
+}
+
+void unsafe_TeleportPlayerAnswer(Critter& critter, int, int, int, string@ playerName, int[]@ values)
+{
+	uint playerId = GetPlayerId(playerName);
+	if(playerId == 0)
+		return;
+	Critter@ player = GetCritter(playerId);
+	if(!valid(player))
+		return;
+	
+	Map@ map = critter.GetMap();
+	if(!valid(map))
+		return;
+	
+	player.TransitToMap(map.Id, values[0], values[1], player.Dir);
+}
+
+void Heal(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_CRITTER)
+		return;
+	Critter@ cr = GetCritter(values[0]);
+	if(!valid(cr))
+		return;
+	
+	cr.StatBase[ST_CURRENT_HP] = cr.Stat[ST_MAX_LIFE];
+}
+
+
+void Kill(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_CRITTER)
+		return;
+	Critter@ cr = GetCritter(values[0]);
+	if(!valid(cr))
+		return;
+	
+	cr.ToDead(ANIM2_DEAD_BURST, null);
+}
+
+void KnockOut(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_CRITTER)
+		return;
+	Critter@ cr = GetCritter(values[0]);
+	if(!valid(cr))
+		return;
+	
+	cr.ToKnockout(KNOCKOUT_ANIM2_DEFAULT(true), 5, cr.HexX, cr.HexY);
+}
+
+void Revive(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_CRITTER)
+		return;
+	Critter@ cr = GetCritter(values[0]);
+	if(!valid(cr))
+		return;
+	
+	cr.ToLife();
+}
+
+void DeleteNpc(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_CRITTER)
+		return;
+	Critter@ cr = GetCritter(values[0]);
+	if(!valid(cr) || !cr.IsNpc())
+		return;
+	
+	DeleteNpc(cr);
+}
+
+void AddNpc(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_HEX)
+		return;
+
+	ShowSayScreen(critter, true, true, "Npc PID", "", "admin@unsafe_NpcPidAnswer", values);
+}
+
+void unsafe_NpcPidAnswer(Critter& critter, int, int, int, string@ npcPid, int[]@ values)
+{
+	int value = 0;
+	if(!StrToInt(npcPid, value))
+		return;
+	
+	values.insertLast(value);	
+	ShowSayScreen(critter, false, true, "Script", "", "admin@unsafe_AddNpcAnswer", values);
+}
+
+void unsafe_AddNpcAnswer(Critter& critter, int, int, int, string@ script, int[]@ values)
+{
+	Map@ map = critter.GetMap();
+	if(!valid(map))
+		return;
+	if(valid(script) && script.length() == 0)
+		@script = null;
+	
+	map.AddNpc(values[2], values[0], values[1], (critter.Dir + 3) % 6, null, null, script);
+}
+
+void Say(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_CRITTER)
+		return;
+
+	ShowSayScreen(critter, false, false, "Say", "", "admin@unsafe_SayAnswer", values);
+}
+
+void unsafe_SayAnswer(Critter& critter, int, int, int, string@ message, int[]@ values)
+{
+	Critter@ cr = GetCritter(values[0]);
+	if(!valid(cr) || !valid(message))
+		return;
+	
+	cr.Say(SAY_NORM, message);
+}
+
+void AddItem(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_CRITTER)
+		return;
+
+	ShowSayScreen(critter, true, true, "Item PID", "", "admin@unsafe_PidAnswer", values);
+}
+
+void unsafe_PidAnswer(Critter& critter, int, int, int, string@ pid, int[]@ values)
+{
+	int value = 0;
+	if(!StrToInt(pid, value))
+		return;
+	
+	values.insertLast(value);	
+	ShowSayScreen(critter, true, true, "Count", "1", "admin@unsafe_PidCountAnswer", values);
+}
+
+void unsafe_PidCountAnswer(Critter& critter, int, int, int, string@ count, int[]@ values)
+{
+	int value = 0;
+	if(!StrToInt(count, value))
+		return;
+		
+	Critter@ cr = GetCritter(values[0]);
+	if(!valid(cr))
+		return;
+	cr.AddItem(values[1], value);
+}
+
+void ShowInventory(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_CRITTER)
+		return;
+	
+	Critter@ cr = GetCritter(values[0]);
+	if(!valid(cr))
+		return;
+		
+	critter.ShowContainer(cr, null, TRANSFER_FAR_CRIT);
+}
+
+void ServerMessage(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	ShowSayScreen(critter, false, false, "Server message", "", "admin@unsafe_ServerMessageAnswer", values);
+}
+
+void unsafe_ServerMessageAnswer(Critter& critter, int, int, int, string@ message, int[]@)
+{
+	uint[] players = GetOnlinePlayers();
+	for (uint i = 0; i < players.length(); i++)
+	{
+		Critter@ player = GetCritter(players[i]);
+		if(!valid(player))
+			continue;
+		player.RunClientScript("client_screen_messages@ShowServerMessage", 0, 0, 0, message, null);
+	}
+}
+
+void RunPool(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	ShowSayScreen(critter, false, true, "Options (separated by ';')", "", "admin@unsafe_RunPoolAnswer", values);
+}
+
+void unsafe_RunPoolAnswer(Critter& critter, int, int, int, string@ message, int[]@)
+{
+}
+
+void SetParam(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_CRITTER)
+		return;
+
+	ShowSayScreen(critter, true, true, "Param", "", "admin@unsafe_ParamAnswer", values);
+}
+
+void unsafe_ParamAnswer(Critter& critter, int, int, int, string@ param, int[]@ values)
+{
+	Critter@ cr = GetCritter(values[0]);
+	if(!valid(cr))
+		return;
+
+	int value = 0;
+	if(!StrToInt(param, value))
+		return;
+	
+	values.insertLast(value);
+	ShowSayScreen(critter, true, true, "Value", ""+cr.ParamBase[value], "admin@unsafe_SetParamAnswer", values);
+}
+
+void unsafe_SetParamAnswer(Critter& critter, int, int, int, string@ value, int[]@ values)
+{
+	int val = 0;
+	if(!StrToInt(value, val))
+		return;
+		
+	Critter@ cr = GetCritter(values[0]);
+	if(!valid(cr))
+		return;
+	cr.ParamBase[values[1]] = val;
+}
+
+void SetOffence(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_CRITTER)
+		return;
+
+	if(values.length() == 1)
+	{
+		string@ menuItems = "";
+	
+		menuItems += "Junktown:admin@SetOffence$1001;";
+		menuItems += "Hub:admin@SetOffence$1002;";
+		
+		ShowAdminMenu(critter, actionType, menuItems, values);
+	}
+	else
+	{
+		Critter@ cr = GetCritter(values[0]);
+		if(!valid(cr))
+			return;
+		ShowSayScreen(critter, true, true, "Offence", "" + GetOffence(cr, values[1]), "admin@unsafe_SetOffenceAnswer", values);
+	}
+}
+
+void unsafe_SetOffenceAnswer(Critter& critter, int, int, int, string@ offence, int[]@ values)
+{
+	int val = 0;
+	if(!StrToInt(offence, val))
+		return;
+		
+	Critter@ cr = GetCritter(values[0]);
+	if(!valid(cr))
+		return;
+	
+	ClearOffence(cr, values[1]);
+	if(val > 0)
+		AddOffence(cr, values[1], val);
+}
+
+void GuardAttack(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_CRITTER)
+		return;
+		
+	Critter@ cr = GetCritter(values[0]);
+	if(!valid(cr))
+		return;
+
+	Map@ map = critter.GetMap();
+	if(!valid(map))
+		return;
+	Critter@[] npcs;
+	map.GetCritters(0, FIND_LIFE | FIND_ONLY_NPC, npcs);
+	for (uint i = 0; i < npcs.length(); i++)
+	{
+		Critter@ guard = npcs[i];
+		if(guard.IsSee(critter) && guard.Stat[ST_AI_ID] == AIPACKET_GENERAL_TOWN_GUARDS)
+			AddAttackPlane(guard, 0, cr, AI_MIN_HP(guard.Stat[ST_AI_ID]), true);
+	}
+}
+
+
+#endif

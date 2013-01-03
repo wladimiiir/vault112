@@ -1,0 +1,324 @@
+#include "_macros.fos"
+#include "entire_h.fos"
+#include "serializator.fos"
+#include "utils_for_array.fos"
+#include "house_names.fos"
+#include "house_dialog.fos"
+#include "critter_action_basic.fos"
+
+import void FlushScreen( Critter& cr, bool fadeOut, uint timeMs ) from "effects";
+import float GetDirectionF( uint16 hx, uint16 hy, uint16 tx, uint16 ty ) from "linetracer";
+import void PlayUnlockedLockerSound(Item& locker) from "sounds";
+
+House@[] houses;
+
+House@ GetHouse(Critter& owner)
+{
+	Map@ map = owner.GetMap();
+	if(!valid(map))
+		return null;
+	
+	for (uint i = 0; i < houses.length(); i++)
+	{
+		House@ house = houses[i];
+		house.Load();
+		if(house.IsOnMap(map) && house.IsOwner(owner))
+			return house;
+	}
+	
+	return null;
+}
+
+uint GetAvalilableHouseCount(Map& map)
+{
+	uint count = 0;
+	for (uint i = 0; i < houses.length(); i++)
+	{
+		House@ house = houses[i];
+		house.Load();
+		if(house.IsOnMap(map) && !house.HasOwner())
+			count++;
+	}
+	return count;
+}
+
+uint[] housePresenters;
+
+Critter@ GetHousePresenter(Map& map)
+{
+	for (uint i = 0; i < housePresenters.length(); i++)
+	{
+		Critter@ presenter = GetCritter(housePresenters[i]);
+		if(!valid(presenter) || !valid(presenter.GetMap()))
+			continue;
+			
+		if(presenter.GetMap().GetProtoId() == map.GetProtoId())
+			return presenter;
+	}
+			
+	return null;
+}
+
+void HousePresenterInit(Critter& npc, bool)
+{
+	housePresenters.insertLast(npc.Id);
+}
+
+void BuyableHouseDoorInit(Item& door, bool firstTime) 
+{
+	if(door.GetType() != ITEM_TYPE_DOOR)
+		return;
+		
+	door.SetEvent(ITEM_EVENT_SKILL, "_HouseDoorSkill");
+	houses.insertLast(House(door));
+}
+
+bool _HouseDoorSkill(Item& item, Critter& cr, int skill)
+{
+	House house = House(item);
+	
+	if(cr.Timeout[TO_BATTLE] > 0)
+	{
+		cr.SayMsg(SAY_NETMSG, TEXTMSG_TEXT, 70308);
+		return true;
+	}
+	
+	if(!house.CanSwitchSide(cr))
+	{
+		cr.SayMsg(SAY_NETMSG, TEXTMSG_TEXT, 70304);
+		return true;
+	}
+	if(!house.SwitchSide(item, cr))
+		Log("Switching sides failed: door="+item.Id+", critter="+cr.Id);
+	
+	return true;
+}
+
+class House
+{
+	#define _GetKey		("House_"+DoorMap+"_"+DoorX+"_"+DoorY)
+	
+	private uint DoorId;
+	private uint DoorMap;
+	private uint DoorX;
+	private uint DoorY;
+	private int EntireNumber;
+	private uint Owner;
+	private uint OwnershipEndTime;
+	private uint[] Occupants;
+	private uint[] InHouseCritters;
+	
+	House(Item& door)
+	{
+		DoorId = door.Id;
+		uint16 hexX = 0, hexY = 0;
+		Map@ map = door.GetMapPosition(hexX, hexY);
+		if(!valid(map))
+			return;
+		DoorMap = map.GetProtoId();
+		DoorX = door.HexX;
+		DoorY = door.HexY;
+		EntireNumber = door.Val0;
+		Owner = 0;
+		OwnershipEndTime = 0;
+		Load();
+	}
+	
+	void Load()
+	{
+		Serializator serializator;
+		if(!serializator.Load(_GetKey))
+			return;
+		
+		serializator.Get(Owner);
+		serializator.Get(OwnershipEndTime);
+		uint size = 0;
+		serializator.Get(size);
+		Occupants.resize(0);
+		for (uint i = 0; i < size; i++) 
+		{
+			uint occupant = 0;
+			serializator.Get(occupant);
+			Occupants.insertLast(occupant);
+		}
+		serializator.Get(size);
+		InHouseCritters.resize(0);
+		for (uint i = 0; i < size; i++) 
+		{
+			uint inHouseCritter = 0;
+			serializator.Get(inHouseCritter);
+			InHouseCritters.insertLast(inHouseCritter);
+		}
+	}
+	
+	private void Save()
+	{
+		Serializator serializator;
+		serializator.Set(Owner);
+		serializator.Set(OwnershipEndTime);
+		serializator.Set(Occupants.length());
+		for (uint i = 0; i < Occupants.length(); i++)
+			serializator.Set(Occupants[i]);
+		serializator.Set(InHouseCritters.length());
+		for (uint i = 0; i < InHouseCritters.length(); i++)
+			serializator.Set(InHouseCritters[i]);
+			
+		serializator.Save(_GetKey);
+	}
+	
+	uint16 GetDoorX() {return DoorX;}
+	uint16 GetDoorY() {return DoorY;}
+	
+	string GetName()
+	{
+		return GetHouseName(DoorMap, DoorX, DoorY);
+	}
+	
+	string GetOwnerName()
+	{
+		return GetPlayerName(Owner);
+	}
+	
+	bool IsOnMap(Map& map)
+	{
+		return map.GetProtoId() == DoorMap;
+	}
+	
+	bool HasOwner()
+	{
+		return Owner != 0 && __FullSecond < OwnershipEndTime;
+	}
+	
+	bool IsOwner(Critter& critter)
+	{
+		return Owner == critter.Id && __FullSecond < OwnershipEndTime;
+	}
+	
+	void SetOwner(Critter& critter, uint ownershipEndTime)
+	{
+		Owner = critter.Id;
+		OwnershipEndTime = ownershipEndTime;
+		Save();
+	}
+	
+	bool IsOccupant(Critter& critter)
+	{
+		return Present(critter.Id, Occupants);
+	}
+	
+	bool IsInHouse(Critter& critter)
+	{
+		return Present(critter.Id, InHouseCritters);
+	}
+	
+	void SwitchInHouse(uint critterId)
+	{
+		if(Present(critterId, InHouseCritters))
+			RemoveFromArray(InHouseCritters, critterId);
+		else
+			InHouseCritters.insertLast(critterId);
+		Save();
+	}
+	
+	void AddOccupant(Critter& critter)
+	{
+		if(IsOccupant(critter))
+			return;
+			
+		Occupants.insertLast(critter.Id);
+		Save();
+	}
+	
+	void RemoveOccupant(uint occupantId)
+	{
+		if(RemoveFromArray(Occupants, occupantId))
+			Save();
+			
+		Critter@ occupant = GetCritter(occupantId);
+		if(valid(occupant) && IsInHouse(occupant))
+			SwitchSide(null, occupant);
+	}
+	
+	bool CanSwitchSide(Critter& critter)
+	{
+		return IsOwner(critter) || IsOccupant(critter) || IsInHouse(critter);
+	}
+	
+	bool SwitchSide(Item@ door, Critter& critter)
+	{
+		Map@ map = critter.GetMap();
+		if(!valid(map))
+			return false;
+			
+		Entire[] entires;
+		ParseEntires(map, entires, EntireNumber);
+		
+		for (uint i = 0; i < entires.length(); i++)
+		{
+			uint16 hexX = entires[i].HexX;
+			uint16 hexY = entires[i].HexY;
+			//Log("Entire: "+hexX+", "+hexY);
+			map.GetHexCoordWall(critter.HexX, critter.HexY, hexX, hexY, 0.0f, 
+				GetDistantion(critter.HexX, critter.HexY, hexX, hexY));
+			//Log("Hexes after: "+hexX+", "+hexY);
+			if(hexX != entires[i].HexX || hexY != entires[i].HexY)
+			{
+				if(IsInHouse(critter))
+					RemoveFromHouse(critter);
+				else
+					AddToHouse(door, critter);
+				
+				FlushScreen(critter, false, 1000);
+				FlushScreen(critter, true, 1000);
+				uint[] values = {critter.Id, entires[i].HexX, entires[i].HexY, DoorId};
+				CreateTimeEvent(__FullSecond + REAL_SECOND(1), "e_MoveCritter", values, true);
+				RefreshOwnershipEndTime();
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private void AddToHouse(Item@ door, Critter& critter)
+	{
+		if(!IsInHouse(critter))
+		{	
+			if(valid(door))
+				PlayUnlockedLockerSound(door);
+			InHouseCritters.insertLast(critter.Id);
+			Save();
+		}
+	}
+	
+	private void RemoveFromHouse(Critter& critter)
+	{
+		if(RemoveFromArray(InHouseCritters, critter.Id))
+			Save();
+	}
+	
+	private void RefreshOwnershipEndTime()
+	{
+		OwnershipEndTime = __FullSecond + DEFAULT_HOUSE_HOLD_TIME;
+		Save();
+	}
+}
+
+uint e_MoveCritter(uint[]@ values)
+{
+	Critter@ critter = GetCritter(values[0]);
+	if(valid(critter))
+		critter.TransitToHex(values[1], values[2], critter.Dir);
+	else
+	{
+		//fallback, if critter was not found (maybe he was removed while logged off or server crash)
+		Item@ door = GetItem(values[3]);
+		if(valid(door))
+		{
+			House house(door);
+			house.SwitchInHouse(values[0]);
+		}
+	}
+		
+	return 0;
+}

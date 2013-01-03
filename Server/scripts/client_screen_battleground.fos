@@ -1,0 +1,483 @@
+#include "_macros.fos"
+#include "_client_defines.fos"
+#include "client_gui_h.fos"
+#include "battleground_h.fos"
+
+int CurrentState = -1;
+
+TeamList@[] TeamLists;
+
+IGUIElementTextOpt@ CountdownUI;
+uint StartTime = 0;
+IGUIElementTextOpt@ BattleTimeUI;
+IGUIElementTextOpt@ TurnBasedRoundsUI;
+uint EndTime = 0;
+uint TurnBasedRounds = 0;
+
+IGUIElementTextOpt@[] TeamNameUIs;
+IGUIElementTextOpt@[] TeamScoreUIs;
+
+void SetBattleground(int infoType, int startTime, int endTime, string@ teams, int[]@ values)
+{
+	CritterCl@ chosen = GetChosen();
+	if(!valid(chosen))
+		return;
+		
+	if(CurrentState == chosen.Param[BATTLEGROUND])
+	{
+		Refresh(infoType, teams, values);
+		return;
+	}
+		
+	switch(chosen.Param[BATTLEGROUND])
+	{
+		case BATTLEGROUND_NONE:
+			DeleteGUIElements();
+			break;
+		case BATTLEGROUND_CREATED:
+			InitCreatedScreen(teams, values);
+			break;
+		case BATTLEGROUND_JOINED:
+			InitJoinedScreen(teams, values);
+			break;			
+		case BATTLEGROUND_STARTED:
+			GUI_CreateScreen(CLIENT_SCREEN_BATTLEGROUND, "")
+				.CanMove(false);
+			InitCountdownScreen(startTime);
+			InitBattleScreen(endTime, teams);
+			break;
+	}
+	
+	CurrentState = chosen.Param[BATTLEGROUND];
+}
+
+void Refresh(uint infoType, string@ teams, int[]@ values)
+{
+	CritterCl@ chosen = GetChosen();
+	if(!valid(chosen))
+		return;
+
+	switch(chosen.Param[BATTLEGROUND])
+	{
+		case BATTLEGROUND_NONE:
+			break;
+		case BATTLEGROUND_CREATED:
+		case BATTLEGROUND_JOINED:
+			if(infoType == INFO_TYPE_TEAM_PLAYERS)
+				for (uint i = 0; i < TeamLists.length(); i++)
+					TeamLists[i].Refresh(values);
+			break;			
+		case BATTLEGROUND_STARTED:
+			if(infoType == INFO_TYPE_TEAM_SCORE)
+				for (uint i = 0; i < TeamScoreUIs.length(); i++)
+					TeamScoreUIs[i].setText("" + values[i]);
+			else if(infoType == INFO_TYPE_TURN_BASED)
+				TurnBasedRounds = values[0];
+
+			break;
+	}
+}
+
+void RefreshBattleground()
+{
+	CritterCl@ chosen = GetChosen();
+	if(!valid(chosen))
+		return;
+
+	if(chosen.Param[BATTLEGROUND] > 0)
+	{
+		if(CurrentState != chosen.Param[BATTLEGROUND])
+			RunServerScriptUnsafe("battleground@unsafe_RequestRefresh", 0, 0, 0, null, null);
+		switch(chosen.Param[BATTLEGROUND])
+		{
+			case BATTLEGROUND_CREATED:
+			case BATTLEGROUND_JOINED:
+				ShowScreen(CLIENT_SCREEN_BATTLEGROUND, 0, 0, 0);
+				break;
+			case BATTLEGROUND_STARTED:
+				RefreshBattleInfo();
+				
+				if(StartTime == 0 || StartTime < __FullSecond)
+					HideScreen(CLIENT_SCREEN_BATTLEGROUND, 0, 0, 0);
+				else
+					ShowScreen(CLIENT_SCREEN_BATTLEGROUND, 0, 0, 0);
+				break;
+		}
+	}
+	else
+	{
+		if(CurrentState > 0)
+		{
+			HideScreen(CLIENT_SCREEN_BATTLEGROUND, 0, 0, 0);
+			DeleteGUIElements();
+			CurrentState = 0;
+		}
+	}
+}
+
+void DeleteGUIElements()
+{
+	for (uint i = 0; i < TeamNameUIs.length(); i++)
+	{
+		TeamNameUIs[i].setText("");
+		DeleteGUIElement(CLIENT_MAIN_SCREEN_GAME, cast<IGUIElementOpt>(TeamNameUIs[i]));
+	}
+	for (uint i = 0; i < TeamScoreUIs.length(); i++)
+	{
+		TeamScoreUIs[i].setText("");
+		DeleteGUIElement(CLIENT_MAIN_SCREEN_GAME, cast<IGUIElementOpt>(TeamScoreUIs[i]));
+	}
+	TeamNameUIs.resize(0);
+	TeamScoreUIs.resize(0);
+	
+	if(valid(CountdownUI))
+		CountdownUI.setText("");
+	if(valid(BattleTimeUI))
+		BattleTimeUI.setText("");
+	if(valid(TurnBasedRoundsUI))
+		TurnBasedRoundsUI.setText("");
+}
+
+void InitCreatedScreen(string@ teams, int[]@ players) 
+{
+	InitTeamScreen(teams, players);
+	AddActionButtons(true);
+}
+
+void InitJoinedScreen(string@ teams, int[] players) 
+{
+	InitTeamScreen(teams, players);
+	AddActionButtons(false);
+}
+
+void InitTeamScreen(string@ teams, int[] players)
+{
+	if(!valid(teams))
+	{
+		Message("<error csb1>");
+		return;
+	}
+	
+	GUI_CreateScreen(CLIENT_SCREEN_BATTLEGROUND, "")
+		.AutoCursor(true, CURSOR_HAND)
+		.CanMove(false);
+	
+	string@[] teamNames = split(teams, ";");
+	uint width = 213;
+	uint height = 283;
+	
+	TeamLists.resize(0);
+	for (uint i = 0; i < teamNames.length(); i++)
+	{
+		uint topX = __ScreenWidth / 2 - width / 2 * teamNames.length() - 10 * (teamNames.length() - 1) + i * (width + 5 * (teamNames.length() - 1));
+		uint topY = __ScreenHeight / 2 - height / 2 - 40;
+
+		GUI_AddImage(CLIENT_SCREEN_BATTLEGROUND, "listbox.png", PT_ART_INTRFACE, 0, 0)
+			.Position(topX, topY)
+			.setAbsolutePosition(true)
+		;
+		
+		GUI_AddButton(CLIENT_SCREEN_BATTLEGROUND)
+			.UpPic("DI_RDBT2.frm")
+			.DownPic("DI_RDBT1.frm")
+			.Position(topX + 70, topY + 242)
+			.CallbackMouseClick(JoinAction(i))
+			.setAbsolutePosition(true)
+		;
+			
+		GUI_AddText(CLIENT_SCREEN_BATTLEGROUND, teamNames[i], 0, 0)
+			.TextOptions(FONT_FAT, COLOR_GREEN, FT_BORDERED | FT_CENTERXY)
+			.AbsolutePosition(topX, topY + 10)
+			.TextBoxSize(width, 20)
+		;
+		
+		GUI_AddText(CLIENT_SCREEN_BATTLEGROUND, "JOIN", 0, 0)
+			.TextOptions(FONT_FAT, COLOR_YELLOW, 0)
+			.AbsolutePosition(topX + 90, topY + 240)
+			.TextBoxSize(100, 20)
+		;
+		
+		TeamList teamList(i, topX + 44, topY + 50);
+		TeamLists.insertLast(teamList);
+		teamList.Refresh(players);
+	}
+}
+
+void InitCountdownScreen(int startTime)
+{
+	StartTime = uint(startTime);
+	if(!valid(CountdownUI))
+	{
+		@CountdownUI = GUI_AddText(CLIENT_MAIN_SCREEN_GAME)
+			.TextOptions(FONT_BIG, COLOR_WHITE, FT_CENTERXY)
+			.AbsolutePosition(__ScreenWidth / 2 - 50, __ScreenHeight / 2 - 15)
+			.TextBoxSize(100, 30)
+		;
+	}
+}
+
+void InitBattleScreen(int endTime, string teams)
+{
+	EndTime = uint(endTime);
+	if(!valid(BattleTimeUI))
+	{
+		@BattleTimeUI = GUI_AddText(CLIENT_MAIN_SCREEN_GAME)
+			.TextOptions(FONT_FAT, COLOR_YELLOW, FT_CENTERXY)
+			.AbsolutePosition(__ScreenWidth / 2 - 50, 5)
+			.TextBoxSize(100, 20)
+		;
+	}
+	else
+		BattleTimeUI.setText("");
+		
+	if(!valid(TurnBasedRoundsUI))
+	{
+		@TurnBasedRoundsUI = GUI_AddText(CLIENT_MAIN_SCREEN_GAME)
+			.TextOptions(FONT_FAT, COLOR_YELLOW, FT_CENTERXY)
+			.AbsolutePosition(__ScreenWidth / 2 - 100, 5)
+			.TextBoxSize(200, 20)
+		;
+	}
+	else
+		TurnBasedRoundsUI.setText("");
+	
+	string@[] teamNames = split(teams, ";");
+	for (uint i = 0; i < TeamNameUIs.length(); i++)
+		DeleteGUIElement(CLIENT_MAIN_SCREEN_GAME, cast<IGUIElementOpt>(TeamNameUIs[i]));
+	for (uint i = 0; i < TeamScoreUIs.length(); i++)
+		DeleteGUIElement(CLIENT_MAIN_SCREEN_GAME, cast<IGUIElementOpt>(TeamScoreUIs[i]));
+
+	CritterCl@ chosen = GetChosen();
+	TeamNameUIs.resize(0);
+	TeamScoreUIs.resize(0);
+	for (uint i = 0; i < teamNames.length(); i++)
+	{
+		uint x = i % 2 == 0 ? 10 : __ScreenWidth - 10 - 150;
+		uint y = __ScreenHeight / 2 + 50 * (i / 2);
+		uint alignment = i % 2 == 0 ? FT_CENTERY : FT_CENTERR;
+		TeamNameUIs.insertLast(
+			GUI_AddText(CLIENT_MAIN_SCREEN_GAME)
+				.TextOptions(FONT_FAT, valid(chosen)
+					? uint(chosen.Param[PVP_TEAM]) == i + 1 ? COLOR_DGREEN : COLOR_DRED
+					: COLOR_YELLOW, alignment)
+				.AbsolutePosition(x, y)
+				.TextBoxSize(150, 20)
+		);
+		TeamScoreUIs.insertLast(
+			GUI_AddText(CLIENT_MAIN_SCREEN_GAME)
+				.TextOptions(FONT_FAT, COLOR_WHITE, alignment)
+				.AbsolutePosition(x, y + 22)
+				.TextBoxSize(150, 20)
+		);
+	}
+	
+	for (uint i = 0; i < TeamNameUIs.length(); i++)
+		TeamNameUIs[i].setText(teamNames[i]);
+	for (uint i = 0; i < TeamScoreUIs.length(); i++)
+		TeamScoreUIs[i].setText("0");
+}
+
+void RefreshBattleInfo()
+{
+	if(valid(CountdownUI) && StartTime != 0)
+	{
+		if(__FullSecond > StartTime)
+		{
+			uint diff = __FullSecond - StartTime;
+			if(diff < REAL_SECOND(2))
+				CountdownUI.setText("Start!");
+			else
+				CountdownUI.setText("");
+		}
+		else
+		{
+			uint seconds = (StartTime - __FullSecond) / __TimeMultiplier;
+			CountdownUI.setText("" + (seconds + 1));
+		}
+	}
+	
+	if(valid(BattleTimeUI) && EndTime != 0)
+	{
+		if(StartTime != 0 && __FullSecond > StartTime)
+		{
+			if(__FullSecond > EndTime + REAL_SECOND(2))
+				BattleTimeUI.setText("");
+			else if(__FullSecond > EndTime)
+				BattleTimeUI.setText("00:00");
+			else
+				BattleTimeUI.setText(GetTimeString((EndTime - __FullSecond) / __TimeMultiplier));
+		}
+		else
+		{
+			BattleTimeUI.setText("");
+		}
+	}
+	if(valid(TurnBasedRoundsUI) && EndTime == 0)
+	{
+		if(StartTime != 0 && __FullSecond > StartTime)
+			if(TurnBasedRounds == 1)
+				TurnBasedRoundsUI.setText("Last round");
+			else
+				TurnBasedRoundsUI.setText("Rounds left: " + TurnBasedRounds);
+		else
+			TurnBasedRoundsUI.setText("");
+	}
+}
+
+string GetTimeString(uint time)
+{
+	time++; //correction
+	uint seconds = time % 60;
+	uint hours = time / (60 * 60);
+	uint minutes = time / 60 - hours * 60;
+	
+	string@ timeString = "";
+	if(hours > 0)
+		timeString += hours + ":";
+	if(minutes < 10)
+			timeString += "0";
+	timeString += minutes + ":";
+	if(seconds < 10)
+		timeString += "0";
+	timeString += seconds;
+
+	return timeString;
+}
+
+void AddActionButtons(bool startButton)
+{
+	uint buttonX = __ScreenWidth / 2 - 75;
+	uint buttonY = __ScreenHeight / 2 + 110 + 2;
+	
+	if(startButton)
+	{
+		GUI_AddButton(CLIENT_SCREEN_BATTLEGROUND)
+			.UpPic("opbtnoff.frm")
+			.DownPic("opbtnon.frm")
+			.Position(buttonX, buttonY)
+			.CallbackMouseClick(StartAction())
+			.setAbsolutePosition(true)
+		;
+		
+		GUI_AddText(CLIENT_SCREEN_BATTLEGROUND, "START", 0, 0)
+			.TextOptions(FONT_BIG, COLOR_YELLOW, FT_CENTERXY)
+			.AbsolutePosition(buttonX, buttonY)
+			.TextBoxSize(137, 32)
+		;
+		buttonY += 36;
+	}
+	
+	GUI_AddButton(CLIENT_SCREEN_BATTLEGROUND)
+		.UpPic("opbtnoff.frm")
+		.DownPic("opbtnon.frm")
+		.Position(buttonX, buttonY)
+		.CallbackMouseClick(CancelAction())
+		.setAbsolutePosition(true)
+	;
+	
+	GUI_AddText(CLIENT_SCREEN_BATTLEGROUND, "CANCEL", 0, 0)
+		.TextOptions(FONT_FAT, COLOR_YELLOW, FT_CENTERXY)
+		.AbsolutePosition(buttonX, buttonY)
+		.TextBoxSize(137, 30)
+	;
+}
+
+class JoinAction : IGUIElementCallbackMouseClick
+{
+	private uint TeamIndex;
+	
+	JoinAction(uint teamIndex)
+	{
+		TeamIndex = teamIndex;
+	}
+	
+	void OnMouseClick(int id, int click) override
+	{
+		if(click != MOUSE_CLICK_LEFT)
+			return;
+		CritterCl@ chosen = GetChosen();
+		if(!valid(chosen))
+			return;
+		
+		RunServerScriptUnsafe("battleground@unsafe_Join", TeamIndex, 0, 0, null, null);
+	}
+}
+
+class StartAction : IGUIElementCallbackMouseClick
+{
+	void OnMouseClick(int id, int click) override
+	{
+		if(click != MOUSE_CLICK_LEFT)
+			return;
+		CritterCl@ chosen = GetChosen();
+		if(!valid(chosen))
+			return;
+			
+		RunServerScriptUnsafe("battleground@unsafe_Start", 0, 0, 0, null, null);
+	}
+}
+
+class CancelAction : IGUIElementCallbackMouseClick
+{
+	void OnMouseClick(int id, int click) override
+	{
+		if(click != MOUSE_CLICK_LEFT)
+			return;
+		CritterCl@ chosen = GetChosen();
+		if(!valid(chosen))
+			return;
+			
+		RunServerScriptUnsafe("battleground@unsafe_Cancel", 0, 0, 0, null, null);
+	}
+}
+
+class TeamList 
+{
+	private uint Index;
+	private IGUIElementTextOpt@[] PlayerNames;
+	private IGUIElementTextOpt@[] KillsCountUI;
+	private IGUIElementTextOpt@[] DeathsCountUI;
+	
+	TeamList(uint teamIndex, uint x, uint y)
+	{
+		Index = teamIndex;
+		uint height = 10;
+		for (uint i = 0; i < 15; i++)
+		{
+			PlayerNames.insertLast(GUI_AddText(CLIENT_SCREEN_BATTLEGROUND, "test"+i, 0, 0)
+				.TextOptions(FONT_FALLOUT, COLOR_GREEN, 0)
+				.AbsolutePosition(x, y + i * height) 
+				.TextBoxSize(137, 10)
+			);
+		}
+	}
+	
+	void Refresh(int[] players)
+	{
+		uint playerIndex = 0; 
+		for (uint i = 0; i < PlayerNames.length(); i++)
+		{
+			if(playerIndex < players.length())
+			{
+				bool found = false;
+				for (uint j = playerIndex; j < players.length(); j+=2)
+					if(uint(players[j]) == Index)
+					{
+						CritterCl@ critter = GetCritter(players[j + 1]);
+						if(valid(critter))
+							PlayerNames[i].setText(critter.Name);
+						else
+							PlayerNames[i].setText("not found");
+						playerIndex = j + 2;
+						found = true;
+						break;
+					}
+					
+				if(!found)
+					PlayerNames[i].setText("");
+			}
+			else
+				PlayerNames[i].setText("");
+		}
+	}
+}

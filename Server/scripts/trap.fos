@@ -1,0 +1,339 @@
+// Author: rifleman17
+// Ћовушки, установленные на дверь или контейнер.
+// ¬ качестве сложности ловушки используетс€ свойство LockerComplexity.
+#include "_msgstr.fos"
+#include "_macros.fos"
+
+// #define DL #(str) Log(str)
+#define DL    # (str)
+
+import void InjureCritter( Critter& cr, uint dmg, uint dmgType, uint8 dir, uint attackerId )  from "combat";
+import void QuakeScreen( Map& map ) from "effects";
+
+// ѕризнак, можно ли установить ловушку на контейнер/дверь
+// onItem - дверь/контейнер, на который нужно поставить ловушку
+bool _ValidForTrap( Item& onItem )
+{
+    bool  isValid = false;
+    uint8 iType = onItem.GetType();
+    isValid = ( iType == ITEM_TYPE_DOOR || iType == ITEM_TYPE_CONTAINER );
+
+    return isValid;
+}
+
+// ѕризнак: предмет=ловушка
+bool _IsItemTrap( Item& trap )
+{
+    // предмет должен иметь флаг ITEM_HIDDEN
+    if( !FLAG( trap.Flags, ITEM_HIDDEN ) )
+        return false;
+    if( !FLAG( trap.Flags, ITEM_TRAP ) )
+        return false;
+    return ( _CanItemTrap( trap ) );
+}
+
+// ѕризнак: предмет может выступать в роли ловушки. ѕока только дл€ гранат
+bool _CanItemTrap( Item& trap )
+{
+    return _CanItemTrap( trap.GetProtoId() );
+}
+
+bool _CanItemTrap( uint pid )
+{
+    uint[] trapPids = { PID_MOLOTOV_COCKTAIL, PID_FRAG_GRENADE, PID_PLASMA_GRENADE, PID_PULSE_GRENADE };
+    for( uint i = 0, l = trapPids.length(); i < l; i++ )
+    {
+        if( pid == trapPids[ i ] )
+            return true;
+    }
+
+    return false;
+}
+
+// ѕризнак, дверь заминирована
+bool _IsItemTrapped( Item& trappedItem )
+{
+    return ( valid( GetTrap( trappedItem ) ) );
+}
+
+// Ћовушка на данной двери
+Item @ GetTrap( Item & door )
+{
+    DL( "getting trap" );
+    if( !_ValidForTrap( door ) )
+        return null;
+    DL( "door valid for trap" );
+    Map @ map = GetMap( door.MapId );
+    if( !valid( map ) )
+        return null;
+    DL( "map valid" );
+    uint x = door.HexX;
+    uint y = door.HexY;
+
+    Item@[] traps;
+    if( map.GetItems( x, y, traps ) == 0 )
+        return null;
+
+    for( uint i = 0, l = traps.length(); i < l; i++ )
+    {
+        DL( "cycle" );
+        Item@ trap = traps[ i ];
+        if( !valid( trap ) )
+            continue;
+
+        if( _IsItemTrap( trap ) )
+        {
+            return trap;
+        }
+    }
+    return null;
+}
+
+// ”становка ловушки
+// TODO: прописывать сложность ловушки в гранату. ѕока установки сложности съема гранаты нет
+bool _TrySetupTrap( Item& door, Item @ trap, Critter& player )
+{
+    if( !valid( trap ) )
+        return false;
+    if( !_ValidForTrap( door ) )
+        return false;
+    if( !_CanItemTrap( trap ) )
+        return false;
+    Map@ map = GetMap( door.MapId );
+    if( !valid( map ) )
+        return false;
+    if( player.Timeout[ TO_SK_LOCKPICK ] > 0 )
+    {
+        player.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_WEARINESS );
+        return false;
+    }
+
+    int base = player.Skill[ SK_TRAPS ];
+    base = CLAMP( base, 0, 95 );
+    int chance = Random( 1, 100 );
+    if( base >= chance )
+    {
+        // ловушка установлена
+        player.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_TRAPS_SET_SUCC );
+
+        uint pid = trap.GetProtoId();
+        DeleteItem( trap );
+
+        if( _SetDoorTrap( door, pid ) )
+            player.StatBase[ ST_EXPERIENCE ] += 50;
+    }
+    else
+    {
+        // не установлена
+        player.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_TRAPS_SET_FAIL );
+        if( chance <= 5 || base < 5 )
+        {
+            TrapDamagePlayer( trap, player );           // ≈сть некий шанс, что ловушка сработает при установке(граната взорветс€)
+        }
+    }
+
+    player.TimeoutBase[ TO_SK_LOCKPICK ] = TRAPS_TIMEOUT( player ) * 2; // удвоенный таймаут на установку
+    return true;
+}
+
+bool _SetDoorTrap( Item& door, uint trapPid )
+{
+    uint16 x = 0, y = 0;
+    Map    @map = door.GetMapPosition( x, y );
+
+    if( !valid( map ) )
+        return false;
+    Item @ trap = map.AddItem( x, y, trapPid, 1 );
+
+    if( valid( trap ) )
+    {
+        SETFLAG( trap.Flags, ITEM_TRAP );
+        SETFLAG( trap.Flags, ITEM_HIDDEN );
+        trap.Update();
+        return true;
+    }
+    return false;
+}
+
+// —н€тие ловушки
+bool _TryRemoveTrap( Item& door, Critter& player )
+{
+    if( !_ValidForTrap( door ) )
+        return false;
+    if( !_IsItemTrapped( door ) )
+        return false;
+
+    if( player.Timeout[ TO_SK_LOCKPICK ] > 0 )
+    {
+        player.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_WEARINESS );
+        return false;
+    }
+
+    Item @ trap = GetTrap( door );
+    if( !valid( trap ) )
+        return false;
+
+    int base = player.Skill[ SK_TRAPS ] - door.LockerComplexity;
+    base = CLAMP( base, 0, 95 );
+    int chance = Random( 1, 100 );
+    if( base >= chance )
+    {
+        player.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_TRAPS_SUCC );      // ¬ы смогли разминировать ловушку.
+        player.AddItem( trap.GetProtoId(), 1 );
+        DeleteItem( trap );
+        player.StatBase[ ST_EXPERIENCE ] += 50;
+    }
+    else
+    {
+        player.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_TRAPS_FAIL ); // ¬ы не смогли сн€ть ловушку.
+        if( chance <= 5 || base < 5 )
+        {
+            TrapDamagePlayer( trap, player );                            // ≈сть некий шанс, что ловушка сработает при разминировании
+        }
+
+    }
+    player.TimeoutBase[ TO_SK_LOCKPICK ] = TRAPS_TIMEOUT( player );
+    return true;
+}
+
+// Ќанесение дамага игроку от ловушки
+void TrapDamagePlayer( Item& trap, Critter& player )
+{
+    if( !_IsItemTrap( trap ) )
+        return;
+
+    // пока все только дл€ гранат реализовано
+    if( trap.GetType() == ITEM_TYPE_WEAPON )
+    {
+        // c оружием просто - нужно выполнить нанесение дамага
+        uint       weapPid = trap.GetProtoId();
+        ProtoItem@ weap = GetProtoItem( weapPid );
+        if( !valid( weap ) )
+            return;
+
+        uint damage = Random( weap.Weapon_DmgMin_0, weap.Weapon_DmgMax_0 );
+        uint damageType = weap.Weapon_DmgType_0;
+        Map @ map = player.GetMap();
+        if( valid( map ) )
+        {
+            uint tx = player.HexX;
+            uint ty = player.HexY;
+            if( weapPid == PID_MOLOTOV_COCKTAIL )
+            {
+                map.RunEffect( PID_EXPLODE_FIRE_BIG, tx, ty, 2 );
+                QuakeScreen( map );
+            }
+            else if( weapPid == PID_FRAG_GRENADE || weapPid == PID_HOLY_HAND_GRENADE )
+            {
+                map.RunEffect( PID_EXPLODE_FIRE_SMALL, tx, ty, 2 );
+                QuakeScreen( map );
+            }
+            else if( weapPid == PID_PULSE_GRENADE )
+                map.RunEffect( PID_EXPLODE_EMP, tx, ty, 2 );
+            else if( weapPid == PID_PLASMA_GRENADE )
+            {
+                map.RunEffect( PID_EXPLODE_PLASMA, tx, ty, 2 );
+                QuakeScreen( map );
+            }
+
+        }
+
+        InjureCritter( player, damage, damageType, GetDirection( trap.HexX, trap.HexY, player.HexX, player.HexY ), 0 );
+        DeleteItem( trap );
+        return;
+    }
+}
+
+bool UseSkillOnTrappedItem( Critter& cr, Item& trappedItem, int skill ) // Export
+{
+    DL( "using skill" );
+    if( !_IsItemTrapped( trappedItem ) )
+    {
+        DL( "no trap" );
+        return false;
+    }
+    DL( "item trapped" );
+    if( skill == SK_TRAPS )
+    {
+        _TryRemoveTrap( trappedItem, cr );
+        return true;
+    }
+    if( skill == SKILL_PICK_ON_GROUND )
+    {
+        DL( "try get trap" );
+        Item @ trap = GetTrap( trappedItem );
+        if( !valid( trap ) )
+            return false;
+
+        TrapDamagePlayer( trap, cr );
+
+        return true;
+    }
+    return false;
+}
+
+bool SetTrapOnItem( Critter& cr, Item& trap, Item& onItem ) // Export
+{
+    if( _ValidForTrap( onItem ) )
+    {
+        if( _CanItemTrap( trap ) )
+        {
+            _TrySetupTrap( onItem, trap, cr );
+            return true;
+        }
+    }
+    return false;
+}
+
+// —крипт дл€ двери с самовопроизвод€щейс€ ловушкой
+// Val5 - врем€ респауна ловушки в игровых минутах
+// Val4 - прототип ловушки
+void _TrappedDoorInit( Item& door, bool firstTime )
+{
+    uint trapPid = door.Val4;
+    if( !_CanItemTrap( trapPid ) )
+        return;
+
+    door.SetEvent( ITEM_EVENT_SKILL, "_TrappedDoorSkill" );
+    if( _IsItemTrapped( door ) )
+        return;
+    _SetDoorTrap( door, trapPid );
+}
+
+bool _TrappedDoorSkill( Item& door, Critter& cr, int skill )
+{
+    if( cr.IsNpc() )
+        return false;
+
+    if( UseSkillOnTrappedItem( cr, door, skill ) )
+    {
+        if( !_IsItemTrapped( door ) )    // Ћовушка разминирована или взорвалась
+        {
+            uint time = door.Val5;
+            if( time > 0 )
+            {
+                CreateTimeEvent( __FullSecond + time * 60, "e_RespawnTrap", door.Id, true );
+            }
+        }
+        return true;
+    }
+    return false;
+}
+
+// ¬осстановление ловушки через врем€ указанное в Val5
+uint e_RespawnTrap( uint[] @ values )
+{
+    Item @ door = GetItem( values[ 0 ] );
+    if( !valid( door ) )
+        return 0;
+    uint trapPid = door.Val4;
+    if( !_CanItemTrap( trapPid ) )
+        return 0;
+    _SetDoorTrap( door, trapPid );
+    Map @map = GetMap( door.MapId );
+    if( valid( map ) ) // ѕопытка закрыть дверь
+    {
+        door.LockerClose();
+    }
+    return 0;
+}

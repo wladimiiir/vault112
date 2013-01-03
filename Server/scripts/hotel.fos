@@ -1,0 +1,336 @@
+#include "_macros.fos"
+#include "entire_h.fos"
+#include "serializator.fos"
+#include "hotel_dialog.fos"
+#include "critter_action_basic.fos"
+
+HotelRoom@[] HotelRooms;
+
+HotelRoom@[] GetMapHotelRooms(Map@ map)
+{
+	HotelRoom@[] hotelRooms;
+	if(!valid(map))
+		return hotelRooms;
+	
+	for (uint i = 0; i < HotelRooms.length(); i++)
+	{
+		HotelRoom@ hotelRoom = HotelRooms[i];
+		if(hotelRoom.IsOnMap(map))
+			hotelRooms.insertLast(hotelRoom);
+	}
+	
+	return hotelRooms;
+}
+
+HotelRoom@ GetHotelRoom(Critter& tenant)
+{
+	HotelRoom@[] hotelRooms = GetMapHotelRooms(tenant.GetMap());
+	for (uint i = 0; i < hotelRooms.length(); i++)
+		if(hotelRooms[i].IsTenant(tenant))
+			return @hotelRooms[i];
+			
+	return null;
+}
+
+HotelRoom@ GetHotelRoom(Item& door)
+{
+	for (uint i = 0; i < HotelRooms.length(); i++)
+		if(HotelRooms[i].IsDoor(door))
+			return @HotelRooms[i];
+	
+	return null;
+}
+
+HotelRoom@ FindVacantHotelRoom(Critter& player)
+{
+	HotelRoom@ vacantRoom;
+	HotelRoom@[] hotelRooms = GetMapHotelRooms(player.GetMap());
+	for (uint i = 0; i < hotelRooms.length(); i++)
+		if(!valid(vacantRoom) || hotelRooms[i].GetTenantCount() < vacantRoom.GetTenantCount())
+			@vacantRoom = hotelRooms[i];
+	
+	return vacantRoom;
+}
+
+void ShowHotelRoom(Critter& hotelManager, HotelRoom@ hotelRoom)
+{
+	Action@ action = DefaultAction()
+		.AddSubAction(MoveTo(hotelRoom.GetDoorX(), hotelRoom.GetDoorY(), false))
+		.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70134))
+		.AddSubAction(Wait(REAL_SECOND(5)))
+	;
+	actionManager.Start(hotelManager, action); 
+}
+
+void InitRoomDoorIn(Item& door, bool)
+{
+	if(door.GetType() != ITEM_TYPE_DOOR)
+		return;
+	uint16 hexX = 0, hexY = 0;
+	Map@ map = door.GetMapPosition(hexX, hexY);
+	if(!valid(map))
+		return;
+	
+	HotelRooms.insertLast(HotelRoom(door, GetHotelRoomLocation(map), door.Val0));
+
+	door.SetEvent(ITEM_EVENT_SKILL, "_HotelRoomIn");
+}
+
+uint GetHotelRoomLocation(Map& hotelMap)
+{
+	//~ switch(hotelMap.GetProtoId())
+	//~ {
+		//~ case MAP_junktown:
+			//~ return LOCATION_HotelRoomJunktown;
+		//~ case MAP_hub:
+			//~ return LOCATION_HotelRoomHub;
+	//~ }
+	return 0;
+}
+
+bool _HotelRoomIn(Item& door, Critter& cr, int skill)
+{
+	if(cr.Timeout[TO_BATTLE] > 0)
+	{
+		cr.SayMsg(SAY_NETMSG, TEXTMSG_TEXT, 70308);
+		return true;
+	}
+	
+	HotelRoom@ hotelRoom = GetHotelRoom(door);
+	if(!valid(hotelRoom))
+	{
+		Log("<Error: no hotel room found for door: "+door.Id+">");
+		return true;
+	}
+	if(!hotelRoom.IsTenant(cr))
+	{
+		cr.SayMsg(SAY_NETMSG, TEXTMSG_TEXT, 70304);
+		return true;
+	}
+	if(!hotelRoom.GoIn(cr))
+		Log("Entering hotel room failed: door="+door.Id+", critter="+cr.Id);
+	
+	return true;
+}
+
+void InitRoomDoorOut(Item& door, bool)
+{
+	if(door.GetType() != ITEM_TYPE_DOOR)
+		return;
+		
+	door.SetEvent(ITEM_EVENT_SKILL, "_HotelRoomOut");
+}
+
+bool _HotelRoomOut(Item& door, Critter& cr, int skill)
+{
+	Map@ map = cr.GetMap();
+	if(!valid(map))
+		return true;
+	
+	@map = GetHotelMap(map);
+	if(!valid(map))
+		return true;
+		
+	cr.TransitToMap(map.Id, DEFAULT_HOTEL_ENTIRE);
+	
+	return true;
+}
+
+Map@ GetHotelMap(Map& hotelRoomMap)
+{
+	//~ switch(hotelRoomMap.GetProtoId())
+	//~ {
+		//~ case MAP_Hotel_Room_Junktown:
+			//~ return GetMapByPid(MAP_junktown, 0);
+		//~ case MAP_Hotel_Room_Hub:
+			//~ return GetMapByPid(MAP_hub, 0);
+	//~ }
+	return null;
+}
+
+class HotelRoom
+{
+	#define _GetKey		("HotelRoom_"+DoorMap+"_"+DoorX+"_"+DoorY)
+	
+	private uint DoorMap;
+	private uint DoorX;
+	private uint DoorY;
+	private uint16 HotelRoomLocationPid;
+	private uint HotelRoomEntire;
+	private uint[] Tenants;
+	private uint[] TenancyEndTimes;
+	private uint[] HotelRoomMaps;
+	
+	HotelRoom(Item& door, uint16 hotelRoomLocationPid, uint hotelRoomEntire)
+	{
+		uint16 hexX = 0, hexY = 0;
+		Map@ map = door.GetMapPosition(hexX, hexY);
+		if(!valid(map))
+			return;
+		DoorMap = map.GetProtoId();
+		DoorX = door.HexX;
+		DoorY = door.HexY;
+		HotelRoomLocationPid = hotelRoomLocationPid;
+		HotelRoomEntire = hotelRoomEntire;
+		Load();
+	}
+	
+	void Load()
+	{
+		Serializator serializator;
+		if(!serializator.Load(_GetKey))
+			return;
+		
+		serializator.Get(Tenants);
+		serializator.Get(TenancyEndTimes);
+		serializator.Get(HotelRoomMaps);
+	}
+	
+	private void Save()
+	{
+		Serializator serializator;
+		
+		serializator.Set(Tenants);
+		serializator.Set(TenancyEndTimes);
+		serializator.Set(HotelRoomMaps);
+		
+		serializator.Save(_GetKey);
+	}
+	
+	uint GetDoorX() {return DoorX;}
+	
+	uint GetDoorY() {return DoorY;}
+	
+	bool IsOnMap(Map& map)
+	{
+		return DoorMap == map.GetProtoId();
+	}
+	
+	bool IsDoor(Item& door)
+	{
+		uint16 hexX = 0, hexY = 0;
+		Map@ map = door.GetMapPosition(hexX, hexY);
+		if(!valid(map))
+			return false;
+		
+		return map.GetProtoId() == DoorMap && hexX == DoorX && hexY == DoorY;
+	}
+	
+	bool IsTenant(Critter& critter)
+	{
+		Map@ map = critter.GetMap();
+		if(!valid(map) || map.GetProtoId() != DoorMap)
+			return false;
+		
+		RemoveOldTenants();
+		for (uint i = 0; i < Tenants.length(); i++)
+			if(critter.Id == Tenants[i])
+				return true;
+		return false;
+	}
+	
+	uint GetTenantCount()
+	{
+		RemoveOldTenants();
+		return Tenants.length();
+	}
+	
+	void SetTenancy(Critter& tenant, uint tenancyEndTime)
+	{
+		Map@ map = tenant.GetMap();
+		if(!valid(map))
+			return;
+		
+		for (uint i = 0; i < Tenants.length(); i++)
+			if(Tenants[i] == tenant.Id)
+			{
+				TenancyEndTimes[i] = tenancyEndTime;
+				Save();
+				return;
+			}
+		
+		uint hotelRoomMapId = CreateHotelRoomMap(tenant);
+		if(hotelRoomMapId == 0)
+		{
+			Log("<Error: cannot create map for hotel room: "+HotelRoomLocationPid+">");
+			return;
+		}
+		Tenants.insertLast(tenant.Id);
+		TenancyEndTimes.insertLast(tenancyEndTime);
+		HotelRoomMaps.insertLast(hotelRoomMapId);
+		//Log("Tenancy set for door: "+DoorX+", "+DoorY);
+		Save();
+	}
+	
+	uint GetTenancyEndTime(Critter& tenant)
+	{
+		for (uint i = 0; i < Tenants.length(); i++)
+			if(Tenants[i] == tenant.Id)
+				return MAX(__FullSecond, TenancyEndTimes[i]);
+				
+		return __FullSecond;
+	}
+	
+	private uint CreateHotelRoomMap(Critter& tenant)
+	{
+		uint locationId = CreateLocation(HotelRoomLocationPid, tenant.WorldX, tenant.WorldY, null);
+		if(locationId == 0)
+			return 0;
+		Location@ location = GetLocation(locationId);
+		if(!valid(location))
+			return 0;
+			
+		Map@ map = location.GetMapByIndex(0);
+		if(!valid(map))
+			return 0;
+			
+		return map.Id;
+	}
+	
+	bool GoIn(Critter& tenant)
+	{
+		if(!IsTenant(tenant))
+			return false;
+		Map@ map = tenant.GetMap();
+		if(!valid(map))
+			return false;
+		
+		for (uint i = 0; i < Tenants.length(); i++)
+			if(Tenants[i] == tenant.Id)
+			{
+				Map@ hotelRoomMap = GetMap(HotelRoomMaps[i]);
+				if(!valid(hotelRoomMap))
+					return false;
+				tenant.TransitToMap(hotelRoomMap.Id, HotelRoomEntire);
+			}
+		
+		return true;
+	}
+	
+	private void RemoveOldTenants()
+	{
+		bool save = false;
+		for (uint i = TenancyEndTimes.length(); i > 0;)
+		{
+			i--;
+			if(__FullSecond > TenancyEndTimes[i])
+			{
+				Log("Removing old tenant: "+Tenants[i]);
+				Tenants.removeAt(i);
+				TenancyEndTimes.removeAt(i);
+				
+				Map@ map = GetMap(HotelRoomMaps[i]);
+				if(valid(map))
+				{
+					Location@ location = map.GetLocation();
+					if(valid(location))
+						DeleteLocation(location.Id);
+				}
+				HotelRoomMaps.removeAt(i);
+				save = true;
+			}
+		}
+		if(save)
+			Save();
+	}
+}

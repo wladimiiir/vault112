@@ -1,0 +1,71 @@
+#include "_macros.fos"
+
+TableStuff@[] TableStuffs;
+
+void TableStuffInit(Item& item, bool firstTime)
+{
+	if(firstTime)
+		_ItemSetHidden(item);
+	
+	TableStuffs.insertLast(TableStuff(item));
+}
+
+TableStuff@ GetClosestTableStuff(Critter& shopkeeper)
+{
+	Map@ map = shopkeeper.GetMap();
+	if(!valid(map))
+		return null;
+	
+	TableStuff@ closest;
+	uint closestDistance = uint(-1);
+	
+	for (uint i = 0; i < TableStuffs.length(); i++)
+	{
+		uint distance = TableStuffs[i].GetDistance(map, shopkeeper.HexX, shopkeeper.HexY);
+		if(distance < closestDistance)
+		{
+			closestDistance = distance;
+			@closest = TableStuffs[i];
+		}
+	}
+	
+	return closest;
+}
+
+class TableStuff
+{
+	private uint StuffItemId;
+	private uint MapId;
+	private uint16 HexX;
+	private uint16 HexY;
+	
+	TableStuff(Item& stuff)
+	{
+		StuffItemId = stuff.Id;
+		Map@ map = stuff.GetMapPosition(HexX, HexY);
+		if(!valid(map))
+			return;
+		MapId = map.GetProtoId();
+	}
+	
+	uint GetDistance(Map& map, uint16 hexX, uint16 hexY)
+	{
+		if(map.GetProtoId() != MapId)
+			return uint(-1);
+		return GetDistantion(hexX, hexY, HexX, HexY);
+	}
+	
+	void Hide()
+	{
+		Item@ stuffItem = GetItem(StuffItemId);
+		if(valid(stuffItem))
+			_ItemSetHidden(stuffItem);
+	}
+	
+	void Show()
+	{
+		Item@ stuffItem = GetItem(StuffItemId);
+		if(valid(stuffItem))
+			_ItemUnsetHidden(stuffItem);
+	}
+}

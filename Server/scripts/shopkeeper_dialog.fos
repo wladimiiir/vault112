@@ -1,0 +1,107 @@
+void r_SetSupplier(Critter& player, Critter@ npc, int days)
+{
+	if(!valid(npc))
+		return;
+		
+	Shopkeeper shopkeeper(npc);
+	shopkeeper.SetSupplier(player, __FullSecond + REAL_DAY(days));
+}
+
+void r_AddSupplyDays(Critter& player, Critter@ npc, int days)
+{
+	if(!valid(npc))
+		return;
+		
+	Shopkeeper shopkeeper(npc);
+	if(!shopkeeper.IsSupplier(player))
+		return;
+		
+	shopkeeper.SetSupplier(player, shopkeeper.GetSupplyEndTime() + REAL_DAY(days));
+}
+
+bool d_HasSupplier(Critter& npc, Critter@ player)
+{
+	Shopkeeper shopkeeper(npc);
+	return shopkeeper.HasSupplier();
+}
+
+bool d_IsSupplier(Critter& player, Critter@ npc)
+{
+	if(!valid(npc))
+		return false;
+	
+	Shopkeeper shopkeeper(npc);
+	return shopkeeper.IsSupplier(player);
+}
+
+bool d_IsNotSupplier(Critter& player, Critter@ npc)
+{
+	if(!valid(npc))
+		return false;
+	
+	Shopkeeper shopkeeper(npc);
+	return !shopkeeper.IsSupplier(player);
+}
+
+bool d_HasOldItems(Critter& player, Critter@ npc)
+{
+	if(!valid(npc))
+		return false;
+	
+	Shopkeeper shopkeeper(npc);
+	return shopkeeper.HasOldItems(player);
+}
+
+bool d_HasNoOldItems(Critter& player, Critter@ npc)
+{
+	if(!valid(npc))
+		return false;
+	
+	Shopkeeper shopkeeper(npc);
+	return !shopkeeper.HasOldItems(player);
+}
+
+bool d_IsSupplierForLessThanDays(Critter& player, Critter@ npc, int days)
+{
+	if(!valid(npc))
+		return false;
+	
+	Shopkeeper shopkeeper(npc);
+	return shopkeeper.IsSupplier(player) 
+			&& shopkeeper.GetSupplyEndTime() < uint(__FullSecond + REAL_DAY(days));
+}
+
+bool d_IsSupplierForMoreThanDays(Critter& player, Critter@ npc, int days)
+{
+	if(!valid(npc))
+		return false;
+		
+	Shopkeeper shopkeeper(npc);
+	return shopkeeper.IsSupplier(player) 
+			&& shopkeeper.GetSupplyEndTime() > uint(__FullSecond + REAL_DAY(days));
+}
+
+void dlg_SetDaysLeft(Critter& player, Critter@ npc, string@ lexems)
+{
+	if(IS_DIALOG_END(lexems) || IS_DIALOG_SAY_MODE(lexems) || !valid(npc))
+        return;
+        
+    Shopkeeper shopkeeper(npc);
+    uint daysLeft = 0;
+    
+    if(shopkeeper.IsSupplier(player))
+    {
+		daysLeft = shopkeeper.GetSupplyEndTime() - __FullSecond;
+		daysLeft /= __TimeMultiplier * 60 * 60 * 24;
+		daysLeft++;
+	}
+    lexems = "$daysLeft" + daysLeft;
+}
+
+void r_SetupItemCosts(Critter& player, Critter@ npc)
+{
+	if(!valid(npc))
+		return;
+		
+	SetupItemCosts(player, npc);
+}

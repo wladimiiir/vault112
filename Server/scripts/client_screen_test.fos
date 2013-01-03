@@ -1,0 +1,100 @@
+// Author: cvet
+// Test script
+#include "_client_defines.fos"
+#include "client_gui_h.fos"
+#include "_colors.fos"
+
+class TestScreenButtonShow : IGUIElementCallbackMouseClick
+{
+    void OnMouseClick( int click )
+    {
+        Message( "GUITestScreenButtonShow::OnMouseClick " + click );
+        ::ShowScreen( CLIENT_SCREEN_TEST, 3, 3, 3 );
+    }
+}
+
+class TestScreenButton : IGUIElementCallbackMouseClick
+{
+    void OnMouseClick( int click )
+    {
+        ::HideScreen( 0, 2, 2, 2 );
+    }
+}
+
+class TestScreenButton2 : IGUIElementCallbackMouseClick
+{
+    void OnMouseClick( int click )
+    {
+        ::ShowScreen( CLIENT_SCREEN_TEST, 1, 1, 1 );
+    }
+}
+
+class TestScreen : IGUIScreenCallbackShow, IGUIScreenCallbackHide, IGUIScreenCallbackMove, IGUIElementCallbackInit, IGUIElementCallbackKeyPress
+{
+    void OnShow( int p0, int p1, int p2 )
+    {
+        ::Message( "OnShow " + p0 + " " + p1 + " " + p2 + "." );
+        @ScreenOpt = GUI_GetScreenOptions();
+    }
+
+    void OnHide( int p0, int p1, int p2 )
+    {
+        ::Message( "OnHide " + p0 + " " + p1 + " " + p2 + "." );
+    }
+
+    void OnMove( int posX, int posY )
+    {
+        ::Message( "OnMove posX " + posX + " posY " + posY );
+        ::Message( "equal posX " + ScreenOpt.GetPosX() + " posY " + ScreenOpt.GetPosY() );
+    }
+
+    void OnInit()
+    {
+        @InputBoxOpt = GUI_GetElementOptions();
+    }
+
+    void OnKeyPress( uint8 key, uint8 letter )
+    {
+        string letter_ = " ";
+        letter_[ 0 ] = ( letter != 0 ? letter : '?' );
+        ::Message( "OnKeyPress key code " + key + " letter " + letter_ + "." );
+    }
+
+    IGUIScreenOpt@  ScreenOpt;
+    IGUIElementOpt@ InputBoxOpt;
+}
+
+void InitTestScreen()
+{
+    TestScreenButtonShow buttonShow;
+    GUI_AddScreenElement( CLIENT_MAIN_SCREEN_GAME, "ebut_out.frm", 150, 40 )
+    .CallbackMouseClick( buttonShow )
+    .DownPic( "ebut_in.frm" );
+
+    TestScreen testScreen;
+    GUI_CreateScreen( CLIENT_SCREEN_TEST, "automap.frm" )
+    .CallbackShow( testScreen )
+    .CallbackHide( testScreen )
+    .CallbackMove( testScreen )
+    .CanMove( true )
+    // .Position(155,111)
+    .Modal( false )
+    .Multiinstance( true );
+
+    TestScreenButton buttonExit;
+    GUI_AddScreenElement( CLIENT_SCREEN_TEST, "ebut_out.frm", 10, 200 )
+    .CallbackMouseClick( buttonExit )
+    .DownPic( "ebut_in.frm" );
+
+    TestScreenButton2 buttonAction;
+    GUI_AddScreenElement( CLIENT_SCREEN_TEST, "ageoff.frm", 70, 50 )
+    .CallbackMouseClick( buttonAction )
+    .DownPic( "ageon.frm" )
+    .Text( "action", FONT_FALLOUT, COLOR_LRED, COLOR_DRED, FT_CENTERX | FT_CENTERY | FT_NOBREAK );
+
+    GUI_AddScreenElement( CLIENT_SCREEN_TEST, "charwin.frm", 170, 60 )
+    .CallbackInit( testScreen )
+    .CallbackKeyPress( testScreen )
+    .Text( "type here", FONT_FALLOUT, COLOR_DGREEN, COLOR_RED, FT_CENTERX | FT_CENTERY )
+    .TextInput( true, 50, COLOR_LGREEN );
+}

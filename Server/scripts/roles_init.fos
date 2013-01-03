@@ -1,0 +1,142 @@
+#include "critter_action_basic.fos"
+#include "critter_action_find.fos"
+#include "critter_action_condition.fos"
+#include "critter_action_dialog.fos"
+#include "critter_action_protection.fos"
+#include "critter_action_when.fos"
+#include "_ai.fos"
+#include "_itempid.fos"
+#include "custom_data_h.fos"
+#include "combat_h.fos"
+
+#define		DEFAULT_JAIL_TIMEOUT			(REAL_MINUTE(10))
+#define		MESSAGE_REINFORCEMENTS			(1999)
+#define		OFFENDER_LEXEM					("offender")
+
+const uint16[] FOOD_ITEMS = {PID_MUTATED_FRUIT, PID_IGUANA_ON_A_STICK, PID_MEAT_ON_A_STICK};
+const Dialog@ HealDialog = Dialog()
+								.AddSentence(1, SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70215)
+								.AddSentence(2, SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70216);
+
+void _HungryKidInit(Critter& npc, bool firstTime)
+{
+	#define TO_DISTANCE	(3)
+	
+	if(firstTime)
+		npc.ModeBase[MODE_NO_HOME] = 1;
+	
+	Action@ action = LoopAction()
+						.AddSubAction(FindCritters(ClosestPlayer)
+										.If(IsSeen())
+										.AddSubAction(LoopAction(2)
+											.AddSubAction(Follow(TO_DISTANCE))
+											.AddSubAction(LookAt())
+											.AddSubAction(Say(TEXTMSG_TEXT, 70113))
+											.AddSubAction(Wait(REAL_SECOND(5)))))
+						.AddSubAction(FindItems(FOOD_ITEMS)
+										.AddSubAction(PickUp())
+										.AddSubAction(DeleteItems()))
+						.AddSubAction(Patrol(DEFAULT_PATROL_ENTIRE, true))
+						.AddSubAction(Wait(REAL_SECOND(3)));
+	;
+	actionManager.Start(npc, action);
+}
+
+void _InitBrahmin(Critter& npc, bool firstTime)
+{
+	if(firstTime)
+	{
+		npc.StatBase[ST_DIALOG_ID] = DIALOG_all_brahmin;
+	}
+
+	Action@ action = LoopAction(true)
+						.AddSubAction(AttackAttacker())
+						.AddSubAction(ChangeDirection(RANDOM_DIRECTION, true))
+						.AddSubAction(Wait(REAL_SECOND(5), REAL_SECOND(30)))
+	;
+	
+	actionManager.Start(npc, action);
+}
+
+void _InitTraderSupplier(Critter& npc, bool firstTime)
+{
+	Action@ action = LoopAction()
+						.AddSubAction(RepeatAtInterval(REAL_SECOND(30))
+							.AddSubAction(Show())
+							.AddSubAction(Patrol(2, false))
+							.AddSubAction(Say("Bla bla bla..."))
+							.AddSubAction(MoveTo(232, 209, false, true))
+							.AddSubAction(Hide()))
+	;
+	actionManager.Start(npc, action);
+}
+
+void _InitHelplessCitizen(Critter& npc, bool firstTime)
+{
+	if(firstTime)
+	{
+		npc.StatBase[ST_AI_ID] = AIPACKET_FO1_RUNAWAY;
+	}
+	
+	Action@ action = RunningAction()
+						.AddSubAction(WhenSomeoneAttacks()
+							.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70119).WithChance(60))
+							.AddSubAction(MoveTo(DEFAULT_HIDEOUT_ENTIRE, true)
+								.AddSubAction(Wait(REAL_MINUTE(2)))))
+	;
+	actionManager.Start(npc, action);
+}
+
+void _InitTeamMedic(Critter& npc, bool firstTime)
+{
+	#define	INJURED_HP_PERCENTAGE	(75)
+	
+	if(firstTime)
+	{
+		Item@ item = npc.AddItem(PID_FIELD_MEDIC_KIT, 1);
+		if(valid(item))
+		{
+			npc.MoveItem(item.Id, 1, SLOT_HAND1);
+			npc.SetFavoriteItem(SLOT_HAND1, PID_FIELD_MEDIC_KIT);
+		}
+	}
+	
+	Action@ action = LoopAction()
+						.AddSubAction(FindCritters(FIND_LIFE_AND_KO | FIND_ONLY_NPC)
+							.If(IsTeamMember())
+							.If(IsInjured(INJURED_HP_PERCENTAGE))
+							.AddSubAction(Follow(1)
+								.AddSubAction(Heal()
+									.AddSubAction(AddDialog(@HealDialog, 1, false))
+									.AddSubAction(RemoveDialog(@HealDialog, 1)))))
+	;
+	actionManager.Start(npc, action);
+}
+
+void InitInvisibleLaw(Critter& npc, uint jailMapProtoId, uint jailEntire, uint offenceArea, uint16[] forbidenItems)
+{
+	npc.ParamBase[INVIS_LEVEL] = 100;
+	npc.StatBase[ST_BONUS_LOOK] = 1000;
+	Action@ action = LoopAction()
+						.AddSubAction(RecordOffence(offenceArea))
+						.AddSubAction(SetAttackerJailTimeout(DEFAULT_JAIL_TIMEOUT))
+						.AddSubAction(ForbidItems(forbidenItems)
+										.AddSubAction(RecordOffence(offenceArea, 3))
+										.AddSubAction(SetJailTimeout(DEFAULT_JAIL_TIMEOUT)))
+						.AddSubAction(FindCritters(ToJail)
+										.AddSubAction(Loot(LOOT_TYPE_DELETE))
+										.AddSubAction(Inform(TEXTMSG_TEXT, 70302))
+										.AddSubAction(Wait(REAL_SECOND(15)))
+										.AddSubAction(TransitCritterToMap(jailMapProtoId, jailEntire)
+											.AddSubAction(RunCritterFunction(FunctionSetJailed))
+											.AddSubAction(Revive())
+											.AddSubAction(RunCritterFunction(FunctionRefreshVisible))))
+						.AddSubAction(WatchForThieves(100, 50)
+										.AddSubAction(RecordOffence(offenceArea, 1)))
+						.AddSubAction(WhenCritterShown()
+										.If(IsOffender(offenceArea, 3, MAX_OFFENCE_NO_LIMIT))
+										.AddSubAction(Wait(REAL_SECOND(1)))
+										.AddSubAction(Inform(TEXTMSG_TEXT, 70301)))
+						;
+	actionManager.Start(npc, action);
+}

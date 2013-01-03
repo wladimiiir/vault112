@@ -1,0 +1,2113 @@
+TODO:
+
+DONE: All
+# Заметки по переводу:
+# Принести Смитти ремонтный ключ, Яма - не понял, что именно имеется в виду - repair toolkit или wrench. Перевел как wrench.
+#{8105001}{}{Найдите способ как победить главного воина племени Мусковекуана.} - даже не представляю как это имя правильно транслитерировать на английский. Поменял в англоязычном варианте на Motelchiuh (по имени ацтекского царя).
+#{8103102}{}{Принесите Гоятлаю целебных порошков.} - написал как Gojatlah, не уверен, правильно ли. 
+
+
+# 17.10.2007 Cvet  
+# Last edited: – 07.10.2008 00:11 by fragboi
+# Added: 17.07.2009 by trueneutral
+# Added even more: 13.08.09 by trueneutral
+
+#
+#
+#
+
+{4}{}{%d. }
+{5}{}{Current progress: }
+
+#
+# ID
+# Quest name
+#
+
+#
+# Formulas are:
+#	ID * 1000 + %exp%. (1-100) - Text player sees with quest var equal to %exp%.
+#	ID * 1000 + 101 - Quest tab name.
+#	ID * 1000 + 102 - Overall quest description.
+
+# 145
+# Найти журналы Кошачья Лапка.
+
+{145001}{}{Юра К. попросил вас принести ему 3 журнала "Кошачья лапка".}
+{145002}{}{Вы уговорили Куклачева принести ему всего 1 журнал "Кошачья лапка".}
+{145003}{}{Вы осчастливили Куклачева.}
+
+{145101}{}{Klamath}
+{145102}{}{Найти журналы Кошачья Лапка.}
+
+# 152
+# Matt persuade his wife to move with him to live in the Klamath.
+
+{152001}{}{Emmy is on the South-East Den.}
+{152002}{}{You could not persuade his wife.}
+{152003}{}{Matt and Emmy thank you.}
+
+{152101}{}{Den}
+{152102}{}{Persuade Matts wife to the move.}
+
+
+# 1807
+# Караван Арройо - Город-Убежище
+
+{1807001}{}{Вы записались в охранники каравана Селмы. Отправление в 14:00. Будьте на виду у проводника перед отправлением.}
+{1807002}{}{Вы в составе каравана. Задача - сопроводить караван до пункта назначения.}
+{1807003}{}{Провал: вы напали на проводника или охранников.}
+{1807004}{}{Провал: Вы бросили караван в Пустоши.}
+{1807005}{}{Провал: Вы погибли во время маршрута.}
+{1807006}{}{Провал: Вы не смогли защитить проводника.}
+{1807007}{}{Провал: Вы убили проводника каравана.}
+{1807008}{}{Караван удачно достиг точки назначения. Получите награду у Селмы.}
+{1807009}{}{Вы в составе каравана. Задача - сопроводить караван до пункта назначения.}
+{1807010}{}{Караван удачно достиг точки назначения. Получите награду у Селмы.}
+{1807011}{}{Вы сопроводили караван Сельмы до точки назначения.}
+
+{1807101}{}{Арройо}
+{1807102}{}{Охрана каравана Арройо - Город-Убежище}
+
+# 1808
+# Караван Арройо - СФ
+
+{1808001}{}{Вы записались в охранники каравана Арройо - Сан-Франциско. Отправление в 19:00. Будьте на виду у проводника перед отправлением.}
+{1808002}{}{Вы в составе каравана. Задача - сопроводить караван до пункта назначения.}
+{1808003}{}{Провал: вы напали на проводника или охранников.}
+{1808004}{}{Провал: Вы бросили караван в Пустоши.}
+{1808005}{}{Провал: Вы погибли во время маршрута.}
+{1808006}{}{Провал: Вы не смогли защитить проводника.}
+{1808007}{}{Провал: Вы убили проводника каравана.}
+{1808008}{}{Караван удачно достиг точки назначения. Получите награду у проводника.}
+{1808009}{}{Вы в составе каравана. Задача - сопроводить караван до пункта назначения.}
+{1808010}{}{Караван удачно достиг точки назначения. Получите награду у проводника.}
+{1808011}{}{Вы сопроводили караван до точки назначения.}
+
+{1808101}{}{Арройо}
+{1808102}{}{Охрана каравана Арройо - Сан-Франциско}
+
+# 1809
+# Караван Арройо - НКР
+
+{1809001}{}{Вы записались в охранники каравана Кейта Лаумера. Отправление в 14:00. Будьте на виду у проводника перед отправлением.}
+{1809002}{}{Вы в составе каравана. Задача - сопроводить караван до пункта назначения.}
+{1809003}{}{Провал: вы напали на проводника или охранников.}
+{1809004}{}{Провал: Вы бросили караван в Пустоши.}
+{1809005}{}{Провал: Вы погибли во время маршрута.}
+{1809006}{}{Провал: Вы не смогли защитить проводника.}
+{1809007}{}{Провал: Вы убили проводника каравана.}
+{1809008}{}{Караван удачно достиг точки назначения. Получите награду у Лаумера.}
+{1809009}{}{Вы в составе каравана. Задача - сопроводить караван до пункта назначения.}
+{1809010}{}{Караван удачно достиг точки назначения. Получите награду у Лаумера.}
+{1809011}{}{Вы сопроводили караван Лаумера до точки назначения.}
+
+{1809101}{}{Арройо}
+{1809102}{}{Охрана каравана Арройо - НКР}
+
+# 1826
+# Взорвать репликатор на станции репликации №4.
+
+{1826001}{}{Взорвите репликационный чан, который вышел из строя.}
+{1826002}{}{Взрывчатка установлена. Уносите ноги, пока пластид не разнес к чертям все вокруг!}
+{1826003}{}{Вы взорвали один из репликационных чанов, производящих полчища безумных гулей. Награду получите у торговца на любой станции репликации.}
+{1826004}{}{Вы помогли капитану Смоллету взорвать дефектный репликатор.}
+
+{1826101}{}{Станция репликации №4}
+{1826102}{}{Горячий reset.}
+
+# 1827 
+# Поговорить с капитаном Смоллетом на поверхности у станции репликации №4
+
+{1827001}{}{Найдите лидера ударного отряда хабологов на поверхности Станции Репликации №4.}
+{1827002}{}{Вы согласились помочь хабологам справиться со взбесившейся техникой на станции репликации и решить проблему с гулями.}
+
+{1827101}{}{Станция репликации №4}
+{1827102}{}{Аварийная ситуация.}
+
+# 1829
+# Убить 5 гулей так, чтобы они больше не поднялись
+
+{1829001}{}{Убейте пятерых реплицированных гулей на станции репликации №4.}
+{1829002}{}{Убит 1 реплицированный гуль.}
+{1829003}{}{Убито 2 реплицированных гуля.}
+{1829004}{}{Убито 3 реплицированных гуля.}
+{1829005}{}{Убито 4 реплицированных гуля.}
+{1829006}{}{Убито 5 реплицированных гулей. Обратитесь к торговцу хабологов на любой станции репликации, чтобы получить награду.}
+{1829007}{}{Вы выполнили задание ученого с репликационной станции №4. В Пустоши стало на 5 безумных гулей меньше.}
+
+{1829101}{}{Станция репликации №4}
+{1829102}{}{No pasaran!}
+
+# 3040
+# Quest to locate an abandoned military depot.
+
+{3040001}{}{Locate an abandoned military depot.}
+{3040002}{}{You have found an abandoned military depot location.}
+{3040003}{}{You have found an abandoned military depot. You've told Old Man about this.}
+{3040004}{}{You've failed to find the location of an abandoned military depot.}
+
+{3040101}{}{Abandoned military depot's location}
+{3040102}{}{Locate abandoned military depot.}
+
+# 3041
+# Quest to locate an abandoned military depot. Sub-quest 1.
+
+{3041001}{}{Old Man asked you to find and bring back his daughter, she's somewhere in Den, in a junkies commune.}
+{3041002}{}{Old Man’s daughter asked you to find her beloved one. The guy’s probable name is Max.}
+{3041003}{}{Pass daughter's message to her father.}
+{3041004}{}{Completed. The military depot is now marked on the map.}
+
+{3041101}{}{Abandoned military depot's location}
+{3041102}{}{Find the military depot location. Old Man will let you know it after you find his daughter.}
+
+# 3042
+# Quest to locate an abandoned military depot. Sub-quest 2.
+
+{3042001}{}{Player's last job place is Golden Globos Porn.}
+{3042002}{}{You need to find a pretty girl for the new movie.}
+{3042003}{}{Find Player, trick him into giving you the key card.}
+{3042004}{}{Completed. You’ve found the key to military depot.}
+
+{3042101}{}{Abandoned military depot's location}
+{3042102}{}{Find a key card to the military depot entrance. Obtain it from former Old Man's partner, Player, in New-Reno.}
+
+# 3100
+# Quest to deliver condoms from Leanna, Becky's Bar. 
+
+{3100001}{}{Find Kitty in New Reno and speak with her about "something" for Leanna.}
+{3100002}{}{Bring red condom to Leanna.}
+{3100003}{}{Completed.}
+
+{3100101}{}{Den}
+{3100102}{}{Leanna asked you to bring this. She promised a reward.}
+
+# 3101
+# Mom’s quest to get rid of Virginia, the Den.
+
+{3101001}{}{Mom wants this Virginia whore to stop hanging out near her place.}
+{3101002}{}{You persuaded Virginia to leave.}
+{3101003}{}{Mom will be happy to know this slut won’t be around for some time.}
+
+{3101101}{}{Den}
+{3101102}{}{Get rid of Virginia the whore for Mom.}
+
+# 3102
+# Mom’s quest to deliver radscorpion tails, Den. 
+
+{3102001}{}{Mom from Den wants you to bring her 4 radscorpion tails for her special dish.}
+{3102002}{}{You have delivered radscorpion tails to Mom.}
+
+{3102101}{}{Den}
+{3102102}{}{Bring 4 radscorpion tails to Mom.}
+
+# 3103
+# Quest to get rid of the ghost, Den.
+
+{3103001}{}{You had a talk with crazy guy. He told you about the ghost in the old abandoned house. Maybe you should check it out.}
+{3103002}{}{Ghost turned out to be a ruthless murderer. Find a way to kill him. Ask locals about the ghost.}
+{3103003}{}{Smitty got very scared when he heard about the ghost. He sent you to Mom.}
+{3103004}{}{Boy near Leanna’s bar said Leanna may know something.}
+{3103005}{}{Leanna said you should talk to Mom.}
+{3103006}{}{Lara said you should talk to Mom.}
+{3103007}{}{Fred said you should talk to Mom.}
+{3103008}{}{Mom sent you to father Cliff.}
+{3103009}{}{Father Cliff gave you a bottle of holy water. Use it to defeat the ghost.}
+{3103010}{}{You have exterminated the evil ghost of Den.}
+{3103011}{}{You have exterminated the evil ghost of Den, but were cursed.}
+
+{3103101}{}{Den}
+{3103102}{}{Get rid of the ghost!}
+
+# 3104
+# Quest to fix robot Mr. Handy, Den.
+
+{3104001}{}{Smitty needs your help to fix Mr. Handy robot.}
+{3104002}{}{After inspecting the robot you've found that it needs some new parts and oil change. Also you’ll need tools to fix it.}
+{3104003}{}{Smitty will be happy to know his robot works perfectly.}
+{3104004}{}{You have fixed Mr. Handy.}
+
+{3104101}{}{Den}
+{3104102}{}{Fix Mr. Handy.}
+
+# 3105
+# Quest to deliver molotov cocktails, Den.
+
+{3105001}{}{Lara asked you to get 5 molotov cocktails for James.}
+{3105002}{}{You brought the molotov cocktails to James. You should report to Lara about this.}
+{3105003}{}{You’ve delivered molotov cocktails and got your reward. You've contributed torwards anarchy. Vive L' Anarchie!}
+
+{3105101}{}{Den}
+{3105102}{}{Deliver molotov cocktails.}
+
+# 3107
+# Give Joey a loan, Den.
+
+{3107001}{}{You’ve lent some money to Joey, don’t forget to pay him a visit.}
+{3107002}{}{You couldn’t get your money back.}
+{3107003}{}{Joey paid you back with interest.}
+
+{3107101}{}{Den}
+{3107102}{}{Give Joey a loan.}
+
+# 3109
+# Get 3 combat knives for Joey, Den.
+
+{3109001}{}{Joey is looking for 3 good combat knives for his gang.}
+{3109002}{}{You refused to get knives for Joey.}
+{3109003}{}{You brought Joey the knives he wanted.}
+
+{3109101}{}{Den}
+{3109102}{}{Get 3 combat knives for Joey.}
+
+# 3110
+# Get a consignment of jet from Mordino, New Reno, (cycle) Den.
+
+{3110001}{}{You agreed to buy a consignment of jet in New Reno for Joey.}
+{3110002}{}{You refused to work as a drug courier for Joey.}
+{3110003}{}{You got the jet.}
+{3110004}{}{You brought the jet Joey wanted.}
+
+{3110101}{}{Den}
+{3110102}{}{Get a consignment of jet for Joey.}
+
+# 3111
+# Talk to Lara about Joey, Den.
+
+{3111001}{}{Ask Lara if she's willing to cooperate with Joey.}
+{3111002}{}{You've failed to reach an agreement of cooperation between Joey and Lara.}
+{3111003}{}{You had a talk with Lara.}
+{3111004}{}{You successfully accomplished Joey's mission to negotiate with Lara.}
+
+{3111101}{}{Den}
+{3111102}{}{Talk to Lara about Joey.}
+
+# 3112
+# Collect Joey's money from Flick.
+
+{3112001}{}{Flick owes Joey an awful lot of money. You should get that money back.}
+{3112002}{}{You couldn't get Joey's money back from Flick.}
+{3112003}{}{You got money from Flick.}
+{3112004}{}{You brought Joey his money.}
+
+{3112101}{}{Den}
+{3112102}{}{Collect Joey's money from Flick.}
+
+# 3113
+# Repair James' radios, Den. 
+
+{3113001}{}{James gave you a bunch of malfunctioning radios. Maybe someone in Klamath could repair them.}
+{3113002}{}{You couldn't fix the radios.}
+{3113003}{}{You successfully repaired the radios.}
+{3113004}{}{You brought repaired radios back to James.}
+
+{3113101}{}{Den}
+{3113102}{}{Fix James' radios.}
+
+# 3115
+# Get a hunting rifle for James, Den.
+
+{3115001}{}{James has lost his hunting rifle. He would be grateful if you could find him a new one.}
+{3115002}{}{You refused to get James a new hunting rifle.}
+{3115003}{}{You got James the hunting rifle he wanted.}
+
+{3115101}{}{Den}
+{3115102}{}{Get a hunting rifle for James.}
+
+# 3116
+# Get a Psycho, Buffout and Mentats for James, Den.
+
+{3116001}{}{James is looking for psycho, buffout and mentats.}
+{3116002}{}{You refused to get drugs for James.}
+{3116003}{}{You bring the drugs to James.}
+
+{3116101}{}{Den}
+{3116102}{}{Get drugs for James.}
+
+# 3117
+# Collect James' money from traders, Den.
+
+{3117001}{}{Traders Fred, Leanna and Mom owe James some money.}
+{3117002}{}{You couldn't get James' money back.}
+{3117003}{}{You brought traders' money to James.}
+
+{3117101}{}{Den}
+{3117102}{}{Collect traders' money for James.}
+
+# 3121
+# Buy some meat jerky in Klamath for James, Den.
+
+{3121001}{}{James needs a new supply of meat jerky.}
+{3121002}{}{You failed to deliver meat jerky to James.}
+{3121003}{}{You bought meat jerky.}
+{3121004}{}{You delivered meat jerky to James.}
+
+{3121101}{}{Den}
+{3121102}{}{Meat from Dantons.}
+
+# 3122
+# Bring some booze for James from Klamath, Den. 
+
+{3122001}{}{James' alcohol supply is running dry. Get him a pack of booze from Bob.}
+{3122002}{}{You failed to deliver booze to James.}
+{3122003}{}{You bought the alcohol.}
+{3122004}{}{You brought the booze to James.}
+
+{3122101}{}{Den}
+{3122102}{}{Booze from Whiskey Bob.}
+
+# 3123
+# Get James a fresh supply of stimpacks from Redding, Den.
+{3123001}{}{James needs a fresh supply of stimpacks. Get him some healing chems from Redding.}
+{3123002}{}{You failed to make an agreement with Doc about supplying James with stimpacks.}
+{3123003}{}{You have loaded up with stimpacks.}
+{3123004}{}{You delivered the healing chems to James.}
+
+{3123101}{}{Den}
+{3123102}{}{Redding Medical Aid.}
+
+# 3124
+# Deliver supply of weapons to James from New Reno, Den.
+
+{3124001}{}{James needs to replenish his firearms supply, get the stuff for him from Eldridge, New Reno.}
+{3124002}{}{You failed to get weapons for James.}
+{3124003}{}{You got the weapons from Eldridge.}
+{3124004}{}{You delivered new guns to James.}
+
+{3124101}{}{Den}
+{3124102}{}{Provide a supply of weapons for James.}
+
+# 3125
+# Deliver a consignment of leather armors from Modoc, Den.
+
+{3125001}{}{James' depot is almost empty. Purchase a bunch of leather armors for him in Modoc.}
+{3125002}{}{You refused to take a walk to Modoc.}
+{3125003}{}{You purchased a pack of leather armors.}
+{3125004}{}{You delivered a pack of leather armors.}
+
+{3125101}{}{Den}
+{3125102}{}{James' leather armors from Modoc.}
+
+# 3128
+# Find a new pair of boots for Smitty, Den.
+
+{3128001}{}{Smitty has lost his boots somewhere. Find him a new pair.}
+{3128002}{}{You got new boots for Smitty.}
+{3128003}{}{You refused to find new boots for Smitty.}
+
+{3128101}{}{Den}
+{3128102}{}{Smitty's boots.}
+
+# 3130
+# Befriend with Lara, Den.
+
+{3130001}{}{Prove you're a real bad guy so that Lara could trust you.}
+{3130002}{}{You have proved yourself worthy. Now Lara trusts you.}
+
+{3130101}{}{Den}
+{3130102}{}{Lara loves villains.}
+
+# 3131
+# Deliver Lara's package to Joey, Den.
+
+{3131001}{}{Lara asks you to deliver a package to Joey.}
+{3131002}{}{You refused to deliver a package.}
+{3131003}{}{You have delivered a package to Joey.}
+{3131004}{}{You have delivered Lara's package to Joey.}
+
+{3131101}{}{Den}
+{3131102}{}{Package for Joey.}
+
+# 3132
+# Lara's spy, Den.
+
+{3132001}{}{Lara wants you to gather information about Brotherhood's activity in town.}
+{3132002}{}{You failed to gather information about Brotherhood's activity in town.}
+{3132003}{}{You learned that the Brotherhood is keeping a look-out over the town.}
+
+{3132101}{}{Den}
+{3132102}{}{Lara's spy.}
+
+# 3134
+# Join Lara's gang, Den.
+
+{3134001}{}{You could join Lara's gang, but you need to pass a loyalty test first.}
+{3134002}{}{You have refused to join Lara's gang.}
+{3134003}{}{You've passed the loyalty test and became a gang member.}
+
+{3134101}{}{Den}
+{3134102}{}{Join Lara's gang.}
+
+# 3135
+# Bring Flick a package of jet from NR, Den.
+
+{3135001}{}{Flick wants you to get him consignment of jet from Mordino, New Reno.}
+{3135002}{}{You failed to deliver jet to Flick.}
+{3135003}{}{You got the package of jet.}
+{3135004}{}{You brought the jet Flick wanted.}
+
+{3135101}{}{Den}
+{3135102}{}{Dealer from Den.}
+
+# 3136
+# Get weapons to Fred from Vic, Den.
+
+{3136001}{}{Fred needs to replenish his firearms supply, get guns for him from Klamath.}
+{3136002}{}{You refused to get guns for Fred.}
+{3136003}{}{You bought weapons from Vic.}
+{3136004}{}{You delivered new guns to Fred.}
+
+{3136101}{}{Den}
+{3136102}{}{Weapons for Fred.}
+
+# 3137
+# Get Fred a fresh supply of stimpacks, Den.
+ 
+{3137001}{}{Fred needs to refill his healing chems supply.}
+{3137002}{}{You brought stimpacks to Fred.}
+
+{3137101}{}{Den}
+{3137102}{}{Get a supply of stimpacks for Fred.}
+
+# 3138
+# Find a thief in Becky's bar, Den.
+
+{3138001}{}{Leanna's not happy about the pickpocketing in the bar. Find the thief.}
+{3138002}{}{You failed to find the thief.}
+{3138003}{}{You found the thief.}
+{3138004}{}{You found the thief in Becky's bar.}
+
+{3138101}{}{Den}
+{3138102}{}{Pickpocketing at Becky's.}
+
+# 3139
+# Find a micro fusion cell for Smitty, Den.
+
+{3139001}{}{Smitty is performing some chemistry experiments. Find him a micro fusion cell.}
+{3139002}{}{You refused to search for a micro fusion cell for Smitty.}
+{3139003}{}{You brought a micro fusion cell to Smitty.}
+
+{3139101}{}{Den}
+{3139102}{}{Smitty's battery.}
+
+# 3140
+# Find a new wrench for Smitty, Den.
+
+{3140001}{}{Someone has stolen Smitty's wrench. Get him a new one.}
+{3140002}{}{You refused to find a new wrench for Smitty.}
+{3140003}{}{You found a new wrench for Smitty.}
+
+{3140101}{}{Den}
+{3140102}{}{Smitty's wrench.}
+
+# 3141
+# Smitty wants you to find out how to make bullets, Den.
+
+{3141001}{}{Gather information about bullet manufacturing method for Smitty.}
+{3141002}{}{You failed to gather information about bullet manufacturing method.}
+{3141003}{}{You gathered information for Smitty about bullet production.}
+{3141004}{}{Smitty is now able to produce 10mm ammunition.}
+
+{3141101}{}{Den}
+{3141102}{}{Smitty the gunsmith.}
+
+# 3142
+# Buy some alcohol from Whiskey Bob for Leanna, Den.
+
+{3142001}{}{Leanna is interested in Whiskey Bob's alcohol and asks you to buy a couple of bottles as samples.}
+{3142002}{}{You refused to buy alcohol from Bob.}
+{3142003}{}{You bought booze from Whiskey Bob for Leanna.}
+{3142004}{}{You gave booze to Leanna.}
+
+{3142101}{}{Den}
+{3142102}{}{Taster for Leanna.}
+
+# 3143
+# Find out Whiskey Bob's secret of cheap alcohol production, Den.
+
+{3143001}{}{Find out Whiskey Bob's secret of cheap alcohol production.}
+{3143002}{}{You failed to learn Bob's alcohol know-how.}
+{3143003}{}{You've learnt Bob's know-how.}
+{3143004}{}{Leanna now knows how to make cheaper booze.}
+
+{3143101}{}{Den}
+{3143102}{}{Dry Law.}
+
+# 3144
+# Throw the drug dealer out of the church, Den.
+
+{3144001}{}{A drug dealer showed up in the church. Find a way to get rid of him.}
+{3144002}{}{You failed to get rid of the drug dealer.}
+{3144003}{}{You threw the drug dealer out.}
+{3144004}{}{You dealt with a drug dealer in the church.}
+
+{3144101}{}{Den}
+{3144102}{}{Blasphemy in church.}
+
+# 3145
+# Find Ananias a rubber sex doll, Den.
+
+{3145001}{}{Ananias asks you to find him a rubber sex doll.}
+{3145002}{}{You refused to search for a rubber sex doll.}
+{3145003}{}{You brought the doll to Ananias.}
+
+{3145101}{}{Den}
+{3145102}{}{Master Of Puppets.}
+
+# 3146
+# Find Ananias a rubber sex doll, (part 2) Den.
+
+{3146001}{}{Ananias' visitors tore his doll into pieces. Find him a new one.}
+{3146002}{}{You refused to find a new doll for Ananias.}
+{3146003}{}{You brought the doll to Ananias.}
+
+{3146101}{}{Den}
+{3146102}{}{Master Of Puppets 2.}
+
+#3151 Принять участие в смертельных гонках
+
+{3151001}{}{Примите участие в Смертельных Гонках Западного побережья Гранд-Пасифик Американ. Заявка на участие стоит 17000 монет.}
+{3151002}{}{Вы приняли участие в Смертельных Гонках Западного побережья Гранд-Пасифик Американ.}
+
+{3151101}{}{Яма}
+{3151102}{}{Смертельные Гонки: Открытие.}
+
+#3152 Победить в смертельных гонках
+
+{3152001}{}{Вы - зарегистрированный участник Смертельных Гонок Западного побережья Гранд-Пасифик Американ!! Дождитесь старта на территории автостоянки, чтобы получить координаты первого чекпоинта.}
+{3152002}{}{Гонка началась. На ближайшем чекпоинте узнаете координаты следующего. Пройдите по маршруту через все чекпоинты и победите в гонках!}
+{3152003}{}{В этот раз вам не повезло. Кто-то был быстрее вас. Испытайте удачу в следующих гонках!}
+{3152004}{}{Вы заняли второе место. Подойдите к Биллу, чтобы получить приз, пока организаторы гонок не покинули Яму.}
+{3152005}{}{Вы заняли первое место. Поздравляем с победой! Подойдите к Биллу, чтобы получить приз, пока организаторы гонок не покинули Яму.}
+{3152006}{}{Поздравляем! Вы заняли второе место в Смертельных Гонках!}
+{3152007}{}{Невероятно! Вы победили в Смертельных Гонках! Вы - живая легенда Пустоши!}
+
+{3152101}{}{Яма}
+{3152102}{}{Смертельные Гонки Западного побережья Гранд-Пасифик Американ.}
+
+# 3201
+# Get distilled water from the Vault City for Whiskey Bob's factory, Klamath.
+
+{3201001}{}{Bob needs distilled water for his alcohol production.}
+{3201002}{}{You got distilled water for Whiskey Bob.}
+{3201003}{}{You sold distilled water to Bob.}
+
+{3201101}{}{Klamath}
+{3201102}{}{Get distilled water for Whiskey Bob.}
+
+# 3206
+# Bring gecko pelts to Balthas, Modoc, Klamath.
+
+{3206001}{}{Sell gecko pelts to Balthas, Modoc.}
+{3206002}{}{You sold gecko pelts.}
+
+{3206101}{}{Klamath}
+{3206102}{}{Gecko pelts sale.}
+
+# 3210
+# Geckos hunt, Klamath, Smiley
+{3210001}{}{Smiley asked you to kill a bunch of geckos somewhere near the city.}
+{3210002}{}{You have arrived to the place.}
+{3210003}{}{Yay! You've beaten the geckos. We did it!}
+{3210004}{}{Unluckily you died.}
+{3210005}{}{You didn't follow your friends and most likely let them down.}
+{3210006}{}{You fled from the battlefield.}
+
+{3210101}{}{Klamath}
+{3210102}{}{Kill a bunch of geckos.}
+
+# 3213
+# Brahmin wrangle, Klamath, Torr
+
+{3213001}{}{You agreed to help Torr to defend brahmins. You should be at the pasture by midnight.}
+{3213002}{}{It's time to go to the pasture if you're not already there.}
+{3213003}{}{Herd is dead!}
+{3213004}{}{You successfully defended all the brahmins!}
+{3213005}{}{You defended brahmins. Unluckily some are dead.}
+{3213006}{}{You defended brahmins. Unluckily some are dead.}
+{3213007}{}{You defended brahmins. Unluckily some are dead.}
+{3213008}{}{You defended brahmins. Unluckily some are dead.}
+{3213009}{}{You defended brahmins. Unluckily some are dead.}
+
+{3213101}{}{Klamath}
+{3213102}{}{Brahmin wrangle.}
+
+# 3215
+# Klamath. jo Sulivan. Quest "Teach Dunton a lesson".
+
+{3215001}{}{Thrash that junkie!}
+{3215002}{}{You've killed that junkie.}
+{3215003}{}{You've completed the task.}
+
+{3215101}{}{Klamath}
+{3215102}{}{Teach that junkie a lesson.}
+
+# 3223
+# Saving trapper Bryan.
+
+{3223001}{}{Hepl Emma to find her husband.}
+{3223002}{}{Bryan asked to tell Emma everything is allright.}
+{3223003}{}{Trapper Bryan asked to tell his wife everything is allright.}
+{3223004}{}{Completed. You calmed down Emma. It would be best if you let Bryan know too.}
+{3223005}{}{Completed. You reported to Bryan.}
+{3223006}{}{Failed. You broke Emma's hope.}
+{3223007}{}{Failed. You broke Emma's hope and even told Bryan about it. What a bastard you are.}
+{3223008}{}{Completed. You calmed down Emma. It would be best if you let Bryan know too.}
+{3223009}{}{Failed. You tried to trick Emma.}
+{3223010}{}{Completed. You tricked Bryan.}
+{3223011}{}{Failed. You were to late.}
+
+{3223101}{}{Klamath}
+{3223102}{}{Saving trapper Bryan.}
+
+# 3224
+# Кламат, найти работницу
+
+{3224001}{}{Салли попросила найти ей работницу.}
+{3224002}{}{Вы уговорили Вирджинию перейти на работу к Салли.}
+{3224003}{}{Выполнено. Вы сообщили Салли о том, что Вирджиния согласна у неё работать.}
+
+{3224101}{}{Кламат}
+{3224102}{}{Найти работницу}
+
+# 3229
+# Кламат, оповестить жениха
+
+{3229001}{}{Передайте жениху Вероники, что она не сможет пойти с ним в бар.}
+{3229002}{}{Вы передали жениху Вероники, что она задержится на работе.}
+{3229003}{}{Выполнено. Вы отчитались Веронике.}
+{3229004}{}{Так ей!}
+
+{3229101}{}{Кламат}
+{3229102}{}{Оповестить жениха}
+
+# 3230
+# Кламат, принести различные предметы старику
+
+{3230001}{}{Старик из Кламата по имени Бугенгаген пообещал раскрыть вам секрет соблазнения любой женщины Пустоши. За свои советы просит 100 монет.}
+{3230002}{}{Старик из Кламата по имени Бугенгаген пообещал раскрыть вам секрет соблазнения любой женщины Пустоши. Для этого ему нужно приготовить некий чудодейственный напиток. Принесите Бугенгагену Цветок Брока.}
+{3230003}{}{Старик из Кламата по имени Бугенгаген пообещал раскрыть вам секрет соблазнения любой женщины Пустоши. Для этого ему нужно приготовить некий чудодейственный напиток. Принесите Бугенгагену Бутылку Самогона.}
+{3230004}{}{Старик из Кламата по имени Бугенгаген пообещал раскрыть вам секрет соблазнения любой женщины Пустоши. Для этого ему нужно приготовить некий чудодейственный напиток. Принесите Бугенгагену Корень Ксандера.}
+{3230005}{}{Старик из Кламата по имени Бугенгаген пообещал раскрыть вам секрет соблазнения любой женщины Пустоши. Для этого ему нужно приготовить некий чудодейственный напиток. Принесите Бугенгагену Хвост Скорпиона.}
+{3230006}{}{Старик из Кламата по имени Бугенгаген пообещал раскрыть вам секрет соблазнения любой женщины Пустоши. Для этого ему нужно приготовить некий чудодейственный напиток. Принесите Бугенгагену Порох.}
+{3230007}{}{Старик из Кламата по имени Бугенгаген пообещал раскрыть вам секрет соблазнения любой женщины Пустоши. Для этого ему нужно приготовить некий чудодейственный напиток. Принесите Бугенгагену Противоядие.}
+{3230008}{}{Старик разыграл вас, не было у него никакого секрета. Стоило ли мотаться по всей Пустоши ради того, чтобы это узнать?}
+{3230009}{}{Вы решили не связываться с хитрым стариком из Кламата. Пусть оставит свои секреты при себе.}
+
+{3230101}{}{Кламат}
+{3230102}{}{Искусство соблазнения}
+
+# 3300
+# Jose Ramirez quest to find 100 micro fusion cells and an engine, Modoc. 
+
+{3300001}{}{Jose Ramirez wants you to find 100 microfusion cells and an engine.}
+{3300002}{}{You have found the stuff Ramirez wants, return to his workshop.}
+{3300003}{}{You got your reward from Jose Ramirez.}
+
+{3300101}{}{Modoc}
+{3300102}{}{Find microfusion cells and an engine for Jose Ramirez.}
+
+# 3302
+# Buy bramin pelts from Smiley for Balthas, Modoc. 
+
+{3302001}{}{Balthas asks you to bring him bramin pelts from Smiley.}
+{3302002}{}{You have bought bramin pelts.}
+{3302003}{}{You brought gecko bramin to Balthas.}
+
+{3302101}{}{Modoc}
+{3302102}{}{Bramin pelts for Balthas.}
+
+# 3303
+# Sell Balthas' armors in Den and Klamath, Den.
+
+{3303001}{}{Balthas needs to sell his merchandise in Den and Klamath.}
+{3303002}{}{You have sold Balthas' leather armors.}
+{3303003}{}{You gave Balthas his money for sold merchandise.}
+
+{3303101}{}{Modoc}
+{3303102}{}{Balthas' leather armors.}
+
+# 3306
+# Collect a crop of cabbages for Jo, Modoc.
+
+{3306001}{}{Joe needs your help with ingathering.}
+{3306002}{}{You have gathered cabbage.}
+{3306003}{}{You helped Joe with ingathering.}
+
+{3306101}{}{Modoc}
+{3306102}{}{For the cabbage!}
+
+# 3307
+# Убить гигантскую Осу для мэра, Модок.
+
+{3307001}{}{Джо из Модока, кроме всего прочего, исполняющий обязанности местного мэра попросил разобраться с гигантским насекомым на одной из ферм неподалеку от города.}
+{3307002}{}{Вы убили гигантскую осу. Вернитесь к мэру в Модок, чтобы получить награду.}
+{3307003}{}{Вы помогли Джо справиться с гигантской осой.}
+
+{3307101}{}{Modoc}
+{3307102}{}{Вредители на ферме}
+
+# 3308
+# Выяснить, почему на фермах Модока слабеют брамины. Выдает Джо, Модок.
+
+{3308001}{}{Модоку снова нужна ваша помощь. По словам Джо, что-то неладное происходит со скотом. Найдите Гришема, он посвятит вас в детали.}
+{3308002}{}{Старина Гришем обеспокоен состоянием браминов. Отправляйтесь на ферму и разберитесь, в чем дело.}
+{3308003}{}{Вы проторчали на ферме без малого целую ночь. Ничего подозрительного не заметили.}
+{3308004}{}{Хе. Эта штука боится людей. Надо просто поставить охрану.}
+{3308005}{}{"Это" полетело куда-то к северу от Модока. Можно попробовать обыскать окрестности.}
+{3308006}{}{Вы нашли странную пещеру. Похоже, там кто-то живет. Или что-то.}
+{3308007}{}{Эмиль не дождался вашей помощи, вы опоздали.}
+{3308008}{}{Вы убили человека (или нечеловека?), который называл себя именем Эмиль Регис. Плохо это или хорошо, не важно. Зато брамины будут в безопасности!}
+{3308009}{}{Вы исцелили болезнь Эмиля Региса. Ферма в безопасности. Возвращайтесь к Гришему.}
+{3308010}{}{Вы разобрались с проблемой фермеров Модока. Браминам ничего больше не угрожает.}
+{3308011}{}{Добрые дела окупаются. Вы спасли вампира и получили новую способность. Только вот шея почему-то болит и  чешется…}
+
+{3308101}{}{Modoc}
+{3308102}{}{Ночь нежна.}
+
+# 3315
+# Караван Модок - Гекко
+
+{3315001}{}{Вы записались в охранники каравана Хосе Аурелиано. Отправление в 14:00. Будьте на виду у проводника перед отправлением.}
+{3315002}{}{Вы в составе каравана. Задача - сопроводить караван до пункта назначения.}
+{3315003}{}{Провал: вы напали на проводника или охранников.}
+{3315004}{}{Провал: Вы бросили караван в Пустоши.}
+{3315005}{}{Провал: Вы погибли во время маршрута.}
+{3315006}{}{Провал: Вы не смогли защитить проводника.}
+{3315007}{}{Провал: Вы убили проводника каравана.}
+{3315008}{}{Караван удачно достиг точки назначения. Получите награду у проводника.}
+{3315009}{}{Вы в составе каравана. Задача - сопроводить караван до пункта назначения.}
+{3315010}{}{Караван удачно достиг точки назначения. Получите награду у проводника.}
+{3315011}{}{Вы сопроводили караван Аурелиано в Гекко.}
+
+{3315101}{}{Modoc}
+{3315102}{}{Охрана каравана Модок - Гекко}
+
+# 3316
+# Сбор аммиака в холодильниках
+
+{3316001}{}{Фаррел из Модока несет какой-то бред о складе дохлых негров. Обещает хорошо заплатить за хладогент, кооторый можно извлечь из холодильников.}
+{3316002}{}{Вы выполнили просьбу Фарелла и принесли ему аммиак, добытый собственными руками прямо в Пустоши. Можно еще разок к нему заглянуть.}
+
+{3316101}{}{Модок}
+{3316102}{}{Морозко.}
+
+# Лучший охотник Пустоши
+# 3317
+# Квест 2. Использовать флейту на 5 крыс и принести их Лоуренсу в Модок.
+
+{3317001}{}{Примените ультразвуковой гипнотизатор, полученный от Хьюза и Лоуренса на пяти крысах в Пустоши.}
+{3317002}{}{Гипнотизатор испытан на 5 крысах в Пустоши. Вернитесь к Хьюзу и Лоуренсу с отчетом и принесите 5 парализованных крыс.}
+{3317003}{}{Вы помогли Лоуренсу и Хьюзу испытать ультразвуковой гипнотизатор на 5 крысах в Пустоши.}
+
+{3317101}{}{Лучший охотник Пустоши}
+{3317102}{}{Пляши под мою дудку.}
+
+# Лучший охотник Пустоши
+# 3320
+# Квест 2. Использовать токсичную крысу на флоатера. Многоразовый
+
+{3320001}{}{Используйте супертоксин Хьюза и Лоуренса на парализованной крысе. Затем метните токсичную крысу в пасть летателю. }
+{3320002}{}{Вы испытали супертоксин на летателе из Пустоши. Желаемый эффект не был достигнут. Сообщите о провале Лоуренсу в Модок.}
+{3320003}{}{Супертоксин, на который Лоуренс и Хьюз возлагали такие надежды не сработал на летателе. Вы можете продолжить испытания, но сомнительно, что они дадут положительный эффект.}
+{3320004}{}{Еще один шприц супертоксина. Еще одна крыса. Еще один летатель. Яд снова не сработал. Сообщите Хьюзу о провале.}
+
+{3320101}{}{Лучший охотник Пустоши}
+{3320102}{}{Завтрак для Флоатера.}
+
+# Лучший охотник Пустоши
+# 3324
+# Квест 3. Зачистить локацию с кротокрысами
+{3324001}{}{В пипбой записаны коордиинаты убежища беглого ЭМ-22 с кротокрысами. Найдите специальную метку на земле перед входом в пещеру и используйте мазь Лоуренса, чтобы выманить животных на поверхность.}
+{3324002}{}{Вы не успели вовремя уничтожить колонию разумных кротокрысов.}
+{3324003}{}{Вы уничтожили всех кротокрысов, но так и не нашли Эмпирического Медведя. Возможно, он успел уйти. Вернитесь в Модок к охотникам.}
+{3324004}{}{Вы воспользовались приманкой Лоуренса. Остается только ждать, пока она сработает.}
+{3324005}{}{Вы уничтожили колонию разумных кротокрысов по заданию Хьюза и Лоуренса.}
+
+{3324101}{}{Лучший охотник Пустоши}
+{3324102}{}{Колония разумных кротокрысов.}
+
+# 3600
+# Караван Брокен-Хиллс - Гекко
+
+{3600001}{}{Вы записались в охрану каравана Кристофера Карсона из Брокен Хиллс, следующего в Гекко. Нужно быть рядом с ним в 10:00, иначе караван уйдет без вас.}
+{3600002}{}{Вы в составе каравана. Задача - сопроводить караван до пункта назначения.}
+{3600003}{}{Вы напали на караван Кристофера Карсона, следующий из Брокен Хиллс в Гекко. Вероятно, Кит никогда не наймет вас для охраны своих грузов.}
+{3600004}{}{Провал: Вы бросили караван из Брокен Хиллс в Пустоши. Награды вы не получите.}
+{3600005}{}{Провал: Вы не выполнили задачи по охране каравана. Вы погибли во время маршрута.}
+{3600006}{}{Провал: Карсон погиб в Пустоши. Вы не смогли защитить караванщика.}
+{3600007}{}{Вы убили проводника каравана Брокен-Хиллс - Гекко. Вряд ли Кристофер Карсон пожелает иметь с вами дело.}
+{3600008}{}{Великолепно! Караван благополучно достиг точки назначения. Заберите плату у Билла Аутфита в Брокен Хиллс.}
+{3600009}{}{Вы в составе каравана. Постарайтесь сохранить груз и защищайте проводника в течении всего маршрута.}
+{3600010}{}{Очередной успех! Караван в точке назначения. Бен Вейд оценит вашу работу.}
+{3600011}{}{Вы выполнили задание по сопровождению и охране каравана до Гекко.}
+
+{3600101}{}{Брокен Хиллс}
+{3600102}{}{Охрана каравана Брокен Хиллс - Гекко}
+
+# 3604
+# Квест "Рога изобилия"
+{3604001}{}{Добудьте  у  хабологов новую технологию  обогащения урана.}
+{3604002}{}{Убейте 40 саботажников в окрестностях Сан-Франциско.}
+{3604003}{}{Вы выполнили задание хабологов. Нужно вернуться к АХС-7.}
+{3604004}{}{Вы получили диск с описанием технологии обогащения урана. Отнесите его на обогатительную фабрику Брокен Хиллс.}
+{3604005}{}{Вы вдохнули новую жизнь в обогатительную фабрику Брокен Хила. Мертвяки вам смертельно благодарны.}
+
+{3604101}{}{Брокен Хиллс}
+{3604102}{}{Рога изобилия.}
+
+# 3608
+# Квест "Кошачья Лапка."
+{3608001}{}{По просьбе Маркуса приведите одну из симпатичных девчонок "Кошачьей Лапки" в Брокен Хиллс.}
+{3608002}{}{Одна из проституток "Кошачьей лапки" согласилась навестить Маркуса. Проводите девушку до Брокен Хиллс.}
+{3608003}{}{Несмотря на все трудности и опастности, подстерегавшие вас на каждом шагу, вы привели проститутку из Нью-Рено Маркусу. Вернитесь к Маркусу через день.}
+{3608004}{}{Вы выполнили просьбу Маркуса и привели ему профессионалку из "Кошачьей Лапки".}
+{3608005}{}{Вы сдали Маркуса с потрохами Зайусу. Вряд ли Маркус станет с вами после этого разговаривать.}
+
+{3608101}{}{Брокен Хиллс}
+{3608102}{}{Кошачья Лапка.}
+
+# 3610
+# Квест "Рискованное дельце."
+{3610001}{}{Микки из Брокен Хиллс рассказал о подозрительном парне в баре, который ищет надежного человека. Дело, по словам Микки, выгодное.}
+{3610002}{}{Вы встретились с Туко в баре Брокен Хиллс. Туко предложил вам принять участие в мародерском набеге на заброшенный военный объект. Место встречи с подельниками Туко указано у вас на карте.}
+{3610003}{}{Проклятье! Туко предал вас и заманил в ловушку! Бродяги пытаются вас убить.}
+{3610004}{}{Несмотря на предательство Туко, вылазка увенчалась успехом. У вас есть координаты военного объекта, о котором говорил этот жулик.}
+{3610005}{}{Вы попали на территорию заброшенного военного объекта.}
+
+{3610101}{}{Брокен Хиллс}
+{3610102}{}{Рискованное дельце.}
+
+# 3666
+# Убить игрока из списка рейнджеров
+
+{3666001}{}{Liquidate the outlaw.}
+{3666002}{}{You liquidated the outlaw. Report the brass.}
+{3666003}{}{You refused to work. Pay the fee.}
+
+{3666101}{}{NCR}
+{3666102}{}{Murder for rangers.}
+
+# 3701
+# Bring a package of 20 jets to Flick, Den, New Reno. 
+
+{3701001}{}{Bring 20 pieces of jet to Flick.}
+{3701002}{}{You have delivered the package of drugs to Flick.}
+{3701003}{}{Jessy is impressed with your actions.}
+
+{3701101}{}{New Reno}
+{3701102}{}{Flick's jet.}
+
+# 3702
+# Prove your toughness – make Father Tully drunk, New Reno.
+
+{3702001}{}{To prove your toughness make father Tully drunk and check his pockets.}
+{3702002}{}{You made father Tully drunk.}
+{3702003}{}{You have dealt with drunk father Tully.}
+
+{3702101}{}{New Reno}
+{3702102}{}{Drunk hypocrite.}
+
+# 3703
+# Foist off the pistol to Eldridge, New Reno.
+
+{3703001}{}{Eldridge has gone too far, make him buy a pistol for 2 grand.}
+{3703002}{}{Eldridge’s spirit is broken. He agreed to do everything you told him.}
+{3703003}{}{You reported James about the job.}
+{3703004}{}{You failed. James will be furious.}
+
+{3703101}{}{New Reno}
+{3703102}{}{“Protection” for El.}
+
+# 3705
+# Sell jet to 5 junkies in NR, New Reno.
+
+{3705001}{}{Sell jet to 5 junkies.}
+{3705002}{}{4 clients left.}
+{3705003}{}{3 clients left.}
+{3705004}{}{2 clients left.}
+{3705005}{}{1 client left.}
+{3705006}{}{You have successfully sold jet to addicts.}
+{3705007}{}{You succeeded in selling jet to addicts.}
+
+{3705101}{}{New Reno}
+{3705102}{}{Drug dealer.}
+
+# 3707
+# Проблемы мистера Райта: Заложник.
+
+{3707001}{}{Сын Оливера Райта в плену у шайки мародеров. Освободите заложника и разберитесь с бандитами.}
+{3707002}{}{Вы заплатили мародерам выкуп. Сообщите сыну Райта, что он свободен.}
+{3707003}{}{Вы убили мародера, который охранял сына Райта. Быстрее сматывайтесь отсюда, пока банда не заметила вашего присутствия.}
+{3707004}{}{Не делайте резких движений. Аккуратно, без провокаций, помогите Райту покинуть логово мародеров.}
+{3707005}{}{Сын Райта спасен. С минимумом потерь вы освободили заложника. Бандиты остались живы. Сообщите Орвиллу Райту обо всем, что произошло.}
+{3707006}{}{Сын Райта спасен. Шайка мародеров уничтожена. Вернитесь в Нью-Рено, чтобы получить заслуженную награду.}
+{3707007}{}{Обстоятельства сложились не в вашу пользу. Сын Райта мертв, мародеры не понесли значимых потерь. Орвилл Райт должен узнать, что здесь произошло.}
+{3707008}{}{Несмотря на то, что сын Райта погиб, вы выполнили поручение Орвилла. Мародеры уничтожены. Возвращайтесь в Нью-Рено и сообщите Орвиллу Райту о том, что случилось.}
+{3707009}{}{Вы освободили заложника, но не расправились с бандитами. Поручение Орвилла Райта выполнено только наполовину.}
+{3707010}{}{Вы не справились с заданием Орвилла Райта. Его сын погиб, и его смерть осталась не отмщенной.}
+{3707011}{}{Вы сумели спасти заложника и разобрались с мародерами. Это благоприятно сказалось на ваших отношениях с семьей Райт.}
+{3707012}{}{Вы отомстили мародерам за смерть Райта и сообщили о гибели сына Орвиллу.}
+
+{3707101}{}{Нью-Рено}
+{3707102}{}{Проблемы мистера Райта: Заложник.}
+
+# 3707
+# Убить сына Райта для Луиса Сальваторе
+
+{3710001}{}{Убейте сына Райта, захваченного в заложники мародерами.}
+{3710002}{}{Вы убили сына Райта, захваченного мародерами в Пустоши. Вернитесь к Сальваторе чтобы получить награду.}
+{3710003}{}{Семья Райтов потеряла одного из своих людей. Если Райты узнают о вашей роли в этом происшествии, у вас будут проблемы.}
+
+{3710101}{}{Нью-Рено}
+{3710102}{}{Встречное предложение от Луиса Сальваторе.}
+
+# 3714
+# Довести бармена в ГизГ.
+
+{3714001}{}{Вы переговорили с барменом в Десперадо. Самому ему и дела нет до вашего поселения. Но он пообещал переговорить с сыном, может быть того заинтересует ваше предложение.}
+{3714002}{}{Согласие семьи бармена получено. Теперь поговорите с самим Топлером.}
+{3714003}{}{Проводите Топлера Харви на его новое место работы.}
+{3714003}{}{Вы благополучно избежали всех опасностей Пустоши и проводили Топлера Харви в его новый бар. Теперь в вашем городе есть отличный бармен!}
+
+{3714101}{}{Нью-Рено}
+{3714102}{}{Персональный бармен.}
+
+# 4001
+# Crack Carlos’ safe, NCR.
+{4001001}{}{Crack vice-president Carlos' safe.}
+{4001002}{}{You've successfully cracked the safe. Bring back to Merc what was inside.}
+{4001003}{}{Merc is pleased with your job.}
+{4001004}{}{You failed the mission. Merc will be furious.}
+
+{4001101}{}{NCR}
+{4001102}{}{Like a shadow.}
+
+# 4218
+# Встретимся у Дасти!
+
+{4218001}{}{Некто Смит попросил вас помочь проникнуть в город минуя охрану. Он не желает светиться на виду у таможни и заполнять все эти бланки.}
+{4218002}{}{Капитан таможни согласилась закрыть глаза на Смита. Вы можете провести его без обычной процедуры оформления документов.}
+{4218003}{}{Охрана на входе в город разрешила Смиту пройти. Найдите вашего нового приятеля в центре города, в баре Дасти.}
+{4218004}{}{Вы помогли Смиту пройти в НКР без оформления пропуска. Интересно, к чему такая скрытность?}
+
+{4218101}{}{NCR}
+{4218102}{}{Встретимся у Дасти!}
+
+# 4220
+# Припугнуть Вейстина
+
+{4220001}{}{У Смита, с которым вы недавно познакомились, какие-то личные счеты с Вейстином. Он просит вас помочь ему "навестить" советника. Выглядит это все очень подозрительно.}
+{4220002}{}{Вы согласились помочь Смиту проникнуть на ранчо советника Вейстина. Вам нужно встретиться со Смитом возле ворот Ранчо. Смит не будет долго ждать, так что не опаздывайте!}
+{4220003}{}{Вы благополучно отвлекли охранника на входе, и Смит пробрался на территорию Ранчо. Чем он там будет заниматься, одному богу известно. Дождитесь его возвращения в баре Дасти.}
+{4220004}{}{Смит "припугнул" Вейстина с вашей помощью. Кого может интересовать, что стало с советником?}
+{4220005}{}{Вы рассказали шерифу о планах Смита. Дюмонт пообещал принять меры, но вам почему-то кажется, что он не очень вам поверил.}
+
+{4220101}{}{NCR}
+{4220102}{}{"Припугнуть" Вейстина.}
+
+# 4228
+# Lost Dappo's caravan
+
+{4228001}{}{Нужно выяснить, почему Бастер зол на Даппо.}
+{4228002}{}{Караван Даппо с грузом для Бастера пропал. Нужно уточнить у Даппо, что случилось с грузом.}
+{4228003}{}{Даппо попросил найти караван с грузом Бастера. Последний раз караван был замечен в районе Убежища № 15.}
+{4228004}{}{Остатки каравана найдены. В ящике, который везли для Бастера, хранился боевой робот. По каким-то причинам он активировался и уничтожил всех караванщиков. Можно возвращаться к Даппо.}
+{4228005}{}{Караван Даппо найден.}
+
+{4228101}{}{NCR}
+{4228102}{}{Lost Dappo's caravan.}
+
+# 4231
+# Советнику требуется лекарство для сердца. Найти нужные таблетки можно только в Городе-Убежище.
+
+{4231001}{}{Вейстину требуется лекарство для сердца. Таблетки можно купить у Элен Трой в Городе-Убежище за 1000 монет.}
+{4231002}{}{У Элен закончились ингридиенты, необходимые для изготовления лекарства для сердца. Нужно принести Ментаты и Баффаут в ее лабораторию.}
+{4231003}{}{Все компоненты лекарства переданы Элен. Лекарство стоит 1000 монет.}
+{4231004}{}{Таблетки для сердца получены. Нужно вернуться к советнику Вейстина.}
+{4231005}{}{Таблетки для сердца переданы советнику.}
+
+{4231101}{}{NCR}
+{4231102}{}{Westin heart pills.}
+
+# 4232
+# Патрульный Кесс хочет вступить в рейнджеры но не может пройти медкомиссию у доктора Клауса.
+
+{4232001}{}{Патрульный Кесс хочет вступить в рейнджеры но не может пройти медкомиссию у доктора Клауса.}
+{4232002}{}{Клаус согласился закрыть глаза на Кесса. Тот пройдет медкомиссию. Нужно вернуться к Кессу.}
+{4232003}{}{ВКлаус может пройти медкомиссию. Еще один раз.}
+
+{4232101}{}{NCR}
+{4232102}{}{Kess Medical Comission.}
+
+# 4242
+# Принести Ретчу суперинструменты, мотор, масленку, 10 тыщ монет и голодиск со съерры чтобы получить через игровую неделю багги
+
+{4242001}{}{Ретч утверждает, что может собрать багги. Нужно принести Ретчу суперинструменты, мотор, масленку и 10 000 монет.}
+{4242002}{}{Все необходимое для сбора багги собрано. Включая плату в 10 тысяч. Но Ретчу требуются чертежи подвески двигателя багги. Найти нужную схему можно в компьютерной сети Сьерра.}
+{4242003}{}{Один из механиков, служивший на Сьерре, оставил технический паспорт своего багги в компьютере на военной базе. Данные сохранены на голодиск. Нужно вернуться к Ретчу."}
+{4242004}{}{Голодиск с чертежами подвески багги передан Ретчу. Осталось отдать механику мотор, масленку, суперинструменты и заплатить 10 тысяч монет.}
+{4242005}{}{Ретч приступил к сбору багги. Нужно навестить его через неделю.}
+{4242006}{}{Удивительно, но Ретч действительно способен из кучи мусора сделать что-то работающее. Ваш новенький багги - прекрасное тому подтверждение!}
+
+{4242101}{}{NCR}
+{4242102}{}{Buggy}
+
+# 4244
+# охрана каравана Даппо из НКР в Реддинг
+
+{4244001}{}{Даппо нанял вас для охраны каравана в Реддинг. Нужно найти проводника Абдалхи на входе в НКР до 14:00 15 числа.}
+{4244002}{}{Вы в составе каравана. Двигаемся по Пустоши. Необходимо сохранить жизнь проводника.}
+{4244003}{}{Караван успешно достиг точки назначения. Нужно найти Джеймса Хоффи, чтобы получить награду."}
+{4244004}{}{Караван Даппо из НКР в Рейдинг успешно сопровожден.}
+{4244005}{}{Проводник Абдалхи погиб в Пустоши. Миссия провалена.}
+{4244006}{}{Вы были убиты во время сопровождения каравана. Миссия провалена.}
+
+{4244101}{}{NCR}
+{4244102}{}{NCR-Redding caravan.}
+
+# 4246
+# Охота на охотников, НКР: убейте по заданию Элизы из НКР 20 работорговцев в окрестностях ЯМЫ
+
+{4246001}{}{Элиза из НКР просит вас уничтожить банду работорговцев в окрестностях Дена. Необходимо найти место, где скрываются бандиты.}
+{4246002}{}{Вы нашли базу работорговцев. Убейте 20 работорговцев и вернитесь к Элизе в НКР.}
+{4246003}{}{Вы нашли базу работорговцев. Убито работорговцев: 5. Осталось убить: 15."}
+{4246004}{}{Вы нашли базу работорговцев. Убито работорговцев: 10. Осталось убить: 10.}
+{4246005}{}{Вы нашли базу работорговцев. Убито работорговцев: 15. Осталось убить: 5.}
+{4246006}{}{Банда работорговцев ликвидирована. Убито 20 работорговцев. Вернитесь к Элизе в НКР и получите награду.}
+{4246007}{}{Вы расправились с работорговцами из Ямы по заданию Элизы.}
+
+{4246101}{}{NCR}
+{4246102}{}{Slavers Hunting.}
+
+# 4248
+# Почтальон - доставка письма случайному адресату.
+
+{4248001}{}{У вас есть письмо, которое нужно доставить одному из жителей Пустоши. Адрес и имя получателя написаны на конверте.}
+{4248002}{}{Вы потеряли письмо. Доставка сорвалась.}
+{4248003}{}{Вы доставили письмо по адресу.}
+
+{4248101}{}{NCR}
+{4248102}{}{Postman.}
+
+# 4263
+# Уничтожить один из лагерей рейдеров вокруг НКР
+
+{4263001}{}{Объединенные банды рейдеров и работорговцев окружили НКР. Они блокируют караванные пути и нападают на патрули рейнджеров. Уничтожьте один из лагерей бандитов и вернитесь к сержанту Кайлу в НКР.}
+{4263002}{}{Лагерь рейдеров уничтожен. Вернитесь в НКР, чтобы получить заслуженную награду у сержанта Кайла в тренировочном лагере.}
+{4263003}{}{Вы уничтожили один из лагерей рейдеров.}
+
+{4263101}{}{NCR}
+{4263102}{}{NCR Siege.}
+
+# 4265
+# Атака рейдеров. НКР
+
+{4265001}{}{Нападение на столицу Республики. На территорию Базара НКР вторглись банды рейдеров и работорговцев. Остановите вторжение и убейте хотя бы одного рейдера.}
+{4265002}{}{Вы приняли участие в отражении атаки на НКР. Необходимо уничтожить всех нападающих и восстановить порядок в столице.}
+{4265003}{}{Вторжение рейдеров остановлено! Вернитесь к Элизе за наградой.}
+{4265004}{}{Вы помогли отстоять столицу Новокалифорнийской Республики. }
+
+{4265101}{}{NCR}
+{4265102}{}{Raiders attack.}
+
+
+
+# 4266
+# Сынишка. НКР. Сын президента НКР утащил пистолет у рядового. Игрок должен вернуть пушку.
+
+{4266001}{}{Президент НКР попросил вас выяснить у сержанта Кайла, какие у него возникли проблемы с сыном Карлсона.}
+{4266002}{}{По словам сержанта сын Карлсона утащил пистолет одного из Рейнджеров и не хочет признаваться, куда его спрятал.}
+{4266003}{}{Пистолет у сына Карлсона. Не отставайте от мальчика. Пусть поймет, что он в ваших руках и удрать от вас не получится.}
+{4266004}{}{Вы не смогли догнать мальчика. Пистолет он не отдаст.}
+{4266005}{}{Вы ни на шаг не отставали от сына Карлсона. Подойдите к нему и заберите пистолет.}
+{4266006}{}{Пистолет, который стащил сынишка президента у вас. Сообщите сержанту о находке.}
+{4266007}{}{Вы не признались сержанту, что забрали пистолет у сына Карлсона.}
+{4266008}{}{Вы отдали пистолет сержанту. Нужно вернуться к президенту Карлсону.}
+{4266009}{}{Вы выполнили просьбу Карлсона.}
+
+{4266101}{}{NCR}
+{4266102}{}{Karlson Son}
+
+# 4269
+# Дипломатическая миссия - обмен нотами протеста между НКР и братством стали
+
+{4269001}{}{По заданию Виктора Шеймана, командующего Армией НКР, вы должны доставить протест НКР против экспансии Братства Стали на территориях Северной Калифорнии. Отправляйтесь в аванпост Братства в Сан-франциско.}
+{4269002}{}{Вы передали протест паладинам Братства Стали.}
+{4269003}{}{Вы передали протест паладинам Братства Стали. Дождитесь, пока паладины составят ответное письмо.}
+{4269004}{}{У вас кейс с официальным ответом Братства Стали на протест генерала Шеймана. Доставьте кейс командующему.}
+{4269005}{}{Вы открыли кейс с официальным ответом Братства! Лучше не рассказывать никому об этом, а кейс выбросить.}
+{4269006}{}{Задание Шеймана выполнено. Вы доставили протест паладинам Братства Стали и передали письмо с официальным ответом Братства Шейману.}
+{4269007}{}{Вы доставили ноту протеста в Братство Стали, но не смогли добиться от них ответа. Задание провалено.}
+
+{4269101}{}{NCR}
+{4269102}{}{Diplomatic Mission}
+
+# 4270
+# Разведка территории для сержанта Кайла
+
+{4270001}{}{Исследуйте окрестности Реддинга по заданию сержанта Кайла. После того, как, по вашему мнению задача будет выполнена, вернитесь в НКР.}
+{4270002}{}{Вы выполнили задание сержанта Кайла по разведке территорий вокруг Реддинга.}
+
+{4270101}{}{NCR}
+{4270102}{}{Redding Recon}
+
+# 4271 Шпионская миссия в ГУ
+
+{4271001}{}{По заданию начальника Агенства Контрразведки НКР Сантьяго, проникните на территорию Города Убежища и запишите на магнитофон доклад советника Линетт. Постарайтесь, чтобы вас не обнаружили.}
+{4271017}{}{Вы приступили к записи доклада советника МакКлюра. Будьте предельно осторожны! }
+{4271018}{}{Вы были раскрыты во время выполнения задания. Миссия провалена.}
+{4271019}{}{Вы не дослушали доклад МакКлюра до конца. Миссия провалена.}
+{4271020}{}{Вы записали весь доклад советника МакКлюра. Возврашайтесь к Сантьяго!}
+{4271021}{}{Вы выполнили задание Сантьяго.}
+
+{4271101}{}{NCR}
+{4271102}{}{Шпионская миссия в Городе Убежища}
+
+#4273 Найти шпиона для Сантьяго
+
+{4273001}{}{По заданию начальника агентства контрразведки Сантьяго найдите подозрительных людей. Ничего конкретно неизвестно, кроме того, что эти люди появились в городе недавно.}
+{4273002}{}{Дороти сообщила о странных радиопереговорах. Источник сигнала где-то в НКР. Сеанс связи начинается каждый день в 01:00 или чуть позже на 17 радиоканале.}
+{4273002}{}{Найдите тех, кто занимает 17ый радиоканал каждую ночь в 01:00. Постарайтесь, чтобы злоумышленники вас не заметили.}
+{4273017}{}{Вы выяснили, кто ведет загадочные радиопереговоры. Это Смит. Необходимо дослушать разговор до конца.}
+{4273018}{}{Смит заметил, что вы за ним наблюдаете. Не удалось дослушать переговоры до конца.}
+{4273019}{}{Вы не дослушали переговоры до конца, но очевидно, что Смит - тот, кто нужен Сантьяго.}
+{4273020}{}{Шпионом Бишопа оказался некто Смит. Необходимо срочно доложить Сантьяго, что на советника Вейстина готовится покушение.}
+{4273021}{}{Задание выполнено. Шпионом оказался Смит.}
+
+{4273101}{}{NCR}
+{4273102}{}{Найти шпиона для Сантьяго}
+
+# 4274
+# "Вылечить" брамина
+
+{4274001}{}{Один из браминов на ранчо Вейстина чем-то отравился. Проверьте, что случилось с животным. Если вы сможете исцелить брамина, вернитесь к Феликсу.}
+{4274002}{}{Поборов отвращение, вы "изъяли" из брамина ту дрянь, что он сожрал. Возвращайтесь к Феликсу за наградой.}
+{4274003}{}{Вы спасли жизнь брамину! Ведь это главное, правда? И не важно, каким способом пришлось это сделать.}
+
+{4274101}{}{NCR}
+{4274102}{}{Грязная работа}
+
+
+# 4276
+# Настоящий ковбой
+
+{4276001}{}{Феликс просит привести ему дикого брамина из Пустоши. Для того, чтобы заинтересовать брамина, скормите ему цветок, полученный от управляющего ранчо.}
+{4276002}{}{Вы поймали брамина. Возвращайтесь к Феликсу. Постарайтесь, чтобы брамин не отстал.}
+{4276003}{}{Вы привели брамина Феликсу.}
+
+{4276101}{}{NCR}
+{4276102}{}{Настоящий ковбой}
+
+# 4284
+# Библиография Хаба
+
+{4284001}{}{Принесите как минимум 3 книги из библиографии Хаба для Просветленной. Книги можно найти в исследовательском комплексе на северо-западе от НКР.}
+{4284002}{}{Вы выполнили просьбу Просветленной и принесли ей книги.}
+
+{4284101}{}{НКР}
+{4284102}{}{Библиография Хаба}
+
+# 4286
+# Бракованная партия винтовок.
+
+{4286001}{}{Начальник караванов Даппо прислал гневное письмо торговцу оружием Бастеру. Бастер просит разузнать, в чем дело.}
+{4286002}{}{Даппо считает, что Бастер продал ему бракованное оружие. Нужно вернуться к торговцу.}
+{4286003}{}{Вы уладили конфликт между Бастером и Даппо, заплатив караванщику сумму, которая компенсировала материальный ущерб от потери каравана.}
+{4286004}{}{Вы вывели Бастера на чистую воду. Похоже, что он продал начальнику караванов партию бракованного оружия.}
+{4286005}{}{Вы получили деньги от Бастера. Нужно заплатить их Даппо в качестве возмещения ущерба, который тот понес при потере каравана.}
+{4286006}{}{Вы заплатили Даппо. Он снова готов работать с Бастером.}
+{4286007}{}{Вы помирили двух торговцев самым простым способом - заплатили компенсацию Даппо. Неплохой вариант.}
+{4286009}{}{Несмотря на то, что Бастер так и не признался, вы точно уверены: Бастер иногда снабжает караванщиков бракованным оружием. В этот раз вы помогли уладить скандал с Даппо.}
+{4286010}{}{Вам нужно найти охранников каравана, который ограбили рейдеры.}
+{4286011}{}{Поговорите с охранниками караванов. Их можно найти на Базаре НКР, в забегаловке Майки.}
+{4286012}{}{Один из охранников каравана, Джим, исчез из НКР сразу после возвращения каравана домой. Найдите Джима, возможно, его поведение связано с происшествием.}
+{4286013}{}{Вы выяснили, почему оружие охранников каравана отказало. Один из караванщиков, наркоман, заменил боевые патроны холостыми. Нужно вернуться к Даппо.}
+{4286014}{}{Вы рассказали Даппо о проделке Джима. Можно вернуться к Бастеру.}
+{4286015}{}{Вы выяснили, что произошло с караваном Даппо, во время нападения рейдеров. В следующий раз Даппо более осторожно подойдет к найму охраны для своих грузов.}
+
+{4286101}{}{NCR}
+{4286102}{}{Проблема со стволами}
+
+# 4287
+# Мятеж в сквате.
+
+{4287001}{}{По заданию командира рейнджеров Элизабет, убейте 20 мятежных рейнджеров на территории заброшеной лаборатории.}
+{4287005}{}{Убито мятежников: 5 из 20}
+{4287010}{}{Убито мятежников: 10 из 20}
+{4287015}{}{Убито мятежников: 15 из 20}
+{4287020}{}{Убито мятежников: 20 из 20. Задание выполнено, нужно вернуться к Элизе за наградой}
+{4287021}{}{Вы выполнили задание Элизабет и расправились с мятежниками.}
+
+{4287101}{}{NCR}
+{4287102}{}{Rebels}
+
+# 4292
+# Патруль рейнджеров
+
+{4292001}{}{Вы записались в патруль рейнджеров. В 22:00 отправление. Сбор в казармах Рейнджеров в НКР.}
+{4292002}{}{Вы в составе патрульного взвода рейнджеров. Начато патрулирование.}
+{4292003}{}{Провал: вы пытались ограбить или нападали на патрульных.}
+{4292004}{}{Провал: вы самовольно покинули патрульный взвод.}
+{4292005}{}{Вы погибли во время выполнения задания капрала Хейта.}
+{4292006}{}{Капрал Хейт погиб на задании. }
+{4292007}{}{Провал: Вы прикончили капрала Хейта. Лучше не показываться ему на глаза.}
+{4292008}{}{Задание выполнено. Обратитесь к капралу Хейту за наградой. И поспешите, он не будет долго ждать.}
+{4292009}{}{Еще один патруль. Удачи!}
+{4292010}{}{Очередной патруль завершен. Обратитесь к капралу за наградой.}
+{4292011}{}{Вы успешно выполнили задание капрала Хейта и получили награду. Ваш ранг среди Рейнджеров растет.}
+
+{4292101}{}{НКР}
+{4292102}{}{Патруль рейнджеров}
+
+# 4300
+# Караван Реддинг-ВолтСити
+
+{4300001}{}{Вы записались в охрану каравана Бена Вейда. Приходите к караванщику 1го числа в 12 часов дня.}
+{4300002}{}{Вы в составе каравана. Задача - сопроводить караван до пункта назначения.}
+{4300003}{}{Вы напали на караван Бена Вейда, следующий из Реддинга в Город-Убежища. Вероятно, Вейд никогда не наймет вас для охраны своих грузов.}
+{4300004}{}{Провал: Вы бросили караван Бена Вейда в Пустоши. Награды вы не получите.}
+{4300005}{}{Провал: Вы не выполнили задачи по охране каравана. Вы погибли во время маршрута.}
+{4300006}{}{Провал: Бен Вейд погиб в Пустоши. Вы не смогли защитить караванщика.}
+{4300007}{}{Вы убили проводника каравана Реддинг - Город-Убежища. Вряд ли Бен Вейд пожелает иметь с вами дело.}
+{4300008}{}{Великолепно! Караван благополучно достиг точки назначения. Заберите плату у Бена Вейда.}
+{4300009}{}{Вы в составе каравана. Постарайтесь сохранить груз и защищайте проводника в течении всего маршрута.}
+{4300010}{}{Очередной успех! Караван в точке назначения. Бен Вейд оценит вашу работу.}
+{4300011}{}{Вы выполнили задание по сопровождению и охране каравана до Города-Убежища.}
+
+
+{4300101}{}{Реддинг}
+{4300102}{}{Охрана каравана Реддинг - Город-Убежища}
+
+# 4301
+# Караван Реддинг-Нью-Рено
+
+{4301001}{}{Вы записались в охрану каравана Энрико Савинелли. Приходите к караванщику 21го числа в 15 часов.}
+{4301002}{}{Вы в составе каравана. Задача - сопроводить караван до пункта назначения.}
+{4301003}{}{Вы напали на караван Энрико Савинелли, следующий из Реддинга в Нью-Рено. Вероятно, Савинелли никогда не наймет вас для охраны своих грузов.}
+{4301004}{}{Провал: Вы бросили караван Энрико Савинелли в Пустоши. Награды вы не получите.}
+{4301005}{}{Провал: Вы не выполнили задачи по охране каравана. Вы погибли во время маршрута.}
+{4301006}{}{Провал: Энрико Савинелли погиб в Пустоши. Вы не смогли защитить караванщика.}
+{4301007}{}{Вы убили проводника каравана Реддинг - Нью-Рено. Вряд ли Энрико Савинелли пожелает иметь с вами дело.}
+{4301008}{}{Великолепно! Караван благополучно достиг точки назначения. Заберите плату у Энрико Савинелли.}
+{4301009}{}{Вы в составе каравана. Постарайтесь сохранить груз и защищайте проводника в течении всего маршрута.}
+{4301010}{}{Очередной успех! Караван в точке назначения. Энрико Савинелли оценит вашу работу.}
+{4301011}{}{Вы выполнили задание по сопровождению и охране каравана Реддинг - Нью-Рено.}
+
+
+{4301101}{}{Реддинг}
+{4301102}{}{Охрана каравана Реддинг - Нью-Рено}
+
+# 4302
+# Караван Реддинг-НКР
+
+{4302001}{}{Вы записались в охрану каравана Стэнвелла. Приходите к караванщику 11го числа в 8 часов утра.}
+{4302002}{}{Вы в составе каравана. Задача - сопроводить караван до до пункта назначения.}
+{4302003}{}{Вы напали на караван Стэнвелла, следующий из Реддинга в НКР. Вероятно, Стэнвелл никогда не наймет вас для охраны своих грузов.}
+{4302004}{}{Провал: Вы бросили караван Стэнвелла в Пустоши. Награды вы не получите.}
+{4302005}{}{Провал: Вы не выполнили задачи по охране каравана. Вы погибли во время маршрута.}
+{4302006}{}{Провал: Стэнвелл погиб в Пустоши. Вы не смогли защитить начальника каравана.}
+{4302007}{}{Вы убили проводника каравана Реддинг - НКР. Вряд ли Стэнвелл пожелает иметь с вами дело.}
+{4302008}{}{Великолепно! Караван благополучно достиг точки назначения. Заберите плату у Стэнвелла.}
+{4302009}{}{Вы в составе каравана. Постарайтесь сохранить груз и защищайте проводника в течении всего маршрута.}
+{4302010}{}{Очередной успех! Караван в точке назначения. Стэнвелл оценит вашу работу.}
+{4302011}{}{Вы выполнили задание по сопровождению и охране каравана Реддинг - НКР.}
+
+
+{4302101}{}{Реддинг}
+{4302102}{}{Охрана каравана Реддинг - НКР}
+
+# 4303
+# Ванаминго в Реддинге
+
+{4303001}{}{Шериф попросил разобраться со вдовой Руни. Она заперлась в доме и отказывается выходить на улицу целую неделю.}
+{4303002}{}{Руни боится ванаминго. По ее словам, ванаминго по ночам ходят вокруг дома, прыгают по крыше и пытаются пролезть внутрь. }
+{4303003}{}{Шериф оповещен о том, что в последнее время Руни слышит по ночам некие странные звуки. Природу их определить не удалось, но вдова утверждает, что это ванаминго. Шериф посоветовал допросить мисс Маджеску.}
+{4303004}{}{Вы рассказали Руни о том, что Джош Лоуренс запугивал ее. Руни вспомнила историю, в которой Джош Лоуренс предложил ей переехать к нему жить. Она отвергла его приложение. Поняв, что проделки с винаминго Джош вытворял из-за любви к ней, надеясь, что она испугаеться и изменит свое решение, Руни попросила не рассказывать об этом шерифу.}
+{4303005}{}{Мисс Маджеску слышала странные звуки, но не предала этому особого внимания, посчитав, что шумит ветер. Она припоминает, что давным-давно ванаминго раскапывали могилы на городском кладбище и выбирались на свободу. Она искренне боится, что история повторяется и просит выяснить что происходит. Стоит распросить Джоша Лоуренса, владельца салуна "Последний Вздох", может он что-то слышал о винамино.}
+{4303006}{}{Шериф оповещен о шумах которые слышит мисс Маджеску.}
+{4303007}{}{Разговор с Джошем Лоуренсом в салуне "Последний Вздох". Он сказал, что по ночам что-то шуршит на кладбище, слышны старшные рычание, подозрительные писки и прочие звуки. Показывает на разрытые могилы и предполагает, что это дело лап ванаминго.}
+{4303008}{}{Шериф оповещен о разговоре с Лоуренсом. Шериф попросил допросить местного доктора.}
+{4303009}{}{Доктор скептически относится к возможности хотя бы одного ванаминго выжить, и говорит, что пришельцы давно исчезли, Лоуренс любит приврать, да и вообще рекомендует поговорить с детьми на улицах, может, они что-то знают.}
+{4303010}{}{Продолжайте расспрашивать детей.}
+{4303011}{}{Продолжайте расспрашивать детей.}
+{4303012}{}{Продолжайте расспрашивать детей.}
+{4303013}{}{Продолжайте расспрашивать детей.}
+{4303014}{}{Продолжайте расспрашивать детей.}
+{4303015}{}{Ребенок видел ночью Лоуренса рядом с домом Руни, у него был здоровенный булыжник на веревке. Он забрасывал булыжник на крышу и грохотал им по шиферу.}
+{4303016}{}{Шериф оповещен о рассказе ребенка про ночные похождение Лоуренса.}
+{4303017}{}{Лоурес признался в том, что он пугал вдову Руни по ночам. Он хотел ее напугать, чтобы она побоявшись жить в одиночестве, всё таки приняла его предложение и переехала к нему жить.}
+{4303018}{}{Вы выполнили поручение шерифа разобраться с Руни.}
+
+{4303101}{}{Реддинг}
+{4303102}{}{Ванаминго в Реддинге}
+
+# 4310
+# Медикаменты для доктора
+
+{4310001}{}{У доктора Джонсона в Реддинге закончились медикаменты. Необходимо забрать комплект лекарственных препаратов в пункте снабжения Внутреннего Города.}
+{4310002}{}{Медикаменты для доктора Джонсона у вас. Вернитесь во Внешний город.}
+{4310003}{}{Вы доставили для доктора Джонсона медикаменты из Внутреннего Города Реддинга.}
+
+{4310101}{}{Реддинг}
+{4310102}{}{Медикаменты для доктора Джонсона.}
+
+# 4311
+# Отравленный регулятор.
+
+{4311001}{}{Вылечите отравленного регулятора в Реддинге. Вам потребуется противоядие, чтобы исцелить больного.}
+{4311002}{}{Вы исцелили регулятора с помощью противоядия. Сообщите о результатах доктору Джонсону.}
+{4311003}{}{Жизни регулятора больше ничего не угрожает. С помощью противоядия вы спасли парня.}
+
+{4311101}{}{Реддинг}
+{4311102}{}{Отравленный регулятор.}
+
+# 4312
+# Возвращение беглеца, Реддинг
+
+{4312001}{}{Найдите женщину в церкви Модока. Ей требуется помощь.}
+{4312002}{}{Мария из Модока попросила найти ее сбежавшего ребенка, Джоуи. Возможно, он находится где-то в Нью-Рено.}
+{4312003}{}{Вы помогли матери, вы привели ребенка, сбежавшего из дома. }
+{4312004}{}{В деревне на поверхности Убежища 15 одна женщина нуждается в вашей помощи.}
+{4312005}{}{Найдите девочку 11 лет, Наташу Грэй, сбежавшую из дома. Скорее всего, поиски лучше начать в Нью-Рено.}
+{4312006}{}{Вы поговорили с Наташей. Она не поддается уговорам и не собирается возвращаться домой.}
+{4312007}{}{Вы вернули сбежавшую девочку обратно домой к родителям.}
+
+{4312101}{}{Реддинг}
+{4312102}{}{Возвращение беглеца}
+
+
+# 4330
+# Квест "На связи". Отнести 4 рации врачам в пустоши.
+
+{4330001}{}{По просьбе доктора Джонсона из Реддинга, найдите 4 рации, настройте их на волну №1717 и раздайте врачам в Пустоши. Доктору Трою в Городе-Убежище, Холидею в Брокен Хиллс, Юбилею в НКР и Доктору Фунгу в Сан-Франциско.}
+{4330002}{}{Первая рация передана, осталось еще три.}
+{4330003}{}{Два врача получили рации, настроенные на волну 1717.}
+{4330004}{}{Три рации переданы, осталось передать последнюю. Не забудьте настроить ее на волну 1717.}
+{4330005}{}{Вы выполнили просьбу Джонсона. Может быть, стоит послушать, о чем они там говорят?}
+{4330006}{}{Задание доктора выполнено. Вы помогли Джонсону наладить связь с другими врачами в городах Пустоши.}
+
+{4330101}{}{Реддинг}
+{4330102}{}{На связи.}
+
+{4331001}{}{Отнесите рацию доктору Трою в Город-Убежище.}
+
+{4331101}{}{Реддинг}
+{4331102}{}{Рация для доктора Троя.}
+
+{4332001}{}{Отнесите рацию доктору Фунгу в Сан-Франциско.}
+
+{4332101}{}{Реддинг}
+{4332102}{}{Рация для доктора Фунга.}
+
+{4333001}{}{Отнесите рацию доктору Холидею в Брокен-Хиллс.}
+
+{4333101}{}{Реддинг}
+{4333102}{}{Рация для доктора Холидея.}
+
+{4334001}{}{Отнесите рацию доктору Юбилею в НКР.}
+
+{4334101}{}{Реддинг}
+{4334102}{}{Рация для доктора Юбилея.}
+
+# 4402
+# Чокнутый компьютер, Сан-Франциско
+
+{4402001}{}{С компьютером Братства Стали происходит что-то странное. Нужно найти кого-то, кто сможет объяснить его странное поведение.}
+{4402002}{}{Суперкомпьютер Братства, Zax 366, по всей видимости, сходит с ума. Нужно найти способ "прочистить мозги" компьютеру.}
+{4402003}{}{Используя свой неотразимый дар красноречия вы убедили Zax 366 в том, что он должен продолжать выполнять свое предназначение и служить человеку.}
+{4402004}{}{Одно ваше неосторожное высказывание привело к тому, что личность Zax 366 была разрушена.}
+{4402005}{}{Суперкомпьютер Братства Стали сломан. Вместо операционной системы запущена некая игра. Чтобы восстановить работу системы, нужно пройти игру до конца.}
+{4402006}{}{Вы восстановили работу системы мейнфрейма.}
+{4402009}{}{Вы сделали все, что могли, но это не помогло восстановить стабильную работу мейнфрейма.}
+{4402010}{}{Вы помогли Еве из Братства Стали решить проблему с мейнфреймом ZAX 366.}
+
+{4402101}{}{Сан-Франциско}
+{4402102}{}{Чокнутый компьютер}
+
+# 4409
+# Вторжение в Доки! Сан-Франциско
+
+{4409001}{}{На район Доков Сан-Франциско нападают странные существа. Убейте 5 огромных насекомых, чтобы помочь остановить вторжение.}
+{4409002}{}{Убито гигантских насекомых: 1 из 5}
+{4409003}{}{Убито гигантских насекомых: 2 из 5}
+{4409004}{}{Убито гигантских насекомых: 3 из 5}
+{4409005}{}{Убито гигантских насекомых: 4 из 5}
+{4409006}{}{Убито гигантских насекомых: 5 из 5}
+{4409007}{}{Вы помогли Братству Стали защитить Сан-Франциско. Убито 5 гигантских насекомых.}
+
+{4409101}{}{Сан-Франциско}
+{4409102}{}{Вторжение в Доки!}
+
+# 4410
+# Самый натуральный наркотик. Сан-Франциско
+
+{4410001}{}{Один наркоман в Доках Сан-Франциско попросила вас принести 10 корней Зандера и 10 цветков Брока.}
+{4410002}{}{Вы принесли наркоману из Доков корни Зандера и цветки Брока.}
+
+{4410101}{}{Сан-Франциско}
+{4410102}{}{Самый натуральный наркотик}
+
+# 4411
+# Сбор дани для Ло Пэна. Сан-Франциско
+
+{4411001}{}{Чтобы завоевать доверие Ло Пэна, вы должны выполнить его задание. Соберите с жителей Сан-Франциско деньги для гангстера. Применяйте силу, если это потребуется.}
+{4411002}{}{Вы выполнили задачу Ло Пэна. Теперь его наемники могут поработать на вас.}
+{4411003}{}{Вы пытались спорить с Ло Пэном. Теперь он не станет иметь с вами никаких дел.}
+
+{4411101}{}{Сан-Франциско}
+{4411102}{}{Сбор дани для Ло Пэна.}
+
+# 4415
+# Найм телохранителя от Ло Пэна. Сан-Франциско
+
+{4415001}{}{Вы заплатили одному из гангстеров Ло Пэна. Теперь он работает на вас телохранителем. Если захотите узнать, когда кончится контракт - спросите у телохранителя.}
+{4415002}{}{Срок контракта с телохранителем истек.}
+
+{4415101}{}{Сан-Франциско}
+{4415102}{}{Найм телохранителя от Ло Пэна.}
+
+# 4416
+# Зачистка трюмов. Сан-Франциско
+
+{4416001}{}{По просьбе капитана Рона Майерса убейте в одиночку или в составе группы всех жителей нижних палуб танкера. Лично вы должны прикончить минимум одну тварь из всего этого зверинца, иначе капитан не оценит вашу помощь.}
+{4416002}{}{Вы лично убили одного из страшных чудовищ, живущих в трюмах танкера. Осталось уничтожить остальных.}
+{4416003}{}{Вы очистили трюмы танкера от чудовищ всех мастей.}
+{4416004}{}{Вы помогли капитану танкера справиться с чудовищами в трюмах.}
+
+{4416101}{}{Сан-Франциско}
+{4416102}{}{Зачистка трюмов.}
+
+
+# 4417
+# Пропавшие панки. Сан-Франциско
+
+{4417001}{}{По просьбе капитана Майерса спуститесь на нижние палубы танкера и найдите четверых членов его команды живыми или мертвыми. Примечание: чтобы определить причину гибели панков, используйте навык "наука".}
+{4417002}{}{Найден первый из пропавших членов команды. Мертв, как и следовало ожидать.}
+{4417003}{}{Найден второй... На теле нет пулевых ранений, только следы многочисленных укусов и рваные раны. Этого бедолагу прикончили местные чудовища.}
+{4417004}{}{Еще одно тело. Вероятно, этот человек подвергся атаке кентавра. Умер от многочисленных ран и облучения.}
+{4417005}{}{Последний из пропавших панков найден. Все оказались мертвы. Нужно сообщить капитану.}
+{4417006}{}{К сожалению, все члены команды, пропавшие на нижних палубах, были найдены мертвыми...}
+
+{4417101}{}{Сан-Франциско}
+{4417102}{}{Зачистка трюмов.}
+
+# 4420
+# Возрождение Императора. Сан-Франциско
+
+{4420001}{}{Жесткие диски Императора Ши (так они называют свой суперкомпьютер) были отформатированы неизвестным. За восстановление данных Императора Советник Кен Ли обещает хорошо заплатить.}
+{4420002}{}{Вы не смогли восстановить память Императора.}
+{4420003}{}{Вы сумели восстановить 1% данных на жестком диске Императора.}
+{4420004}{}{Вы сумели восстановить 2% данных на жестком диске Императора.}
+{4420005}{}{Вы сумели восстановить 3% данных на жестком диске Императора.}
+{4420006}{}{Вы сумели восстановить 1% данных на жестком диске Императора. Данные восстановлены полностью!}
+{4420007}{}{Вы сумели восстановить 2% данных на жестком диске Императора. Данные восстановлены полностью!}
+{4420008}{}{Вы сумели восстановить 3% данных на жестком диске Императора. Данные восстановлены полностью!}
+{4420009}{}{Советник Кен Ли от имени народа Ши поблагодарил вас за восстановление данных на жестких дисках Императора.}
+{4420010}{}{Вы не справились с заданием.}
+
+{4420101}{}{Сан-Франциско}
+{4420102}{}{Возрождение Императора}
+
+# 4421
+# Формат: С. Сан-Франциско
+
+{4421001}{}{По заданию АHS-7 из Сан-Франциско отформатируйте жесткие диски Императора Ши.}
+{4421002}{}{Миссия провалена. Возможно, вам стоит вернуться к этому заданию позже, когда станете опытнее.}
+{4421003}{}{Форматирование закончено. Уничтожено данных в памяти Императора Ши: 1%.}
+{4421004}{}{Форматирование закончено. Уничтожено данных в памяти Императора Ши: 3%.}
+{4421005}{}{Форматирование закончено. Уничтожено данных в памяти Императора Ши: 5%.}
+{4421006}{}{Вы выполнили задание AHS-7. Данные в памяти Императора Ши уничтожены.}
+{4421007}{}{Вы не смогли выполнить задание хабологов.}
+
+{4421101}{}{Сан-Франциско}
+{4421102}{}{Формат: С.}
+
+# 4424
+# Нэнси и Сид. Сан-Франциско
+  
+{4424001}{}{Бармен Слим с танкера просит вас найти панков Нэнси и Сида, которые исчезли в неизвестном направлении.}
+{4424002}{}{Вы услышали радиосообщение Нэнси. Она находится на побережье, в палатке наркоторговцев.}
+{4424003}{}{Вы не успели к Нэнси. Когда вы нашли палатку, девушка уже была мертва. Сид исчез.}
+{4424004}{}{Вы сообщили Слиму, что не смогли найти Сида. Тело Нэнси было найдено в палатке на побережье.}
+
+{4424101}{}{Сан-Франциско}
+{4424102}{}{Нэнси и Сид}
+
+# 4427
+# Логово болотников. Сан-Франциско
+  
+{4427001}{}{По заданию паладинов Братства, уничтожьте всех болотников в их собственном логове.}
+{4427002}{}{Все болотники уничтожены. Вернитесь к командору Крузу в бункере Сан-Франциско, чтобы получить награду.}
+{4427003}{}{Вы помогли Братству Стали справиться с болотниками.}
+
+{4427101}{}{Сан-Франциско}
+{4427102}{}{Логово болотников.}
+
+
+# 4428
+# AHS - 7, Сан-Франциско. Сюжетная линия, побочный квест.
+
+{4428001}{}{Убедите троих жителей Атолла в необходимости прохождения репликации. Затем возвращайтесь в Сан-Франциско.}
+{4428002}{}{Вы удачно охмурили одного из рабочих Атолла. Он пообещал заглянуть в репликационный центр. Осталось обработать еще двоих.}
+{4428003}{}{Второе согласие. Остался последний несогласный.}
+{4428004}{}{Трое с платформы Атолла согласились посетить центр хабологов и пройти репликацию. Задача выполнена. Вернитесь к AХС-7.}
+{4428005}{}{Вы удачно прошли испытание и приняты в хабологи. Трое из Атолла прошли репликацию.}
+
+{4428101}{}{Сан-Франциско}
+{4428102}{}{Введение в хабологию.}
+
+# 4430
+# СФ. АХС-7. Правосудие Хаба.Квест для доступа к сюжетной линии
+
+{4430001}{}{Чтобы подтвердить свою веру, уничтожьте отрекшихся от блага Церкви Хабологии.}
+{4430002}{}{Вы решили позволить несчастным бежать. Милосердие тоже может убивать, но не в этом случае.}
+{4430003}{}{Семья Ингвара благополучно скрылась. Никто не сможет их найти, если они следовали вашим советам.}
+{4430004}{}{Правосудие хабологов в действии. Они выглядят безобидными, мы то знаем, что коварство этих предателей не имеет границ.}
+{4430005}{}{Задача выполнена. Все члены семьи Ингвара мертвы.}
+{4430006}{}{Вы не оправдали доверия Хаба и не справились с заданием. Семья Ингвара выжила, но вы больше не являетесь членом Церкви.}
+{4430007}{}{Вашей вере можно позавидовать. Блестяще выполненное поручение, и вот вы уже АХС-3.}
+
+{4430101}{}{Сан-Франциско}
+{4430102}{}{Правосудие Хаба.}
+
+# 4434
+# СФ. АХС-7. Телохранитель для брата Хономера. Квест для доступа к сюжетной линии
+
+{4434001}{}{Вам поручено ответственное задание. Найдите хаболога Хономера и следуйте его указаниям.}
+{4434002}{}{Вы должны проводить Хономера к базе хабологов в Пустоши, на юге от Сан-Франциско. Оберегайте хаболога от нападений.}
+{4434003}{}{Вы выполнили задание АХС-7 и проводили Хономера к базе хабологов.}
+
+{4434101}{}{Сан-Франциско}
+{4434102}{}{Телохранитель для брата Хономера.}
+
+# 4440
+# СФ купить рецепт хитиновой брони у доктора Тиганга
+
+{4440001}{}{Джинг Т. Ганг продает технологию изготовления уникальной хитиновой брони.}
+{4440002}{}{Вы купили рецепт хитинового бронежилета}
+
+{4440101}{}{Сан-Франциско}
+{4440102}{}{{Хитиновая броня.}
+
+# 4506
+# Считать данные с блоков памяти роботов Сьерры. Наварро
+{4506001}{}{Соберите статистические данные из блоков памяти боевых роботов Съерры. После того, как объем собранных данных сканера составит 100%, вернитесь к Генри в Наварро.}
+{4506002}{}{Вы выполнили задание Генри и вернули сканер.}
+
+{4506101}{}{Наварро}
+{4506102}{}{Непыльная работа.}
+
+# 4507
+# Убить 5 роботов с помощью импульсных ракет
+
+{4507001}{}{По заданию профессора Генри поразите с помощью ЕМП-ракет 5 различных роботов. Затем возвращайтесь в Наварро. Прогресс: 0 из 5 роботов.}
+{4507002}{}{По заданию профессора Генри поразите с помощью ЕМП-ракет 5 различных роботов. Затем возвращайтесь в Наварро. Прогресс: 1 из 5 роботов.}
+{4507003}{}{По заданию профессора Генри поразите с помощью ЕМП-ракет 5 различных роботов. Затем возвращайтесь в Наварро. Прогресс: 2 из 5 роботов.}
+{4507004}{}{По заданию профессора Генри поразите с помощью ЕМП-ракет 5 различных роботов. Затем возвращайтесь в Наварро. Прогресс: 3 из 5 роботов.}
+{4507005}{}{По заданию профессора Генри поразите с помощью ЕМП-ракет 5 различных роботов. Затем возвращайтесь в Наварро. Прогресс: 4 из 5 роботов.}
+{4507006}{}{По заданию профессора Генри поразите с помощью ЕМП-ракет 5 различных роботов. Затем возвращайтесь в Наварро. Прогресс: 5 из 5 роботов.}
+{4507007}{}{Вы выполнили задание Генри и провели полевые испытания рабочего прототипа ЕМП-ракеты.}
+
+{4507101}{}{Наварро}
+{4507102}{}{Полевые испытания.}
+
+# 4509
+# Принести профессору Генри в Наварро: 10 бронебойных ракет, 5 импульсных гранат и 20 микросхем
+
+{4509001}{}{Принесите профессору Генри в Наварро 10 бронебойных ракет, 5 импульсных гранат и 20 микросхем. Материалы нужны ученому для разработки прототипа нового вида боеприпасов.}
+{4509002}{}{Вы выполнили запрос профессора Генри и обеспечили опытным материалом разработку прототипа нового вида ракет.}
+
+{4509101}{}{Наварро}
+{4509102}{}{Прототип.}
+
+# 4601
+# Manota's quest for jewelry, Primitive Tribe.
+
+{4601001}{}{Find a precious necklace for Manota.}
+{4601002}{}{You refused to look for a necklace for Manota.}
+{4601003}{}{You got the necklace for Manota.}
+
+{4601101}{}{Primal Tribe}
+{4601102}{}{Find a necklace for Manota.}
+
+# 4602
+# Help Sulik find some items for tribe, Primitive Tribe.
+
+{4602001}{}{Primal Tribe needs several gecko pelts and a couple of antidotes.}
+{4602002}{}{You refused to help the tribe.}
+{4602003}{}{You brought the items to Sulik.}
+
+{4602101}{}{Primal Tribe.}
+{4602102}{}{Find gecko pelts and antidote for Sulik.}
+
+# 4603
+# Find 3 healing powders for Gojatlah the shaman, Primitive Tribe. 
+
+{4603001}{}{Shaman needs 3 healing powders for his ritual.}
+{4603002}{}{You refused to help the shaman.}
+{4603003}{}{You brought the healing powders to Gojatlah.}
+
+{4603101}{}{Primal Tribe}
+{4603102}{}{Bring healing powders to Gojatlah.}
+
+# 4604
+# Bring big book of science to Mayara.
+
+{4604001}{}{Mayara, Keeper of wisdom, is looking for a big book of science. Bring it to her.}
+{4604002}{}{You refused to help Mayara. Your reputation within the tribe is lowered.}
+{4604003}{}{Mayara gladly accepted your book and shared her wisdom with you.}
+
+{4604101}{}{Primal Tribe}
+{4604102}{}{Mayara's new wisdom, big book of science.}
+
+# 4605
+# Dick-measuring contest with tribe's toughest warrior, Primitive Tribe. 
+
+{4605001}{}{Find a way to defeat the tribe's toughest warrior, Motelchiuh.}
+{4605002}{}{Being grateful for your help, Mayara told you a secret to defeat Motelchiuh.}
+{4605003}{}{You have used your wits to defeat the tribe's toughest warrior.}
+
+{4605101}{}{Primal Tribe}
+{4605102}{}{Defeat Motelchiuh.}
+
+# 4606
+# Protect the Primitive tribe.
+
+{4606001}{}{Raiders are preparing to attack! Hurry up!}
+{4606002}{}{You have helped the tribe in destroying the raiders.}
+{4606003}{}{Mission failed. You ran away from the battlefield.}
+{4606004}{}{Mission failed. You got killed.}
+{4606005}{}{Mission failed. Tribe drove off raiders without your help.}
+{4606006}{}{You helped the tribe to defend against raiders' attack.}
+{4606007}{}{You have earned the tribe's respect.}
+{4606008}{}{Mission failed. You were late.}
+{4606009}{}{Mission failed. Raiders have left.}
+{4606010}{}{Raiders are attacking the tribe, hepl them!}
+
+{4606101}{}{Primal Tribe}
+{4606102}{}{Help the tribe, they are under raider attack!}
+
+# 4701 - q_arroyo_mynoc_oil
+# Принести маслёнку для Минока.
+
+{4701001}{}{Минок является хранителем брони Избранного, но броне требуется смазка. Вы обещали достать маслёнку для Минока.}
+{4701002}{}{Выполнено. Вы принесли маслёнку Миноку.}
+{4701003}{}{Провалено. Вы отказались искать маслёнку для Минока.}
+
+{4701101}{}{Арройо}
+{4701102}{}{Принести маслёнку для Минока.}
+
+# 4702 - q_arroyo_mynoc_defence
+# Помочь Арройо избавиться от рейдеров.
+
+{4702001}{}{Минок попросил вас разыскать и разобраться с рейдерами нападающими на караваны идущие в Арройо.}
+{4702002}{}{Вы уничтожили рейдеров, которых в лагере было подозрительно мало. Нужно сообщить об этом Миноку.}
+{4702003}{}{Вы расправились не со всеми рейдерами. Нужно уничтожить их основные силы.}
+{4702004}{}{Провалено. Вы отказались оказать помощь в защите Арройо.}
+{4702005}{}{Вы обманули Минока, сказав что уничтожили рейдеров. Но он попросил вас уничтожить их основные силы. Видимо тут схитрить не удастся.}
+{4702006}{}{Вы очистили караванные пути Арройо от рейдеров. Нужно поговорить с Миноком об этом.}
+{4702007}{}{Выполнено. Вы помогли Арройо в борьбе за выживание.}
+{4702008}{}{Провалено. Вы не успели уничтожить рейдеров. Бандиты покинули лагерь.}
+
+{4702101}{}{Арройо}
+{4702102}{}{Помочь Арройо ибавиться от рейдеров.}
+
+# 4705 - q_arroyo_cassidy_letter
+# Передать письмо Синди.
+
+{4705001}{}{Кэссиди попросил передать письмо его подруге из Города-Убежище, Синди.}
+{4705002}{}{Вы доставили письмо Синди.}
+{4705003}{}{Выполнено. Вы доставили письмо Синди и отчитались Кэссиди.}
+{4705004}{}{Провалено. Вы потеряли письмо.}
+
+{4705101}{}{Арройо}
+{4705102}{}{Письмо для Синди.}
+
+# 4706 - q_arroyo_proof_of_death
+# Доказательства смерти Избранного.
+
+{4706001}{}{Достаньте доказательства смерти Избранного для Тодда Стюарта.}
+{4706002}{}{Проследуйте за Тоддом за дом.}
+{4706003}{}{Выполнено. Вы достали для Тодда нужные улики.}
+{4706004}{}{Провалено. Вы сдали Тодда Мартину.}
+
+{4706101}{}{Арройо}
+{4706102}{}{Доказательства смерти Избранного.}
+
+# 4707 - q_arroyo_cassidy_letter
+# Передать письмо Линетт.
+
+{4707001}{}{Доставьте письмо Тодда Стюарта Первой Гражданке Города-Убежища Линетт.}
+{4707002}{}{Вы доставили письмо Первой Гражданке.}
+{4707003}{}{Выполнено. Вы доставили письмо и отчитались Тодду.}
+{4707004}{}{Провалено. Тодд не доверил вам письма.}
+
+{4707101}{}{Арройо}
+{4707102}{}{Письмо для Линетт.}
+
+# 4900 - q_v13_deathclaw
+# Квест "Добыть самку", Убежище 13
+
+{4900001}{}{Сержант у входа в убежище дал вашей группе задание разыскать и привести ему живую самку смертокогта. (Для этого нужно её сначала привести в бессознательное состояние и надеть на неё специальный намордник, тогда она будет покорной и пойдёт за вами.)}
+{4900002}{}{Вы захватили самку смертокогта. Теперь важно доставить её в целости в убежище.}
+{4900003}{}{Вы не сумели доставить самку смертокогта и потеряли намордник. Нужно поговорить с сержантом, возможно он даст ещё один.}
+{4900004}{}{Выполнено. Вы привели самку смертокогта в убежище.}
+{4900005}{}{Провалено. Вы отказались ловить смертокогта.}
+
+{4900101}{}{Убежище 13}
+{4900102}{}{Добыть самку смертокогта}
+
+# 5000 - q_main_quest
+# СЮЖЕТ
+
+{5000001}{}{Воспользуйтесь советом Мартина и пройдите процедуру репликации.}
+{5000002}{}{Избранный... Это имя прогремело на всю Пустошь. По словам Мартина, Избранный бесследно исчез некоторое время назад. Мартину нужна любая информация, которую вы сумеете найти.}
+{5000003}{}{Вы поговорили с Джонсоном из Реддинга. Он встречался с Избранным незадолго до его изчезновения. Репликационный чип, изъятый доктором у репликанта, заинтересовал Избранного. Он немедленно решил выяснить, для чего хабологи используют эту микросхему.}
+{5000004}{}{Вы проникли на секретную лабораторию хабологов и изучили материалы с помощью суперкомпьютера. Избранный был прав, репликационные чипы имеют второе назначение, не связанное с возрождением репликанта. Сеть таинственных лабораторий как-то связано с этой неизвестной функцией репликационного чипа.}
+
+{5000101}{}{Поиски Избранного}
+{5000102}{}{Таинственное исчезновение.}
+
+# 5117 
+# Убить Троя Хармонта
+{5117001}{}{Вы убили Хармона. Принесите его жетон сержанту Гонду в НКР.}
+{5117002}{}{Трой Хармон убит.}
+
+{5117101}{}{Убить Троя Хармона}
+{5117102}{}{Бункер}
+
+# 5118 
+# Убить Буффало Билла
+{5118001}{}{Вы убили Вильяма Коди. Принесите его жетон сержанту Гонду в НКР.}
+{5118002}{}{Вильям Коди убит.}
+
+{5118101}{}{Убить Вильяма Коди}
+{5118102}{}{Бункер}
+
+# 5119 
+# Убить Чучо
+{5119001}{}{Вы убили Чучо. Принесите его жетон сержанту Гонду в НКР.}
+{5119002}{}{Мендес убит.}
+
+{5119101}{}{Убить Мендеса}
+{5119102}{}{Бункер}
+
+# 5120 
+# Убить Фреда Бернхема
+{5120001}{}{Вы убили Фреда Бернхема. Принесите его жетон сержанту Гонду в НКР.}
+{5120002}{}{Фредерик Бернхем убит.}
+
+{5120101}{}{Убить Фреда Бернхема}
+{5120102}{}{Бункер}
+
+# 5121 
+# Убить Рамиреза
+{5121001}{}{Вы убили Рамиреза. Принесите его жетон сержанту Гонду в НКР.}
+{5121002}{}{Рамирез убит.}
+
+{5121101}{}{Убить Рамиреза}
+{5121102}{}{Бункер}
+
+# Лучший охотник Пустоши.
+# Квест 1. Убить 10 кротокрысов, затем поговорить со Смайли, после этого принести осколочную гранату на БГ.
+# 5200 
+
+{5200001}{}{По заданию Хьюза и Лоуренса найдите в пустоши гнездовье кротокрыса и принесите охотникам яйцо кротокрыса. Убивайте самок кротокрысов, возможно, у одной из них отыщите яйцо.}
+{5200002}{}{Хьюз и Лоуренс по всей видимости что-то напутали. Вы убили уже дюжину кротокрысов, но яйца так и не нашли. Возможно, стоит найти другого опытного траппера и попросить у него совета.}
+{5200003}{}{Смайли считает, что вас разыграли. Найдите осколочную гранату и под видом яйца кротокрыса отдайте ее Лоуренсу.}
+{5200004}{}{Вы заслужили уважение охотников в Модоке.}
+
+{5200101}{}{Лучший охотник Пустоши}
+{5200102}{}{Принесите яйцо кротокрыса Хьюзу и Лоуренсую}
+
+# 5387 
+# Wanamingos hunt, Redding, Marion.
+
+{5387001}{}{Redding's sherrif gave you a task: destroy the wanamingo cave.}
+{5387002}{}{You have arrived. It's dark and humid here.}
+{5387003}{}{You destroyed the wanamingos, cowboys. Yeeeeehaaaah!}
+{5387004}{}{Unluckily, you died.}
+{5387005}{}{You didn't follow your friends and most likely let them down.}
+{5387006}{}{You fled from the battlefield.}
+{5387007}{}{Mission complete.}
+
+{5387101}{}{Redding}
+{5387102}{}{Wanamingo hunting}
+
+# 7061
+# Underground troubles.
+
+{7061001}{}{Find out why ghoul operative are not working.}
+{7061002}{}{Ghoul told deathclaws are sabotaging their work. Try to sort this out or report back.}
+{7061003}{}{AHS still wants you to sort the problem out.}
+{7061004}{}{Retrieve your bonus.}
+{7061005}{}{Completed. All problems with ghouls are sorted out, you received your pay.}
+
+{7061101}{}{Hell}
+{7061102}{}{Underground troubles.}
+
+# 7071
+# Badgers-badgers!
+
+{7071001}{}{You agreed to retrieve sect's badges from sinisters on the lower level.}
+{7071002}{}{You brought 1 badge to Rolf.}
+{7071003}{}{You brought 2 badges to Rolf.}
+{7071004}{}{You brought 3 badges to Rolf.}
+{7071005}{}{You brought 4 badges to Rolf.}
+{7071006}{}{You brought 5 badges to Rolf.}
+{7071007}{}{You brought 6 badges to Rolf.}
+{7071008}{}{You brought 7 badges to Rolf.}
+{7071009}{}{You brought 8 badges to Rolf.}
+{7071010}{}{You brought 9 badges to Rolf.}
+{7071011}{}{You brought 10 badges to Rolf.}
+{7071012}{}{Completed. You were blessed for helping the Sect. May the power of the Reactor be with you.}
+
+{7071101}{}{Hell}
+{7071102}{}{Gathering badges.}
+
+# 8802
+# Город-убежище, Счастливчик Чарли. Принести Combat shotgun и 2 shotgun shells
+
+{8802001}{}{Вы отказались помогать Чарли в самоубийстве.}
+{8802002}{}{Вы решили помочь Чарли застрелиться. Принесите ему армейский дробовик  и 2 патрона.}
+{8802003}{}{Вы подарили Чарли новый смысл жизни.}
+{8802004}{}{Вы достали для Чарли дробовик. Теперь он может стреляться, сколько захочет.}
+
+{8802101}{}{Город-Убежище}
+{8802102}{}{Счастливчик Чарли.}
+
+# 8803
+# Город-убежище, Доктор Эндрю. Принести сумку парамедика, чемоданчик доктора и два ред-эвея
+
+{8803001}{}{Принесите доктору Эндрю докторский чемоданчик, аптечку парамедика и два рад-эвея.}
+{8803002}{}{Вы выполнили просьбу доктора Эндрю.}
+{8803003}{}{Теперь доктор Эндрю на полном фарше. Ему всего хватает.}
+
+{8803101}{}{Город-Убежище}
+{8803102}{}{Медикаменты для доктора Эндрю.}
+
+# 8805
+# Город-убежище, Бармен. Принести игуан и мясо
+
+{8805001}{}{Доставьте бармену в Город Убежища 5 шашлыков из игуан, 5 игуан на палочке и 5 порций вяленого мяса.}
+{8805002}{}{Вы доставили бармену натуральные продукты.}
+
+{8805101}{}{Город-Убежище}
+{8805102}{}{Натуральные продукты.}
+
+# 8808
+# Город-убежище, Доктор Трой. Свежая кровь
+
+{8808001}{}{Не ради славы, а всего лишь в качестве добровольной помощи, вы пообещали доктору Трою принять участие в эксперименте по прямому оплодотворению. Найдите трех горожанок, и выполните просьбу доктора.}
+{8808002}{}{Задача выполнена. Вы осчастливили трех горожанок Города-Убежища. Вы помогли городу с решением  демографических проблем. Зайдите к доктору для отчёта.}
+{8808003}{}{Вы внесли свой посильный вклад в решение демографической проблемы Города-Убежища.}
+{8808004}{}{Невероятно! Вы отец, трижды. Ваших детей зовут Непоседа, Мякиш и Нетак.}
+{8808005}{}{Невероятно! Вы отец, трижды. Ваших детей зовут Леголас, Гимли и Арагорн.}
+{8808006}{}{Невероятно! Вы отец, трижды. Ваших детей зовут Незнайка, Пончик и Сиропчик.}
+{8808007}{}{Невероятно! Вы отец, трижды. Ваших детей зовут Тир, Вир и Мотсогнир.}
+{8808008}{}{Невероятно! Вы отец, трижды. Ваших детей зовут Битард, Анон и Семен.}
+
+{8808101}{}{Город-Убежище}
+{8808102}{}{Свежая кровь.}
+
+# 8810
+# Город-убежище, Вэлери. Семья.
+{8810001}{}{Отнесите письмо от дочери Вику в Кламат. Постарайтесь его не потерять.}
+{8810002}{}{Вы доставили письмо Вику от Вэлери.}
+{8810003}{}{Вы отчитались о доставке письма.}
+{8810004}{}{Вы передали Вэлери ответ Вика.}
+
+{8810101}{}{Город-Убежище}
+{8810102}{}{Семья.}
+
+# 8813 
+# Город-убежище. Хелен Трой
+{8813001}{}{Для проведения пластической операции, Хелен Трой требуется программа пластической хирургии, которую можно найти в Сан-Франциско. Запишите программу на голодиск и вернитесь в ГУ.}
+{8813002}{}{Yesss! Вы получили заветные файлы. Скорее к Элен Трой, скорее.}
+{8813003}{}{Вы нашли программы по пластике лица. Жительницы города готовы молиться на вас.}
+
+{8813101}{}{Город-Убежище}
+{8813102}{}{Свет мой, зеркальце.}
+
+# 8817
+# Город-убежище, Доктор Трой. 
+{8817001}{}{Доктор Трой готов помочь в ваших поисках и порекомендовать высококлассного специалиста. Однако, для его согласия вы должны "внести пожертвования на исследования" в размере 12 тысяч монет.}
+{8817002}{}{Вы пожертвовали приличную сумму на исследования доктора Троя. Теперь доктор Блэк будет с вами говорить.}
+{8817003}{}{Для получения согласия Блэка вы должны заплатить ему 15 000 монет подъемных.}
+{8817004}{}{Джек Блэк следует за ваими к вашему Городу. Доведите его до здания клиники в Городе, построенном с помощью Г.Э.К.К.}
+{8817005}{}{У доктора Блэка новая клиника. Вы помогли ему добраться до Города.}
+
+{8817101}{}{Город-Убежище}
+{8817102}{}{Клиника для доктора Блэка.}
+
+# 8819
+# Город-убежище, Хартманн
+{8819001}{}{Для того, чтоб вступить в Гвардию, вы должны выполнить несколько задач Йохана Хартманна. Первое задание: победить в поединке с гвардейцем}
+{8819002}{}{Вы победили гвардейца в рукопашном бою. Первое испытание пройдено.}
+
+{8819101}{}{Город-Убежище}
+{8819102}{}{Гвардия Города-Убежища. Испытание первое. Курс молодого гвардейца.}
+
+# 8822
+# Город-убежище, Хартманн
+{8822001}{}{Капитан Хартманн желает убедиться, что вы способны следить за боеспособностью своего оружия. Отремонтируйте две штурмовые винтовки до идеального состояния.}
+{8822002}{}{Вы починили штурмовые винтовки Хартманна. Второе испытание пройдено.}
+{8822003}{}{Вы не только отремонтировали, но и усовершенстовали выданное капитаном оружие. Второе испытание пройдено.}
+
+{8822101}{}{Город-Убежище}
+{8822102}{}{Гвардия Города-Убежища. Испытание второе. Самоделкин.}
+
+# 8823
+# Город-убежище, Хартманн
+
+{8823001}{}{Настало время продемонстрировать капитану ваши навыки строевой подготовки. Становитесь в шеренгу с гвардейцами и выполняйте приказы Хартманна.}
+{8823002}{}{Вы на позиции, внимательно слушайте приказы капитана и делайте то же, что и гвардейцы рядом с вами.}
+{8823003}{}{Вы выполнили все приказы капитана, поговорите с Харманном.}
+{8823004}{}{Вы не только умеете метко стрелять, но также можете похвастаться отличной выправкой. Задание капитана выполнено.}
+
+{8823101}{}{Город-Убежище}
+{8823102}{}{Гвардия Города-Убежища. Испытание третье. Строевая подготовка.}
+
+# 8826
+# Город-убежище,Хартманн
+
+{8826001}{}{Вы должны принять участие в патрулировании окрестностей Города-Убежища. Найдите капрала Шрима во Внешнем Городе рядом с казармами.}
+{8826002}{}{Вы в составе патрульного взвода гвардейцев. Начато патрулирование.}
+{8826003}{}{Провал: вы пытались ограбить или нападали на патрульных.}
+{8826004}{}{Провал: вы самовольно покинули патрульный взвод.}
+{8826005}{}{Вы погибли во время выполнения задания капрала Шрима.}
+{8826006}{}{Капрал Шрим погиб на задании. }
+{8826007}{}{Провал: Вы прикончили капрала Шрима. Лучше не показываться ему на глаза.}
+{8826008}{}{Задание выполнено. Обратитесь к капитану Хартманну за наградой. И поспешите, он не будет долго ждать.}
+{8826009}{}{Еще один патруль. Удачи!}
+{8826010}{}{Очередной патруль завершен. Обратитесь к капитану за наградой.}
+{8826011}{}{Вы успешно выполнили задание капитана и получили награду. Возвращайтесь через 2 дня.}
+
+{8826101}{}{Город-Убежище}
+{8826102}{}{Легкая прогулка}
+
+# 8829
+# Город-убежище, Хартманн
+
+{8829001}{}{Вы должны подтвердить или опровергнуть слухи о скоплении супермутантов в окрестностях Города-Убежища.}
+{8829002}{}{Вы нашли логово супермутантов-бандитов. Нужно немедленно доложить Хартманну об этом.}
+{8829003}{}{Провал! Вы обнаружили себя. Теперь супермутанты покинут свое убежище и никто их не найдет.}
+{8829004}{}{Вы блестяще справились с поставленной задачей. Подозрения капитана Хартманна подтвердились. В окрестностях ГУ обнаружены воинтственно настроенные супермутанты.}
+{8829005}{}{Вы провалили разведмиссию. Супермутанты заметили ваше появление. Теперь их нужно искать в другом месте.}
+
+{8829101}{}{Город-Убежище}
+{8829102}{}{Пойди туда - не знаю куда.}
+
+# 8832
+# Город-убежище, Хартманн
+
+{8832001}{}{С помощью нескольких гвардейцев уничтожьте логово супермутантов. Никто не должен уйти живым. Гвардейцы будут ждать у входа в логово.}
+{8832002}{}{Надпись. Логово супермутантов уничтожено. Доложите Хартманну об успехе.}
+{8832003}{}{Вы слишком долго добирались до логова. Мутанты успели удрать с места дислокации}
+{8832004}{}{Вы блестяще справились с поставленной задачей. Подозрения капитана Хартманна подтвердились. В окрестностях ГУ обнаружены воинственно настроенные супермутанты.}
+
+{8832101}{}{Город-Убежище}
+{8832102}{}{Опасная охота.}
+
+
+# 8834
+# Город-убежище, Хартманн
+
+{8834001}{}{Последние события, связанные с повышенной активностью мутантов привели к тому, что Городу-Убежищу потребовалась помощь внешних сил. Вы должны добраться до генерала Шеймана в НКР и заручиться его поддержкой.}
+{8834002}{}{Генерал Шейман выслушал вас и собирает Совет НКР для принятия решения. Вернитесь в Штаб Армии через сутки.}
+{8834003}{}{Только благодаря вашему врожденному дару красноречия вы смогли убедить генерала Шеймана поддержать Город-Убежище в это непростое время. Вернитесь к капитану Хартманну.}
+{8834004}{}{Вы помогли Городу-Убежищу получить поддержку Армии НКР и лично генерала Шеймана.}
+
+{8834101}{}{Город-Убежище}
+{8834102}{}{Дипкурьер}
+
+# 8836
+# Город-убежище, Аманда
+
+{8836001}{}{Муж Аманды, Джошуа за незначительное нарушение осужден на несколько лет исправительных работ. Это несправедливо. Помогите семье Джошуа справиться с этой проблемой.}
+{8836002}{}{Вы согласились помочь Аманде и вызволить ее мужа в обмен на "небольшую услугу". Этично или нет, кого это волнует? Она не слишком долго сопротивлялась, в любом случае. Поговорите с Баркусом, в Центре Распределения слуг, чтобы выяснить, как можно освободить Джошуа.}
+{8836003}{}{Вы убедили Баркуса, что Джошуа ваш личный слуга. Теперь нужно найти 1234 монеты, чтобы возместить расходы Центра Распределения слуг, и Джошуа будет свободен.}
+{8836004}{}{Вы заплатили за Джошуа. Он может вернуться домой.}
+{8836005}{}{Хорошо быть Гражданином! Все проблемы решаются по мановению ока. Джошуа свободен, вернитесь к Аманде с радостным известием.}
+{8836006}{}{Вы помогли Аманде вызволить Джошуа из Центра Распределения Слуг.}
+{8836007}{}{Вроде бы проблема и решена, но какой ценой? Нужно сообщить Аманде и сматываться из Города-Убежища.}
+{8836008}{}{Вроде бы проблема и решена, но какой ценой? Кобель Баркус ждет вашего визита. Нужно сообщить Аманде и сматываться из Города-Убежища.}
+{8836009}{}{Вы помогли Аманде уладить проблему Джошуа. Семья счастлива, но вот вас ожидает похотливый Координатор По Слугам. Лучше не показываться ему на глаза.}
+
+{8836101}{}{Город-Убежище}
+{8836102}{}{"Амнистия" для Джошуа.}
+
+# 8841
+# Город-убежище, Линетт
+
+{8841001}{}{Вы получили задание от Линетт. Понаехавших надо заставить молчать.}
+{8841002}{}{Вы поставили на место первого понаехавшего.}
+{8841003}{}{Вы поставили на место второго понаехавшего.}
+{8841004}{}{Вы построили на тумбочке троих приезжих. Вернитесь к Линетт.}
+{8841005}{}{Вы заткнули недовольных. Понаехавшие теперь молчат и смотрят в землю.}
+
+{8841101}{}{Город-Убежище}
+{8841102}{}{Гнев.}
+
+# 8843
+# Город-убежище, Линетт
+
+{8843001}{}{По заданию Первого Гражданина, арестуйте одного из сторонников Мак Клюра. Повод - подозрение в государственной измене.}
+{8843002}{}{Никто не обещал, что будет легко. Вправьте мозги нарушителю, и арестуйте.}
+{8843003}{}{Вы одержали верх над сторонником Мак Клюра. Отведите его в тюрьму.}
+{8843004}{}{Задание выполнено. Изменник арестован. Виновен или нет, это уже второй вопрос.}
+{8843005}{}{Вы арестовали одного из }
+
+{8843101}{}{Город-Убежище}
+{8843102}{}{Эрнст Тельман.}
+
+# 8845
+# Город-убежище, Линетт
+
+{8845001}{}{По заданию Первого Гражданина, подбросьте МакКлюру компроментирующие документы.}
+{8845002}{}{Подлог не удался. Покиньте помещение.}
+{8845003}{}{Вы выполнили задание Линетт. Компромат в одном из ящиков в личном доме МакКлюра.}
+{8845004}{}{Вы должны найти при свидетелях  компрометирующие  документы. Отправляйтесь к советнику и произведите обыск при свидетелях.}
+{8845005}{}{Советник скомпрометирован. Кто-то скажет, вилами по воде писано. Но свидетели не станут молчать.}
+{8845006}{}{Благодаря вам Линетт теперь на вершине. Определённо можно сказать, что совесть у вас резиновая.}
+
+{8845101}{}{Город-Убежище}
+{8845102}{}{Подлог.}
+
+# 8847 q_vc_cindy_letter
+# Город-убежище, Синди
+
+{8847001}{}{Передайте письмо Синди Кэссиди.}
+{8847002}{}{Передайте письмо Синди Кэссиди.}
+{8847003}{}{Вы доставили письмо Кэссиди.}
+{8847004}{}{Выполнено. Вы доставили письмо Кэссиди и отчитались Синди.}
+{8847005}{}{Провалено. Вы потеряли письмо.}
+{8847006}{}{Подождите, пока Синди допишет письмо.}
+
+{8847101}{}{Город-Убежище}
+{8847102}{}{Письмо для Кэссиди}
+
+# 8848 q_vc_cindy_letter
+# Город-убежище, Линетт/Грегори
+
+{8848001}{}{Передайте письмо Линетт Тодду Стюарту.}
+{8848002}{}{Вы доставили письмо Тодду Стюарту.}
+{8848003}{}{Выполнено. Вы отчитались о доставке.}
+
+{8848101}{}{Город-Убежище}
+{8848102}{}{Письмо Тодду Стюарту}
+
+# 16000
+# Wanamingos hunt, Redding, Marion.
+
+{16000001}{}{Redding's sherrif gave you a task: destroy the wanamingo cave.}
+{16000002}{}{You have arrived. It's dark and humid here.}
+{16000003}{}{You destroyed the wanamingos, cowboys. Yeeeeehaaaah!}
+{16000004}{}{Unluckily, you died.}
+{16000005}{}{You didn't follow your friends and most likely let them down.}
+{16000006}{}{You fled from the battlefield.}
+
+{16000101}{}{Redding}
+{16000102}{}{Hunt them wanamingos down!}
+

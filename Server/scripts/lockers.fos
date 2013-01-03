@@ -1,0 +1,237 @@
+// Author: cvet
+// Doors and keys stuff.
+#include "_macros.fos"
+#include "_msgstr.fos"
+
+import void PlayOpenLockerSound(Item& locker) from "sounds";
+import void PlayCloseLockerSound(Item& locker) from "sounds";
+import void PlayLockedLockerSound(Item& locker) from "sounds";
+import bool AutoClose(Item& locker) from "doors";
+
+bool UseItemOnLocker( Critter& cr, Item& locker, Item& item ) // Export
+{
+    return true;
+}
+
+bool UseSkillOnLocker( Critter& cr, Item& locker, int skill ) // Export
+{
+    Map@ map = cr.GetMap();
+    if( not valid( map ) )
+    {
+        cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING );
+        return true;
+    }
+
+	ProtoItem@ proto = GetProtoItem(locker.GetProtoId());
+    
+    if( skill == SKILL_PICK_ON_GROUND )
+    {
+        if( locker.GetType() == ITEM_TYPE_DOOR )
+        {
+            // NoOpen
+            if( FLAG( locker.LockerCondition, LOCKER_NOOPEN ) )
+            {
+                cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING );
+                return true;
+            }
+
+            // Critter on hex
+            if( FLAG( locker.LockerCondition, LOCKER_ISOPEN ) && valid( map.GetCritter( locker.HexX, locker.HexY ) ) )
+            {
+                cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING );
+                return true;
+            }
+
+            // Check key
+            if( !FLAG( locker.LockerCondition, LOCKER_ISOPEN ) && locker.LockerId != 0 &&
+                !FLAG( locker.LockerCondition, LOCKER_BROKEN ) && !IsKeyAvailable( cr, locker.LockerId ) )
+            {
+				PlayLockedLockerSound(locker);
+                cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_ITEM_LOCKER_NEED_KEY );
+                return true;
+            }
+
+			
+            // Change state
+            if( FLAG( locker.LockerCondition, LOCKER_ISOPEN ) )
+            {
+				PlayCloseLockerSound(locker);
+                locker.LockerClose();
+			}
+            else
+            {
+				PlayOpenLockerSound(locker);
+                locker.LockerOpen();
+                AutoClose(locker);
+			}
+        }
+        else if( locker.GetType() == ITEM_TYPE_CONTAINER )
+        {
+            // NoOpen
+            if( FLAG( locker.LockerCondition, LOCKER_NOOPEN ) )
+            {
+                cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING );
+                return true;
+            }
+
+            // Check key
+            if( !FLAG( locker.LockerCondition, LOCKER_ISOPEN ) && locker.LockerId != 0 &&
+                !FLAG( locker.LockerCondition, LOCKER_BROKEN ) && !IsKeyAvailable( cr, locker.LockerId ) )
+            {
+				PlayLockedLockerSound(locker);
+                cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_ITEM_LOCKER_NEED_KEY );
+                return true;
+            }
+
+            // Is changeble
+            if( locker.Proto.Container_Changeble )
+            {
+                // Change state
+                if( FLAG( locker.LockerCondition, LOCKER_ISOPEN ) )
+                {
+					PlayCloseLockerSound(locker);
+                    locker.LockerClose();
+				}
+                else
+                {
+					PlayOpenLockerSound(locker);
+                    locker.LockerOpen();
+                    AutoClose(locker);
+                    cr.ShowContainer( null, locker, locker.Proto.GroundLevel ? TRANSFER_HEX_CONT_DOWN : TRANSFER_HEX_CONT_UP );
+                }
+            }
+            // No changeble
+            else
+            {
+                cr.ShowContainer( null, locker, locker.Proto.GroundLevel ? TRANSFER_HEX_CONT_DOWN : TRANSFER_HEX_CONT_UP );
+            }
+        }
+    }
+    else if( skill == SK_STEAL )
+    {
+        if( locker.GetType() == ITEM_TYPE_CONTAINER && FLAG( locker.LockerCondition, LOCKER_ISOPEN ) )
+            cr.ShowContainer( null, locker, locker.Proto.GroundLevel ? TRANSFER_HEX_CONT_DOWN : TRANSFER_HEX_CONT_UP );
+        else
+            cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING );
+    }
+    else if( skill == SK_LOCKPICK )
+    {
+        if(Lockpick(cr, locker))
+        {
+			PlayOpenLockerSound(locker);
+            locker.LockerOpen();
+            AutoClose(locker);
+            if( locker.GetType() == ITEM_TYPE_CONTAINER )
+                cr.ShowContainer( null, locker, locker.Proto.GroundLevel ? TRANSFER_HEX_CONT_DOWN : TRANSFER_HEX_CONT_UP );
+            cr.StatBase[ ST_EXPERIENCE ] += 50;
+            cr.AddScore( SCORE_CRACKER, 1 );
+        }
+        else
+        {
+            cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_LOCKPICK_FAIL );
+        }
+
+        cr.TimeoutBase[ TO_SK_LOCKPICK ] = LOCKPICK_TIMEOUT( cr );
+    }
+    else if( skill == SKILL_TAKE_ALL_CONT )
+    {
+        return false;
+    }
+    else
+    {
+        cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING );
+    }
+    return true;
+}
+
+//import bool Lockpick(Critter& cr, Item& locker) from "lockers";
+bool Lockpick(Critter& cr, Item& locker)
+{
+	// NoOpen
+	if( FLAG( locker.LockerCondition, LOCKER_NOOPEN ) )
+	{
+		cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING );
+		return false;
+	}
+
+	if( cr.Timeout[ TO_SK_LOCKPICK ] > 0 )
+	{
+		cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_WEARINESS );
+		return false;
+	}
+
+	if( locker.LockerId == 0 || FLAG( locker.LockerCondition, LOCKER_ISOPEN ) )
+	{
+		cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING );
+		return false;
+	}
+
+	int    base = cr.Skill[ SK_LOCKPICK ] - locker.LockerComplexity;
+	uint8  mode = 0;
+	uint16 activePid = cr.GetSlotProto( SLOT_HAND1, mode ).ProtoId;
+	if( activePid == PID_LOCKPICKS )
+	{
+		base += 25;
+		if( Random( 0, 30 ) == 0 )
+			cr.DeleteItem( PID_LOCKPICKS, 1 );
+	}
+	else if( activePid == PID_EXP_LOCKPICK_SET )
+	{
+		base += 50;
+		if( Random( 0, 30 ) == 0 )
+			cr.DeleteItem( PID_EXP_LOCKPICK_SET, 1 );
+	}
+	// Todo: PID_ELECTRONIC_LOCKPICKS, PID_ELEC_LOCKPICK_MKII
+
+	base = CLAMP( base, 0, 95 );
+	return base >= Random( 1, 100 );
+}
+
+//import bool IsKeyAvailable( Critter& cr, uint lockerId ) from "lockers";
+bool IsKeyAvailable( Critter& cr, uint lockerId ) // Export
+{
+    if( lockerId == 0 )
+        return true;
+    if( _CritFingersDoorId( cr.Id ) == lockerId || _CritEyesDoorId( cr.Id ) == lockerId )
+        return true;
+    Item@[] keys;
+    for( uint i = 0, j = cr.GetItemsByType( ITEM_TYPE_KEY, keys ); i < j; i++ )
+        if( keys[ i ].LockerId == lockerId )
+            return true;
+    return false;
+}
+
+uint GetKeyId( Critter& cr, uint lockerId ) // Export
+{
+    if( lockerId == 0 || _CritFingersDoorId( cr.Id ) == lockerId || _CritEyesDoorId( cr.Id ) == lockerId )
+        return 0;
+    Item@[] keys;
+    for( uint i = 0, j = cr.GetItemsByType( ITEM_TYPE_KEY, keys ); i < j; i++ )
+        if( keys[ i ].LockerId == lockerId )
+            return keys[ i ].Id;
+    return 0;
+}
+
+void SwitchState( Item& locker ) // Export
+{
+    // Todo: show messages
+
+    if( locker.GetType() == ITEM_TYPE_DOOR || locker.GetType() == ITEM_TYPE_CONTAINER )
+    {
+        // Check open aviability
+        if( not FLAG( locker.LockerCondition, LOCKER_NOOPEN ) )
+        {
+            // Change state
+            if( FLAG( locker.LockerCondition, LOCKER_ISOPEN ) )
+            {
+				PlayCloseLockerSound(locker);
+                locker.LockerClose();
+			}
+            else
+            {
+				PlayOpenLockerSound(locker);
+                locker.LockerOpen();
+			}
+        }
+    }
+}

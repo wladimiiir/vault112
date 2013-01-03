@@ -1,0 +1,113 @@
+// Author: heX, cvet, Tab10id
+
+/** Выполняет "бросок кубика" на умения.
+ */
+import int RollVsSkill( Critter& cr, uint skillIndex, int bonus ) from "stdlib";
+
+/** Проверяет, является ли результат "броска кубика" успешным.
+ */
+import bool IsSuccessRvS( int val ) from "stdlib";
+
+/** Проверяет, является ли результат "броска кубика" критическим.
+ */
+import bool IsCriticalRvS( int val ) from "stdlib";
+
+/** Вылечить игрока (оживить, выставить максимум жизней).
+ */
+import void HealCritter( Critter& player ) from "stdlib";
+
+/** Телепортирует игрока на указанную точке на карте в рамках указанной локации.
+ */
+import bool TransitToLoc( Critter& cr, uint16 locPid, uint mapIndex, uint entranceNum ) from "stdlib";
+
+/** Телепортирует криттера на указанную точке на карте.
+ */
+import bool TransitToMap( Critter& cr, uint16 mapPid, uint entranceNum ) from "stdlib";
+
+/** Создаеться новая уникальная локация, на которую телепортируется криттер.
+ */
+import bool TransitToNewLocation( Critter& cr, uint16 locPid ) from "stdlib";
+
+/** Выводит информацию в окно сообщений игрока. Текст береться из пункта "строки" в редакторе диалогов.
+ */
+import void InfoMessage( Critter& player, Critter& npc, uint strNum ) from "stdlib";
+
+/** Выводит текст над Нпц. Текст береться из пункта "строки" в редакторе диалогов.
+ */
+import void NpcMessageNorm( Critter& npc, uint strNum ) from "stdlib";
+
+/** Выводит крик над персонажем. Текст береться из пункта "строки" в редакторе диалогов.
+ */
+import void NpcMessageShout( Critter& npc, uint strNum ) from "stdlib";
+
+/** Выводит шепот над персонажем. Текст береться из пункта "строки" в редакторе диалогов.
+ */
+import void NpcMessageWhisp( Critter& npc, uint strNum ) from "stdlib";
+
+/** Выводит эмо текст над персонажем. Текст береться из пункта "строки" в редакторе диалогов.
+ */
+import void NpcMessageEmo( Critter& npc, uint strNum ) from "stdlib";
+
+/** Выставка времени таймаута.
+   Используйте функцию d_TimeOutCheck для проверки истечения времени.
+   На ветку которая выдает квест вешаем условие: d_TimeOutCheck().
+   Затем в момент выдачи квеста вызываем: r_TimeOutSet(2).
+   Это означает что ветка будет недоступна два игровых часа.
+   Функциями TimeOutSub и TimeOutAdd можно влиять на запущенный таймаут.
+   Таймаут у каждого Нпц свой личный.
+ */
+import void TimeoutSet( Critter& npc, uint gameHours ) from "stdlib";
+
+/** Уменьшение таймаута.
+ */
+import void TimeoutSub( Critter& npc, uint gameHoursSub ) from "stdlib";
+
+/** Увеличение таймаута.
+ */
+import void TimeoutAdd( Critter& npc, uint gameHoursAdd ) from "stdlib";
+
+/** Меняет значение квестовой переменной у игрока и группы следующей за ним.
+ */
+import void GroupSetVar( Critter& player, uint16 varId, int value ) from "stdlib";
+
+/** Выдать стандартное предупреждение. Текст: "Стоять! Не подходи!" / "Hey you! Do not approach!"
+ */
+import void Warn( Critter& player, int npcRole ) from "stdlib";
+
+/** Управление дверью.
+ */
+import void DoorControl( Critter& player, uint entireNum, bool toOpen ) from "stdlib";
+
+/** Запустить диалог с ближайшем Нпц по его роли.
+ */
+import bool DialogNpc( Critter& player, int role ) from "stdlib";
+
+/** Взять ближайшего криттера, eсли критеров нет то возвращаем null.
+ */
+import Critter@ GetNearCritterWithRole( Map@ map, uint16 hexX, int hexY, uint radius, int role ) from "stdlib";
+
+import void Kill( Critter& player, int type ) from "stdlib";
+
+import void Damage( Critter& player, int dmg, int type, int dir ) from "stdlib";
+
+import void AttackStop( Critter& player, int npcRole ) from "stdlib";
+
+import void Attack( Critter& player, int npcRole ) from "stdlib";
+import bool TransitToMap( Critter& cr, int locPid, int mapIndex, int entranceNum ) from "stdlib";
+
+import void SkillUp( Critter& player, int skill ) from "stdlib";
+
+import void QuestRewardExperience( Critter& cr, uint8 base ) from "stdlib";
+
+// Импорты с других модулей.
+import void      DropDrugEffects( Critter& cr ) from "drugs";
+import void      DropRadiation( Critter& cr ) from "radiation";
+import bool      AddAttackPlane( Critter& npc, uint priority, uint critId ) from "npc_planes";
+import Location@ CreateLocationForCritter( Critter& player, int locPid, int worldX, int worldY, int delta, int varNum ) from "location";
+import void      SetLocationDeleteTime( Location& loc, uint time ) from "location";
+
+import void SkillAdd(Critter& player, int skill, int value) from "stdlib";
+
+import void CheckMaleCrType(uint crBaseType, uint& crType) from "stdlib";
+
+import void ShowSayScreen(Critter& critter, bool onlyNumbers, bool closeOnDone, string title, string initialText, string answerScript, int[]@ values) from "stdlib";

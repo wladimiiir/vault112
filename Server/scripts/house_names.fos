@@ -1,0 +1,34 @@
+#include "_maps.fos"
+
+HouseName@[] houseNames = {
+	//~ HouseName(MAP_hub, 288, 158, "Oldtown house")
+};
+
+
+string@ GetHouseName(uint map, uint16 doorX, uint16 doorY)
+{
+	for (uint i = 0; i < houseNames.length(); i++)
+	{
+		HouseName@ houseName = houseNames[i];
+		if(houseName.Map == map && houseName.DoorX == doorX && houseName.DoorY == doorY)
+			return houseName.Name;
+	}
+	
+	return null;
+}
+
+class HouseName
+{
+	uint Map;
+	uint DoorX;
+	uint DoorY;
+	string Name;
+	
+	HouseName(uint map, uint16 doorX, uint16 doorY, string name)
+	{
+		Map = map;
+		DoorX = doorX;
+		DoorY = doorY;
+		Name = name;
+	}
+}

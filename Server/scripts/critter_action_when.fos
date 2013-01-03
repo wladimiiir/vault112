@@ -1,0 +1,215 @@
+#include "critter_action.fos"
+
+class WhenAbstractAction : CrittersHolderAction
+{
+	WhenAbstractAction()
+	{
+		BlockSubActions();
+		SetListening(true);
+	}
+	
+	void StartNextSuperAction(Critter& critter) override
+	{
+		ClearCritters();
+		BlockSubActions();
+		SetListening(true);
+		CrittersHolderAction::StartNextSuperAction(critter);
+	}
+}
+
+class WhenAttackStarts : WhenAbstractAction 
+{
+	int PlaneBeginEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem) override
+	{
+		if(plane.Type != AI_PLANE_ATTACK || IsRunning() || !Check(critter, someCr, someItem))
+			return PLANE_RUN_GLOBAL;
+			
+		if(valid(someCr))
+			AddCritter(someCr);
+		UnblockSubActions();
+		SetListening(false);
+		Start(critter);
+			
+		return PLANE_RUN_GLOBAL;
+	}
+	
+	string GetInfo() override {return "WhenAttackEnds";}
+}
+
+class WhenAttackEnds : WhenAbstractAction 
+{
+	int PlaneEndEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem) override
+	{
+		if(plane.Type != AI_PLANE_ATTACK || critter.GetPlanes(AI_PLANE_ATTACK, null) > 0 || reason != REASON_SUCCESS 
+			|| IsRunning() || !Check(critter, someCr, someItem))
+			return PLANE_RUN_GLOBAL;
+			
+		if(valid(someCr))
+			AddCritter(someCr);
+		UnblockSubActions();
+		SetListening(false);
+		Start(critter);
+			
+		return PLANE_RUN_GLOBAL;
+	}
+	
+	string GetInfo() override {return "WhenAttackEnds";}
+}
+
+class WhenEnemyFound : WhenAbstractAction 
+{
+	private uint Result;
+	
+	WhenEnemyFound()
+	{
+		Result = PLANE_RUN_GLOBAL;
+	}
+	
+	WhenEnemyFound(uint result)
+	{
+		Result = result;
+	}
+	
+	int PlaneBeginEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem) override
+	{
+		if(reason != REASON_FOUND_IN_ENEMY_STACK 
+			|| IsRunning() || !Check(critter, someCr, someItem))
+			return PLANE_RUN_GLOBAL;
+			
+		if(valid(someCr))
+			AddCritter(someCr);
+		UnblockSubActions();
+		SetListening(false);
+		Start(critter);
+			
+		return Result;
+	}
+	
+	string GetInfo() override {return "WhenEnemyFound";}
+}
+
+class WhenPlaneRun : WhenAbstractAction 
+{
+	private uint Result;
+	
+	WhenPlaneRun()
+	{
+		Result = PLANE_RUN_GLOBAL;
+	}
+	
+	WhenPlaneRun(uint result)
+	{
+		Result = result;
+	}
+	
+	int PlaneRunEvent(Critter& critter, NpcPlane& plane, int reason, uint& result0, uint& result1, uint& result2) override 
+	{
+		if(IsRunning() || !Check(critter, null, null))
+			return PLANE_RUN_GLOBAL;
+		
+		UnblockSubActions();
+		SetListening(false);
+		Start(critter);
+		
+		return Result;
+	}
+	
+	string GetInfo() override {return "WhenPlaneRun";}
+}
+
+class WhenCritterShown : WhenAbstractAction 
+{
+	void ShowCritterEvent(Critter& critter, Critter& showCritter) override
+	{
+		if(IsRunning() || !Check(critter, showCritter, null))
+			return;
+		
+		AddCritter(showCritter);
+		UnblockSubActions();
+		SetListening(false);
+		Start(critter);
+	}
+	
+	string GetInfo() override {return "WhenCritterShown";}
+}
+
+class WhenDead : WhenAbstractAction
+{
+	void DeadEvent(Critter& critter, Critter@ killer) override
+	{
+		if(IsRunning() || !Check(critter, killer, null))
+			return;
+		
+		AddCritter(killer);
+		UnblockSubActions();
+		SetListening(false);
+		Start(critter);
+	}
+	
+	string GetInfo() override {return "WhenDead";}
+}
+
+class WhenSomeoneDead : WhenAbstractAction
+{
+	void SeeSomeoneDeadEvent(Critter& critter, Critter& killed, Critter@ killer) override
+	{
+		if(IsRunning() || !Check(critter, killed, null))
+			return;
+		
+		AddCritter(killed);
+		UnblockSubActions();
+		SetListening(false);
+		Start(critter);
+	}
+	
+	string GetInfo() override {return "WhenSomeoneDead";}
+}
+
+class WhenSomeoneAttacks : WhenAbstractAction
+{
+	void SeeSomeoneAttackEvent(Critter& critter, Critter& attacker, Critter& attacked) override
+	{
+		if(IsRunning() || !Check(critter, attacker, null))
+			return;
+		
+		AddCritter(attacker);
+		UnblockSubActions();
+		SetListening(false);
+		Start(critter);
+	}
+	
+	string GetInfo() override {return "WhenSomeoneAttacks";}
+}
+
+class WhenAttacked : WhenAbstractAction
+{
+	bool AttackedEvent(Critter& critter, Critter& attacker) override
+	{
+		if(IsRunning() || !Check(critter, attacker, null))
+			return false;
+		
+		AddCritter(attacker);
+		UnblockSubActions();
+		SetListening(false);
+		Start(critter);
+		return false;
+	}
+	
+	string GetInfo() override {return "WhenAttacked";}
+}
+
+class WhenSomeoneLoots : WhenAbstractAction
+{
+	void SeeSomeoneUseSkill(Critter& critter, Critter& skillCritter, int skill, Critter@ onCritter, Item@ onItem, Scenery@ onScenery) override
+	{
+		if(IsRunning() || !Check(critter, onCritter, null) || (skill != SKILL_LOOT_CRITTER && skill != SK_STEAL))
+			return;
+		
+		AddCritter(skillCritter);
+		UnblockSubActions();
+		SetListening(false);
+		Start(critter);
+	}
+	
+	string GetInfo() override {return "WhenSomeoneLoots";}
+}

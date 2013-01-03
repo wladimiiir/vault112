@@ -1,0 +1,135 @@
+#include "_macros.fos"
+#include "_msgstr.fos"
+#include "utils_for_array.fos"
+
+// Author: rifleman17
+// NoPvp режим для некоторых карт на сервере
+// Если включен при первом запуске, нежелательно отключать без вайпа, иначе смешаются пвп и нопвп персонажи
+
+const uint[] noPvpMaps =
+{
+};
+
+/*
+   const       uint[] noPvpMaps = { MAP_klamath, MAP_klamath_mall, MAP_barter_ground };
+ */
+const int[] excludeDialogs =
+{
+};
+const int[] btInvul = { BT_MEN, BT_WOMEN, BT_CHILDREN, BT_SUPER_MUTANT, BT_GHOUL };
+
+#define NOPVP_VAR        ( LMVAR_is_nopvp_map ) // Номер переменной, в которой
+#define CTE_NOPVP_OFF    ( 42 )                 // Идентификатор события "очистить нопвп режим"
+#define TIME_CHECK       ( REAL_MINUTE( 1 ) )   // Время проверки, не вышел ли игрок с нопвп зоны
+
+
+void OnCitterMapIn( Critter& cr, Map& map )
+{
+    cr.ModeBase[ MODE_NO_PVP ] = 0;   // перестраховка, по идее это присваивание не нужно, но на всякий случай...
+    if( cr.IsPlayer() && IsNoPvpMap( map ) )
+    {
+        cr.ModeBase[ MODE_NO_PVP ] = 1;
+        cr.SayMsg( SAY_NETMSG, TEXTMSG_TEXT, 1 );
+        if( cr.GetTimeEvents( CTE_NOPVP_OFF, null, null, null ) == 0 )
+        {
+            cr.AddTimeEvent( "cte_NoPvpOff", TIME_CHECK, CTE_NOPVP_OFF );
+        }
+    }
+}
+
+uint cte_NoPvpOff( Critter& cr, int identifier, uint& rate )
+{
+    if( cr.Mode[ MODE_NO_PVP ] == 0 )
+        return 0;
+    Map@map = cr.GetMap();
+    if( valid( map ) && IsNoPvpMap( map ) ) // если карта с включенным НоПвп, откладываем снятие режима
+        return TIME_CHECK;
+    cr.ModeBase[ MODE_NO_PVP ] = 0;
+    return 0;
+}
+
+void OnCritterMapOut( Critter& cr, Map& map )
+{
+    Map@ mapCr = cr.GetMap();
+    if( valid( mapCr ) && IsNoPvpMap( mapCr ) )
+        return;
+    if( __NoPvpMaps && cr.IsPlayer() && cr.Mode[ MODE_NO_PVP ] > 0 ) // если но пвп карты не включены, персонаж получил нопвп режим другим способом, не отменяем
+    {
+        cr.ModeBase[ MODE_NO_PVP ] = 0;
+        cr.SayMsg( SAY_NETMSG, TEXTMSG_TEXT, 2 );
+    }
+}
+
+bool IsNoPvpMap( Map& map )
+{
+    if( !__NoPvpMaps )
+        return false;
+    GameVar@ nopvpOn = GetLocalVar( NOPVP_VAR, map.Id );
+    return  ( valid( nopvpOn ) && nopvpOn == 1 );
+}
+
+void SetNoPvp()
+{
+    if( !__NoPvpMaps )
+        return;
+    Map@ map;
+    for( uint i = 0, l = noPvpMaps.length(); i < l; i++ )
+    {
+        @map = GetMapByPid( noPvpMaps[ i ], 0 );
+        if( valid( map ) )
+            SetNoPvp( map, true );
+    }
+}
+
+// Установка NoPvp режима на карте, действует только при первой загрузке карты
+// Присваивается переменная, а также все НПЦ на карте получают режим MODE_INVULNERABLE
+void SetNoPvp( Map& map, bool firstTime )
+{
+    if( firstTime )
+    {
+        uint pidMap = map.GetProtoId();
+        if( Present( pidMap, noPvpMaps ) )
+        {
+            GameVar@ nopvpOn = GetLocalVar( NOPVP_VAR, map.Id );
+            if( valid( nopvpOn ) && nopvpOn == 0 )
+                nopvpOn = 1;
+            else
+                return;
+            Critter@[] critters;
+            Critter@ cr;
+            int      bt = 0;
+            int      dialog = 0;
+            if( map.GetCritters( 0, FIND_ALL | FIND_ONLY_NPC, critters ) > 0 )
+            {
+                for( uint i = 0, l = critters.length(); i < l; i++ )
+                {
+                    @cr = critters[ i ];
+                    if( !valid( cr ) || !cr.IsNpc() )
+                        continue;
+                    dialog = cr.Stat[ ST_DIALOG_ID ];
+                    if( Present( dialog, excludeDialogs ) )
+                        continue;
+                    bt = cr.Stat[ ST_BODY_TYPE ];
+                    if( Present( bt, btInvul ) )
+                        cr.ModeBase[ MODE_INVULNERABLE ] = 1;                       // God Mode On.
+                }
+            }
+        }
+    }
+}
+
+// игрок с включенным NoPvp режимом может телепортироваться на глобал
+void unsafe_CritterToGlobal( Critter& player, int, int, int, string@, int[] @ )
+{
+    player.Wait( 1000 );   // Антиспам
+    if( player.Timeout[ TO_BATTLE ] > 0 )
+    {
+        player.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_TIMEOUT_BATTLE_WAIT );
+        return;
+    }
+    Map@ map = player.GetMap();
+    if( valid( map ) && IsNoPvpMap( map ) && player.Mode[ MODE_NO_PVP ] == 1 && player.IsLife() )
+        player.TransitToGlobal( false );
+    else
+        player.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_USE_NOTHING );
+}

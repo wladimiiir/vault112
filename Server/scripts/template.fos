@@ -1,0 +1,245 @@
+
+
+
+// Общие
+// Time event
+uint e_FuncName( uint[] @ values )
+uint e_FuncName( int[] @ values )
+// Возвращается кол-во игровых секунд, когда событие вызовется опять, при 0 событие удаляется.
+// Critter time event
+uint cte_FuncName( Critter& cr, int identifier, uint& rate )
+// Возвращается кол-во игровых секунд, когда событие вызовется опять, при 0 событие удаляется.
+// Scenery
+bool s_FuncName( Critter& cr, Scenery& scen, int skill, Item@ item )
+// При возврате false событие попадает в обработчик криттера, потом в глобальный. При true выход.
+// Trigger
+void t_FuncName( Critter& cr, Scenery& trigger, bool entered, uint8 dir )
+// Dialog
+void dlg_FuncName( Critter& player, Critter@ npc, string@ text )
+uint dlg_FuncName( Critter& player, Critter@ npc, string@ text )
+// Dialog demand
+bool d_FuncName( Critter& master, Critter& slave, int val, ... )
+// Dialog result
+void r_FuncName( Critter& master, Critter& slave, int val, ... )
+uint r_FuncName( Critter& master, Critter& slave, int val, ... )
+// Text listener
+void listen_FuncName( Critter& player, string& text )
+// ~runscript command
+void FuncName( Critter& player, int param0, int param1, int param2 )
+// FixBoy function
+int fix_FuncName( Critter& cr, int stage )
+// Location entrances (Town/World)
+bool entrance_FuncName( Location& loc, Critter@[]& critters, uint8 entrance )
+// Show screen answer, used in Critter::ShowScreen
+void answer_FuncName( Critter& player, uint answerI, string& answerS )
+// Npc misc plane script
+void plane_FuncName( Critter& npc )
+// @script funcName@ lexem, client side
+string FuncName( string& lexems )
+// void Critter::RunClientScript method, client side
+void FuncName( int param0, int param1, int param2, string@ param3, int[] @ param4 )
+// void RunServerScript function, with hardcoded access check on server side
+void FuncName( Critter& player, int param0, int param1, int param2, string@ param3, int[] @ param4 )
+// void RunServerScriptUnsafe function, without access checks, "unsafe_" prefix required
+void unsafe_FuncName( Critter& player, int param0, int param1, int param2, string@ param3, int[] @ param4 )
+// Critter param get behaviour
+int getParam_FuncName( Critter& cr, uint index )
+// Critter param changed behaviour
+void changedParam_FuncName( Critter& cr, uint index, int oldValue )
+// Critter param send behaviour
+bool allowParam_FuncName( uint index, Critter& fromCr, Critter& toCr )
+// Critter slot send behaviour
+bool allowSlot_FuncName( uint8 slot, Item& item, Critter& fromCr, Critter& toCr )
+
+// Critter
+// CRITTER_EVENT_IDLE
+void _FuncName( Critter& cr )
+// Простой, вызывается каждые __CritterIdleTick секунд, для изменения времени вызывайте Critter::Wait в функции.
+// CRITTER_EVENT_FINISH
+void _FuncName( Critter& cr, bool deleted )
+// Завершение работы криттера.
+// CRITTER_EVENT_DEAD
+void _FuncName( Critter& cr, Critter@ killer )
+// Смерть. Вызывается перед глобальным обработчиком смертей.
+// CRITTER_EVENT_RESPAWN
+void _FuncName( Critter& cr )
+// Восстановился после смерти.
+// CRITTER_EVENT_SHOW_CRITTER
+void _FuncName( Critter& cr, Critter& showCrit )
+// Появился новый криттер в поле зрения.
+// CRITTER_EVENT_SHOW_CRITTER_X, где X может быть 1, 2, 3.
+void _FuncName( Critter& cr, Critter& showCrit )
+// Появился новый криттер в дистанции определенной uint Critter::ShowCritterDistX.
+// CRITTER_EVENT_HIDE_CRITTER
+void _FuncName( Critter& cr, Critter& hideCrit )
+// Пропал криттер с поля зрения.
+// CRITTER_EVENT_HIDE_CRITTER_X, где X может быть 1, 2, 3.
+void _FuncName( Critter& cr, Critter& hideCrit )
+// Пропал криттер с дистанции определенной uint Critter::ShowCritterDistX.
+// CRITTER_EVENT_SHOW_ITEM_ON_MAP
+void _FuncName( Critter& cr, Item& showItem, bool added, Critter@ dropper )
+// Появился итем в поле зрения.
+// CRITTER_EVENT_CHANGE_ITEM_ON_MAP
+void _FuncName( Critter& cr, Item& item )
+// Поменялся итем в поле зрения, например открылась/закрылась дверь/контейнер.
+// CRITTER_EVENT_HIDE_ITEM_ON_MAP
+void _FuncName( Critter& cr, Item& hideItem, bool removed, Critter@ picker )
+// Пропал итем с поля зрения.
+// CRITTER_EVENT_ATTACK
+bool _FuncName( Critter& cr, Critter& target )
+// Криттер атакует кого-либо. При возвращенном значении true глобальный обработчик critter_attack не вызывается.
+// CRITTER_EVENT_ATTACKED
+bool _FuncName( Critter& cr, Critter& attacker )
+// Криттера атаковали. При возвращенном значении true глобальный обработчик critter_attacked не вызывается.
+// CRITTER_EVENT_STEALING
+void _FuncName( Critter& cr, Critter& thief, bool success, Item& item, uint count )
+// Совершают воровство. success означает успешно ли произошло воровство расчитанное в critter_stealing.
+// CRITTER_EVENT_MESSAGE
+void _FuncName( Critter& cr, Critter& fromCr, int message, int value )
+// Пришло сообщение отправленное с помощью Critter::SendMessage.
+// CRITTER_EVENT_USE_ITEM
+bool _FuncName( Critter& cr, Item& item, Critter@ onCritter, Item@ onItem, Scenery@ onScenery )
+// При использовании итема на что-либо. При flase вызываютя дальнейшие обработчики. При true выход.
+// CRITTER_EVENT_USE_ITEM_ON_ME
+bool _FuncName( Critter& cr, Critter& whoUse, Item& item )
+// При использовании итема на криттера. При flase вызываютя дальнейшие обработчики. При true выход.
+// CRITTER_EVENT_USE_SKILL
+bool _FuncName( Critter& cr, int skill, Critter@ onCritter, Item@ onItem, Scenery@ onScenery )
+// При использовании навыка на что-либо. При flase вызываютя дальнейшие обработчики. При true выход.
+// CRITTER_EVENT_USE_SKILL_ON_ME
+bool _FuncName( Critter& cr, Critter& whoUse, int skill )
+// При использовании навыка на что-либо. При flase вызываютя дальнейшие обработчики. При true выход.
+// CRITTER_EVENT_DROP_ITEM
+void _FuncName( Critter& cr, Item& item )
+// При выкидывании тема.
+// CRITTER_EVENT_MOVE_ITEM
+void _FuncName( Critter& cr, Item& item, uint8 fromSlot )
+// При смене позиции у итема.
+// CRITTER_EVENT_KNOCKOUT
+void _FuncName( Critter& cr, uint anim2begin, uint anim2idle, uint anim2end, uint lostAp, uint knockDist )
+// При уходе в накаут.
+// CRITTER_EVENT_SMTH_DEAD
+void _FuncName( Critter& cr, Critter& fromCr, Critter@ killer )
+// Когда криттер в области видимости умирает. См. CRITTER_EVENT_DEAD.
+// CRITTER_EVENT_SMTH_STEALING
+void _FuncName( Critter& cr, Critter& fromCr, Critter& thief, bool success, Item& item, uint count )
+// Когда криттер в области видимости подвергается краже. См. CRITTER_EVENT_STEALING.
+// success означает успешно ли произошло воровство расчитанное в critter_stealing.
+// CRITTER_EVENT_SMTH_ATTACK
+void _FuncName( Critter& cr, Critter& fromCr, Critter& target )
+// Когда криттер в области видимости атакует. См. CRITTER_EVENT_ATTACK.
+// CRITTER_EVENT_SMTH_ATTACKED
+void _FuncName( Critter& cr, Critter& fromCr, Critter& attacker )
+// Когда криттер в области видимости подвергается атаке. См. CRITTER_EVENT_ATTACKED.
+// CRITTER_EVENT_SMTH_USE_ITEM
+void _FuncName( Critter& cr, Critter& fromCr, Item& item, Critter@ onCritter, Item@ onItem, Scenery@ onScenery )
+// Когда криттер в области видимости использует итем на чем-либо. См. CRITTER_EVENT_USE_ITEM.
+// CRITTER_EVENT_SMTH_USE_SKILL
+void _FuncName( Critter& cr, Critter& fromCr, int skill, Critter@ onCritter, Item@ onItem, Scenery@ onScenery )
+// Когда криттер в области видимости использует навык на чем-либо. См. CRITTER_EVENT_USE_SKILL.
+// CRITTER_EVENT_SMTH_DROP_ITEM
+void _FuncName( Critter& cr, Critter& fromCr, Item& item )
+// Когда криттер в области видимости выкидывает итем. См. CRITTER_EVENT_DROP_ITEM.
+// CRITTER_EVENT_SMTH_MOVE_ITEM
+void _FuncName( Critter& cr, Critter& fromCr, Item& item, uint8 fromSlot )
+// Когда криттер в области видимости меняет местоположение итема. См. CRITTER_EVENT_MOVE_ITEM.
+// CRITTER_EVENT_SMTH_KNOCKOUT
+void _FuncName( Critter& cr, Critter& fromCr, uint anim2begin, uint anim2idle, uint anim2end, uint lostAp, uint knockDist )
+// Когда криттер в области видимости уходит в накаут. См. CRITTER_EVENT_KNOCKOUT.
+// CRITTER_EVENT_PLANE_BEGIN
+int _FuncName( Critter& cr, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem )
+// Когда движок создает план для Нпц. Вызывается и для потомков основного плана в том числе.
+// int reason указывает причину начала плана (см. Plane begin/end/run reasons в _defines.fos).
+// Возвращаемые значения:
+// PLANE_RUN_GLOBAL - вызвать глобальный обработчик, который определит сохранить или удалить план;
+// PLANE_KEEP - сохранить план, без вызова глобального обработчика;
+// PLANE_DISCARD - удалить план, без вызова глобального обработчика.
+// CRITTER_EVENT_PLANE_END
+int _FuncName( Critter& cr, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem )
+// Когда у Нпц заканчивается выполение плана (выполнение плана-потомка не вызывает это событие).
+// int reason указывает причину завершения плана (см. Plane begin/end/run reasons в _defines.fos).
+// Возвращаемые значения см. в CRITTER_EVENT_PLANE_BEGIN.
+// CRITTER_EVENT_PLANE_RUN
+int _FuncName( Critter& cr, NpcPlane& plane, int reason, uint& result0, uint& result1, uint& result2 )
+// Возвращаемые значения см. в CRITTER_EVENT_PLANE_BEGIN.
+// CRITTER_EVENT_BARTER
+bool _FuncName( Critter& cr, Critter& barterCr, bool attach, uint barterCount )
+// Когда с Нпц начинают/заканчивают бартер.
+// bool attach - начинается или заканчивается бартер.
+// uint barterCount - всего торгующих, включая новое присоединение/отсоединение.
+// При возвращении true - бартер начинается, false - бартер не начинается; актуально при attach == true.
+// CRITTER_EVENT_TALK
+bool _FuncName( Critter& cr, Critter& talkCr, bool attach, uint talkCount )
+// Когда с Нпц начинают/заканчивают разговор.
+// bool attach - начинается или заканчивается разговор.
+// uint talkCount - всего разговаривающих, включая новое присоединение/отсоединение.
+// При возвращении true - диалог начинается, false - не начинается; актуально при attach == true.
+// CRITTER_EVENT_GLOBAL_PROCESS
+bool _FuncName( Critter& cr, int type, Item@ car, float& x, float& y, float& toX, float& toY, float& speed, uint& encounterDescriptor, bool& waitForAnswer )
+// Обработка глобальной карты.
+// При возвращении true - глобальный обработчик не запускается, false - запуск глобального обработчика.
+// CRITTER_EVENT_GLOBAL_INVITE
+bool _FuncName( Critter& cr, Item@ car, uint encounterDescriptor, int combatMode, uint& mapId, uint16& hexX, uint16& hexY, uint8& dir )
+// Обработка глобальной карты для перехода на карту.
+// Криттер является лидером группы.
+// При возвращении true - глобальный обработчик не запускается, false - запуск глобального обработчика.
+// CRITTER_EVENT_TURN_BASED_PROCESS
+void _FuncName( Critter& cr, Map& map, bool beginTurn )
+// Обработка пошагового боя. Вызывается в начале (beginTurn == true) и в конце (beginTurn == false) хода криттера.
+// CRITTER_EVENT_SMTH_TURN_BASED_PROCESS
+void _FuncName( Critter& cr, Critter& fromCr, Map& map, bool beginTurn )
+// Обработка пошагового боя. Вызывается в начале (beginTurn == true) и в конце (beginTurn == false) хода другого криттера.
+
+// Map
+// MAP_EVENT_FINISH
+void _FuncName( Map& map, bool deleted )
+// Завершение работы карты.
+// MAP_EVENT_LOOP_X, где X от 0 до 4
+void _FuncName( Map& map )
+// Цикл X. Для изменения времени вызова используйте Map::SetLoopTime.
+// MAP_EVENT_IN_CRITTER
+void _FuncName( Map& map, Critter& cr )
+// При входе криттера на карту.
+// MAP_EVENT_OUT_CRITTER
+void _FuncName( Map& map, Critter& cr )
+// При выходе криттера с карты.
+// MAP_EVENT_CRITTER_DEAD
+void _FuncName( Map& map, Critter& cr, Critter@ killer )
+// При смерти криттера на карте.
+// MAP_EVENT_TURN_BASED_BEGIN
+void _FuncName( Map& map )
+// Начало пошагового боя.
+// MAP_EVENT_TURN_BASED_END
+void _FuncName( Map& map )
+// Окончание пошагового боя.
+// MAP_EVENT_TURN_BASED_PROCESS
+void _FuncName( Map& map, Critter& cr, bool beginTurn )
+// Обработка пошагового боя. Вызывается в начале (beginTurn == true) и в конце (beginTurn == false) хода криттера.
+
+// Item
+// ITEM_EVENT_FINISH
+void _FuncName( Item& item, bool deleted )
+// Удаление итема. При deleted == true полное, false при завершении работы сервера.
+// Возможно перемещение итема для предотвращения удаления.
+// ITEM_EVENT_ATTACK
+bool _FuncName( Item& item, Critter& cr, Critter& target )
+// При атаке итемом криттера. Если возвращается true, то обработка атаки не произойдет. При false вызывается обработчик криттера.
+// ITEM_EVENT_USE
+bool _FuncName( Item& item, Critter& cr, Critter@ onCritter, Item@ onItem, Scenery@ onScenery )
+// При использовании итема на что-либо. При flase вызывается обработчик криттера, потом глобальный on_use_item. При true выход.
+// ITEM_EVENT_USE_ON_ME
+bool _FuncName( Item& item, Critter& cr, Item@ usedItem )
+// При использовании итема на итем. При false вызывается обработчик криттера, потом глобальный on_use_item. При true выход.
+// ITEM_EVENT_SKILL
+bool _FuncName( Item& item, Critter& cr, int skill )
+// При использовнии навыка на итеме. При false вызывается обработчик криттера, потом глобальный on_use_skill. При true выход.
+// При skill == -1 использование или поднимание.
+// ITEM_EVENT_DROP
+void _FuncName( Item& item, Critter& cr )
+// При выбросе итема.
+// ITEM_EVENT_MOVE
+void _FuncName( Item& item, Critter& cr, uint8 fromSlot )
+// При перемещении итема между слотами.
+// ITEM_EVENT_WALK
+void _FuncName( Item& item, Critter& cr, bool entered, uint8 dir )
+// При хождении по итему на карте.

@@ -1,0 +1,148 @@
+#include "_macros.fos"
+#include "entire_h.fos"
+#include "serializator.fos"
+
+class ItemHolderWrapper
+{
+	#define _GetKey		("ItemHolder_" + Npc.Id)
+	
+	private Critter@ Npc;
+	private dictionary Containers;
+	
+	ItemHolderWrapper(Critter& npc)
+	{
+		@Npc = npc;
+		Load();
+	}
+	
+	bool HoldsItems(string key)
+	{
+		return Containers.exists(key);
+	}
+	
+	Item@[] PopItems(string key)
+	{
+		Item@[] items;
+		Item@ container = GetContainer(key, false);
+		if(valid(container))
+		{
+			container.GetItems(0, items);
+			Containers.delete(key);
+			Save();
+		}
+		
+		return items;
+	}
+	
+	void PutItems(string key, Item@[] items)
+	{
+		Item@ container = GetContainer(key, true);
+		if(!valid(container))
+			return;
+			
+		Log("Moving items");
+		MoveItems(items, container, 0);
+	}
+	
+	private Item@ GetContainer(string key, bool create)
+	{
+		Item@ container;
+		if(Containers.exists(key))
+		{
+			Containers.get(key, @container);
+			return container;
+		}
+		else if(create)
+		{
+			@container = Npc.AddItem(PID_HIDDEN_CONTAINER, 1);
+			if(!valid(container))
+				return null;
+			_ItemSetHidden(container);
+			Containers.set(key, @container);
+			Save();
+		}
+		
+		return container;
+	}
+
+	private void Load()
+	{
+		Serializator serializator;
+		if(!serializator.Load(_GetKey))
+			return;
+		
+		uint size = 0;
+		serializator.Get(size);
+		for (uint i = 0; i < size; i++)
+		{
+			string key = "";
+			serializator.Get(key);
+			Item@ item;
+			serializator.Get(item);
+			if(valid(item))
+				Containers.set(key, @item);
+		}
+	}
+	
+	private void Save()
+	{
+		Serializator serializator;
+		
+		string@[] keys;
+		Containers.keys(keys);
+		serializator.Set(keys.length);
+		for (uint i = 0; i < keys.length(); i++)
+		{
+			Item@ container;
+			Containers.get(keys[i], @container);
+			serializator.Set(keys[i]);
+			serializator.Set(container.Id);
+		}
+		serializator.Save(_GetKey);
+	}
+}
+
+class PatrolEntireWrapper
+{
+	#define _GetKey		("PatrolEntire_" + mapId + "_" + entire.Number + "_" + entire.HexX + "_" + entire.HexY)
+	
+	private uint mapId;
+	private Entire@ entire;
+	private uint patroller;
+	
+	PatrolEntireWrapper(Map& map, Entire& entire)
+	{
+		mapId = map.Id;
+		@this.entire = entire;
+		patroller = 0;
+		Load();
+	}
+	
+	private void Load()
+	{
+		Serializator serializator;
+		if(!serializator.Load(_GetKey))
+			return;
+		
+		serializator.Get(patroller);
+	}
+	
+	private void Save()
+	{
+		Serializator serializator;
+		
+		serializator.Set(patroller);
+		serializator.Save(_GetKey);
+	}
+	
+	void SetPatroller(Critter@ critter)
+	{
+		patroller = valid(critter) ? critter.Id : 0;
+		Save();
+	}
+	
+	bool HasPatroller()
+	{
+		return patroller != 0;
+	}
+}

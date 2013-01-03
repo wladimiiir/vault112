@@ -1,0 +1,252 @@
+#include "critter_action.fos"
+#include "utils_for_array.fos"
+
+import void AddAttackProtection(Critter@ protector, Critter& critter, uint protectionFlags) from "custom_data";
+import void RemoveAttackProtection(Critter@ protector, Critter& critter, uint protectionFlags) from "custom_data";
+import bool IsProtectedFromAttacker(Critter& critter, Critter& attacker) from "custom_data";
+//import void AddStealProtection(Critter@ protector, Critter& critter) from "custom_data";
+//import void RemoveStealProtection(Critter@ protector, Critter& critter) from "custom_data";
+//import bool IsProtectedFromThief(Critter& critter, Critter& thief) from "custom_data";
+import void AddSkillProtection(Critter@ protector, Critter& critter, uint protectionFlags) from "custom_data";
+import void RemoveSkillProtection(Critter@ protector, Critter& critter, uint protectionFlags) from "custom_data";
+import bool IsProtectedFromSkill(Critter& critter, int skill, Critter@ targetCritter, Item@ targetItem, Scenery@ targetScenery) from "custom_data";
+
+class ProtectFromStealing : ListeningAction
+{
+	private uint ProtectionFlags; // see custom_data_h.fos
+	private bool OnlyPlayer;
+	
+	ProtectFromStealing(uint protectionFlags)
+	{
+		ProtectionFlags = protectionFlags;
+		OnlyPlayer = false;
+	}
+	
+	ProtectFromStealing(uint protectionFlags, bool onlyPlayer)
+	{
+		ProtectionFlags = protectionFlags;
+		OnlyPlayer = onlyPlayer;
+	}
+	
+	void ShowCritterEvent(Critter& critter, Critter& showCritter) override
+	{
+		if(OnlyPlayer && !showCritter.IsPlayer())
+			return;
+		Info("Player shown (ProtectFromStealing)");
+		//AddStealProtection(critter, showCritter);
+	}
+
+	void HideCritterEvent(Critter& critter, Critter& hideCritter) override
+	{
+		if(OnlyPlayer && !hideCritter.IsPlayer())
+			return;
+		Info("Player hidden (ProtectFromStealing)");
+		//RemoveStealProtection(critter, hideCritter);
+	}
+	
+	string GetInfo() override {return "ProtectFromStealing";}
+}
+
+class ProtectFromAttack : ListeningAction
+{
+	private uint ProtectionFlags; // see custom_data_h.fos
+	private bool OnlyPlayer;
+	private bool Initialized;
+	
+	ProtectFromAttack(uint protectionFlags)
+	{
+		ProtectionFlags = protectionFlags;
+		OnlyPlayer = false;
+		Initialized = false;
+	}
+	
+	ProtectFromAttack(uint protectionFlags, bool onlyPlayer)
+	{
+		ProtectionFlags = protectionFlags;
+		OnlyPlayer = onlyPlayer;
+		Initialized = false;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		if(!Initialized  && !OnlyPlayer)
+		{
+			InitializeAttackProtection(critter);
+			Initialized = true;
+		}
+		DefaultAction::Perform(critter);
+	}
+	
+	private void InitializeAttackProtection(Critter& critter)
+	{
+		Info("Initializing protection..." + critter.Id);	
+		Info("Adding protection: " + critter.Id);	
+		AddAttackProtection(critter, critter, ProtectionFlags);
+		
+		Critter@[] critters;
+		critter.GetCritters(false, FIND_ALL, critters);
+		Info("Seeing "+critters.length()+ " critters.");
+		for (uint i = 0; i < critters.length(); i++)
+		{
+			Info("Adding attack protection: "+critters[i].Id);
+			AddAttackProtection(critter, critters[i], ProtectionFlags);
+		}
+	}
+	
+	void ShowCritterEvent(Critter& critter, Critter& showCritter) override
+	{
+		if(OnlyPlayer && !showCritter.IsPlayer())
+			return;
+			
+		Info("Adding protection: "+showCritter.Id);	
+		AddAttackProtection(critter, showCritter, ProtectionFlags);
+	}
+
+	void HideCritterEvent(Critter& critter, Critter& hideCritter) override
+	{
+		if(OnlyPlayer && !hideCritter.IsPlayer())
+			return;
+			
+		Info("Removing protection: "+hideCritter.Id);	
+		RemoveAttackProtection(critter, hideCritter, ProtectionFlags);
+	}
+	
+	string GetInfo() override {return "ProtectFromAttack";}
+}
+
+class AttackWhenProtected : ListeningAction 
+{
+	private Action@ AttackEventAction;
+	private uint[] attackerIds;
+	
+	AttackWhenProtected(Action@ attackEventAction)
+	{
+		@AttackEventAction = attackEventAction;
+	}
+	
+	bool AttackEvent(Critter& critter, Critter& target) override
+	{
+		if(Present(target.Id, attackerIds))
+		{
+			Info("Target is remembered as attacker: "+target.Id);
+			return AttackEventAction.AttackEvent(critter, target);
+		}
+		
+		return false;
+	}
+	
+	bool AttackedEvent(Critter& critter, Critter& attacker) override
+	{
+		if(!attacker.IsPlayer())
+			return false;
+		
+		Info("Seeing someone attacking");
+		if(IsProtectedFromAttacker(critter, attacker) && !Present(attacker.Id, attackerIds))
+		{
+			PerformAndAction(critter, attacker, null);
+			Info("Inserting critter with protected attack.");
+			attackerIds.insertLast(attacker.Id);
+		}
+		return false;
+	}
+	
+	void SeeSomeoneAttackEvent(Critter& critter, Critter& attacker, Critter& attacked) override
+	{
+		if(!attacker.IsPlayer())
+			return;
+		
+		Info("Seeing someone attacking");
+		if(IsProtectedFromAttacker(attacked, attacker) && !Present(attacker.Id, attackerIds))
+		{
+			PerformAndAction(critter, attacker, null);
+			Info("Inserting critter with protected attack.");
+			attackerIds.insertLast(attacker.Id);
+		}
+	}
+	
+	int PlaneEndEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem) override
+	{
+		Info("Some plane ended.");
+		if(plane.Type == AI_PLANE_ATTACK)
+	    {
+			Info("Attack plane ended.");
+			int index = FindInArray(attackerIds, plane.Attack_TargId);
+			if(index >= 0)
+			{
+				Info("Removing critter at index: "+index);
+				attackerIds.removeAt(index);
+			}
+			AttackEventAction.PlaneEndEvent(critter, plane, reason, someCr, someItem);
+	    }
+		return PLANE_RUN_GLOBAL;
+	}
+	
+	string GetInfo() override {return "AttackWhenProtected";}
+}
+
+class ProtectFromSkill : ListeningAction
+{
+	private uint ProtectionFlags; // see custom_data_h.fos
+	private bool OnlyPlayer;
+	
+	ProtectFromSkill(uint protectionFlags)
+	{
+		ProtectionFlags = protectionFlags;
+		OnlyPlayer = false;
+	}
+	
+	ProtectFromSkill(uint protectionFlags, bool onlyPlayer)
+	{
+		ProtectionFlags = protectionFlags;
+		OnlyPlayer = onlyPlayer;
+	}
+	
+	void ShowCritterEvent(Critter& critter, Critter& showCritter) override
+	{
+		if(OnlyPlayer && !showCritter.IsPlayer())
+			return;
+		Info("Player shown (ProtectFromSkill)");
+		AddSkillProtection(critter, showCritter, ProtectionFlags);
+	}
+
+	void HideCritterEvent(Critter& critter, Critter& hideCritter) override
+	{
+		if(OnlyPlayer && !hideCritter.IsPlayer())
+			return;
+		Info("Player hidden (ProtectFromSkill)");
+		RemoveSkillProtection(critter, hideCritter, ProtectionFlags);
+	}
+	
+	string GetInfo() override {return "ProtectFromSkill";}
+}
+
+class WhenProtectedFromSkill : CrittersHolderAction
+{
+	private uint ProtectionFlags; // see custom_data_h.fos
+	
+	WhenProtectedFromSkill(uint protectionFlags)
+	{
+		ProtectionFlags = protectionFlags;
+		BlockSubActions();
+		SetListening(true);
+	}
+	
+	void SeeSomeoneUseSkill(Critter& critter, Critter& skillCritter, int skill, Critter@ onCritter, Item@ onItem, Scenery@ onScenery) override
+	{
+		if(!IsProtectedFromSkill(skillCritter, skill, onCritter, onItem, onScenery) || IsRunning())
+			return;
+		
+		AddCritter(skillCritter);
+		UnblockSubActions();
+		SetListening(false);
+		Start(critter);
+	}
+	
+	void StartNextSuperAction(Critter& critter) override
+	{
+		BlockSubActions();
+		ClearCritters();
+		SetListening(true);
+		CrittersHolderAction::StartNextSuperAction(critter);
+	}
+}

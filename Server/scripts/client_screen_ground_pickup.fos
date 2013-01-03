@@ -1,0 +1,225 @@
+#include "_macros.fos"
+#include "_client_defines.fos"
+#include "client_gui_h.fos"
+
+import int GetIniValue(string& iniKey, int defaultValue) from "ini_parser";
+import int[]@ GetIniValues4(string& iniKey, int[]@ defaultValues) from "ini_parser";
+
+uint InvItemCount = 10;
+
+uint ItemsIndex = 0;
+IGUIElementImageOpt@[] ItemsUIs;
+IGUIElementTextOpt@[] ItemCountUIs;
+IGUIElementButtonOpt@ MoveUpButton;
+IGUIElementButtonOpt@ MoveDownButton;
+IGUIElementButtonOpt@ CancelButton;
+
+uint[] ItemProtos;
+uint[] ItemCounts;
+
+void PickUpItem(ProtoItem& proto)
+{
+	if(!valid(proto))
+		return;
+	
+	CritterCl@ chosen = GetChosen();
+	if(!valid(chosen))
+		return;
+
+	uint[] pickUp = {CHOSEN_PICK_ITEM, proto.ProtoId, chosen.HexX, chosen.HexY, 0, 0, 0};
+    SetChosenActions(pickUp);
+    /*for (uint i = 0; i < ItemProtos.length(); i++)
+		if(ItemProtos[i] == proto.ProtoId)
+		{
+			ItemProtos.removeAt(i);
+			ItemCounts.removeAt(i);
+			break;
+		}
+	if(ItemProtos.length() == 0)
+		HideScreen(CLIENT_SCREEN_MULTI_PICKUP, 0, 0, 0);
+	else 
+	{
+		ClearItems();
+		RefreshItems();
+	}*/
+	HideScreen(CLIENT_SCREEN_MULTI_PICKUP, 0, 0, 0);
+}
+
+void ShowGroundPickupScreen(int, int, int, string@, int[]@ protoCounts)
+{
+	if(!valid(protoCounts))
+		return;
+		
+	if(!PrepareScreen(protoCounts))
+	{
+		Message("<Error 1>");
+		return;
+	}
+
+	ShowScreen(CLIENT_SCREEN_MULTI_PICKUP, 0, 0, 0);
+}
+
+bool PrepareScreen(int[] protoCounts)
+{
+	if(protoCounts.length() % 2 != 0)
+		return false;
+	
+	ItemsIndex = 0;
+	ClearItems();
+	ItemProtos.resize(0);
+	ItemCounts.resize(0);
+	for (uint i = 0; i < protoCounts.length(); i+=2)
+	{
+		ItemProtos.insertLast(protoCounts[i]);
+		ItemCounts.insertLast(protoCounts[i+1]);
+	}
+
+	RefreshItems();
+	RefreshButtons();
+	
+	return true;
+}
+
+void ClearItems()
+{
+	for (uint i = 0; i < ItemsUIs.length(); i++)
+	{
+		ItemsUIs[i].clearImage();
+		ItemCountUIs[i].Text("");
+	}
+}
+
+void RefreshItems()
+{	
+	for (uint i = ItemsIndex; i < ItemProtos.length() && i < ItemsIndex + InvItemCount; i++)
+	{
+		ProtoItem@ proto = GetProtoItem(ItemProtos[i]);
+		if(valid(proto))
+		{
+			ItemsUIs[i - ItemsIndex].loadImage(proto.PicInv, 0);
+			ItemCountUIs[i - ItemsIndex].Text(ItemCounts[i] == 1 ? "" : ("x"+ItemCounts[i]));
+		}
+	}
+}
+
+void RefreshButtons()
+{
+	MoveUpButton.setVisible(ItemsIndex > 0);
+	MoveDownButton.setVisible(ItemProtos.length() > ItemsIndex + InvItemCount);
+}
+
+void InitGroundPickUpScreen()
+{
+	GUI_CreateScreen(CLIENT_SCREEN_MULTI_PICKUP, GetIfaceIniStr("GPickupMainPic"))
+		.AutoCursor(true, CURSOR_HAND);
+
+	int itemHeight = GetIniValue("GPickupHeightItem", 30);
+	int itemWidth = GetIniValue("GPickupWidthItem", 70);
+	int[] positions = GetIniValues4("GPickupInv", null);
+	InvItemCount = positions[3] / itemHeight;
+	ItemsUIs.resize(0);
+	for (uint i = 0; i < InvItemCount; i++)
+	{
+		IGUIElementImageOpt@ item = GUI_AddImage(CLIENT_SCREEN_MULTI_PICKUP)
+			.Stretch(true)
+			.Position(positions[0], positions[1] + i * itemHeight, itemWidth, itemHeight)
+			.CallbackMouseClick(ItemClicked(i));
+			
+		ItemsUIs.insertLast(item);
+		
+		IGUIElementTextOpt@ count = GUI_AddText(CLIENT_SCREEN_MULTI_PICKUP)
+			.TextOptions(FONT_FALLOUT, COLOR_WHITE, 0)
+			.Position(positions[0] + 2, positions[1] + i * itemHeight)
+			.TextBoxSize(itemWidth, itemHeight);
+			
+		ItemCountUIs.insertLast(count);
+	}
+	
+	@MoveUpButton = GUI_AddButton(CLIENT_SCREEN_MULTI_PICKUP)
+		.UpPic(GetIfaceIniStr("GPickupInvScrUpPic"))
+		.DownPic(GetIfaceIniStr("GPickupInvScrUpPicDn"))
+		.Position("GPickupInvScrUp")
+		.CallbackMouseClick(MoveUpCallback());
+	@MoveDownButton = GUI_AddButton(CLIENT_SCREEN_MULTI_PICKUP)
+		.UpPic(GetIfaceIniStr("GPickupInvScrDnPic"))
+		.DownPic(GetIfaceIniStr("GPickupInvScrDnPicDn"))
+		.Position("GPickupInvScrDn")
+		.CallbackMouseClick(MoveDownCallback());	
+	@CancelButton = GUI_AddButton(CLIENT_SCREEN_MULTI_PICKUP)
+		.DownPic(GetIfaceIniStr("GPickupCancelPicDn"))
+		.Position("GPickupCancel")
+		.CallbackMouseClick(CancelCallback());
+}
+
+class ItemClicked : IGUIElementCallbackMouseClick
+{
+	private uint Index;
+	
+	ItemClicked(uint index)
+	{
+		Index = index;
+	}
+	
+	void OnMouseClick(int id, int click) override
+	{
+		if(ItemsIndex + Index >= ItemProtos.length())
+			return;
+		
+		if(click == MOUSE_CLICK_WHEEL_DOWN)
+			MoveDown();
+		if(click == MOUSE_CLICK_WHEEL_UP)
+			MoveUp();
+		
+		if(click != MOUSE_CLICK_LEFT)
+			return;
+		
+		ProtoItem@ proto = GetProtoItem(ItemProtos[ItemsIndex + Index]);
+		if(!valid(proto))
+			return;
+		
+		PickUpItem(proto);
+	}
+}
+
+class CancelCallback : IGUIElementCallbackMouseClick
+{
+	void OnMouseClick(int id, int click) override
+	{
+		HideScreen(CLIENT_SCREEN_MULTI_PICKUP, 0, 0, 0);
+	}
+}
+
+class MoveUpCallback : IGUIElementCallbackMouseClick
+{
+	void OnMouseClick(int id, int click) override
+	{
+		MoveUp();
+	}
+}
+
+void MoveUp()
+{
+	if(!MoveUpButton.isVisible())
+		return;
+	ItemsIndex--;
+	RefreshItems();
+	RefreshButtons();
+}
+
+class MoveDownCallback : IGUIElementCallbackMouseClick
+{
+	void OnMouseClick(int id, int click) override
+	{
+		MoveDown();
+	}
+}
+
+void MoveDown()
+{
+	if(!MoveDownButton.isVisible())
+		return;
+	ItemsIndex++;
+	RefreshItems();
+	RefreshButtons();
+}
+

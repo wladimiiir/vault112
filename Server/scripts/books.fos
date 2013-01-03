@@ -1,0 +1,88 @@
+// Author: cvet
+// Original Fallout2 system
+// In Fallout, Fallout 2 and Fallout Tactics, the amount of skill points gained is equal to 100,
+// subtract the current skill level, divide by 10, and then rounded down. Thus, the maximum a skill
+// can increased by books is up to 91%. Other books are used in quests.
+// Read time (Int/hours): 1/10, 2/9, 3/8, 4/7, 5/6, 6/5, 7/4, 8/3, 9/2, 10/1
+// For timeout used Science timeout.
+// TODO: PE_BOOKWORM
+#include "_macros.fos"
+#include "_msgstr.fos"
+
+bool IsReadableBook( uint16 pid ) // Export
+{
+    switch( pid )
+    {
+    case PID_BIG_BOOK_OF_SCIENCE: // Science
+    case PID_DEANS_ELECTRONICS:   // Repair
+    case PID_FIRST_AID_BOOK:      // First Aid
+    case PID_SCOUT_HANDBOOK:      // Outdoorsman
+    case PID_GUNS_AND_BULLETS:    // Small Guns
+    case PID_CATS_PAW_ISSUE_5:    // Energy Weapons
+        return true;
+    default:
+        break;
+    }
+    return false;                           // Not a book
+}
+
+void TryReadBook( Critter& cr, Item& book ) // Export
+{
+    if( cr.Timeout[ TO_SK_SCIENCE ] > 0 )
+    {
+        cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_WEARINESS );
+        return;
+    }
+
+    int  skillNum;
+    uint strNum;
+    switch( book.GetProtoId() )
+    {
+    case PID_BIG_BOOK_OF_SCIENCE:
+        skillNum = SK_SCIENCE;
+        strNum = STR_BOOK_READ_SCIENCE;
+        break;                                                                                  // Science
+    case PID_DEANS_ELECTRONICS:
+        skillNum = SK_REPAIR;
+        strNum = STR_BOOK_READ_REPAIR;
+        break;                                                                              // Repair
+    case PID_FIRST_AID_BOOK:
+        skillNum = SK_FIRST_AID;
+        strNum = STR_BOOK_READ_FISRT_AID;
+        break;                                                                                 // First Aid
+    case PID_SCOUT_HANDBOOK:
+        skillNum = SK_OUTDOORSMAN;
+        strNum = STR_BOOK_READ_OUTDOORSMAN;
+        break;                                                                                     // Outdoorsman
+    case PID_GUNS_AND_BULLETS:
+        skillNum = SK_SMALL_GUNS;
+        strNum = STR_BOOK_READ_SMALL_GUNS;
+        break;                                                                                     // Small Guns
+    case PID_CATS_PAW_ISSUE_5:
+        skillNum = SK_ENERGY_WEAPONS;
+        strNum = STR_BOOK_READ_ENERGY_WEAPONS;
+        break;                                                                                             // Energy Weapons
+    default:
+        return;
+    }
+
+    int readTime = ( 11 - cr.Stat[ ST_INTELLECT ] ) * 60 * 60;
+    int sp = ( 100 - cr.Skill[ skillNum ] ) / 10;
+    if( sp <= 0 )
+    {
+        cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_BOOK_READ_FAIL );
+        cr.TimeoutBase[ TO_SK_SCIENCE ] = __FullSecond + readTime;
+        _SubItem( book, 1 );
+        return;
+    }
+
+    if( _CritIsTagSkill( cr, skillNum ) )
+        sp *= 2;
+    if( cr.Perk[ PE_COMPREHENSION ] != 0 )
+        sp = sp * 150 / 100;
+
+    cr.SkillBase[ skillNum ] += sp;
+    cr.TimeoutBase[ TO_SK_SCIENCE ] = __FullSecond + readTime;
+    cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, strNum );
+    _SubItem( book, 1 );
+}

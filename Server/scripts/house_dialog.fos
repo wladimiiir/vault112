@@ -1,0 +1,142 @@
+#define	DEFAULT_HOUSE_HOLD_TIME	(REAL_MONTH(1))
+
+void dlg_AddOccupant(Critter& player, Critter@ npc, string@ playerName)
+{
+	if(!IS_DIALOG_SAY_MODE(playerName) || IS_DIALOG_END(playerName))
+        return;
+    
+    Critter@ occupant = GetPlayer(playerName);
+    if(!valid(occupant))
+    {
+        player.SayMsg(SAY_DIALOG, TEXTMSG_TEXT, 70305);
+        return;
+    }
+    House@ house = GetHouse(player);
+    if(!valid(house))
+		return;
+	
+	house.AddOccupant(occupant);
+	player.SayMsg(SAY_DIALOG, TEXTMSG_TEXT, 70306);
+}
+
+void dlg_RemoveOccupant(Critter& player, Critter@ npc, string@ playerName)
+{
+	if(!IS_DIALOG_SAY_MODE(playerName) || IS_DIALOG_END(playerName))
+        return;
+    
+    uint occupantId = GetPlayerId(playerName);
+    if(occupantId <= 0)
+    {
+        player.SayMsg(SAY_DIALOG, TEXTMSG_TEXT, 70305);
+        return;
+    }
+    House@ house = GetHouse(player);
+    if(!valid(house))
+		return;
+	
+	house.RemoveOccupant(occupantId);
+	player.SayMsg(SAY_DIALOG, TEXTMSG_TEXT, 70307);
+}
+
+bool d_OwnsHouse(Critter& master, Critter@ slave)
+{
+	return valid(GetHouse(master));
+}
+
+void dlg_LoadAvailableHouses(Critter& player, Critter@ npc, string@ lexems)
+{
+	if(IS_DIALOG_END(lexems) || IS_DIALOG_SAY_MODE(lexems))
+        return;
+	
+	Map@ map = player.GetMap();
+	if(!valid(map))
+		return;
+	
+	uint houseIndex = 0;
+	for (uint i = 0; i < houses.length(); i++)
+	{
+		House@ house = houses[i];
+		house.Load();
+		if(house.IsOnMap(map) && !house.HasOwner())
+		{
+			lexems += "$houseName" + houseIndex + houses[i].GetName();
+			houseIndex++;
+		}
+	}
+		
+	// TODO: to prevent situation when while choosing house some house is released,
+	// houses should be stored to some array when using index in r_SetOwner function
+}
+
+void r_SetOwner(Critter& player, Critter@ npc, int houseIndex)
+{
+	Map@ map = player.GetMap();
+	if(!valid(map))
+		return;
+	
+	int index = 0;
+	for (uint i = 0; i < houses.length(); i++)
+	{
+		House@ house = houses[i];
+		house.Load();
+		if(house.IsOnMap(map) && !house.HasOwner())
+		{
+			if(index == houseIndex)
+			{ 
+				houses[i].SetOwner(player, __FullSecond + DEFAULT_HOUSE_HOLD_TIME);
+				break;
+			}
+			else
+				index++;
+		}
+	}
+}
+
+bool d_IsAnyHouseAvailable(Critter& master, Critter@ slave)
+{
+	Map@ map = master.GetMap();
+	if(!valid(map))
+		return false;
+	return GetAvalilableHouseCount(map) > 0;
+}
+
+bool d_IsNoHouseAvailable(Critter& master, Critter@ slave)
+{
+	return !d_IsAnyHouseAvailable(master, slave);
+}
+
+bool d_IsHouseCountAvailable(Critter& master, Critter@ slave, int count)
+{
+	Map@ map = master.GetMap();
+	if(!valid(map))
+		return false;
+	
+	return int(GetAvalilableHouseCount(map)) >= count;
+}
+
+void r_PresentHouses(Critter& master, Critter@ slave)
+{
+	Map@ map = master.GetMap();
+	if(!valid(map))
+		return;
+		
+	Critter@ presenter = GetHousePresenter(map);
+	if(!valid(presenter))
+		return;
+
+	Action@ action = DefaultAction();
+	for (uint i = 0; i < houses.length(); i++)
+	{
+		if(!houses[i].IsOnMap(map))
+			continue;
+			
+		action.AddSubAction(MoveTo(houses[i].GetDoorX(), houses[i].GetDoorY(), true));
+		if(houses[i].HasOwner())
+			action.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70130, "$houseOwner" + houses[i].GetOwnerName()));
+		else
+			action.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70129, "$houseName" + houses[i].GetName()));
+		action.AddSubAction(Wait(REAL_SECOND(5)));
+	}
+	
+	actionManager.Start(presenter, action);
+}

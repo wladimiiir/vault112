@@ -1,0 +1,35 @@
+/** \~russian @page page_protoitems Прототипы предметов
+
+Прототипы предметов хранятся в текстовом виде в файлах в директории Server\\Proto\\Items\\.
+Редактируются с помощью редактора объектов.
+
+Файл items.lst содержит список файлов, содержащих данные о прототипах предметов.
+В составе SDK это файлы:
+@code
+ammo.fopro
+armor.fopro
+container.fopro
+door.fopro
+drug.fopro
+generic.fopro
+grid.fopro
+key.fopro
+misc.fopro
+miscex.fopro
+wall.fopro
+weapon.fopro
+@endcode
+
+Каждый файл создан для хранения своего типа объектов, форматы прототипов каждого из типов объектов имеет различия.\n\n
+<strong>Общие поля</strong>:\n
+<table>
+<tr><td>Pid</td><td>Номер прототипа (должен быть уникальным для всех типов объектов)</td></tr>
+<tr><td>Type</td><td>Определяет тип объекта</td></tr>
+<tr><td>PicMapName</td><td>Изображение на земле</td></tr>
+<tr><td>PicInvName</td><td>Изображение в инвентаре</td></tr>
+<tr><td>Flags</td><td>Флаги объекта</td></tr>
+<tr><td>SoundId</td><td>Идентификатор звука</td></tr>
+<tr><td>Material</td><td>Тип материала</td></tr>
+</table>
+
+*/

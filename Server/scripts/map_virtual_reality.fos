@@ -1,0 +1,38 @@
+#include "_macros.fos"
+#include "entire.fos"
+
+#define	ENTIRE_TERMINAL		(100)
+#define	ENTIRE_CRITTER1		(101)
+#define	ENTIRE_CRITTER2		(102)
+
+void MapInit(Map& map, bool firstTime)
+{
+	if(!firstTime)
+		return;
+		
+	Entire[] entires;
+	ParseEntires(map, entires, ENTIRE_TERMINAL);
+	
+	for (uint i = 0; i < entires.length(); i++)
+	{		
+		Item@ terminal = map.AddItem(entires[i].HexX, entires[i].HexY, PID_TERMINAL_SW, 1);
+		terminal.SetScript("TerminalInit");
+	}
+	
+	
+}
+
+void TerminalInit(Item& item, bool)
+{
+	item.SetEvent(ITEM_EVENT_SKILL, "TerminalSkill");
+}
+
+bool TerminalSkill(Item& door, Critter& cr, int skill)
+{
+	if(skill != SKILL_PICK_ON_GROUND)
+		return false;
+	
+	//start dialog
+	return true;
+}
+

@@ -1,0 +1,594 @@
+// Author: cvet
+// Original Fallout2 system
+#include "_macros.fos"
+#include "_msgstr.fos"
+
+import void AffectRadiation( Critter& cr, int value ) from "radiation";
+import void AffectPoison( Critter& cr, int value ) from "poison";
+
+// Chem Reliant
+// benefit: Faster recovery from chem side effects
+// penalty: Doubles chance for addiction
+// Chem Resistant
+// benefit: 50% less addiction chance
+// penalty: 50% less duration for Chem effects
+#define DRUG_EFFECT_DIV2_WITHDRAWAL    ( 1 )
+#define DRUG_EFFECT_MUL2_ADDICTION     ( 2 )
+#define DRUG_EFFECT_DIV2_ADDICTION     ( 4 )
+#define DRUG_EFFECT_DIV2_DURATION      ( 8 )
+#define RATE_TO_STAGE                  # (rate)          ( ( rate ) & 0xFFFFFF )
+#define RATE_TO_FLAGS                  # (rate)          ( ( rate ) >> 24 )
+#define FORM_RATE                      # ( stage, flags )( ( ( ( flags ) & 0xFF ) << 24 ) | ( ( stage ) & 0xFFFFFF ) )
+
+const int[] DrugsIdentifiers =
+{
+    PID_STIMPAK, PID_RADAWAY, PID_ANTIDOTE, PID_RAD_X, PID_SUPER_STIMPAK, PID_JET_ANTIDOTE, PID_HEALING_POWDER, PID_HYPO,
+    PID_NUKA_COLA, PID_BEER, PID_BOOZE, PID_GAMMA_GULP_BEER, PID_ROENTGEN_RUM, PID_ROT_GUT, PID_MENTATS, PID_BUFFOUT, PID_PSYCHO, PID_JET,
+    PID_MUTATED_FRUIT, PID_IGUANA_ON_A_STICK, PID_MEAT_ON_A_STICK, PID_COOKIE, PID_HYPO_POISON, PID_MUTATED_TOE, PID_KITTY_SEX_DRUG_AGILITY,
+    PID_KITTY_SEX_DRUG_INTELLIGENCE, PID_KITTY_SEX_DRUG_STRENGTH, PID_MONUMENT_CHUNCK, PID_BOX_OF_DOUGHNUTS
+};
+
+const int[] DrugEffects =
+{
+// PID_STIMPAK
+    -1,      0,             0,      0,          0,     0,
+    -2,        10,      0,      0,          0,     0,
+    ST_CURRENT_HP,        20,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_RADAWAY
+    ADDICTION_RADAWAY,     10,           120,    120,      14160, 10080,
+    ST_RADIATION_LEVEL,       -25,    -50,    -75,          0,     0,
+    ST_RADIATION_RESISTANCE,         0,      0,      0,        -20,    20,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_ANTIDOTE
+    -1,      0,            10,     10,          0,     0,
+    ST_POISONING_LEVEL,       -25,    -25,    -25,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_MENTATS
+    ADDICTION_MENTATS,     15,          1440,   4320,       4320, 10080,
+    ST_INTELLECT,         2,     -4,      2,         -3,     3,
+    ST_PERCEPTION,         2,     -4,      2,          0,     0,
+    ST_CHARISMA,         1,     -3,      2,          0,     0,
+    ST_AGILITY,         0,      0,      0,         -2,     2,
+// PID_MUTATED_FRUIT
+    -1,      0,           120,    360,          0,     0,
+    -2,         1,      0,      0,          0,     0,
+    ST_CURRENT_HP,         4,      0,      0,          0,     0,
+    ST_RADIATION_LEVEL,         0,      1,      1,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_IGUANA_ON_A_STICK
+    -1,      0,             0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_BUFFOUT
+    ADDICTION_BUFFOUT,     25,           360,    720,       1800, 10080,
+    ST_STRENGTH,         2,     -4,      2,         -2,     2,
+    ST_AGILITY,         2,     -4,      2,         -3,     3,
+    ST_ENDURANCE,         3,     -4,      1,         -2,     2,
+    -1,         0,      0,      0,          0,     0,
+// PID_MEAT_ON_A_STICK
+    -1,      0,             0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_NUKA_COLA
+    ADDICTION_NUKA_COLA,     10,             0,      0,         30, 10080,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_RAD_X
+    -1,      0,          1440,   1440,          0,     0,
+    ST_RADIATION_RESISTANCE,        50,    -25,    -25,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_PSYCHO
+    ADDICTION_PSYCHO,     20,           240,    240,       9600, 10080,
+    ST_AGILITY,         3,     -3,      0,          0,     0,
+    ST_INTELLECT,        -3,      1,      2,         -2,     2,
+    ST_NORMAL_RESIST,        50,    -25,    -25,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_BEER
+    -1,      0,            30,      0,          0,     0,
+    ST_PERCEPTION,        -1,      1,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_BOOZE
+    -1,      0,            30,      0,          0,     0,
+    ST_PERCEPTION,        -1,      1,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_SUPER_STIMPAK
+    -1,      0,            10,     10,          0,     0,
+    ST_CURRENT_HP,        75,     -3,     -6,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_JET
+    ADDICTION_JET,     50,    /* 10 */ 240,   1430,       1450,     2,      // Only after Jet Antidote was used
+    ST_ACTION_POINTS,         2,     -4,      2,         -1,     1,
+    ST_STRENGTH,         1,     -4,      3,         -2,     2,
+    ST_PERCEPTION,         1,     -4,      3,         -2,     2,
+    -1,         0,      0,      0,          0,     0,
+// PID_JET_ANTIDOTE
+    -1,      0,             0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_HEALING_POWDER
+    -1,      0,           360,      0,          0,     0,
+    -2,         8,      0,      0,          0,     0,
+    ST_CURRENT_HP,        18,      0,      0,          0,     0,
+    ST_PERCEPTION,        -1,      1,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_GAMMA_GULP_BEER
+    -1,      0,            30,      0,          0,     0,
+    ST_PERCEPTION,        -1,      1,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_ROENTGEN_RUM
+    -1,      0,            30,      0,          0,     0,
+    ST_PERCEPTION,        -2,      2,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_HYPO_POISON
+    -1,      0,             0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_COOKIE
+    -1,      0,            15,      0,          0,     0,
+    ST_ACTION_POINTS,         1,     -1,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_MONUMENT_CHUNCK
+    -1,      0,            60,     60,          0,     0,
+    ST_STRENGTH,         3,     -6,      3,          0,     0,
+    ST_AGILITY,         3,     -6,      3,          0,     0,
+    ST_NORMAL_RESIST,        50,    -50,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_ROT_GUT
+    -1,      0,            30,      0,          0,     0,
+    ST_PERCEPTION,        -2,      2,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_MUTATED_TOE
+    -1,      0,          1440,   8640,          0,     0,
+    ST_MAX_LIFE,        -3,      0,      3,          0,     0,
+    ST_POISONING_LEVEL,         2,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_KITTY_SEX_DRUG_AGILITY
+    -1,      0,            60,      0,          0,     0,
+    ST_AGILITY,         1,     -1,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_KITTY_SEX_DRUG_INTELLIGENCE
+    -1,      0,            60,      0,          0,     0,
+    ST_INTELLECT,         1,     -1,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_KITTY_SEX_DRUG_STRENGTH
+    -1,      0,            60,      0,          0,     0,
+    ST_STRENGTH,         1,     -1,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_HYPO
+    -1,      0,             0,      0,          0,     0,
+    -2,        75,      0,      0,          0,     0,
+    ST_CURRENT_HP,       100,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+// PID_BOX_OF_DOUGHNUTS
+    -1,         0,      0,      0,          0,     0,
+    -2,         1,      0,      0,          0,     0,
+    ST_CURRENT_HP,         2,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+    -1,         0,      0,      0,          0,     0,
+};
+
+// Table offsets
+#define TABLE_DRUG_ADDICT    ( 0 )
+#define TABLE_DRUG_PROC      ( 1 )
+#define TABLE_DURATION       # (stage)      ( 2 + ( stage ) )
+#define TABLE_STAT           # (stat)           ( 6 + ( stat ) * 6 )
+#define TABLE_AMOUNT         # ( stat, stage )( 7 + ( stage ) + ( stat ) * 6 )
+
+
+void UseDrug( Critter& cr, Item& drug ) // Export
+{
+    SetDrug( cr, drug.GetProtoId() );
+    _SubItem( drug, 1 );
+}
+
+void UseDrugOn( Critter& cr, Critter& onCr, Item& drug ) // Export
+{
+    if( onCr.IsDead() )
+    {
+        cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_NORESSURECT );
+        return;
+    }
+
+    bool isStimpak = ( drug.GetProtoId() == PID_STIMPAK || drug.GetProtoId() == PID_SUPER_STIMPAK );
+    if( isStimpak || onCr.IsKnockout() /* || Random(0,cr.Skill[SK_FIRST_AID])>onCr.Stat[ST_PERCEPTION]*20*/ )
+    {
+        onCr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_DRUG_USE_ON_SUCC );
+        SetDrug( onCr, drug.GetProtoId() );
+    }
+    else
+    {
+        onCr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_DRUG_USE_ON_FAIL );
+    }
+
+    _SubItem( drug, 1 );
+    if( not isStimpak )
+        cr.TimeoutBase[ TO_SK_FIRST_AID ] = FIRST_AID_TIMEOUT( cr );
+}
+
+void DropDrugEffects( Critter& cr ) // Export
+{
+    // Clear effects of all active drugs
+    // Drop
+    // int[] identifiers;
+    // uint[] rates;
+    // uint count=cr.GetTimeEvents(DrugsIdentifiers,identifiers,null,null,rates);
+    // for(uint i=0;i<count;i++) DropDrug(cr,identifiers[i],rates[i]);
+    // Броня убирается в инвентарь, чтобы избежать эффекта снятия бонусов от armor perk
+    Item@[] items;
+    cr.GetItems( SLOT_ARMOR, items );
+    cr.GetItems( SLOT_HAND1, items );
+    cr.GetItems( SLOT_HAND2, items );
+    for( uint i = 0, l = items.length(); i < l; i++ )
+        _CritMoveItem( cr, items[ i ], SLOT_INV );
+
+    for( uint i = STAT_EXT_BEGIN; i <= STAT_EXT_END; i++ )
+        cr.StatBase[ i ] = 0;
+    // Erase all events
+    cr.EraseTimeEvents( DrugsIdentifiers );
+    // Unset addictions perks
+    for( uint i = ADDICTION_BEGIN; i <= ADDICTION_END; i++ )
+        cr.AddictionBase[ i ] = 0;
+    // Обратно возвращаем броню
+    for( uint i = 0, l = items.length(); i < l; i++ )
+    {
+        Item@ item = items[ i ];
+        if( valid( item ) && item.GetType() == ITEM_TYPE_ARMOR )
+        {
+            _CritMoveItem( cr, item, SLOT_ARMOR );
+            break;             // может быть более 1 брони в руках
+        }
+    }
+}
+
+void SetDrug( Critter& cr, uint16 drugPid )
+{
+    if( drugPid == PID_JET_ANTIDOTE )
+    {
+        uint[] rates;
+        uint count = cr.GetTimeEvents( PID_JET, null, null, rates );
+        for( uint i = 0; i < count; i++ )
+            DropDrug( cr, PID_JET, RATE_TO_STAGE( rates[ i ] ) );
+        cr.EraseTimeEvents( PID_JET );
+        if( count > 0 && cr.Addiction[ ADDICTION_JET ] != 0 )
+        {
+            cr.AddictionBase[ ADDICTION_JET ] = 0;
+            cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_DRUG_ADDICTION_END );
+        }
+        else
+            cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_DRUG_NOTHING_HAPPENS );
+        return;
+    }
+
+    // Chem flags
+    uint flags = 0;
+    if( cr.Trait[ TRAIT_CHEM_RELIANT ] != 0 )
+        flags |= DRUG_EFFECT_DIV2_WITHDRAWAL | DRUG_EFFECT_MUL2_ADDICTION;
+    if( cr.Trait[ TRAIT_CHEM_RESISTANT ] != 0 )
+        flags |= DRUG_EFFECT_DIV2_ADDICTION | DRUG_EFFECT_DIV2_DURATION;
+
+    // Other drugs
+    uint[] indexes;
+    uint[] rates;
+    uint count = cr.GetTimeEvents( drugPid, indexes, null, rates );
+    int  index = GetDrugTableIndex( drugPid );
+
+    // Check
+    if( DrugEffects[ index + TABLE_DRUG_ADDICT ] >= 0 ) // Addiction perk aviability
+    {
+        uint positive = 0;
+        uint negative = 0;
+        for( uint i = 0; i < count; i++ )
+        {
+            uint stage = RATE_TO_STAGE( rates[ i ] );
+            if( stage <= 1 )
+                positive++;
+            else if( stage == 2 )
+                negative++;
+        }
+
+        if( positive >= 2 - negative / 2 )
+        {
+            int addict = DrugEffects[ index + TABLE_DRUG_ADDICT ];
+            int addictProc = DrugEffects[ index + TABLE_DRUG_PROC ];
+            if( FLAG( flags, DRUG_EFFECT_MUL2_ADDICTION ) )
+                addictProc *= 2;
+            if( FLAG( flags, DRUG_EFFECT_DIV2_ADDICTION ) )
+                addictProc /= 2;
+            if( cr.Addiction[ addict ] == 0 && Random( 1, 100 ) <= addictProc )
+                cr.AddictionBase[ addict ] = 1;
+            else
+                cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_DRUG_NOTHING_HAPPENS );
+            return;
+        }
+    }
+
+    // Clear active addictions
+    uint deleted = 0;   // After erase indexes decrement on one position
+    for( uint i = 0; i < count; i++ )
+    {
+        uint stage = RATE_TO_STAGE( rates[ i ] );
+        if( stage >= 3 )
+        {
+            DropDrug( cr, drugPid, stage );
+            cr.EraseTimeEvent( indexes[ i ] - deleted );
+            deleted++;
+        }
+    }
+
+    // Set critter time event
+    cr.AddTimeEvent( "cte_Drug", 0, drugPid, FORM_RATE( 0, flags ) );
+}
+
+int GetDrugTableIndex( uint16 drugPid )
+{
+    int index = 0;
+    switch( drugPid )
+    {
+    case PID_STIMPAK:
+        index = 0;
+        break;
+    case PID_RADAWAY:
+        index = 1;
+        break;
+    case PID_ANTIDOTE:
+        index = 2;
+        break;
+    case PID_MENTATS:
+        index = 3;
+        break;
+    case PID_MUTATED_FRUIT:
+        index = 4;
+        break;
+    case PID_IGUANA_ON_A_STICK:
+        index = 5;
+        break;
+    case PID_BUFFOUT:
+        index = 6;
+        break;
+    case PID_MEAT_ON_A_STICK:
+        index = 7;
+        break;
+    case PID_NUKA_COLA:
+        index = 8;
+        break;
+    case PID_RAD_X:
+        index = 9;
+        break;
+    case PID_PSYCHO:
+        index = 10;
+        break;
+    case PID_BEER:
+        index = 11;
+        break;
+    case PID_BOOZE:
+        index = 12;
+        break;
+    case PID_SUPER_STIMPAK:
+        index = 13;
+        break;
+    case PID_JET:
+        index = 14;
+        break;
+    case PID_JET_ANTIDOTE:
+        index = 15;
+        break;
+    case PID_HEALING_POWDER:
+        index = 16;
+        break;
+    case PID_GAMMA_GULP_BEER:
+        index = 17;
+        break;
+    case PID_ROENTGEN_RUM:
+        index = 18;
+        break;
+    case PID_HYPO_POISON:
+        index = 19;
+        break;
+    case PID_COOKIE:
+        index = 20;
+        break;
+    case PID_MONUMENT_CHUNCK:
+        index = 21;
+        break;
+    case PID_ROT_GUT:
+        index = 22;
+        break;
+    case PID_MUTATED_TOE:
+        index = 23;
+        break;
+    case PID_KITTY_SEX_DRUG_AGILITY:
+        index = 24;
+        break;
+    case PID_KITTY_SEX_DRUG_INTELLIGENCE:
+        index = 25;
+        break;
+    case PID_KITTY_SEX_DRUG_STRENGTH:
+        index = 26;
+        break;
+    case PID_HYPO:
+        index = 27;
+        break;
+    case PID_BOX_OF_DOUGHNUTS:
+        index = 28;
+        break;
+    default:
+        break;
+    }
+    index *= 30;
+    return index;
+}
+
+uint ProcessDrug( Critter& cr, uint16 drugPid, uint& rate )
+{
+    uint stage = RATE_TO_STAGE( rate );
+    uint flags = RATE_TO_FLAGS( rate );
+
+    if( cr.IsDead() )
+        return REAL_MINUTE( 5 );               // Stop drug processing
+    if( drugPid == PID_JET && stage >= 4 )
+        return REAL_HOUR( 5 );                 // Only after Jet Antidote was used
+
+    int  index = GetDrugTableIndex( drugPid );
+    uint duration = 0;
+
+    if( stage == 0 || // Instant effect
+        stage == 1 || // Withdrawal
+        stage == 2 || // Normalize
+        stage == 3 || // Addiction begin
+        stage == 4 )  // Addiction end
+    {
+        for( uint i = 0; i < 4; i++ )
+        {
+            int stat = DrugEffects[ index + TABLE_STAT( i ) ];
+            int amount = DrugEffects[ index + TABLE_AMOUNT( i, stage ) ];
+            if( i == 1 && DrugEffects[ index + TABLE_STAT( 0 ) ] == -2 )
+                amount = Random( DrugEffects[ index + TABLE_AMOUNT( 0, stage ) ], amount );                                              // Take first
+            if( stat < 0 )
+                continue;
+
+            int statVal = cr.Stat[ stat ];
+            if( stat < STAT_EXT_BEGIN )
+                cr.StatBase[ STAT_EXT_BEGIN + stat ] += amount;
+            else if( stat == ST_CURRENT_HP )
+            {
+                cr.StatBase[ ST_CURRENT_HP ] = CLAMP( statVal + amount, -9999, cr.Stat[ ST_MAX_LIFE ] );
+                if( amount < 0 && cr.Stat[ ST_CURRENT_HP ] < 0 )
+                    cr.ToDead( Random( 0, 1 ) == 0 ? ANIM2_DEAD_FRONT : ANIM2_DEAD_BACK, null );
+            }
+            else if( stat == ST_POISONING_LEVEL )
+                AffectPoison( cr, amount );                                        // cr.SetStat(ST_POISONING_LEVEL,CLAMP(statVal+amount,0,2000));
+            else if( stat == ST_RADIATION_LEVEL )
+                AffectRadiation( cr, amount );                                     // cr.SetStat(ST_RADIATION_LEVEL,CLAMP(statVal+amount,0,2000));
+            else
+                continue;
+
+            statVal = cr.Stat[ stat ] - statVal;
+            if( statVal > 0 )
+                cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_DRUG_STAT_GAIN, "$name @msg game " + STR_PARAM_NAME( stat ) + "@$value" + statVal );
+            else if( statVal < 0 )
+                cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_DRUG_STAT_LOSE, "$name @msg game " + STR_PARAM_NAME( stat ) + "@$value" + ( -statVal ) );
+        }
+
+        int addict = DrugEffects[ index + TABLE_DRUG_ADDICT ];
+        if( stage == 0 )     // To withdrawal
+        {
+            duration = DrugEffects[ index + TABLE_DURATION( stage ) ];
+            if( FLAG( flags, DRUG_EFFECT_DIV2_DURATION ) )
+                duration /= 2;
+            // Try set addiction perk
+            int addictProc = DrugEffects[ index + TABLE_DRUG_PROC ];
+            if( FLAG( flags, DRUG_EFFECT_MUL2_ADDICTION ) )
+                addictProc *= 2;
+            if( FLAG( flags, DRUG_EFFECT_DIV2_ADDICTION ) )
+                addictProc /= 2;
+            if( stage == 0 && addict >= 0 && Random( 1, 100 ) <= addictProc )
+                cr.AddictionBase[ addict ] = 1;
+        }
+        else if( stage == 1 )     // To normalize
+        {
+            duration = DrugEffects[ index + TABLE_DURATION( stage ) ];
+            if( FLAG( flags, DRUG_EFFECT_DIV2_DURATION ) )
+                duration /= 2;
+        }
+        else if( stage == 2 && addict >= 0 && cr.Addiction[ addict ] != 0 ) // To addiction
+        {
+            // Find already processed addiction
+            uint[] rates;
+            uint count = cr.GetTimeEvents( drugPid, null, null, rates );
+            bool isPresent = false;
+            for( uint i = 0; i < count; i++ )
+            {
+                if( RATE_TO_STAGE( rates[ i ] ) >= 3 )
+                {
+                    isPresent = true;
+                    break;
+                }
+            }
+            if( not isPresent )
+                duration = DrugEffects[ index + TABLE_DURATION( stage ) ];
+        }
+        else if( stage == 3 )     // To end of addiction
+        {
+            duration = DrugEffects[ index + TABLE_DURATION( stage ) ];
+            if( FLAG( flags, DRUG_EFFECT_DIV2_WITHDRAWAL ) )
+                duration /= 2;
+        }
+        else if( stage == 4 )     // End of addiction
+        {
+            cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_DRUG_ADDICTION_END );
+            if( addict >= 0 && cr.Addiction[ addict ] != 0 )
+                cr.AddictionBase[ addict ] = 0;
+        }
+    }
+
+    stage++;
+    rate = FORM_RATE( stage, flags );
+    return duration * 60;
+}
+
+void DropDrug( Critter& cr, uint16 drugPid, uint stage )
+{
+    if( stage == 0 || stage == 3 )
+        return;                           // Instant effect not happens or already normalize or wait Addidional effect
+
+    int index = GetDrugTableIndex( drugPid );
+
+    if( stage == 1 || // Instant effect already
+        stage == 2 || // Withdrawal already
+        stage == 4 )  // Addiction already
+    {
+        for( uint i = 0; i < 4; i++ )
+        {
+            int stat = DrugEffects[ index + TABLE_STAT( i ) ];
+            int amount = DrugEffects[ index + TABLE_AMOUNT( i, stage + ( stage == 1 ? -1 : 0 ) ) ]; // Turn
+            if( stage == 1 )
+                amount = -amount;
+            if( stat < STAT_EXT_BEGIN )
+                cr.StatBase[ STAT_EXT_BEGIN + stat ] += amount;
+        }
+    }
+}
+
+uint cte_Drug( Critter& cr, int identifier, uint& rate )
+{
+    return ProcessDrug( cr, identifier, rate );
+}

@@ -1,0 +1,35 @@
+// Математические макросы
+
+// MIN(a,b) - Минимальное число из двух
+// MIN(a,b) - Максимальное число из двух
+// POW2(a) - Вторая степень числа
+// POW3(a) - Третья степень числа
+
+#ifndef __MATH__
+#define __MATH__
+
+#define POW2                # (a)                 ( ( a ) * ( a ) )
+#define POW3                # (a)                 ( ( a ) * ( a ) * ( a ) )
+#define POW                                                                   \
+    # ( x, y )                for( int ___i = 1, ___j = x; ___i < y; ___i++ ) \
+        x *= ___j
+#define MIN                 # ( a, b )( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
+#define MAX                 # ( a, b )( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
+#define CLAMP               # ( x, low, high )( ( ( x ) > ( high ) ) ? ( high ) : ( ( ( x ) < ( low ) ) ? ( low ) : ( x ) ) )
+#define ABS                 # (val)                ( ( ( val ) > 0 ) ? ( val ) : -( val ) )
+#define DISTANCE            # ( x1, y1, x2, y2 )( sqrt( POW2( ( x1 ) - ( x2 ) ) + POW2( ( y1 ) - ( y2 ) ) ) )
+
+#define MAKEWORD            # ( a, b )( uint16( ( uint8( a ) ) | ( uint16( uint8( b ) ) ) << 8 ) )
+#define MAKELONG            # ( a, b )( int32( ( uint16( a ) ) | ( uint32( uint16( b ) ) ) << 16 ) )
+#define LOWORD              # (l)               ( uint16( l ) )
+#define HIWORD              # (l)               ( uint16( ( uint32( l ) >> 16 ) & 0xFFFF ) )
+#define LOBYTE              # (w)               ( uint8( w ) )
+#define HIBYTE              # (w)               ( uint8( ( uint16( w ) >> 8 ) & 0xFF ) )
+
+#define LBS_TO_GRAMM        # (lbs)       ( ( lbs ) * 453 )
+
+#define NUMERICAL_NUMBER    # (num)   ( ( ( num ) % 2 ) != 0 ? ( num ) * ( ( num ) / 2 + 1 ) : ( num ) * ( num ) / 2 + ( num ) / 2 )
+#define RANDOM_CHANCE		(float(Random(1, 10000)) / 100.0f)
+#define HAS_CHANCE			# (chance) (RANDOM_CHANCE <= chance)
+
+#endif // __MATH__

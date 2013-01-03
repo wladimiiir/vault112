@@ -1,0 +1,53 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 1 #
+2 1010 D _var p ron_winkley = 0 #
+5 1020 D _var p ron_winkley > 0 @
+2 2000 None 0 #
+3 2010 #
+0 2020 @
+3 3000 None 0 #
+4 3010 R _var p ron_winkley = 1 #
+0 3020 R _var p ron_winkley = 1 @
+4 4000 None 0 #
+65506 4010 @
+5 5000 None 0 #
+65506 5010 #
+6 5020 D _var p ron_winkley < 2 D _param p SK_SMALL_GUNS } 180 R _var p ron_winkley = 2 #
+0 5030 @
+6 6000 None 0 #
+5 6010 #
+0 6020 &
+
+[engl]
+{100}{}{Ron Winkley}
+{200}{}{Ron Winkley, the jail warden.}
+{210}{}{Jail warden, who puts offenders in jail and releases them on their good beahviour.}
+{1000}{}{Predialogue installations}
+{1010}{}{-}
+{1020}{}{-}
+{2000}{}{Don't make any trouble and you will be just fine!}
+{2010}{}{Well, that's one way how you can say hello to strangers.}
+{2020}{}{Okey, I won't.}
+{3000}{}{Oh, yea, sorry. I am Ron Winkley, the local jail warden. Taking care of prisoners and stuff like that, hehe. Can I be of any assistance?}
+{3010}{}{I noticed you are picking up stuff of those who are taken to jail. Maybe you would like to get rid of some of that?}
+{3020}{}{Well, no, thanks. I don't think you can help me with anything.}
+{4000}{}{That's true. Well we can make some deal, but I will accept only caps. I don't want any more heavy rubish here.}
+{4010}{}{Fair enough. Let me see what have you got?}
+{5000}{}{Keep your weapon down and there will be no problem!@@Don't steal and everyone will be happy.@@Please, just don't make any mess here.@@No shooting in here, okey?}
+{5010}{}{Can I see what you have got for sale?}
+{5020}{}{I am good with guns myself and I would like to join your guards. Do you have any vacancies?}
+{5030}{}{Uh, okey.}
+{6000}{}{Not at the moment, no. But I am sure I will need some manpower later, so if you prove yourself worthy, I will let you then.}
+{6010}{}{Okey, then. Let me ask you something else.}
+{6020}{}{Okey, then, I will be back later.}
+
+lse.}
+{6020}{}{Okey, then, I will be back later.}
+

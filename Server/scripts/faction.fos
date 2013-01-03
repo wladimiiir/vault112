@@ -1,0 +1,164 @@
+#include "_macros.fos"
+#include "admin_h.fos"
+#include "_factions.fos"
+#include "loot_items.fos"
+#include "stdlib_h.fos"
+
+import uint[] GetOnlinePlayers() from "online_players";
+
+/**
+* Run script functions
+*/
+void SetFaction(Critter& cr, int critterId, int faction, int)
+{
+	Critter@ critter = GetCritter(critterId);
+	if(!valid(critter))
+		return;
+	
+	critter.ParamBase[FACTION] = faction;
+}
+
+/**
+* Server scripts
+*/
+void ShowFactionMenu(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	string@ menuItems = "";
+	switch(actionType)
+	{
+		case ACTION_TYPE_CRITTER:
+			menuItems += "Set faction:faction@ShowSetFactionMenu;";
+			menuItems += "Add items:faction@ShowAddItemsMenu;";
+			break;
+		case ACTION_TYPE_ITEM:
+			break;
+		case ACTION_TYPE_HEX:
+			menuItems += "Show location:faction@OpenLocationFactionMenu;";
+			break;
+	}
+	menuItems += "Send message:faction@ShowSendMessageFactionMenu;";
+	ShowAdminMenu(critter, actionType, menuItems, values);
+}
+
+void ShowSetFactionMenu(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_CRITTER)
+		return;
+	string@ menuItems = "";
+	menuItems += "Junktown:faction@SetFaction$" + FACTION_Junktown + ";";
+	menuItems += "Raiders:faction@SetFaction$" + FACTION_Raiders + ";";
+	menuItems += "BOS:faction@SetFaction$" + FACTION_BrotherhoodOfSteel + ";";
+	menuItems += "Enclave:faction@SetFaction$" + FACTION_Enclave + ";";
+	menuItems += "None:faction@SetFaction$" + FACTION_None + ";";
+	ShowAdminMenu(critter, actionType, menuItems, values);
+}
+
+void SetFaction(Critter& player, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_CRITTER)
+		return;
+	Critter@ critter = GetCritter(values[0]);
+	if(!valid(critter))
+		return;
+	critter.ParamBase[FACTION] = values[1];
+}
+
+void ShowAddItemsMenu(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_CRITTER)
+		return;
+	string@ menuItems = "";
+	menuItems += "Junktown scout:faction@AddItems$0;";
+	menuItems += "Junktown guard:faction@AddItems$1;";
+	ShowAdminMenu(critter, actionType, menuItems, values);
+}
+
+LootDefinition@[] ItemDefinitions = 
+{
+	LootDefinition()
+		.AddItem(PID_LEATHER_ARMOR_MK_II, 1)
+		.AddItem(PID_DESERT_EAGLE_EXT_MAG, 1)
+		.AddItem(PID_44_FMJ_MAGNUM, 100)
+		.AddItem(PID_ASSAULT_RIFLE, 1)
+		.AddItem(PID_5MM_JHP, 200)
+		.AddItem(PID_STIMPAK, 5),
+	LootDefinition()
+		.AddItem(PID_LEATHER_ARMOR_MK_II, 1)
+		.AddItem(PID_SNIPER_RIFLE, 1)
+		.AddItem(PID_223_FMJ, 50)
+		.AddItem(PID_STIMPAK, 3)
+};
+
+void AddItems(Critter& player, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_CRITTER)
+		return;
+	Critter@ critter = GetCritter(values[0]);
+	if(!valid(critter))
+		return;
+		
+	LootDefinition@ loot = ItemDefinitions[values[1]];
+	if(valid(loot))
+		loot.AddItems(critter);
+}
+
+void ShowFactionList(Critter& critter, int actionType, int[]@ values, string actionScript)
+{
+	string@ menuItems = "";
+	menuItems += "Junktown:faction@" + actionScript + "$" + FACTION_Junktown + ";";
+	menuItems += "Raiders:faction@" + actionScript + "$" + FACTION_Raiders + ";";
+	menuItems += "BOS:faction@" + actionScript + "$" + FACTION_BrotherhoodOfSteel + ";";
+	menuItems += "Enclave:faction@" + actionScript + "$" + FACTION_Enclave + ";";
+	ShowAdminMenu(critter, actionType, menuItems, values);
+}
+
+void ShowSendMessageFactionMenu(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	ShowFactionList(critter, actionType, values, "SendFactionMessage");
+}
+
+void SendFactionMessage(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	ShowSayScreen(critter, false, false, "Message", "", "faction@unsafe_FactionMessage", values);
+}
+
+void unsafe_FactionMessage(Critter& critter, int actionType, int, int, string@ message, int[]@ values)
+{
+	uint[] players = GetOnlinePlayers();
+	for (uint i = 0; i < players.length(); i++)
+	{
+		Critter@ player = GetCritter(players[i]);
+		if(!valid(player))
+			continue;
+		if(player.Param[FACTION] == values[values.length()-1])
+			player.RunClientScript("client_screen_messages@ShowServerMessage", 0, 0, 0, message, null);
+	}
+}
+
+void OpenLocationFactionMenu(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	ShowFactionList(critter, actionType, values, "OpenLocation");
+}
+
+void OpenLocation(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_HEX)
+		return;
+	
+	Map@ map = critter.GetMap();
+	if(!valid(map))
+		return;
+	Location@ location = map.GetLocation();
+	if(!valid(location))
+		return;
+	
+	uint[] players = GetOnlinePlayers();
+	for (uint i = 0; i < players.length(); i++)
+	{
+		Critter@ player = GetCritter(players[i]);
+		if(!valid(player))
+			continue;
+		if(player.Param[FACTION] == values[2])
+			player.SetKnownLoc(true, location.Id);
+	}
+}

@@ -1,0 +1,289 @@
+// Generic encounter npc script
+// Author: cvet, rifleman17, Dagnir
+#include "_macros.fos"
+#include "_animation.fos"
+#include "_teams.fos"
+#include "_npc_roles.fos"
+#include "critter_action_basic.fos"
+#include "critter_action_find.fos"
+#include "critter_action_condition.fos"
+#include "critter_action_when.fos"
+
+import bool AddAttackPlane( Critter& npc, uint priority, Critter& target, bool run ) from "npc_planes";
+//import bool AddWalkPlane( Critter& npc, uint priority, int identifier, uint identifierExt, uint16 hexX, uint16 hexY, uint8 dir, bool run, uint cut ) from "npc_planes";
+import void SetDeterioration( Item& item, int deteriorationProcent ) from "repair";
+
+#define MESSAGE_COLLECT_NPC    ( 30 )
+#define MESSAGE_ATTACK_HIM     ( 31 )
+#define MESSAGE_ATTACK_ME      ( 32 )
+#define PLANE_LOOT             ( 30 )
+
+uint LastDeadId = 0;
+uint[] CollectedNpcIds;
+
+const uint[] HEALING_DRUGS = {PID_SUPER_STIMPAK, PID_STIMPAK, PID_HEALING_POWDER};
+const uint16[] FORBIDEN_ITEMS = {PID_DYNAMITE, PID_ACTIVE_DYNAMITE, PID_ACTIVE_PLASTIC_EXPLOSIVE, PID_PLASTIC_EXPLOSIVES, PID_TOGGLE_SWITCH};
+
+void _NpcRoleInit(Critter& npc, bool firstTime)
+{
+	if(firstTime)
+		SetupItems(npc);
+		
+	npc.Wait(Random(2000, 3000));
+	
+	uint npcRole = npc.Stat[ST_NPC_ROLE];
+	switch(npcRole)
+	{
+		case ROLE_ENCOUNTER_TRADER:
+			if(firstTime)
+				npc.StatBase[ST_TALK_DISTANCE] = 5;
+			InitTrader(npc);
+			break;
+		case ROLE_ENCOUNTER_GUARD:
+			InitGuard(npc);
+			break;
+		case ROLE_ENCOUNTER_TRIBAL:
+		//todo
+		case ROLE_ENCOUNTER_HUMAN_EVIL:
+		//todo
+		case ROLE_ENCOUNTER_HUMAN_NEUTRAL:
+		//todo
+		case ROLE_ENCOUNTER_HUMAN_GOOD:
+			InitHumanGood(npc);
+			break;
+		
+		case ROLE_ENCOUNTER_ANIMAL_NEUTRAL:
+		//todo
+		case ROLE_ENCOUNTER_ANIMAL_GOOD:
+		//todo
+		case ROLE_ENCOUNTER_ANIMAL_WEAK:
+		//todo
+		case ROLE_ENCOUNTER_ANIMAL_EVIL:
+			InitAnimalEvil(npc);
+			break;
+	}
+}
+
+void InitTrader(Critter& npc)
+{
+	uint reinforcementMessageNumber = npc.Stat[ST_TEAM_ID];
+	
+	Action@ action = 
+		LoopAction()
+			.AddSubAction(RepeatAtInterval(REAL_SECOND(15))
+				.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70125)))
+			.AddSubAction(ProvideReinforcements(reinforcementMessageNumber)
+				.If(NotAttacking()))
+			.AddSubAction(WhenAttacked()
+				.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70124))
+				.AddSubAction(CallReinforcements(reinforcementMessageNumber))
+				.AddSubAction(Attack()))
+			.AddSubAction(WhenPlaneRun()
+				.If(IsInjured(70, true))
+				.AddSubAction(UseDrug(HEALING_DRUGS)))
+	;
+	AddClaimLootActions(action, reinforcementMessageNumber);
+	
+	actionManager.StartImmediately(npc, action);
+}
+
+void InitGuard(Critter& npc)
+{
+	uint reinforcementMessageNumber = npc.Stat[ST_TEAM_ID];
+	
+	Action@ attackAction = 
+		ChooseOnlyOne()
+			.AddSubAction(FindCritters(FIND_LIFE)
+				.PickRandom()
+				.If(IsSeen())
+				.If(IsEnemy())
+				.AddSubAction(Attack()))
+	;
+
+	Action@ action = 
+		LoopAction()
+			.AddSubAction(@attackAction)
+			.AddSubAction(WhenEnemyFound(PLANE_DISCARD)
+				.AddSubAction(@attackAction))
+			.AddSubAction(ProvideReinforcements(reinforcementMessageNumber)
+				.If(NotAttacking()))
+			.AddSubAction(WatchForThieves(100, 10)
+				.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70117))
+				.AddSubAction(Attack()))
+			.AddSubAction(WhenAttacked()
+				.AddSubAction(CallReinforcements(reinforcementMessageNumber)))
+			.AddSubAction(WhenPlaneRun()
+				.If(IsInjured(70, true))
+				.AddSubAction(UseDrug(HEALING_DRUGS)))
+			.AddSubAction(FindCritters(FIND_LIFE | FIND_ONLY_PLAYERS)
+				.If(IsInRange(20))
+				.If(IsArmed())
+				.AddSubAction(LookAt())
+				.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70126)))
+			.AddSubAction(FindCritters(FIND_LIFE | FIND_ONLY_PLAYERS)
+				.If(IsInRange(5))
+				.If(IsArmed())
+				.AddSubAction(LookAt())
+				.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70127))
+				.AddSubAction(CallReinforcements(reinforcementMessageNumber))
+				.AddSubAction(Attack()))
+			.AddSubAction(CancelSneaking()
+				.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70128)))
+			.AddSubAction(FindCritters(FIND_LIFE | FIND_ONLY_PLAYERS)
+				.If(HasItem(FORBIDEN_ITEMS))
+				.AddSubAction(LookAt())
+				.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70116))
+				.AddSubAction(Wait(REAL_SECOND(5)))
+				.AddSubAction(Attack()
+					.If(IsInRange(30))))
+	;
+	
+	actionManager.StartImmediately(npc, action);
+}
+
+void InitHumanGood(Critter& npc)
+{
+	uint reinforcementMessageNumber = npc.Stat[ST_TEAM_ID];
+	
+	Action@ attackAction = 
+		HasNpcEnemies(npc)
+			? ChooseOnlyOne()
+				.AddSubAction(FindCritters(FIND_LIFE | FIND_ONLY_PLAYERS)
+					.PickRandom()
+					.WithChance(20)
+					.If(IsEnemy())
+					.If(IsSeen())
+					.AddSubAction(Attack()))
+				.AddSubAction(FindCritters(FIND_LIFE)
+					.PickRandom()
+					.If(IsEnemy())
+					.If(IsSeen())
+					.AddSubAction(Attack()))
+			: ChooseOnlyOne()
+				.AddSubAction(FindCritters(WeakestPlayer)
+					.WithChance(70)
+					.If(IsEnemy())
+					.If(IsSeen())
+					.AddSubAction(Attack()))
+				.AddSubAction(FindCritters(FIND_LIFE)
+					.PickRandom()
+					.If(IsEnemy())
+					.If(IsSeen())
+					.AddSubAction(Attack()))
+	;
+
+	Action@ action = 
+		LoopAction()
+			.AddSubAction(@attackAction)
+			.AddSubAction(WhenEnemyFound(PLANE_DISCARD)
+				.AddSubAction(@attackAction))
+			.AddSubAction(ProvideReinforcements(reinforcementMessageNumber)
+				.If(NotAttacking()))
+			.AddSubAction(WhenAttacked()
+				.AddSubAction(CallReinforcements(reinforcementMessageNumber)))
+			.AddSubAction(WhenPlaneRun()
+				.If(IsInjured(70, true))
+				.AddSubAction(UseDrug(HEALING_DRUGS)))
+	;
+	AddClaimLootActions(action, npc.Stat[ST_TEAM_ID]);
+
+	actionManager.StartImmediately(npc, action);
+}
+
+bool HasNpcEnemies(Critter& npc)
+{
+	Map@ map = npc.GetMap();
+	if(!valid(map))
+		return false;
+		
+	Critter@[] npcs;
+	map.GetCritters(0, FIND_LIFE | FIND_ONLY_NPC, npcs);
+	
+	for (uint i = 0; i < npcs.length(); i++)
+		if(npcs[i].Stat[ST_TEAM_ID] != npc.Stat[ST_TEAM_ID]
+			&& npc.CheckEnemyInStack(npcs[i].Id))
+			return true;
+			
+	return false;
+}
+
+void AddClaimLootActions(Action& mainAction, uint reinforcementMessageNumber)
+{
+	mainAction
+		.AddSubAction(WhenSomeoneDead()
+			.If(IsHuman())
+			.If(NoLoots())
+			.If(NoLooters())
+			.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70123))
+			.AddSubAction(Loot()))
+		.AddSubAction(WhenSomeoneLoots()
+			.If(IsMyLoot())
+			.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70120))
+			.AddSubAction(CallReinforcements(reinforcementMessageNumber))
+			.AddSubAction(Attack()))
+	;
+}
+
+void InitAnimalEvil(Critter& npc)
+{
+	Action@ attackAction = 
+		ChooseOnlyOne()
+			.AddSubAction(FindCritters(FIND_LIFE | FIND_ONLY_PLAYERS)
+				.PickRandom()
+				.WithChance(25)
+				.If(IsEnemy())
+				.If(IsSeen())
+				.AddSubAction(Attack()))
+			.AddSubAction(FindCritters(FIND_LIFE | FIND_ONLY_NPC)
+				.PickRandom()
+				.If(IsEnemy())
+				.If(IsSeen())
+				.AddSubAction(Attack()))
+			.AddSubAction(FindCritters(FIND_LIFE)
+				.PickRandom()
+				.If(IsEnemy())
+				.If(IsSeen())
+				.AddSubAction(Attack()))
+	;
+	uint reinforcementMessageNumber = npc.Stat[ST_TEAM_ID];
+	
+	Action@ action = 
+		LoopAction()
+			.AddSubAction(@attackAction)
+			.AddSubAction(WhenEnemyFound(PLANE_DISCARD)
+				.AddSubAction(@attackAction))
+			.AddSubAction(ProvideReinforcements(reinforcementMessageNumber)
+				.If(NotAttacking()))
+			.AddSubAction(WhenAttackEnds()
+				.AddSubAction(SetHome()))
+			.AddSubAction(WhenAttacked()
+				.AddSubAction(CallReinforcements(reinforcementMessageNumber)))
+	;
+			
+	actionManager.StartImmediately(npc, action);
+}
+
+void SetupItems(Critter& npc)
+{
+	Item@[] items;
+	npc.GetItems( -1, items );
+	bool favrtAmmoSet = false;
+	bool favrtWpnSet  = false;
+	for( uint i = 0, j = items.length(); i < j; i++ )
+	{
+		SetDeterioration( items[ i ], Random( 80, 95 ) );
+		if( items[ i ].GetType() == ITEM_TYPE_WEAPON && !favrtWpnSet )
+		{
+			npc.SetFavoriteItem( SLOT_HAND1, items[ i ].GetProtoId() );
+			npc.StatBase[ST_LAST_WEAPON_ID] = items[i].Id;
+			npc.StatBase[ST_LAST_WEAPON_USE] = 0;
+			favrtWpnSet = true;
+		}
+		/*	if(items[i].GetType() == ITEM_TYPE_AMMO && !favrtAmmoSet)
+				{
+						npc.SetFavoriteItem(SLOT_HAND2, items[i].GetProtoId());
+						favrtAmmoSet = true;
+						continue;
+				} */
+	}
+}

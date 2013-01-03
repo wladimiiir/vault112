@@ -1,0 +1,407 @@
+// Author: heX, cvet, Tab10id
+#include "_macros.fos"
+
+import void FlushScreen( Critter& cr, bool fadeOut, uint timeMs ) from "effects";
+import bool AddAttackPlane( Critter& npc, uint priority, Critter& target ) from "npc_planes";
+import void InjureCritter( Critter& cr, uint dmg, uint dmgType, uint8 dir, uint attackerId ) from "combat";
+import int  NextLevelNeedExp( Critter& cr ) from "parameters";
+
+// Npc scan radius
+#define WARN_DIST                ( 10 )
+
+// Roll vs skill
+#define ROLL_CRITICAL_FAILURE    ( 0 )
+#define ROLL_FAILURE             ( 1 )
+#define ROLL_SUCCESS             ( 2 )
+#define ROLL_CRITICAL_SUCCESS    ( 3 )
+
+int RollVsSkill( Critter& cr, uint skillIndex, int bonus )
+{
+    int skVal = cr.Skill[ skillIndex ];
+    int r = Random( 1, 100 );
+
+    if( skVal + bonus >= r )
+    {
+        if( Random( 1, 100 ) <= ( ( ( skVal - r ) / 10 ) + cr.StatBase[ ST_CRITICAL_CHANCE ] ) )
+            return ROLL_CRITICAL_SUCCESS;
+        else
+            return ROLL_SUCCESS;
+    }
+    else
+    {
+        if( Random( 1, 100 ) <= ( r - skVal ) / 10 )
+            return ROLL_CRITICAL_FAILURE;
+        else
+            return ROLL_FAILURE;
+    }
+}
+
+bool IsSuccessRvS( int val )
+{
+    return val == ROLL_CRITICAL_SUCCESS || val == ROLL_SUCCESS;
+}
+
+bool IsCriticalRvS( int val )
+{
+    return val == ROLL_CRITICAL_SUCCESS || val == ROLL_CRITICAL_FAILURE;
+}
+
+void HealCritter( Critter& player )
+{
+    if( player.IsDead() )
+        player.ToLife();
+    player.StatBase[ ST_CURRENT_HP ] = player.Stat[ ST_MAX_LIFE ];
+}
+
+bool TransitToLoc( Critter& cr, uint16 locPid, uint mapIndex, uint entranceNum )
+{
+    Location@ loc = GetLocationByPid( locPid, 0 );
+    if( not valid( loc ) )
+        return false;
+
+    Map@ map = loc.GetMapByIndex( mapIndex );
+    if( not valid( map ) )
+        return false;
+
+    FlushScreen( cr, true, 3000 );
+    return cr.TransitToMap( map.Id, entranceNum );
+}
+
+bool TransitToMap( Critter& cr, uint16 mapPid, uint entranceNum )
+{
+    Map@ map = GetMapByPid( mapPid, 0 );
+    if( not valid( map ) )
+        return false;
+
+    FlushScreen( cr, true, 3000 );
+    return cr.TransitToMap( map.Id, entranceNum );
+}
+
+bool TransitToNewLocation( Critter& cr, uint16 locPid )
+{
+    Critter@[] group = { cr };
+
+    uint locId = CreateLocation( locPid, cr.WorldX, cr.WorldY, group );
+    if( locId == 0 )
+        return false;
+
+    Location@ loc = GetLocation( locId );
+    loc.Visible = false;
+    loc.GeckVisible = false;
+    loc.AutoGarbage = true;
+
+    FlushScreen( cr, true, 3000 );
+    return cr.TransitToMap( loc.GetMapByIndex( 0 ).Id, 0 );
+}
+
+void InfoMessage( Critter& player, Critter& npc, uint strNum )
+{
+    player.SayMsg( SAY_NETMSG, TEXTMSG_DLG, DLGSTR( npc.Stat[ ST_DIALOG_ID ], strNum ) );
+}
+
+void NpcMessageNorm( Critter& npc, uint strNum )
+{
+    npc.SayMsg( SAY_NORM_ON_HEAD, TEXTMSG_DLG, DLGSTR( npc.Stat[ ST_DIALOG_ID ], strNum ) );
+}
+
+void NpcMessageShout( Critter& npc, uint strNum )
+{
+    npc.SayMsg( SAY_SHOUT_ON_HEAD, TEXTMSG_DLG, DLGSTR( npc.Stat[ ST_DIALOG_ID ], strNum ) );
+}
+
+void NpcMessageWhisp( Critter& npc, uint strNum )
+{
+    npc.SayMsg( SAY_WHISP_ON_HEAD, TEXTMSG_DLG, DLGSTR( npc.Stat[ ST_DIALOG_ID ], strNum ) );
+}
+
+void NpcMessageEmo( Critter& npc, uint strNum )
+{
+    npc.SayMsg( SAY_EMOTE_ON_HEAD, TEXTMSG_DLG, DLGSTR( npc.Stat[ ST_DIALOG_ID ], strNum ) );
+}
+
+void TimeoutSet( Critter& npc, uint gameHours )
+{
+    GameVar@ t = GetLocalVar( LVAR_timeout, npc.Id );
+    t = __FullSecond + gameHours * 60 * 60;
+}
+
+void TimeoutSub( Critter& npc, uint gameHoursSub )
+{
+    GameVar@ t = GetLocalVar( LVAR_timeout, npc.Id );
+    t -= gameHoursSub * 60 * 60;
+}
+
+void TimeoutAdd( Critter& npc, uint gameHoursAdd )
+{
+    GameVar@ t = GetLocalVar( LVAR_timeout, npc.Id );
+    t += gameHoursAdd * 60 * 60;
+}
+
+void GroupSetVar( Critter& player, uint16 varId, int value )
+{
+    Critter@[] group = { player };
+    player.GetFollowGroup( FIND_ALL, group );
+    for( uint i = 0, j = group.length(); i < j; i++ )
+    {
+        GameVar@ var = GetLocalVar( varId, group[ i ].Id );
+        if( not valid( var ) )
+            return;                        // Wrong varId
+        var = value;
+    }
+}
+
+void Warn( Critter& player, int npcRole )
+{
+    if( not player.IsPlayer() )
+        return;
+
+    Critter@ npc = GetNearCritterWithRole( player.GetMap(), player.HexX, player.HexY, WARN_DIST, npcRole );
+    if( not valid( npc ) )
+        return;
+
+    npc.SayMsg( SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 1001 );
+}
+
+void DoorControl( Critter& player, uint entireNum, bool toOpen )
+{
+    Map@   map = player.GetMap();
+    uint16 x = 0, y = 0;
+    if( valid( map ) && map.GetEntireCoords( entireNum, 0, x, y ) )
+    {
+        Item@ door = map.GetDoor( x, y );
+        if( valid( door ) )
+        {
+            if( toOpen )
+                door.LockerOpen();
+            else
+                door.LockerClose();
+        }
+    }
+}
+
+bool DialogNpc( Critter& player, int role )
+{
+    if( not player.IsPlayer() )
+        return false;
+
+    Critter@ npc = GetNearCritterWithRole( player.GetMap(), player.HexX, player.HexY, WARN_DIST, role );
+    if( not valid( npc ) )
+        return false;
+
+    player.Wait( 0 );
+    return RunDialog( player, npc, true );
+}
+
+Critter@ GetNearCritterWithRole( Map@ map, uint16 hexX, int hexY, uint radius, int role )
+{
+    Critter@[] critters;
+    uint     count = map.GetCrittersHex( hexX, hexY, radius, FIND_LIFE, critters );
+    uint     minDist = 10000;
+    Critter@ nearCrit = null;
+    for( uint i = 0; i < count; i++ )
+    {
+        if( critters[ i ].StatBase[ ST_NPC_ROLE ] == role )
+        {
+            uint d = GetDistantion( hexX, hexY, critters[ i ].HexX, critters[ i ].HexY );
+            if( d < minDist )
+            {
+                minDist = d;
+                @nearCrit = critters[ i ];
+            }
+        }
+    }
+    return nearCrit;
+}
+
+
+/**
+   атаковать игрока
+   »спользовать этот тригер дл€ охраны серьезных обьектов не рекомендуетьс€.
+   param=1
+ */
+void Attack( Critter& player, int npcRole )
+{
+    if( not player.IsPlayer() )
+        return;
+    Map@ map = player.GetMap();
+    uint count = map.GetNpcCount( npcRole, FIND_LIFE_AND_KO | FIND_ONLY_NPC );
+    for( uint i = 0; i < count; i++ )
+        AddAttackPlane( map.GetNpc( npcRole, FIND_LIFE_AND_KO | FIND_ONLY_NPC, i ),
+                        AI_PLANE_ATTACK_PRIORITY + 1, player );
+    return;
+}
+
+/**
+   охрана останавливает атаку
+   param=1
+ */
+void AttackStop( Critter& player, int npcRole )
+{
+    if( not player.IsPlayer() )
+        return;
+    Map@ map = player.GetMap();
+    uint count = map.GetNpcCount( npcRole, FIND_LIFE_AND_KO | FIND_ONLY_NPC );
+    NpcPlane@[] planes;
+    for( uint i = 0; i < count; i++ )
+    {
+        Critter@ npc = map.GetNpc( npcRole, FIND_LIFE_AND_KO | FIND_ONLY_NPC, i );
+        planes.resize( 0 );
+        uint     count = npc.GetPlanes( planes );
+        // проходимс€ по списку планов в поисках маркированного плана
+        for( uint j = 0; j < count; j++ )
+            if( ( planes[ j ].Attack_TargId == player.Id ) and
+                ( planes[ j ].Priority == AI_PLANE_ATTACK_PRIORITY + 1 ) )
+                if( npc.ErasePlane( j ) )
+                    npc.EraseEnemyFromStack( player.Id );
+    }
+    return;
+}
+
+/**
+   убивает игрока особой смертью
+   type - тип смерти (COND_DEAD_*)
+ */
+void Kill( Critter& player, int type )
+{
+    if( not player.IsPlayer() )
+        return;
+    player.ToDead( type, null );
+    return;
+}
+
+
+/**
+   повреждает игрока
+   dmg - сколько
+   type - тип повреждени€ (DAMAGE_*)
+ */
+void Damage( Critter& player, int dmg, int type, int dir )
+{
+    if( not player.IsPlayer() )
+        return;
+    InjureCritter( player, dmg, type, dir, 0 );
+    return;
+}
+
+/** “елепортирует игрока на указанную точке на карте в рамках указанной локации.
+ *
+ * @param  cr           ѕеремещаемый криттер.
+ * @param  locPid       PID локации (см. @b CITY.TXT).
+ * @param  mapIndex     Ќомер карты на локации.
+ * @param  entranceNum  Ќомер точки входа.
+ *
+ */
+bool TransitToMap( Critter& cr, int locPid, int mapIndex, int entranceNum )
+{
+    Location@ location = GetLocationByPid( locPid, 0 );
+
+    if( location is null )
+    {
+        Log( "Location with given PID (" + locPid + ") isn't found" );
+        return false;
+    }
+
+    Map@ map = location.GetMapByIndex( mapIndex );
+
+    if( map is null )
+    {
+        Log( "Map with given index (" + mapIndex + ") isn't found on location with PID (" + locPid + ")" );
+        return false;
+    }
+
+    if( cr.IsPlayer() )
+    {
+        FlushScreen( cr, true, 3000 );
+    }
+
+    return cr.TransitToMap( map.Id, entranceNum );
+}
+
+
+
+// ƒинамическа€ награда за квесты
+// base = база расчета опыта в процентах от уровн€, от 1 до 25 макс
+void QuestRewardExperience( Critter& cr, uint8 base )
+{
+    cr.StatBase[ ST_EXPERIENCE ] += CLAMP( ( cr.Stat[ ST_LEVEL ] * 1000 ) * CLAMP( base, 1, 100 ) / 100, 0, 100000 );
+}
+
+// ”станавливает прирост навыка в зависимости от уровн€ навыка криттера
+#define STR_SKILL_UP    ( 15 )
+void SkillUp( Critter& player, int skill )
+{
+    uint value = 9;     // Ѕазовый прирост, навык меньше 81
+    if( player.Skill[ skill ] > 80 && player.Skill[ skill ] < 101 )
+        value = 7;
+    if( player.Skill[ skill ] > 100 )
+        value = 5;
+    player.SkillBase[ skill ] += value;
+    player.SayMsg( SAY_NETMSG, TEXTMSG_TEXT, STR_SKILL_UP, "$skill @msg GAME " + ( ( 10000 + skill ) * 10 + 1 ) + "@" + "$value" + value );
+}
+
+void SkillAdd(Critter& player, int skill, int value)
+{
+	uint sp = 0;
+	while(value > 0)
+	{
+		if(player.Skill[skill] + sp > __SkillModAdd6)
+			value -= 6;
+		else if(player.Skill[skill] + sp > __SkillModAdd5)
+			value -= 5;
+		else if(player.Skill[skill] + sp > __SkillModAdd4)
+			value -= 4;
+		else if(player.Skill[skill] + sp > __SkillModAdd3)
+			value -= 3;
+		else if(player.Skill[skill] + sp > __SkillModAdd2)
+			value -= 2;
+		else
+			value -= 1;
+		if(value >= 0)
+			sp++;
+	}
+	player.SkillBase[skill] += sp;
+}
+
+void CheckMaleCrType(uint crBaseType, uint& crType)
+{
+	if(crBaseType == CRTYPE_LHD_JUMPSUIT)
+	{
+		if( crType == CRTYPE_DW_LEATHER_ARMOR_M )
+			crType = CRTYPE_LHD_LEATHER_ARMOR;
+		else if( crType == CRTYPE_DW_LEATHER_JACKET_M )
+			crType = CRTYPE_LHD_LEATHER_JACKET;
+		else if( crType == CRTYPE_DW_METAL_ARMOR_M )
+			crType = CRTYPE_LHD_METAL_ARMOR;
+		//~ else if( crType == CRTYPE_DW_METAL_ARMOR_MK2_M )
+			//~ crType = CRTYPE_LHD_METAL_ARMOR_MK2;
+		//~ else if( crType == CRTYPE_DW_LEATHER_ARMOR_MK2_M )
+			//~ crType = CRTYPE_LHD_LEATHER_ARMOR_MK2;
+		//~ else if( crType == CRTYPE_DW_TESLA_ARMOR_M )
+			//~ crType = CRTYPE_LHD_TESLA_ARMOR;
+		//~ else if( crType == CRTYPE_DW_JUMPSUIT_M )
+			//~ crType = CRTYPE_LHD_JUMPSUIT;
+	}
+	/*else if(crBaseType == CRTYPE_BD_LEATHER_JACKET)
+	{
+		if( crType == CRTYPE_DW_LEATHER_ARMOR_M )
+			crType = CRTYPE_BD_LEATHER_ARMOR;
+		else if( crType == CRTYPE_DW_LEATHER_JACKET_M )
+			crType = CRTYPE_BD_LEATHER_JACKET;
+		else if( crType == CRTYPE_DW_METAL_ARMOR_M )
+			crType = CRTYPE_BD_METAL_ARMOR;
+		else if( crType == CRTYPE_DW_METAL_ARMOR_MK2_M )
+			crType = CRTYPE_BD_METAL_ARMOR_MK2;
+		else if( crType == CRTYPE_DW_LEATHER_ARMOR_MK2_M )
+			crType = CRTYPE_BD_LEATHER_ARMOR_MK2;
+		else if( crType == CRTYPE_DW_TESLA_ARMOR_M )
+			crType = CRTYPE_BD_TESLA_ARMOR;
+		else if( crType == CRTYPE_DW_JUMPSUIT_M )
+			crType = CRTYPE_BD_JUMPSUIT;
+	}*/
+}
+
+void ShowSayScreen(Critter& critter, bool onlyNumbers, bool closeOnDone, string title, string initialText, string answerScript, int[]@ values)
+{
+	critter.RunClientScript("client_screen_custom_say@ShowSayScreen", 
+		onlyNumbers ? 1 : 0, closeOnDone ? 1 : 0, 0, title +"^"+ initialText +"^"+answerScript, values);
+}

@@ -1,0 +1,70 @@
+// Author: cvet
+// Used in client
+
+#ifndef _SPRITE_
+#define _SPRITE_
+
+class Sprite
+{
+    Sprite()
+    {
+        Id = 0;
+        Width = 0;
+        Height = 0;
+        FrmCount = 0;
+    }
+
+    void Load( string& name, int path )
+    {
+        if( name.length() > 0 )
+            Id = LoadSprite( name, path );
+        else
+            Id = 0;
+        RefreshData();
+    }
+
+    void Load( uint nameHash, uint8 dir )
+    {
+        Id = LoadSprite( nameHash, dir );
+        RefreshData();
+    }
+
+    void LoadByIni( string& iniKey, int path )
+    {
+        string@ name = GetIfaceIniStr( iniKey );
+        if( @name != null && name.length() > 0 )
+            Id = LoadSprite( name, path );
+        else
+            Id = 0;
+        RefreshData();
+    }
+
+    void Draw( int x, int y )
+    {
+        if( Id != 0 )
+            DrawSprite( Id, -1, x, y, 0 );
+    }
+
+    private void RefreshData()
+    {
+        if( Id != 0 )
+        {
+            Width = GetSpriteWidth( Id, 0 );
+            Height = GetSpriteHeight( Id, 0 );
+            FrmCount = GetSpriteCount( Id );
+        }
+        else
+        {
+            Width = 0;
+            Height = 0;
+            FrmCount = 0;
+        }
+    }
+
+    uint Id;
+    int  Width;
+    int  Height;
+    uint FrmCount;
+}
+
+#endif // _SPRITE_

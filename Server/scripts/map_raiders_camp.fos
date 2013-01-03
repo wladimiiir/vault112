@@ -1,0 +1,104 @@
+#include "_macros.fos"
+#include "_npc_pids.fos"
+#include "_teams.fos"
+#include "_ai.fos"
+#include "entire.fos"
+#include "critter_action_basic.fos"
+#include "critter_action_condition.fos"
+#include "critter_action_find.fos"
+#include "critter_action_when.fos"
+
+#define ENTIRE_RAIDER_SPAWN_POINT	(111)
+
+const uint16 LeaderRaiderPid = 0;
+const uint16[] RaiderPids = {  };
+const int[] ArmorPids = {PID_CURED_LEATHER_ARMOR};
+const int[] WeaponPids = {PID_10MM_SMG, PID_SNIPER_RIFLE, PID_PLASMA_PISTOL, PID_HUNTING_RIFLE, PID_14MM_PISTOL, PID_MAGNETO_LASER_PISTOL, PID_ASSAULT_RIFLE};
+const int[] AmmoPids = {PID_10MM_JHP, PID_223_FMJ, PID_SMALL_ENERGY_CELL, PID_223_FMJ, PID_14MM_AP, PID_SMALL_ENERGY_CELL, PID_5MM_JHP};
+const int[] MiscPids = {PID_SUPER_STIMPAK, PID_PSYCHO, PID_WAKIZASHI_BLADE, PID_STEALTH_BOY, PID_GUNS_AND_BULLETS};
+const uint[] HEALING_DRUGS = {PID_SUPER_STIMPAK, PID_STIMPAK};
+
+void _MapInit( Map& map, bool firstTime )
+{
+	if(!firstTime)
+		return;
+	
+	Entire[] entires;
+	ParseEntires(map, entires, ENTIRE_RAIDER_SPAWN_POINT);
+	
+	while(entires.length() > 0)
+	{
+		uint index = Random(0, entires.length() - 1);
+		uint16 npcPid = entires.length() == 1 ? LeaderRaiderPid : RaiderPids[Random(0, RaiderPids.length() - 1)];
+	
+		AddRaider(map, npcPid, entires[index].HexX, entires[index].HexY);
+	
+		entires.removeAt(index);
+	}
+}
+
+void AddRaider( Map& map, uint16 npcPid, uint16 hexX, uint16 hexY )
+{
+	uint weaponIndex = Random(0, WeaponPids.length() - 1);
+	uint armorIndex = Random(0, ArmorPids.length() - 1);
+	int[] items = { 
+		WeaponPids[weaponIndex], 1, SLOT_HAND1,
+		ArmorPids[armorIndex], 1, SLOT_ARMOR,
+		AmmoPids[weaponIndex], Random(14, 45), SLOT_INV,
+		MiscPids[Random(0, MiscPids.length() - 1)], 1, SLOT_INV,
+		PID_STIMPAK, Random(1, 3), SLOT_INV
+	};
+	int[] params = {
+		ST_TEAM_ID, TEAM_Raider,
+		ST_AI_ID, AIPACKET_GENERAL_RANGED_TOUGH_BAD_GUYS,
+		ST_REPLICATION_TIME, -1
+	};
+	
+	Critter@ npc = map.AddNpc(npcPid, hexX, hexY, Random(0, 5), params, items, "_RaiderInit");
+	if(!valid(npc))
+		return;
+		
+	npc.SetFavoriteItem(SLOT_HAND1, WeaponPids[weaponIndex]);
+	npc.SetFavoriteItem(SLOT_ARMOR, ArmorPids[armorIndex]);
+}
+
+void _RaiderInit( Critter& critter, bool )
+{
+	uint reinforcements = critter.Stat[ST_TEAM_ID];
+	
+	Action@ action = LoopAction()
+		.AddSubAction(ProvideReinforcements(reinforcements))
+		.AddSubAction(WhenPlaneRun()
+				.If(IsInjured(60, true))
+				.AddSubAction(UseDrug(HEALING_DRUGS)))
+		.AddSubAction(WhenAttacked()
+			.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70124))
+			.AddSubAction(CallReinforcements(reinforcements)))
+		.AddSubAction(Patrol(DEFAULT_PATROL_ENTIRE, false, false, true)
+						.WithChance(10))
+		.AddSubAction(FindCritters(FIND_LIFE)
+				.If(NotAttacking())
+				.If(IsSeen())
+				.IfNot(IsTeamMember())
+				.AddSubAction(Attack())
+				.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70124))
+				.AddSubAction(CallReinforcements(reinforcements)))
+		.AddSubAction(LookAround(3, REAL_SECOND(10)))
+	;
+	
+	actionManager.Start(critter, action);
+}
+
+void CreateCamp( Critter& player, int forCritter, int campIndex, int level )
+{
+	Critter@ critter = forCritter == 0 ? @player : GetCritter(forCritter);
+	if(!valid(critter))
+		return;
+	
+	//TODO: location
+	uint locationId = CreateLocation(/*LOCATION_RaidersCamp1*/ + campIndex, player.WorldX, player.WorldY, null);
+	if(locationId == 0)
+		return;
+		
+	critter.SetKnownLoc(true, locationId);
+}

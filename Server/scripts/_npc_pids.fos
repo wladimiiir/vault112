@@ -1,0 +1,207 @@
+#ifndef __NPC_PIDS__
+#define __NPC_PIDS__
+
+#define NPC_PID_SmallSilverGecko         ( 80 )
+#define NPC_PID_ToughSilverGecko         ( 81 )
+#define NPC_PID_GoldenGecko              ( 83 )
+#define NPC_PID_ToughGoldenGecko         ( 86 )
+#define NPC_PID_FireGecko                ( 240 )
+#define NPC_PID_ToughFireGecko           ( 241 )
+
+#define NPC_PID_SmallRadscorpion         ( 5 )
+#define NPC_PID_SmallRadscorpion2        ( 355 )
+#define NPC_PID_LargeRadscorpion         ( 6 )
+#define NPC_PID_LargeRadscorpion2        ( 356 )
+#define NPC_PID_LargeRadscorpion3        ( 357 )
+
+#define NPC_PID_RegularRat               ( 11 )
+#define NPC_PID_Rat                      ( 266 )
+#define NPC_PID_RegularPigRat            ( 112 )
+#define NPC_PID_ToughPigRat              ( 113 )
+#define NPC_PID_Molerat                  ( 110 )
+#define NPC_PID_GreaterMolerat           ( 111 )
+#define NPC_PID_MutatedMolerat           ( 117 )
+
+#define NPC_PID_Ant                      ( 382 )
+
+#define NPC_PID_SporePlant               ( 16 )
+#define NPC_PID_SporePlant2              ( 481 )
+
+#define NPC_PID_MasterMerchantFemale     ( 61 )
+#define NPC_PID_BadMerchantMale          ( 56 )
+#define NPC_PID_PrimitiveMale            ( 3 )
+#define NPC_PID_PrimitiveFemale          ( 4 )
+
+#define NPC_PID_HealthyFemaleSlave       ( 19 )
+#define NPC_PID_HealthyMaleSlave         ( 20 )
+#define NPC_PID_MaleOrphan               ( 50 )
+#define NPC_PID_FemaleOrphan             ( 51 )
+#define NPC_PID_MaleSlaver               ( 217 )
+#define NPC_PID_FemaleSlaver             ( 218 )
+#define NPC_PID_CuteFemaleSlave          ( 17 )
+#define NPC_PID_StrongMaleSlave          ( 22 )
+#define NPC_PID_GenericFemaleSlave       ( 27 )
+#define NPC_PID_GenericMaleSlave         ( 28 )
+
+#define NPC_PID_MaleTrapper              ( 95 )
+#define NPC_PID_FemaleTrapper            ( 96 )
+#define NPC_PID_MeleeThugMale            ( 32 )
+#define NPC_PID_MeleeThugFemale          ( 33 )
+
+#define NPC_PID_BanditMale               ( 212 )
+#define NPC_PID_BanditFemale             ( 213 )
+
+#define NPC_PID_AverageMerchantMale      ( 58 )
+#define NPC_PID_WeakMeleeGuardMale       ( 69 )
+#define NPC_PID_WeakMeleeGuardFemale     ( 70 )
+
+#define NPC_PID_MaleSlaver2              ( 58 )
+
+#define NPC_PID_ToughFemaleThug          ( 31 )
+
+#define NPC_PID_ToughMaleThug            ( 30 )
+#define NPC_PID_ToughFemaleThug          ( 31 )
+#define NPC_PID_FemaleCombatSlave        ( 23 )
+#define NPC_PID_MaleCombatSlave          ( 24 )
+
+#define NPC_PID_Brahmin                  ( 10 )
+#define NPC_PID_Brahmin2                 ( 191 )
+#define NPC_PID_Brahmin3                 ( 404 )
+#define NPC_PID_WeakBrahmin              ( 114 )
+#define NPC_PID_WildBrahmin              ( 219 )
+
+#define NPC_PID_Mantis                   ( 12 )
+#define NPC_PID_MediumMantis             ( 216 )
+
+#define NPC_PID_WildDog                  ( 82 )
+
+#define NPC_PID_HomesteaderMale          ( 220 )
+#define NPC_PID_HomesteaderFemale        ( 221 )
+
+#define NPC_PID_MasterTraderFemale       ( 61 )
+#define NPC_PID_BigGunGuardMale          ( 48 )
+#define NPC_PID_BigGunGuardFemale        ( 49 )
+
+#define NPC_PID_GenericGhoul             ( 159 )
+
+#define NPC_PID_RaiderMale               ( 238 )
+#define NPC_PID_RaiderFemale             ( 239 )
+
+#define NPC_PID_Alien                    ( 242 )
+#define NPC_PID_ToughAlien               ( 243 )
+
+#define NPC_PID_SmDeathclaw              ( 7 )
+#define NPC_PID_Deathclaw                ( 8 )
+#define NPC_PID_SmToughDeathclaw         ( 244 )
+#define NPC_PID_ToughDeathclaw           ( 245 )
+
+#define NPC_PID_Centaur                  ( 248 )
+#define NPC_PID_MeanCentaur              ( 249 )
+#define NPC_PID_Floater                  ( 246 )
+#define NPC_PID_NastyFloater             ( 247 )
+
+#define NPC_PID_EnclavePatrolMale        ( 250 )
+#define NPC_PID_EnclavePatrolFemale      ( 251 )
+
+#define NPC_PID_MercenaryMale            ( 254 )
+#define NPC_PID_MercenearyFemale         ( 255 )
+#define NPC_PID_ElronologistMale         ( 278 )
+#define NPC_PID_ElronologistFemale       ( 279 )
+#define NPC_PID_PressGangMale            ( 252 )
+#define NPC_PID_PressGangFemale          ( 253 )
+
+#define NPC_PID_GrandMasterTraderMale    ( 142 )
+#define NPC_PID_VaultCityPatrolMale      ( 222 )
+#define NPC_PID_VaultCityPatrolFemale    ( 223 )
+
+#define NPC_PID_Nightkin                 ( 256 )
+#define NPC_PID_ToughNightkin            ( 257 )
+#define NPC_PID_ToughGhoul               ( 258 )
+
+#define NPC_PID_BigGunThugMale           ( 38 )
+
+#define NPC_PID_Mobster                  ( 259 )
+#define NPC_PID_Yakuza                   ( 260 )
+#define NPC_PID_BigGunThugFemale         ( 39 )
+
+#define NPC_PID_FemaleHomesteader        ( 221 )
+
+#define NPC_PID_MauraderMale             ( 263 )
+#define NPC_PID_MauraderFemale           ( 264 )
+
+#define NPC_PID_MasterTraderFemale       ( 61 )
+#define NPC_PID_NCRRangerMale            ( 261 )
+#define NPC_PID_NCRRangerFemale          ( 262 )
+
+#define NPC_PID_BountyHunter_1           ( 181 )
+#define NPC_PID_BountyHunter_2           ( 182 )
+#define NPC_PID_BountyHunter_3           ( 183 )
+#define NPC_PID_BountyHunter_4           ( 184 )
+#define NPC_PID_BountyHunter_5           ( 185 )
+#define NPC_PID_BountyHunter_6           ( 186 )
+#define NPC_PID_BountyHunter_7           ( 187 )
+#define NPC_PID_BountyHunter_8           ( 187 )
+#define NPC_PID_BountyHunter_9           ( 189 )
+#define NPC_PID_BountyHunter_10          ( 190 )
+
+#define NPC_PID_MaleHunter               ( 202 )
+#define NPC_PID_FemaleHunter             ( 203 )
+
+#define NPC_PID_MaleCannibal             ( 204 )
+#define NPC_PID_FemaleCannibal           ( 205 )
+
+#define NPC_PID_HolyMan                  ( 206 )
+#define NPC_PID_HolyWoman                ( 207 )
+
+#define NPC_PID_MaleNomad                ( 208 )
+#define NPC_PID_FemaleNomad              ( 210 )
+
+#define NPC_PID_AgileMaleThug            ( 34 )
+#define NPC_PID_AgileFemaleThug          ( 35 )
+#define NPC_PID_MaleGunThug              ( 36 )
+#define NPC_PID_FemaleGunThug            ( 37 )
+
+#define NPC_PID_Roboguard					(500)
+#define NPC_PID_Claire						(501)
+
+
+/*const uint16[] Pids_AllNpc={
+        NPC_PID_SmallSilverGecko,NPC_PID_ToughSilverGecko,NPC_PID_GoldenGecko,NPC_PID_ToughGoldenGecko,NPC_PID_FireGecko,NPC_PID_ToughFireGecko,
+        NPC_PID_SmallRadscorpion,NPC_PID_LargeRadscorpion,
+        NPC_PID_RegularRat,NPC_PID_RegularPigRat,NPC_PID_ToughPigRat,NPC_PID_Molerat,NPC_PID_GreaterMolerat,
+        NPC_PID_Ant,NPC_PID_SporePlant,
+        NPC_PID_MasterMerchantFemale,NPC_PID_BadMerchantMale,NPC_PID_PrimitiveMale,NPC_PID_PrimitiveFemale,
+        NPC_PID_HealthyFemaleSlave,NPC_PID_HealthyMaleSlave,NPC_PID_MaleOrphan,NPC_PID_FemaleOrphan,NPC_PID_MaleSlaver,NPC_PID_FemaleSlaver,NPC_PID_CuteFemaleSlave,NPC_PID_StrongMaleSlave,NPC_PID_GenericFemaleSlave,NPC_PID_GenericMaleSlave,
+        NPC_PID_MaleTrapper,NPC_PID_FemaleTrapper,NPC_PID_MeleeThugMale,NPC_PID_MeleeThugFemale,
+        NPC_PID_BanditMale,NPC_PID_BanditFemale,
+        NPC_PID_AverageMerchantMale,NPC_PID_WeakMeleeGuardMale,NPC_PID_WeakMeleeGuardFemale,
+        NPC_PID_MaleSlaver2,
+        NPC_PID_ToughFemaleThug,
+        NPC_PID_ToughMaleThug,NPC_PID_ToughFemaleThug,NPC_PID_FemaleCombatSlave,NPC_PID_MaleCombatSlave,
+        NPC_PID_Brahmin,NPC_PID_WeakBrahmin,NPC_PID_WildBrahmin,
+        NPC_PID_Mantis,NPC_PID_MediumMantis,
+        NPC_PID_WildDog,
+        NPC_PID_HomesteaderMale,NPC_PID_HomesteaderFemale,
+        NPC_PID_MasterTraderFemale,NPC_PID_BigGunGuardMale,NPC_PID_BigGunGuardFemale,
+        NPC_PID_GenericGhoul,
+        NPC_PID_RaiderMale,NPC_PID_RaiderFemale,
+        NPC_PID_Alien,NPC_PID_ToughAlien,
+        NPC_PID_SmToughDeathclaw,NPC_PID_ToughDeathclaw,
+        NPC_PID_Centaur,NPC_PID_MeanCentaur,NPC_PID_Floater,NPC_PID_NastyFloater,
+        NPC_PID_EnclavePatrolMale,NPC_PID_EnclavePatrolFemale,
+        NPC_PID_MercenaryMale,NPC_PID_MercenearyFemale,NPC_PID_ElronologistMale,NPC_PID_ElronologistFemale,NPC_PID_PressGangMale,NPC_PID_PressGangFemale,
+        NPC_PID_GrandMasterTraderMale,NPC_PID_VaultCityPatrolMale,NPC_PID_VaultCityPatrolFemale,
+        NPC_PID_Nightkin,NPC_PID_ToughNightkin,NPC_PID_ToughGhoul,
+        NPC_PID_BigGunThugMale,
+        NPC_PID_Mobster,NPC_PID_Yakuza,NPC_PID_BigGunThugFemale,
+        NPC_PID_FemaleHomesteader,
+        NPC_PID_MauraderMale,NPC_PID_MauraderFemale,
+        NPC_PID_MasterTraderFemale,NPC_PID_NCRRangerMale,NPC_PID_NCRRangerFemale,
+        NPC_PID_BountyHunter_1,NPC_PID_BountyHunter_2,NPC_PID_BountyHunter_3,NPC_PID_BountyHunter_4,NPC_PID_BountyHunter_5,NPC_PID_BountyHunter_6,NPC_PID_BountyHunter_7,NPC_PID_BountyHunter_8,NPC_PID_BountyHunter_9,NPC_PID_BountyHunter_10,
+        NPC_PID_MaleHunter,NPC_PID_FemaleHunter,
+        NPC_PID_MaleCannibal,NPC_PID_FemaleCannibal,
+        NPC_PID_HolyMan,NPC_PID_HolyWoman,
+        NPC_PID_MaleNomad,NPC_PID_FemaleNomad
+   };*/
+
+#endif // __NPC_PIDS__

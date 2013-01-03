@@ -1,0 +1,1436 @@
+// Author: Tab10id
+// Скрипт приписывается итему в прототипе, во время инициализации вокруг итема выставлются итемы, играющие роль триггеров.
+// При переходе через итем-триггер, у игрока проверяется право на проход, если его нет, то в некотором радиусе ищутся охранники,
+// если они найдены, игрок останавливается и начинается диалог с охраной.
+// Под широкими барьерами кладутся дополнительные итемы-блокирующие проход в запертом состоянии.
+
+// #define __DEBUG__
+
+#include "_macros.fos"
+#include "_animation.fos"
+#include "_msgstr.fos"
+#include "stdlib_h.fos"
+#include "combat_h.fos"
+
+#ifdef __DEBUG__
+# define LogEx                        # (error) Log( error )
+#endif
+#ifndef __DEBUG__
+# define LogEx                        # ( error )
+#endif
+
+#define BS_ON                         ( 0 )
+#define BS_OFF_TIMED                  ( 1 )
+#define BS_OFF_PERMA                  ( 2 )
+
+#define MODE_STANDART                 ( 1 )
+#define MODE_HACK                     ( 2 )
+#define MODE_USE_CARD                 ( 3 )
+
+#define AE_DEFAULT                    ( 0 )
+#define AE_ON                         ( 1 )
+#define AE_OFF                        ( 2 )
+
+#define BM_OFF                        ( 1 )
+#define BM_ON                         ( 0 )
+#define BM_HALF_ON                    ( 2 )
+#define BM_OFF_NO_GUARD               ( 3 )
+
+#define TIME_CARD_VALID               ( 24 * 60 * 60 )
+#define TIME_BROKEN                   ( 3 * 60 * 60 )
+#define TIME_NOT_ACCESS               ( 3 * 60 * 60 )
+#define TIME_BARIER_OPEN              ( 5 * 60 )
+
+#define FD_NORMAL                     ( 2 )
+#define FD_HACK_NOT_SUCC              ( 5 )
+#define FD_HACK_SUCC                  ( 6 )
+#define FD_TERM_BROKEN                ( 7 )
+#define FD_TERM_NOT_ACCESS            ( 8 )
+#define FD_TURN_OFF_FIELD             ( 9 )
+#define FD_NOT_VALID_CARD             ( 10 )
+#define FD_BARIER_OPEN                ( 12 )
+#define FD_DISABLED                   ( 12 )
+
+#define COORD_X                       ( 0 )
+#define COORD_Y                       ( 1 )
+
+#define MIN_DMG_USE_LOW               ( 5 )
+#define MAX_DMG_USE_LOW               ( 15 )
+#define MIN_DMG_USE_HI                ( 10 )
+#define MAX_DMG_USE_HI                ( 20 )
+#define MIN_DMG_SPATIAL               ( 15 )
+#define MAX_DMG_SPATIAL               ( 30 )
+#define DAMAGE_TYPE                   ( DAMAGE_ELECTR )
+
+#define MSG_SHOCK_PAIN_FIELD_USE      ( 5300 )
+#define MSG_SHOCK_FULL_FIELD_USE      ( 5301 )
+#define MSG_REPAIR_FAIL_OFF           ( 5302 )
+#define MSG_REPAIR_FAIL_ON            ( 5311 )
+#define MSG_REPAIR_WIN_OFF            ( 5303 )
+#define MSG_REPAIR_WIN_ON             ( 5304 )
+#define MSG_FIELD_SCIENCE_USE_WIN     ( 5308 )
+#define MSG_FIELD_SCIENCE_USE_FAIL    ( 5309 )
+
+#define EXP_DISABLE_FORCE_FIELD       ( 50 )
+#define SCIENCE_PENALTY               ( -40 )
+#define TOOL_BONUS                    ( SCIENCE_PENALTY + 20 )
+#define SUPER_TOOL_BONUS              ( SCIENCE_PENALTY + 40 )
+#define SKILL_SUCCESS                 # ( cr, sk, bonus )( IsSuccessRvS( RollVsSkill( cr, sk, bonus ) ) )
+
+#define RADIUS                        ( 10 )
+
+import void InjureCritter( Critter& cr, uint dmg, uint dmgType, uint8 dir, uint attackerId, uint forceFlags ) from "combat";
+import uint GetNearFullSecond( uint16 year, uint16 month, uint16 day, uint16 hour, uint16 minute, uint16 second ) from "time";
+import bool AddAttackPlane( Critter& npc, uint priority, Critter& target ) from "npc_planes";
+import uint EraseAttackPlane( Critter& npc, Critter& target ) from "npc_planes";
+
+const uint16[][] EBHalfOnMode =
+{
+    { PID_EB_LONG_HOR, PID_EB_LONG_VERT, PID_EB_SHORT_HOR1,    PID_EB_SHORT_VERT1,    PID_EB_SHORT_HOR2,    PID_EB_SHORT_VERT2,    PID_EB_SHORT_HOR3,    PID_EB_SHORT_VERT3 },
+    { 0,              0,               PID_EB_SHORT_HOR1_RED, PID_EB_SHORT_VERT1_RED, PID_EB_SHORT_HOR2_RED, PID_EB_SHORT_VERT2_RED, PID_EB_SHORT_HOR3_RED, PID_EB_SHORT_VERT3_RED, }
+};
+
+const uint8[][][] EBBlockers =
+{
+/* EB_LONG_HOR */
+    { { 4, 3, 4 }, { 0, 1, 0 } },
+/* EB_LONG_VERT */
+    { { 5 }, { 2, 2 } }
+};
+
+const uint8[][] EBTriggers =
+{
+/* EB_LONG_HOR */
+    { 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 0, 0, 0, 0 },
+/* EB_LONG_VERT */
+    { 1, 1, 1, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 0, 0, 0 },
+/* EB_SHORT_HOR1 */
+/* EB_SHORT_HOR2 */
+/* EB_SHORT_HOR3 */
+    { 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 0, 0 },
+/* EB_SHORT_VERT1 */
+/* EB_SHORT_VERT2 */
+/* EB_SHORT_VERT3 */
+    { 2, 2, 3, 3, 3, 4, 5, 5, 5, 0, 0, 0, 1, 2 }
+};
+
+const uint8[][] EBEmitterCoords =
+{
+/* EB_EMITTER_HOR1 */
+/* EB_EMITTER_HOR2 */
+/* EB_EMITTER_HOR3 */
+    { 2, 0 },
+/* EB_EMITTER_VERT1 */
+/* EB_EMITTER_VERT2 */
+/* EB_EMITTER_VERT3 */
+    { 0, 2 }
+};
+
+void InitBariers( Item& barier )
+{
+    uint8[][] blockers;
+    uint8[] triggers;
+    uint8[] temp;
+    uint8  trigDir;
+    uint16 trigDest;
+    uint16 proto = barier.GetProtoId();
+    bool   guarded = true;
+    uint16 haveHalfOnMode = 0;
+
+    if( barier.MapId == 0 )
+    {
+        CreateTimeEvent( __FullSecond, "e_InitBarier", barier.Id, false );
+        return;
+    }
+    Map@ map = GetMap( barier.MapId );
+    if( valid( map ) )
+    {
+        DeleteBlockersAndTriggers( map, barier.Val1 );
+    }
+    switch( proto )
+    {
+    case PID_EB_LONG_HOR:
+        LogEx( "Горизонтальный барьер" );
+        blockers.grow( 2 );
+        push_back_array( blockers[ 0 ], EBBlockers[ 0 ][ 0 ] );
+        push_back_array( blockers[ 1 ], EBBlockers[ 0 ][ 1 ] );
+        trigDir = 5;
+        trigDest = 4;
+        if( barier.Val3 != 0 )
+        {
+            push_back_array( triggers, EBTriggers[ 0 ] );
+            LogEx( "Триггеров вбито: " + EBTriggers[ 0 ].length() );
+        }
+        else
+        {
+            guarded = false;
+        }
+        haveHalfOnMode = EBHalfOnMode[ 1 ][ 0 ];
+        break;
+    case PID_EB_LONG_VERT:
+        LogEx( "Вертикальный барьер" );
+        blockers.grow( 2 );
+        push_back_array( blockers[ 0 ], EBBlockers[ 1 ][ 0 ] );
+        push_back_array( blockers[ 1 ], EBBlockers[ 1 ][ 1 ] );
+        trigDir = 5;
+        trigDest = 2;
+        if( barier.Val3 != 0 )
+        {
+            push_back_array( triggers, EBTriggers[ 1 ] );
+        }
+        else
+        {
+            guarded = false;
+        }
+        haveHalfOnMode = EBHalfOnMode[ 1 ][ 1 ];
+        break;
+    case PID_EB_SHORT_HOR1:
+    case PID_EB_SHORT_HOR2:
+    case PID_EB_SHORT_HOR3:
+        blockers.grow( 2 );
+        trigDir = 5;
+        trigDest = 2;
+        if( barier.Val3 != 0 )
+        {
+            push_back_array( triggers, EBTriggers[ 2 ] );
+        }
+        else
+        {
+            guarded = false;
+        }
+        if( proto == PID_EB_SHORT_HOR1 )
+        {
+            haveHalfOnMode = EBHalfOnMode[ 1 ][ 2 ];
+        }
+        if( proto == PID_EB_SHORT_HOR2 )
+        {
+            haveHalfOnMode = EBHalfOnMode[ 1 ][ 4 ];
+        }
+        if( proto == PID_EB_SHORT_HOR3 )
+        {
+            haveHalfOnMode = EBHalfOnMode[ 1 ][ 6 ];
+        }
+        break;
+    case PID_EB_SHORT_VERT1:
+    case PID_EB_SHORT_VERT2:
+    case PID_EB_SHORT_VERT3:
+        blockers.grow( 2 );
+        trigDir = 0;
+        trigDest = 2;
+        if( barier.Val3 != 0 )
+        {
+            push_back_array( triggers, EBTriggers[ 3 ] );
+        }
+        else
+        {
+            guarded = false;
+        }
+        if( proto == PID_EB_SHORT_VERT1 )
+        {
+            haveHalfOnMode = EBHalfOnMode[ 1 ][ 3 ];
+        }
+        if( proto == PID_EB_SHORT_VERT2 )
+        {
+            haveHalfOnMode = EBHalfOnMode[ 1 ][ 5 ];
+        }
+        if( proto == PID_EB_SHORT_VERT3 )
+        {
+            haveHalfOnMode = EBHalfOnMode[ 1 ][ 7 ];
+        }
+        break;
+    default:
+        break;
+    }
+    CBarier( barier, blockers, triggers, trigDir, trigDest, guarded, haveHalfOnMode );
+}
+
+void InitEmitter( Item& emitter )
+{
+    emitter.SetEvent( ITEM_EVENT_SKILL, "_UseEmitter" );
+    emitter.SetEvent( ITEM_EVENT_USE_ON_ME, "_UseOnEmitter" );
+}
+
+uint16 GetFieldCoord( uint16 coord, uint16 proto, uint8 type )
+{
+    switch( proto )
+    {
+    case PID_EB_EMITTER_HOR1:
+    case PID_EB_EMITTER_HOR2:
+    case PID_EB_EMITTER_HOR3:
+        return EBEmitterCoords[ 0 ][ type ];
+    case PID_EB_EMITTER_VERT1:
+    case PID_EB_EMITTER_VERT2:
+    case PID_EB_EMITTER_VERT3:
+        return EBEmitterCoords[ 1 ][ type ];
+    }
+    return 0;
+}
+
+class CBarier
+{
+    Item@ Barier;          // Ссылка на итем, отображающий сам барьер
+    Item@[] Blockers;      // Массив итемов блокираторов под основным итемом
+    Item@[] Triggers;      // Массив триггеров
+    bool   Guarded;        // Охраняемый ли барьер
+    uint8  BarierStat;     // Текущий режим работы барьера (Закрытый, открытый, снижена мощность)
+    uint16 HaveHalfOnMode; // Имеет ли барьер режим половины мощности (если имеет, то свойство имеет прототип итема хранящего изображение данного барьера в данном режиме)
+    uint8  FieldMode;      // Текущий режим работы
+    CBarier( Item & barier, uint8[][] @ blockers, uint8[] @ triggers, uint8 trigDir, uint16 trigDest, bool guarded, uint16 modeHalfOn )
+    {
+        LogEx( "CBarier: barier.val1=" + barier.Val1 + ", blockers: [" + blockers[ 0 ].length() + "][" + blockers[ 1 ].length() + "], triggers: " + triggers.length() + ", trigDir: " + trigDir + ", trigDest: " + trigDest + ", medeHalfOn: " + modeHalfOn );
+        uint16    baseX, baseY;
+        uint16    newX, newY;
+        Item@     temp;
+        Map@      map;
+        Location@ loc;
+        HaveHalfOnMode = modeHalfOn;
+        baseX = barier.HexX;
+        baseY = barier.HexY;
+        @Barier = barier;
+        Guarded = guarded;
+        Blockers.insertLast( @barier );
+        if( barier.MapId > 0 )
+        {
+            @map = GetMap( barier.MapId );
+        }
+        if( !valid( map ) )
+        {
+            Log( "Map not valid!" );
+            return;
+        }
+        for( uint k = 0; k < blockers.length(); k++ )
+        {
+            newX = baseX;
+            newY = baseY;
+            for( uint i = 0; i < blockers[ k ].length(); i++ )
+            {
+                map.MoveHexByDir( newX, newY, blockers[ k ][ i ], 1 );
+                Critter@ crit = map.GetCritter( newX, newY );
+                if( map.IsHexPassed( newX, newY ) or valid( crit ) )
+                {
+                    @temp = map.GetItem( newX, newY, PID_EB_BLOCKER );
+                    if( not valid( temp ) or temp.Val1 != Barier.Val1 )
+                    {
+                        @temp = map.AddItem( newX, newY, PID_EB_BLOCKER, 1 );
+                        Blockers.insertLast( @temp );
+                    }
+                }
+            }
+        }
+        newX = baseX;
+        newY = baseY;
+        map.MoveHexByDir( newX, newY, trigDir, trigDest );
+        if( guarded )
+        {
+            LogEx( "Триггеры для барьера №" + Blockers[ 0 ].Val1 + ": " + triggers.length() );
+            for( uint k = 0; k < triggers.length(); k++ )
+            {
+                map.MoveHexByDir( newX, newY, triggers[ k ], 1 );
+                Critter@ crit = map.GetCritter( newX, newY );
+                if( map.IsHexPassed( newX, newY ) or valid( crit ) )
+                {
+                    @temp = map.GetItem( newX, newY, PID_EB_TRIGGER );
+                    if( not valid( temp ) or temp.Val1 != Barier.Val1 )
+                    {
+                        @temp = map.AddItem( newX, newY, PID_EB_TRIGGER, 1 );
+                        Triggers.insertLast( @temp );
+                    }
+                }
+            }
+        }
+        InitBlockers( this );
+        InitTriggers( this );
+        @loc = map.GetLocation();
+        if( !valid( loc ) )
+        {
+            Log( "Error: location not valid" );
+            return;
+        }
+        CBariersNet@ net = GetBariersNet( Barier.Val1, loc.Id );
+        if( !valid( net ) )
+        {
+            @net = CBariersNet( Barier.Val1, loc.Id, Barier.Val2 );
+            if( !valid( net ) )
+            {
+                Log( "ForceField not created!" );
+                return;
+            }
+            BariersNets.insertLast( @net );
+        }
+        net.AddBarier( this );
+    }
+
+    void ChangeMode( uint8 mode )
+    {
+        FieldMode = mode;
+        if( mode == BM_HALF_ON )
+        {
+            if( HaveHalfOnMode != 0 )
+            {
+                LogEx( "Меняем прототип" );
+                Blockers[ 0 ].ChangeProto( HaveHalfOnMode );
+            }
+        }
+        else
+        {
+            if( mode == BM_ON )
+            {
+                uint16 proto = GetMainProto();
+                if( proto != 0 )
+                {
+                    Blockers[ 0 ].ChangeProto( proto );
+                }
+            }
+        }
+        if( ( mode == BM_ON ) or ( mode == BM_HALF_ON ) )
+        {
+            for( uint i = 0; i < Blockers.length(); i++ )
+            {
+                UNSETFLAG( Blockers[ i ].Flags, ITEM_HIDDEN );
+            }
+        }
+        else
+        {
+            for( uint i = 0; i < Blockers.length(); i++ )
+            {
+                SETFLAG( Blockers[ i ].Flags, ITEM_HIDDEN );
+            }
+        }
+        for( uint i = 0; i < Blockers.length(); i++ )
+        {
+            if( mode == BM_ON )
+            {
+                UNSETFLAG( Blockers[ i ].Flags, ITEM_NO_BLOCK );
+            }
+            else
+            {
+                if( mode == BM_HALF_ON )
+                {
+                    Blockers[ i ].SetEvent( ITEM_EVENT_WALK, "_DamageCritter" );
+                }
+                else
+                {
+                    Blockers[ i ].SetEvent( ITEM_EVENT_WALK, "" );
+                }
+                if( ( HaveHalfOnMode == 0 ) and ( mode == BM_HALF_ON ) )
+                {
+                    UNSETFLAG( Blockers[ i ].Flags, ITEM_NO_BLOCK );
+                }
+                else
+                {
+                    SETFLAG( Blockers[ i ].Flags, ITEM_NO_BLOCK );
+                }
+            }
+        }
+    }
+
+    uint GetBarierNum()
+    {
+        return Barier.Val1;
+    }
+
+    uint GetGuardNum()
+    {
+        return Barier.Val3;
+    }
+
+    uint16 GetMainProto()
+    {
+        for( uint16 i = 0; i < EBHalfOnMode[ 1 ].length(); i++ )
+        {
+            if( Barier.GetProtoId() == EBHalfOnMode[ 1 ][ i ] )
+            {
+                return EBHalfOnMode[ 0 ][ i ];
+            }
+        }
+        return 0;
+    }
+
+    uint8 GetFieldMode()
+    {
+        LogEx( "Mode: " + this.FieldMode );
+        return this.FieldMode;
+    }
+}
+
+class CBariersNet
+{
+    CBarier@[] Bariers;
+    int   NetNum;
+    uint  LocId;
+    uint8 NetState;
+    bool  TerminalsDisabled;
+    CBariersNet( int netNum, uint locId, uint8 netState )
+    {
+        NetNum = netNum;
+        LocId = locId;
+        NetState = netState;
+        TerminalsDisabled = false;
+    }
+    void AddBarier( CBarier@ barier )
+    {
+        Bariers.insertLast( @barier );
+    }
+    void ChangeNetMode( uint8 mode, uint8 autoEnable )
+    {
+        CBarier@ barier;
+        bool     autoOn;
+        bool     autoOnHalf;
+        for( uint i = 0; i < Bariers.length(); i++ )
+        {
+            @barier = Bariers[ i ];
+            autoOn = ( barier.Blockers[ 0 ].Val4 == 0 ) ? true : false;
+            autoOnHalf = ( barier.Blockers[ 0 ].Val5 == 0 ) ? true : false;
+            if( ( ( ( ( mode == BM_OFF ) and ( autoOn ) ) or ( ( mode == BM_HALF_ON ) and ( autoOnHalf ) ) ) or ( autoEnable == AE_ON ) ) and ( autoEnable != AE_OFF ) )
+            {
+                uint[] values;
+                values.insertLast( LocId );
+                values.insertLast( NetNum );
+                values.insertLast( BM_ON );
+                CreateTimeEvent( __FullSecond + TIME_BARIER_OPEN, "e_TurnOnBariers", values, true );
+            }
+            barier.ChangeMode( mode );
+            NetState = mode;
+        }
+    }
+}
+CBariersNet@[] BariersNets;
+
+CBariersNet@ GetBariersNet( int netNum, uint locId )
+{
+    for( uint i = 0; i < BariersNets.length(); i++ )
+    {
+        if( ( BariersNets[ i ].NetNum == netNum ) and ( BariersNets[ i ].LocId == locId ) )
+            return BariersNets[ i ];
+    }
+    return null;
+}
+
+CBarier@ GetBarier( uint16 mainItemId )
+{
+    CBarier@ barier;
+    for( uint i = 0; i < BariersNets.length(); i++ )
+    {
+        if( valid( BariersNets[ i ] ) )
+        {
+            for( uint k = 0; k < BariersNets[ i ].Bariers.length(); k++ )
+            {
+                if( valid( BariersNets[ i ].Bariers[ k ] ) )
+                {
+                    @barier = BariersNets[ i ].Bariers[ k ];
+                    if( barier.Barier.Id == mainItemId )
+                    {
+                        return barier;
+                    }
+                }
+            }
+        }
+    }
+    return null;
+}
+
+void push_back_array( uint8[]& arr, uint8[]& target )
+{
+    for( uint i = 0; i < target.length(); i++ )
+    {
+        arr.insertLast( target[ i ] );
+    }
+}
+
+void InitBlockers( CBarier& barier )
+{
+    if( barier.Blockers[ 0 ].Val2 == BM_ON )
+    {
+        barier.Blockers[ 0 ].SetEvent( ITEM_EVENT_SKILL, "_DamageCritterUse" );
+        UNSETFLAG( barier.Blockers[ 0 ].Flags, ITEM_HIDDEN );
+        for( uint i = 0; i < barier.Blockers.length(); i++ )
+        {
+            UNSETFLAG( barier.Blockers[ i ].Flags, ITEM_NO_BLOCK );
+            if( i > 0 )
+            {
+                barier.Blockers[ i ].Val1 = barier.Blockers[ 0 ].Val1;
+            }
+        }
+        barier.FieldMode = BM_ON;
+    }
+    else
+    {
+        if( barier.Blockers[ 0 ].Val2 == BM_OFF )
+        {
+            barier.FieldMode = BM_OFF;
+            SETFLAG( barier.Blockers[ 0 ].Flags, ITEM_HIDDEN );
+            for( uint i = 0; i < barier.Blockers.length(); i++ )
+            {
+                SETFLAG( barier.Blockers[ i ].Flags, ITEM_NO_BLOCK );
+                SETFLAG( barier.Blockers[ i ].Flags, ITEM_HIDDEN );
+                if( i > 0 )
+                {
+                    barier.Blockers[ i ].Val1 = barier.Blockers[ 0 ].Val1;
+                }
+            }
+        }
+        else
+        {
+            barier.FieldMode = BM_HALF_ON;
+            barier.Blockers[ 0 ].SetEvent( ITEM_EVENT_SKILL, "_DamageCritterUse" );
+        }
+    }
+}
+
+bool CheckInven( Critter& master )
+{
+    Item@[] items;
+    bool res = false;
+    master.GetItems( -1, items );
+    for( uint i = 0; i < items.length(); i++ )
+    {
+        if( items[ i ].GetProtoId() == PID_ENERGY_BARIER_ACCESS_CARD )
+        {
+            if( CheckCard( items[ i ], master ) )
+            {
+                res = true;
+                break;
+            }
+        }
+    }
+    return res;
+}
+
+bool CheckCard( Item& card, Critter& master )
+{
+    if( ( card.Val4 < int(__FullSecond - TIME_CARD_VALID) ) or ( card.Val5 != int(master.Id) ) )
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
+uint8 HackRoll( Critter& master )
+{
+    uint8 res = RollVsSkill( master, SK_SCIENCE, SCIENCE_PENALTY + master.StatBase[ ST_VAR7 ] );
+    return res;
+}
+
+bool BarierOpen( Critter& master )
+{
+    Map@ map = master.GetMap();
+    if( !valid( map ) )
+    {
+        return false;
+    }
+    Location@ loc = map.GetLocation();
+    if( !valid( loc ) )
+    {
+        return false;
+    }
+    if( GetNetState( loc.Id, master.StatBase[ ST_VAR6 ] ) == BM_OFF )
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+uint e_InitBarier( uint[] @ values )
+{
+    Item@ barier = GetItem( values[ 0 ] );
+    if( valid( barier ) )
+    {
+        InitBariers( barier );
+    }
+    else
+    {
+        Log( "Barier item not valid" );
+    }
+    return 0;
+}
+
+void InitTriggers( CBarier& barier )
+{
+    LogEx( "Инициализация триггеров. Количество: " + barier.Triggers.length() );
+    for( uint i = 0; i < barier.Triggers.length(); i++ )
+    {
+        barier.Triggers[ i ].SetEvent( ITEM_EVENT_WALK, "_WalkOnTrigg" );
+        barier.Triggers[ i ].Val1 = barier.GetGuardNum();
+        barier.Triggers[ i ].Val2 = barier.Barier.Id;
+        barier.Triggers[ i ].Val3 = barier.Barier.Val1;
+    }
+}
+
+void _WalkOnTrigg( Item& item, Critter& cr, bool entered, uint8 dir ) // TODO
+{
+    bool t = true;
+    Critter@[] npcs;
+    uint k = 0;
+    Map@ map;
+    uint netNum = 0;
+    if( cr.IsNpc() )
+    {
+        return;
+    }
+    if( entered )
+    {
+        for( uint i = 0; i < BariersNets.length(); i++ )
+        {
+            for( uint k = 0; k < BariersNets[ i ].Bariers.length(); k++ )
+            {
+                if( BariersNets[ i ].Bariers[ k ].Barier.Id == uint( item.Val2 ) )
+                {
+                    netNum = BariersNets[ i ].Bariers[ k ].Barier.Val1;
+                    if( BariersNets[ i ].Bariers[ k ].FieldMode == BM_OFF_NO_GUARD )
+                    {
+                        return;
+                    }
+                }
+            }
+        }
+        @map = cr.GetMap();
+        if( not valid( map ) )
+        {
+            return;
+        }
+        map.GetCrittersHex( cr.HexX, cr.HexY, RADIUS, FIND_LIFE | FIND_ONLY_NPC, npcs );
+        for( uint i = 0; i < npcs.length(); i++ )
+        {
+            if( npcs[ i ].StatBase[ ST_NPC_ROLE ] != item.Val1 )
+            {
+                npcs.removeAt( i );
+            }
+        }
+        if( npcs.length() != 0 )
+        {
+            CGuards@ g = GetGuards( npcs, netNum, item.Val2 );
+            if( !valid( g ) )
+            {
+                return;
+            }
+            if( not g.CritIsAccessible( cr ) )
+            {
+                cr.Wait( 0 );
+                // cr.MoveToDir((cr.Dir+3)%6);
+                uint i = Random( 0, npcs.length() - 1 );
+                RunDialog( cr, npcs[ i ], 0, true );
+            }
+        }
+    }
+}
+
+void DeleteBlockersAndTriggers( Map& map, uint netNum )
+{
+    Item@[] items;
+    if( map.GetItems( PID_EB_BLOCKER, items ) > 0 )
+    {
+        for( uint i = 0; i < items.length(); i++ )
+        {
+            if( uint( items[ i ].Val1 ) == netNum )
+            {
+                DeleteItem( items[ i ] );
+            }
+        }
+    }
+    items.resize( 0 );
+    if( map.GetItems( PID_EB_TRIGGER, items ) > 0 )
+    {
+        for( uint i = 0; i < items.length(); i++ )
+        {
+            if( uint( items[ i ].Val1 ) == netNum )
+            {
+                DeleteItem( items[ i ] );
+            }
+        }
+    }
+}
+
+bool CritIsAccessible( Critter& cr )
+{
+    return CheckInven( cr );
+}
+
+uint8 GetNetState( uint locId, uint netNum )
+{
+    CBariersNet@ net = GetBariersNet( netNum, locId );
+    if( valid( net ) )
+    {
+        return net.NetState;
+    }
+    return 0;
+}
+
+void _DamageCritter( Item& item, Critter& cr, bool entered, uint8 dir )
+{
+    if( entered )
+    {
+        cr.Wait( 0 );
+        InjureCritter( cr, Random( MIN_DMG_SPATIAL, MAX_DMG_SPATIAL ), DAMAGE_TYPE, Random( 0, 5 ), 0, 0 );
+    }
+}
+
+bool _DamageCritterUse( Item& item, Critter& cr, int skill )
+{
+    CBarier@ barier = GetBarier( item.Id );
+    if( !valid( barier ) )
+    {
+        return true;
+    }
+    else
+    {
+        if( ( skill != SK_SCIENCE ) or ( not SKILL_SUCCESS( cr, SK_SCIENCE, 0 ) ) )
+        {
+            if( barier.GetFieldMode() == BM_HALF_ON )
+            {
+                InjureCritter( cr, Random( MIN_DMG_USE_LOW, MAX_DMG_USE_LOW ), DAMAGE_TYPE, GetDirection( item.HexX, item.HexY, cr.HexX, cr.HexY ), 0, HF_BYPASS_ARMOR );
+                if( skill == SK_SCIENCE )
+                {
+                    cr.SayMsg( SAY_NETMSG, TEXTMSG_TEXT, MSG_FIELD_SCIENCE_USE_FAIL );
+                }
+                else
+                {
+                    cr.SayMsg( SAY_NETMSG, TEXTMSG_TEXT, MSG_SHOCK_PAIN_FIELD_USE );
+                }
+            }
+            else
+            {
+                InjureCritter( cr, Random( MIN_DMG_USE_HI, MAX_DMG_USE_HI ), DAMAGE_TYPE, GetDirection( item.HexX, item.HexY, cr.HexX, cr.HexY ), 0, HF_BYPASS_ARMOR );
+                if( skill == SK_SCIENCE )
+                {
+                    cr.SayMsg( SAY_NETMSG, TEXTMSG_TEXT, MSG_FIELD_SCIENCE_USE_FAIL );
+                }
+                else
+                {
+                    cr.SayMsg( SAY_NETMSG, TEXTMSG_TEXT, MSG_SHOCK_FULL_FIELD_USE );
+                }
+            }
+        }
+        else
+        {
+            cr.SayMsg( SAY_NETMSG, TEXTMSG_TEXT, MSG_FIELD_SCIENCE_USE_WIN );
+        }
+    }
+    return true;
+}
+
+bool _UseEmitter( Item& item, Critter& cr, int skill )
+{
+    CBarier@ field;
+    bool     autoOn;
+    uint8    fieldMode = GetFieldMode( item );
+    if( skill == SK_REPAIR )
+    {
+        if( cr.Timeout[ TO_SK_REPAIR ] > 0 )
+        {
+            cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_WEARINESS );
+            return true;
+        }
+        if( SKILL_SUCCESS( cr, SK_REPAIR, SCIENCE_PENALTY + item.Val0 ) )
+        {
+            @field = GetBarier( item.HexX, item.HexY, item.GetProtoId() );
+            if( !valid( field ) )
+            {
+                return false;
+            }
+            if( ( fieldMode == BM_ON ) or ( fieldMode == BM_HALF_ON ) )
+            {
+                cr.SayMsg( SAY_NETMSG, TEXTMSG_TEXT, MSG_REPAIR_WIN_OFF );
+                autoOn = ( field.Blockers[ 0 ].Val4 == 0 ) ? true : false;
+                if( autoOn )
+                {
+                    LogEx( "Автовключение" );
+                    uint[] values;
+                    values.insertLast( field.Blockers[ 0 ].Id );
+                    CreateTimeEvent( __FullSecond + TIME_BARIER_OPEN, "e_TurnOnBarier", values, true );
+                }
+                field.ChangeMode( BM_OFF );
+            }
+            else
+            {
+                cr.SayMsg( SAY_NETMSG, TEXTMSG_TEXT, MSG_REPAIR_WIN_ON );
+                field.ChangeMode( BM_ON );
+            }
+            if( !GaveExp( cr, item.Id ) )
+            {
+                cr.StatBase[ ST_EXPERIENCE ] += EXP_DISABLE_FORCE_FIELD;
+            }
+        }
+        else
+        {
+            @field = GetBarier( item.HexX, item.HexY, item.GetProtoId() );
+            if( ( field.GetFieldMode() == BM_ON ) or ( field.GetFieldMode() == BM_HALF_ON ) )
+            {
+                cr.SayMsg( SAY_NETMSG, TEXTMSG_TEXT, MSG_REPAIR_FAIL_OFF );
+            }
+            else
+            {
+                cr.SayMsg( SAY_NETMSG, TEXTMSG_TEXT, MSG_REPAIR_FAIL_ON );
+            }
+        }
+        cr.TimeoutBase[ TO_SK_REPAIR ] = REPAIR_TIMEOUT( cr );
+    }
+    else
+    {
+        return false;
+    }
+    return true;
+}
+
+bool _UseOnEmitter( Item& item, Critter& cr, Item@ usedItem )
+{
+    if( !valid( usedItem ) )
+    {
+        return true;
+    }
+    if( ( usedItem.GetProtoId() == PID_MULTI_TOOL ) or ( usedItem.GetProtoId() == PID_SUPER_TOOL_KIT ) )
+    {
+        return ObjectUse( cr, item, usedItem.GetProtoId() );
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool GaveExp( Critter& cr, uint itemId ) // TODO
+{
+    return false;
+}
+
+bool ObjectUse( Critter& cr, Item& item, uint16 proto )
+{
+    CBarier@ field;
+    bool     autoOn;
+    uint8    fieldMode = GetFieldMode( item );
+    int8     bonus = 0;
+    if( proto == PID_SUPER_TOOL_KIT )
+    {
+        bonus = SUPER_TOOL_BONUS;
+    }
+    else
+    {
+        if( proto == PID_MULTI_TOOL )
+        {
+            bonus = TOOL_BONUS;
+        }
+    }
+    if( cr.Timeout[ TO_SK_SCIENCE ] > 0 )
+    {
+        cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_SKILL_WEARINESS );
+        return true;
+    }
+    if( SKILL_SUCCESS( cr, SK_SCIENCE, bonus + item.Val0 ) )
+    {
+        @field = GetBarier( item.HexX, item.HexY, item.GetProtoId() );
+        if( !valid( field ) )
+        {
+            return false;
+        }
+        if( ( fieldMode == BM_ON ) or ( fieldMode == BM_HALF_ON ) )
+        {
+            cr.SayMsg( SAY_NETMSG, TEXTMSG_TEXT, MSG_REPAIR_WIN_OFF );
+            autoOn = ( field.Blockers[ 0 ].Val4 == 0 ) ? true : false;
+            if( autoOn )
+            {
+                LogEx( "Автовключение" );
+                uint[] values;
+                values.insertLast( field.Blockers[ 0 ].Id );
+                CreateTimeEvent( __FullSecond + TIME_BARIER_OPEN, "e_TurnOnBarier", values, true );
+            }
+            field.ChangeMode( BM_OFF );
+        }
+        else
+        {
+            cr.SayMsg( SAY_NETMSG, TEXTMSG_TEXT, MSG_REPAIR_WIN_ON );
+            field.ChangeMode( BM_ON );
+        }
+        if( !GaveExp( cr, item.Id ) )
+        {
+            cr.StatBase[ ST_EXPERIENCE ] += EXP_DISABLE_FORCE_FIELD;
+        }
+        cr.TimeoutBase[ TO_SK_SCIENCE ] = SCIENCE_TIMEOUT( cr );
+    }
+    else
+    {
+        @field = GetBarier( item.HexX, item.HexY, item.GetProtoId() );
+        if( ( field.GetFieldMode() == BM_ON ) or ( field.GetFieldMode() == BM_HALF_ON ) )
+        {
+            cr.SayMsg( SAY_NETMSG, TEXTMSG_TEXT, MSG_REPAIR_FAIL_OFF );
+        }
+        else
+        {
+            cr.SayMsg( SAY_NETMSG, TEXTMSG_TEXT, MSG_REPAIR_FAIL_ON );
+        }
+        cr.TimeoutBase[ TO_SK_SCIENCE ] = SCIENCE_TIMEOUT( cr );
+    }
+    return true;
+}
+
+uint8 GetFieldMode( Item& item )
+{
+    CBarier@ field = GetBarier( item.HexX, item.HexY, item.GetProtoId() );
+    if( valid( field ) )
+    {
+        return field.GetFieldMode();
+    }
+    return 0;
+}
+
+CBarier@ GetBarier( uint16 hexX, uint16 hexY, uint16 proto )
+{
+    CBarier@ barier;
+    for( uint i = 0; i < BariersNets.length(); i++ )
+    {
+        for( uint k = 0; k < BariersNets[ i ].Bariers.length(); k++ )
+        {
+            @barier = BariersNets[ i ].Bariers[ k ];
+            if( ( barier.Barier.HexX == ( hexX + GetFieldCoord( hexX, proto, COORD_X ) ) ) and ( barier.Barier.HexY == ( hexY + GetFieldCoord( hexX, proto, COORD_Y ) ) ) )
+            {
+                LogEx( "Барьер найден" );
+                return barier;
+            }
+        }
+    }
+    LogEx( "Барьер не найден. " + GetFieldCoord( hexX, proto, COORD_X ) + " " + GetFieldCoord( hexY, proto, COORD_Y ) );
+    return null;
+}
+
+void _BarierInit( Item& barier, bool firstTime )
+{
+    InitBariers( barier );
+}
+
+void _EmitterInit( Item& emitter, bool firstTime )
+{
+    InitEmitter( emitter );
+}
+
+bool s_Terminal( Critter& player, Scenery& terminal, int skill, Item@ item, int netNum, int hackBonus, int hitBonus )
+{
+    Map@ map = player.GetMap();
+    uint mapId, hexX, hexY;
+    uint mode = 0;
+    uint itemId = 0;
+    uint timeBrocken = 0;
+    uint timeAccessDenied = 0;
+    uint[] anyData;
+    uint[] adTermInfo;
+    if( not valid( map ) )
+    {
+        return false;
+    }
+    if( valid( item ) )
+    {
+        if( item.GetProtoId() == PID_ENERGY_BARIER_ACCESS_CARD )
+        {
+            mode = MODE_USE_CARD;
+            itemId = item.Id;
+        }
+    }
+    else
+    {
+        if( skill != -1 )
+        {
+            if( skill == SK_SCIENCE )
+            {
+                mode = MODE_HACK;
+            }
+        }
+        else
+        {
+            mode = MODE_STANDART;
+        }
+    }
+    if( mode == 0 )
+    {
+        return false;
+    }
+    mapId = map.Id;
+    player.StatBase[ ST_VAR4 ] = terminal.HexX;
+    player.StatBase[ ST_VAR5 ] = terminal.HexY;
+    player.StatBase[ ST_VAR6 ] = netNum;
+    player.StatBase[ ST_VAR7 ] = hackBonus;
+    player.StatBase[ ST_VAR8 ] = hitBonus;
+    if( IsAnyData( "EnergyBarierTerminalInfo_" + mapId + "_" + terminal.HexX + "_" + terminal.HexY ) )
+    {
+        if( GetAnyData( "EnergyBarierTerminalInfo_" + mapId + "_" + terminal.HexX + "_" + terminal.HexY, adTermInfo ) )
+        {
+            timeBrocken = adTermInfo[ 0 ];
+            timeAccessDenied = adTermInfo[ 1 ];
+        }
+    }
+    anyData.insertLast( mode );
+    anyData.insertLast( itemId );
+    anyData.insertLast( timeBrocken );
+    anyData.insertLast( timeAccessDenied );
+    if( not SetAnyData( "EnergyBarierTerminal_" + mapId + "_" + terminal.HexX + "_" + terminal.HexY + "_" + netNum, anyData ) )
+    {
+        Log( "AnyData not created" );
+    }
+    RunDialog( player, 0, terminal.HexX, terminal.HexY, true );
+    return true;
+}
+
+void r_GetAccessCard( Critter& master, Critter@ slave )
+{
+    Item@ item = master.AddItem( PID_ENERGY_BARIER_ACCESS_CARD, 1 );
+    item.Val4 = __FullSecond;
+    item.Val5 = master.Id;
+}
+
+uint r_Start( Critter& master, Critter@ slave )
+{
+    Item@ card;
+    uint[] anyData;
+    Map@  map = master.GetMap();
+    if( !valid( map ) )
+    {
+        Log( "Map not valid" );
+        return 0;
+    }
+    Location@ loc = map.GetLocation();
+    if( !valid( loc ) )
+    {
+        Log( "Error: location not valid" );
+        return 0;
+    }
+    CBariersNet@ net = GetBariersNet( master.StatBase[ ST_VAR6 ], loc.Id );
+    if( !valid( net ) )
+    {
+        return 0;
+    }
+    if( !net.TerminalsDisabled )
+    {
+        if( IsAnyData( "EnergyBarierTerminal_" + map.Id + "_" + master.StatBase[ ST_VAR4 ] + "_" + master.StatBase[ ST_VAR5 ] + "_" + master.StatBase[ ST_VAR6 ] ) )
+        {
+            if( GetAnyData( "EnergyBarierTerminal_" + map.Id + "_" + master.StatBase[ ST_VAR4 ] + "_" + master.StatBase[ ST_VAR5 ] + "_" + master.StatBase[ ST_VAR6 ], anyData ) )
+            {
+                if( ( anyData[ 2 ] != 0 ) and ( anyData[ 2 ] > __FullSecond ) )
+                {
+                    return FD_TERM_BROKEN;
+                }
+                if( ( anyData[ 3 ] != 0 ) and ( anyData[ 3 ] > __FullSecond ) )
+                {
+                    return FD_TERM_NOT_ACCESS;
+                }
+                if( BarierOpen( master ) )
+                {
+                    return FD_BARIER_OPEN;
+                }
+                if( anyData[ 0 ] == MODE_STANDART )
+                {
+                    return FD_NORMAL;
+                }
+                else
+                {
+                    if( anyData[ 0 ] == MODE_USE_CARD )
+                    {
+                        @card = GetItem( anyData[ 1 ] );
+                        if( !valid( card ) )
+                        {
+                            Log( "Access card not valid" );
+                            return 0;
+                        }
+                        if( not CheckCard( card, master ) )
+                        {
+                            return FD_NOT_VALID_CARD;
+                        }
+                        else
+                        {
+                            CBariersNet@ net = GetBariersNet( master.StatBase[ ST_VAR6 ], loc.Id );
+                            if( valid( net ) )
+                            {
+                                net.ChangeNetMode( BM_OFF, AE_DEFAULT );
+                            }
+                            return FD_TURN_OFF_FIELD;
+                        }
+                    }
+                    else
+                    {
+                        if( anyData[ 0 ] == MODE_HACK )
+                        {
+                            return doHack( master, master.StatBase[ ST_VAR4 ], master.StatBase[ ST_VAR5 ] );
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Log( "AnyData not found" );
+            }
+        }
+        else
+        {
+            Log( "AnyData not created" );
+        }
+    }
+    else
+    {
+        return FD_DISABLED;
+    }
+    return 0;
+}
+
+uint r_doHack( Critter& master, Critter@ slave )
+{
+    return doHack( master, master.StatBase[ ST_VAR4 ], master.StatBase[ ST_VAR5 ] );
+}
+
+uint doHack( Critter& master, int hexX, int hexY )
+{
+    Critter@[] npcs;
+    bool guardNotFound = true;
+    Map@ map = master.GetMap();
+    if( not valid( map ) )
+    {
+        Log( "Map not valid" );
+        return 0;
+    }
+    Location@ loc = map.GetLocation();
+    if( !valid( loc ) )
+    {
+        Log( "Error: location not valid" );
+        return 0;
+    }
+    CBariersNet@ net = GetBariersNet( master.StatBase[ ST_VAR6 ], loc.Id );
+    map.GetCrittersHex( master.HexX, master.HexY, RADIUS, FIND_LIFE | FIND_ONLY_NPC, npcs );
+    for( uint i = 0; i < npcs.length(); i++ )
+    {
+        for( uint k = 0; k < net.Bariers.length(); k++ )
+        {
+            if( npcs[ i ].StatBase[ ST_NPC_ROLE ] == int( net.Bariers[ k ].GetGuardNum() ) )
+            {
+                guardNotFound = false;
+            }
+        }
+        if( guardNotFound )
+        {
+            npcs.removeAt( i );
+        }
+    }
+    if( npcs.length() != 0 )
+    {
+        CGuards@ g = GetGuards( npcs, master.StatBase[ ST_VAR6 ], 0 );
+        if( !valid( g ) )
+        {
+            return 0;
+        }
+        if( not g.CritIsAccessible( master ) )
+        {
+            for( uint i = 0; i < npcs.length(); i++ )
+            {
+                AddAttackPlane( npcs[ i ], AI_PLANE_ATTACK_PRIORITY + 1, master );
+            }
+        }
+    }
+
+    uint  mapId = master.GetMapId();
+    uint8 hRoll = HackRoll( master );
+    if( not IsSuccessRvS( hRoll ) )
+    {
+        if( IsCriticalRvS( hRoll ) )
+        {
+            uint[] adTermInfo;
+            adTermInfo.insertLast( 0 );
+            adTermInfo.insertLast( __FullSecond + TIME_NOT_ACCESS );
+            if( not SetAnyData( "EnergyBarierTerminalInfo_" + mapId + "_" + hexX + "_" + hexY, adTermInfo ) )
+            {
+                Log( "AnyData not saved" );
+            }
+
+            return FD_TERM_NOT_ACCESS;
+        }
+
+        return FD_HACK_NOT_SUCC;
+    }
+
+    return FD_HACK_SUCC;
+}
+
+uint r_TurnOfBarier( Critter& master, Critter@ slave )
+{
+    Map@ map = master.GetMap();
+    if( !valid( map ) )
+    {
+        Log( "map not valid" );
+        return 0;
+    }
+    Location@ loc = map.GetLocation();
+    if( !valid( loc ) )
+    {
+        Log( "Error: location not valid" );
+        return 0;
+    }
+    CBariersNet@ net = GetBariersNet( master.StatBase[ ST_VAR6 ], loc.Id );
+    if( valid( net ) )
+    {
+        net.ChangeNetMode( BM_OFF, AE_DEFAULT );
+    }
+    return FD_TURN_OFF_FIELD;
+}
+
+void r_CheckHit( Critter& master, Critter@ slave ) // TODO
+{}
+
+uint r_CheckAccessCard( Critter& master, Critter@ slave )
+{
+    if( CheckInven( master ) )
+    {
+        Map@ map = master.GetMap();
+        if( !valid( map ) )
+        {
+            Log( "map not valid" );
+            return 0;
+        }
+        Location@ loc = map.GetLocation();
+        if( !valid( loc ) )
+        {
+            Log( "Error: location not valid" );
+            return 0;
+        }
+        CBariersNet@ net = GetBariersNet( master.StatBase[ ST_VAR6 ], loc.Id );
+        if( valid( net ) )
+        {
+            net.ChangeNetMode( BM_OFF, AE_DEFAULT );
+        }
+    }
+    return FD_TURN_OFF_FIELD;
+}
+
+uint e_TurnOnBariers( uint[] @ values )
+{
+    CBariersNet@ net = GetBariersNet( values[ 1 ], values[ 0 ] );
+    if( valid( net ) )
+    {
+        net.ChangeNetMode( values[ 2 ], AE_DEFAULT );
+    }
+    return 0;
+}
+
+uint e_TurnOnBarier( uint[] @ values )
+{
+    CBarier@ barier;
+    for( uint i = 0; i < BariersNets.length(); i++ )
+    {
+        for( uint k = 0; k < BariersNets[ i ].Bariers.length(); k++ )
+        {
+            @barier = BariersNets[ i ].Bariers[ k ];
+            if( barier.Barier.Id == values[ 0 ] )
+            {
+                barier.ChangeMode( BM_ON );
+            }
+        }
+    }
+    return 0;
+}
+
+void r_StartGuard( Critter& master, Critter@npc ) // TODO
+{}
+
+void r_HalfOn( Critter& master, Critter@npc )
+{
+    Map@ map = master.GetMap();
+    if( !valid( map ) )
+    {
+        Log( "map not valid" );
+        return;
+    }
+    Location@ loc = map.GetLocation();
+    if( !valid( loc ) )
+    {
+        Log( "Error: location not valid" );
+        return;
+    }
+    CBariersNet@ net = GetBariersNet( master.StatBase[ ST_VAR6 ], loc.Id );
+    if( valid( net ) )
+    {
+        net.ChangeNetMode( BM_HALF_ON, AE_DEFAULT );
+    }
+}
+
+uint e_DisableForceField( uint[] @ values )
+{
+    CBariersNet@ net = GetBariersNet( values[ 0 ], values[ 1 ] );
+    if( valid( net ) )
+    {
+        net.ChangeNetMode( BM_OFF_NO_GUARD, AE_OFF );
+    }
+    return 0;
+}
+
+uint e_DisableForceFieldWithGuards( uint[] @ values )
+{
+    CBariersNet@ net = GetBariersNet( values[ 0 ], values[ 1 ] );
+    if( valid( net ) )
+    {
+        net.ChangeNetMode( BM_OFF, AE_OFF );
+    }
+    return 0;
+}
+
+uint e_EnableForceField( uint[] @ values )
+{
+    CBariersNet@ net = GetBariersNet( values[ 0 ], values[ 1 ] );
+    if( valid( net ) )
+    {
+        net.ChangeNetMode( BM_ON, AE_OFF );
+    }
+    return 0;
+}
+
+
+
+// реализация охранников
+CGuards@ GetGuards( Critter@[] @ guards, uint netNum, uint barierId )
+{
+    if( guards.length() == 0 )
+    {
+        return null;
+    }
+    CGuards@ g;
+    Map@     map = guards[ 0 ].GetMap();
+    if( !valid( map ) )
+    {
+        Log( "map not valid" );
+        return null;
+    }
+    Location@ loc = map.GetLocation();
+    if( !valid( loc ) )
+    {
+        Log( "location not valid" );
+        return null;
+    }
+    CBariersNet@ net = GetBariersNet( netNum, loc.Id );
+    if( !valid( net ) )
+    {
+        Log( "Net not valid" );
+        return null;
+    }
+    if( loc.GetProtoId() == 45 )
+    {
+        @g = CGuards_GeckCity();
+    }
+    else
+    {
+        @g = CGuards();
+    }
+    return g;
+}
+
+class CGuards
+{
+    bool CritIsAccessible( Critter& cr )
+    {
+        return CheckInven( cr );
+    }
+}
+
+class CGuards_GeckCity : CGuards
+{
+    bool CritIsAccessible( Critter& cr )
+    {
+        cr.Say( SAY_NORM_ON_HEAD, "Hi there!" );
+        return true;
+    }
+}

@@ -1,0 +1,121 @@
+#ifndef __UTILS_RECT__
+#define __UTILS_RECT__
+// Author: heX
+// ver 1.0
+// написано в полном соответствии с WinAPI
+
+class TRect {
+    int Left;
+    int Top;
+    int Right;
+    int Bottom;
+}
+
+class TPoint {
+    int X;
+    int Y;
+}
+
+bool EqualRect( const TRect Rect1, const TRect Rect2 )
+{
+    return ( Rect1.Left == Rect2.Left ) &&
+           ( Rect1.Top == Rect2.Top ) &&
+           ( Rect1.Right == Rect2.Right ) &&
+           ( Rect1.Bottom == Rect2.Bottom );
+}
+
+void SetRect( TRect& Rect, int x1, int y1, int x2, int y2 )
+{
+    Rect.Left = x1;
+    Rect.Top = y1;
+    Rect.Right = x2;
+    Rect.Bottom = y2;
+}
+
+void SetRectEmpty( TRect& Rect )
+{
+    Rect.Left = 0;
+    Rect.Top = 0;
+    Rect.Right = 0;
+    Rect.Bottom = 0;
+}
+
+bool PtInRect( const TRect Rect, const TPoint P )
+{
+    return ( P.X >= Rect.Left ) && ( P.X < Rect.Right ) && ( P.Y >= Rect.Top ) &&
+           ( P.Y < Rect.Bottom );
+}
+
+bool PtInRect( const TRect Rect, const int X, const int Y )
+{
+    return ( X >= Rect.Left ) && ( X < Rect.Right ) && ( Y >= Rect.Top ) &&
+           ( Y < Rect.Bottom );
+}
+
+bool IntersectRect( TRect& Rect, const TRect R1, const TRect R2 )
+{
+    Rect = R1;
+    if( R2.Left > R1.Left )
+        Rect.Left = R2.Left;
+    if( R2.Top > R1.Top )
+        Rect.Top = R2.Top;
+    if( R2.Right < R1.Right )
+        Rect.Right = R2.Right;
+    if( R2.Bottom < R1.Bottom )
+        Rect.Bottom = R2.Bottom;
+    return not IsRectEmpty( Rect );
+}
+
+bool UnionRect( TRect& Rect, const TRect R1, const TRect R2 )
+{
+    Rect = R1;
+    if( not IsRectEmpty( R2 ) )
+    {
+        if( R2.Left < R1.Left )
+            Rect.Left = R2.Left;
+        if( R2.Top < R1.Top )
+            Rect.Top = R2.Top;
+        if( R2.Right > R1.Right )
+            Rect.Right = R2.Right;
+        if( R2.Bottom > R1.Bottom )
+            Rect.Bottom = R2.Bottom;
+    }
+    return not IsRectEmpty( Rect );
+}
+
+bool IsRectEmpty( const TRect Rect )
+{
+    return ( Rect.Right <= Rect.Left ) || ( Rect.Bottom <= Rect.Top );
+}
+
+void OffsetRect( TRect& Rect, int DX, int DY )
+{
+    Rect.Left += DX;
+    Rect.Right += DX;
+    Rect.Top += DY;
+    Rect.Bottom += DY;
+}
+
+TPoint CenterPoint( const TRect Rect )
+{
+    TPoint Result;
+    Result.X = ( Rect.Right - Rect.Left ) / 2 + Rect.Left;
+    Result.Y = ( Rect.Bottom - Rect.Top ) / 2 + Rect.Top;
+    return Result;
+}
+
+void CenterPoint( const TRect Rect, int& X, int& Y )
+{
+    X = ( Rect.Right - Rect.Left ) / 2 + Rect.Left;
+    Y = ( Rect.Bottom - Rect.Top ) / 2 + Rect.Top;
+}
+
+void InflateRect( TRect& ARect, int X, int Y )
+{
+    ARect.Top -= Y;
+    ARect.Bottom += Y;
+    ARect.Left -= X;
+    ARect.Right += X;
+}
+
+#endif // __UTILS_RECT__

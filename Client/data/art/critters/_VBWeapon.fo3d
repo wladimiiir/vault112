@@ -1,0 +1,11 @@
+
+#
+# VanBuren weapons template
+#
+
+Model %name%.x
+Speed 3.0
+
+Anim Anim1Unarmed Anim2Single ModelFile %name%_Single
+Anim Anim1Unarmed Anim2Burst  ModelFile %name%_Burst
+Anim Anim1Unarmed Anim2Sweep  ModelFile %name%_Sweep

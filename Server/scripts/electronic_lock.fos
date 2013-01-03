@@ -1,0 +1,133 @@
+// Author: rifleman17
+// Электронный замок на контейнеры, двери
+// Свойства предмета
+// Val0 - тип ключа, 0 - просто Id предмета, больше ноля - специальный код
+// Val1 - признак: если больше 0, при каждом открытии генерится новый код
+// Val2 - длина шифра в символах. Длина не может быть меньше 3 и больше 10
+// Val3 - если значение больше 0, то через Val3 реальных секунд после открытия дверь/контейнер будут снова закрыты
+// Val4 - номер глобальной переменной, в которой хранится Id двери
+
+#include "_macros.fos"
+#include "serializator.fos"
+
+#define _Key                 # (item) ( "ELock_" + ( item.Val0 > 0 ? item.Val0 : item.Id ) )
+#define _NewCodeAfterOpen    # (item) ( item.Val1 > 0 )             // Признак, генерить ли новый шифр после первого открытия. Указывается в свойствах двери/контейнера
+#define _CodeLength          # (item) ( CLAMP( item.Val2, 3, 10 ) ) // Длина шифра в символах
+#define _CloseAtSeconds      # (item) ( item.Val3 )                 // Время автоматического закрытия контейнера или двери
+#define _GlobalVar           # (item) ( item.Val4 > 0 ? GetGlobalVar( item.Val4 ) : null )
+#define RndChar              ( chars[ Random( 0, ( chars.length() - 1 ) ) ] )
+#define STR_HEADER           ( 403 )                                // Система авторизации. Введите код доступа.
+#define STR_OPEN             ( 410 )                                // Доступ подтвержден. Замок открыт.
+#define STR_ERROR            ( 411 )                                // Ошибка. Неправильный код доступа.
+
+const string[] chars = { "Q", "S", "Y", "W", "F", "Z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "R", "U", "L", "N" };
+
+void GenerateCode( Item& item )
+{
+    string code = "";
+    for( uint i = 0; i < _CodeLength( item ); i++ )
+        code += RndChar;
+    Serializator save;
+    save.Set( code );
+    save.Save( _Key( item ) );
+}
+
+string GetCode( Item& item )
+{
+    Serializator load;
+    string       code = "";
+    if( load.Load( _Key( item ) ) )
+    {
+        load.Get( code );
+    }
+    return code;
+}
+
+void ClearCode( Item& item )
+{
+    if( IsAnyData( _Key( item ) ) )
+        EraseAnyData( _Key( item ) );
+}
+
+void _LockedInit( Item& item, bool firstTime )
+{
+    item.SetEvent( ITEM_EVENT_SKILL, "_LockedSkill" );
+    item.SetEvent( ITEM_EVENT_FINISH, "_LockedFinish" );
+    GameVar@ gId = _GlobalVar( item );
+    if( valid( gId ) )
+        gId = item.Id;
+    if( !IsAnyData( _Key( item ) ) )
+        GenerateCode( item );
+}
+void _LockedFinish( Item& item, bool deleted )
+{
+    if( deleted && IsAnyData( _Key( item ) ) )
+        EraseAnyData( _Key( item ) );
+}
+
+bool _LockedSkill( Item& item, Critter& player, int skill )
+{
+    if( skill == SKILL_PICK_ON_GROUND )
+    {
+        if( IsAnyData( _Key( item ) ) )
+        {
+            if( ( item.GetType() == ITEM_TYPE_CONTAINER || item.GetType() == ITEM_TYPE_DOOR ) &&
+                FLAG( item.LockerCondition, LOCKER_ISOPEN ) )
+                return false;
+            player.Wait( 1000 );
+            string code = "";
+            for( uint i = 0; i < _CodeLength( item ); i++ )
+                code += "?";
+            GameVar@ itemId = GetLocalVar( LVAR_last_electronic_locked, player.Id );
+            if( !valid( itemId ) )
+                return false;
+            itemId = item.Id;
+            player.ShowScreen( SCREEN_SAY, 0, "answer_LockedSkill" );
+            player.SayMsg( SAY_SAY_TITLE, TEXTMSG_TEXT, STR_HEADER );
+            player.Say( SAY_SAY_TEXT, code );
+            return true;
+        }
+    }
+    return false;
+}
+
+void answer_LockedSkill( Critter& player, uint answerI, string& answerS )
+{
+    GameVar@ itemId = GetLocalVar( LVAR_last_electronic_locked, player.Id );
+    if( !valid( itemId ) )
+        return;
+    Item@ item = GetItem( itemId.GetValue() );
+    if( !valid( item ) || !IsAnyData( _Key( item ) ) ||
+        ( item.GetType() != ITEM_TYPE_CONTAINER &&
+          item.GetType() != ITEM_TYPE_DOOR ) )
+        return;
+    if( GetCode( item ) == answerS )
+    {
+        player.SayMsg( SAY_NETMSG, TEXTMSG_TEXT, STR_OPEN );
+        item.LockerOpen();
+        player.ShowContainer( null, item, TRANSFER_HEX_CONT_UP );
+        if( _NewCodeAfterOpen( item ) )
+            GenerateCode( item );
+        if( _CloseAtSeconds( item ) > 0 )
+            CreateTimeEvent( __FullSecond + REAL_SECOND( _CloseAtSeconds( item ) ), "item@e_AutoCloseDoor", item.Id, true );
+    }
+    else
+    {
+        player.SayMsg( SAY_NETMSG, TEXTMSG_TEXT, STR_ERROR );
+    }
+}
+
+// Код замка по номеру глобальной переменной
+string ElectronicLockerCode( int varNum )
+{
+    GameVar@ itemId = GetGlobalVar( varNum );
+    if( valid( itemId ) && itemId.GetValue() > 0 )
+    {
+        Item@ item = GetItem( itemId.GetValue() );
+        if( valid( item ) )
+        {
+            return GetCode( item );
+        }
+    }
+    return "";
+}

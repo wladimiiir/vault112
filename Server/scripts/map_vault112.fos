@@ -1,0 +1,58 @@
+#include "_macros.fos"
+
+import void FlushScreen(Critter& cr, bool fadeOut, uint timeMs) from "effects";
+import bool AutoClose(Item& locker) from "doors";
+import void PlayOpenLockerSound(Item& locker) from "sounds";
+
+void InitStartLocationDoor(Item& door, bool)
+{
+	door.SetEvent(ITEM_EVENT_SKILL, "StartLocationDoorSkill");
+}
+
+bool StartLocationDoorSkill(Item& item, Critter& cr, int skill)
+{
+	CreateTimeEvent(__FullSecond + REAL_SECOND(2), "e_TransitToStart", cr.Id, false);
+	item.LockerOpen();
+	PlayOpenLockerSound(item);
+	FlushScreen(cr, false, 2000);
+	
+	return true;
+}
+
+uint e_TransitToStart(uint[]@ values)
+{
+	Critter@ player = GetCritter(values[0]);
+	if(!valid(player))
+		return 0;
+	
+	Map@ map = GetMapByPid(MAP_v112_1, 0);
+	if(!valid(map))
+	{
+		player.Say(SAY_NETMSG, "<error v112_1>");
+		return 0;
+	}
+	
+	Item@ door = map.GetItem(48, 53, 2018);
+	if(valid(door) && _LockerIsClose(door))
+	{
+		door.LockerOpen();
+		AutoClose(door);
+	}
+	
+	DeleteLocation(player.GetMap().GetLocation().Id);
+	player.TransitToMap(map.Id, 100);
+	
+	uint zoneX = player.WorldX / __GlobalMapZoneLength;
+    uint zoneY = player.WorldY / __GlobalMapZoneLength;
+    player.SetFog( zoneX, zoneY, FOG_NONE );
+    player.SetFog( zoneX - 1, zoneY - 1, FOG_HALF );
+    player.SetFog( zoneX, zoneY - 1, FOG_HALF );
+    player.SetFog( zoneX + 1, zoneY - 1, FOG_HALF );
+    player.SetFog( zoneX - 1, zoneY, FOG_HALF );
+    player.SetFog( zoneX + 1, zoneY, FOG_HALF );
+    player.SetFog( zoneX - 1, zoneY + 1, FOG_HALF );
+    player.SetFog( zoneX, zoneY + 1, FOG_HALF );
+    player.SetFog( zoneX + 1, zoneY + 1, FOG_HALF );
+	
+	return 0;
+}

@@ -1,0 +1,31 @@
+#ifndef __NPC_ROLES__
+#define __NPC_ROLES__
+
+#define	ROLE_HELPLESS_CITIZEN			( 201 )
+#define ROLE_PEN_BRAHMIN				( 202 )
+#define VAULT_112_GUARD					( 203 )
+#define VAULT_112_PATROL				( 204 )
+#define VAULT_112_STUFF_KEEPER			( 205 )
+#define VAULT_112_OCCUPANT				( 206 )
+#define VAULT_112_TURRET				( 207 )
+
+//encounter roles (500-599)
+#define ROLE_ENCOUNTER_HUMAN_GOOD		( 500 )
+#define ROLE_ENCOUNTER_HUMAN_EVIL		( 501 )
+#define ROLE_ENCOUNTER_HUMAN_NEUTRAL	( 502 )
+#define ROLE_ENCOUNTER_HUMAN_MAD		( 503 )
+#define ROLE_ENCOUNTER_HUMAN_COWARD		( 504 )
+//...
+#define ROLE_ENCOUNTER_ANIMAL_GOOD		( 510 )
+#define ROLE_ENCOUNTER_ANIMAL_EVIL		( 511 )
+#define ROLE_ENCOUNTER_ANIMAL_NEUTRAL	( 512 )
+#define ROLE_ENCOUNTER_ANIMAL_WEAK		( 513 )
+//...
+#define ROLE_ENCOUNTER_GUARD			( 520 )
+#define ROLE_ENCOUNTER_TRADER			( 521 )
+#define ROLE_ENCOUNTER_MOB				( 522 )
+#define ROLE_ENCOUNTER_TRIBAL			( 523 )
+
+//...
+
+#endif

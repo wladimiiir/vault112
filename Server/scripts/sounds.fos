@@ -1,0 +1,188 @@
+#include "_macros.fos"
+
+#ifdef __SERVER
+#define SOUND_RADIUS	(40)
+
+//export
+void PlayOpenLockerSound(Item& locker)
+{
+	ProtoItem@ proto = GetProtoItem(locker.GetProtoId());
+
+	if(!valid(proto))
+		return;
+
+	Critter@[] critters = GetCrittersHearingSound(locker);
+	if(locker.GetType() == ITEM_TYPE_DOOR)
+	{
+		for (uint i = 0; i < critters.length(); i++)
+		{
+			critters[i].PlaySound('S', SOUND_DOOR_OPEN, proto.SoundId, '1', true);
+		}
+	}
+	else if(locker.GetType() == ITEM_TYPE_CONTAINER)
+	{
+		string sound = "IOCNTNRA";
+		sound[sound.length()-1] = proto.SoundId;
+		sound += ".ACM";
+		for (uint i = 0; i < critters.length(); i++)
+		{
+			critters[i].PlaySound(sound, true);
+		}
+	}
+}
+
+//export
+void PlayCloseLockerSound(Item& locker)
+{
+	ProtoItem@ proto = GetProtoItem(locker.GetProtoId());
+
+	if(!valid(proto))
+		return;
+
+	Critter@[] critters = GetCrittersHearingSound(locker);
+	if(locker.GetType() == ITEM_TYPE_DOOR)
+	{
+		for (uint i = 0; i < critters.length(); i++)
+		{
+			critters[i].PlaySound('S', SOUND_DOOR_CLOSE, proto.SoundId, '1', true);
+		}
+	}
+	else if(locker.GetType() == ITEM_TYPE_CONTAINER)
+	{
+		string sound = "ICCNTNRA";
+		sound[sound.length()-1] = proto.SoundId;
+		sound += ".ACM";
+		for (uint i = 0; i < critters.length(); i++)
+		{
+			critters[i].PlaySound(sound, true);
+		}
+	}
+}
+
+//export
+void PlayLockedLockerSound(Item& locker)
+{
+	ProtoItem@ proto = GetProtoItem(locker.GetProtoId());
+
+	if(!valid(proto))
+		return;
+
+	Critter@[] critters = GetCrittersHearingSound(locker);
+	if(locker.GetType() == ITEM_TYPE_DOOR)
+	{
+		for (uint i = 0; i < critters.length(); i++)
+		{
+			critters[i].PlaySound('S', SOUND_DOOR_LOCK, proto.SoundId, '1', true);
+		}
+	}
+	else if(locker.GetType() == ITEM_TYPE_CONTAINER)
+	{
+		string sound = "ILCNTNRA";
+		sound[sound.length()-1] = proto.SoundId;
+		sound += ".ACM";
+		for (uint i = 0; i < critters.length(); i++)
+		{
+			critters[i].PlaySound(sound, true);
+		}
+	}
+}
+
+//import void PlayUnlockedLockerSound(Item& locker) from "sounds";
+void PlayUnlockedLockerSound(Item& locker)
+{
+	ProtoItem@ proto = GetProtoItem(locker.GetProtoId());
+
+	if(!valid(proto))
+		return;
+
+	Critter@[] critters = GetCrittersHearingSound(locker);
+	if(locker.GetType() == ITEM_TYPE_DOOR)
+	{
+		for (uint i = 0; i < critters.length(); i++)
+		{
+			critters[i].PlaySound('S', SOUND_DOOR_NOT_OPEN, proto.SoundId, '1', true);
+		}
+	}
+	else if(locker.GetType() == ITEM_TYPE_CONTAINER)
+	{
+		string sound = "INCNTNRA";
+		sound[sound.length()-1] = proto.SoundId;
+		sound += ".ACM";
+		for (uint i = 0; i < critters.length(); i++)
+		{
+			critters[i].PlaySound(sound, true);
+		}
+	}
+}
+
+//export
+void PlayAttackSound(Critter@ soundSource)
+{
+	uint8 mode;
+	ProtoItem@ weaponPid = soundSource.GetSlotProto(SLOT_HAND1, mode);
+	
+	if(valid(weaponPid))
+		soundSource.PlaySound('W', SOUND_WEAPON_USE, _WeaponSoundId(weaponPid, 0), '1', true);
+	else
+		Log("should be playing unarmed attack sound here");
+}
+
+Critter@[] GetCrittersHearingSound(Critter@ soundSource)
+{
+	Critter@[] critters;
+	Map@ map = soundSource.GetMap();
+	if(!valid(map))
+		return critters;
+
+	soundSource.GetCritters(true, FIND_ALL | FIND_ONLY_PLAYERS, critters);
+	
+	return critters;
+}
+
+Critter@[] GetCrittersHearingSound(Item@ item)
+{
+	Critter@[] critters;
+	Map@ map = GetMap(item.MapId);
+	if(!valid(map))
+		return critters;
+
+	map.GetCrittersHex(item.HexX, item.HexY, SOUND_RADIUS, FIND_ALL | FIND_ONLY_PLAYERS, critters); 
+	//map.GetCrittersWhoViewPath(item.HexX, item.HexY, item.HexX, item.HexY, FIND_ALL | FIND_ONLY_PLAYERS, critters); 
+	
+	return critters;
+}
+
+void _ContainerInit(Item& container, bool firstTime)
+{
+	
+}
+
+void _DoorInit(Item& door, bool firstTime)
+{
+	door.SetEvent(ITEM_EVENT_SKILL, "_DoorSkill");
+	door.SetEvent(ITEM_EVENT_USE_ON_ME, "_DoorUseOnMe");
+}
+
+bool _DoorSkill( Item& door, Critter& cr, int skill )
+{
+	cr.Say(SAY_NETMSG, "Door skill");
+	return true;
+}
+
+bool _DoorUseOnMe( Item& door, Critter& cr, Item@ usedItem )
+{
+	cr.Say(SAY_NETMSG, "Door use on me");
+	return true;
+}
+#endif
+
+#ifdef __CLIENT
+void PlayLocalSound(int, int, int, string@ soundName, int[]@)
+{
+	CritterCl@ chosen = GetChosen();
+	if(!valid(chosen))
+		return;
+		
+	PlaySound(soundName);
+}
+#endif
