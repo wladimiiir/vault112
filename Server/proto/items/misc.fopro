@@ -4537,6 +4537,23 @@ Volume=100
 Material=1
 
 [Proto]
+ProtoId=1200
+Type=5
+PicMap=art\items\bed_with_patient.fofrm
+PicInv=art\inven\reserved.frm
+Flags=33559040
+DisableEgg=1
+
+[Proto]
+ProtoId=1201
+Type=5
+PicMap=art\items\vbed-90.frm
+PicInv=art\inven\reserved.frm
+Flags=33559064
+DisableEgg=1
+Material=1
+
+[Proto]
 ProtoId=3228
 Type=5
 PicMap=art\items\wantedsign.fofrm
@@ -4544,4 +4561,5 @@ PicInv=art\inven\reserved.frm
 Flags=33558556
 DisableEgg=1
 Material=1
+
 

@@ -1,0 +1,110 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 1 #
+2 1010 D _var p v112_claire = 0 #
+6 1020 D _var p v112_claire = 1 #
+14 1030 D _var p v112_claire = 2 @
+2 2000 None 0 #
+3 2010 #
+3 2020 @
+3 3000 None 0 #
+4 3010 #
+4 3020 @
+4 4000 None 0 #
+5 4010 #
+5 4020 @
+5 5000 None 0 #
+0 5010 R _var p v112_claire = 1 R _script map_vault112@r_FallAsleep 0  #
+0 5020 R _var p v112_claire = 1 R _script map_vault112@r_FallAsleep 0  @
+6 6000 None 0 #
+7 6010 #
+7 6020 @
+7 7000 None 0 #
+8 7010 #
+15 7020 @
+8 8000 None 0 #
+9 8010 #
+9 8020 #
+9 8030 @
+9 9000 None 0 #
+10 9010 @
+10 10000 None 0 #
+11 10010 @
+11 11000 None 0 #
+12 11010 #
+16 11020 @
+12 12000 None 0 #
+13 12010 R _var p v112_claire = 2 #
+13 12020 R _var p v112_claire = 2 #
+0 12030 R _var p v112_claire = 2 @
+13 13000 None 0 #
+0 13010 R _var p v112_drbraun = 1 #
+0 13020 R _var p v112_drbraun = 1 #
+0 13030 R _var p v112_drbraun = 1 @
+14 14000 None 0 @
+15 15000 None 0 #
+9 15010 #
+9 15020 #
+9 15030 @
+16 16000 None 0 #
+12 16010 &
+
+[engl]
+{100}{}{Claire}
+{200}{}{Claire, local doctor.}
+{210}{}{Claire, local doctor. She is very pretty woman and she seems to be very carefull about her patients.}
+{1000}{}{Predialogue installations}
+{1010}{}{first time}
+{1020}{}{second time}
+{1030}{}{after initial dialog}
+{2000}{}{Oh, thanks God, you are awake.}
+{2010}{}{Wha- what happened? Where am I?}
+{2020}{}{Agh, where am I?}
+{3000}{}{My name is Claire and I am local doctor here. Our scouts found you bleeding in the Wasteland few weeks ago. Do you remember what happened?}
+{3010}{}{What? Bleeding? I- I don't remember anything. Where I am?}
+{3020}{}{Wait. What? No, I have to go.}
+{4000}{}{Calm down. Try not to make sudden moves. You still need some rest. Don't worry, you are safe here. As I said, my name is Claire and we are in ICU facility of Vault 112.}
+{4010}{}{Vault 112? [you feel sudden pain in your head] Aw, my head...}
+{4020}{}{What the fuck is Vault 112? I have never heard of it. [you feel sudden pain in your head] Aw, the fuck, my head...}
+{5000}{}{Please, you have to sleep some more time to recover. You are still in pretty bad shape, but you are out of the worst. Don't worry, everything will be OK.}
+{5010}{}{[close your eyes and slowly fall asleep]}
+{5020}{}{No, no, no, I have to go [you are trying getting up from the bed, but Claire injects sedative to your arm and you are falling asleep].}
+{6000}{}{You are awake. Good. How are you feeling?}
+{6010}{}{Good, I guess.}
+{6020}{}{Not very good, I guess.}
+{7000}{}{You will feel like a new person in couple of days [she smiles at you]. I am glad you made it...you are good to go now, I have done the best I could do.}
+{7010}{}{Thanks...Claire was it?}
+{7020}{}{Thanks, nice lady.}
+{8000}{}{You remember [she smiles]. But...I don't know your name.}
+{8010}{}{My name is...[you are trying to remember]...@lex pname@. Yes, @lex pname@.}
+{8020}{}{[you are trying to remember, but you can't]...I don't remember.}
+{8030}{}{My name is not important.}
+{9000}{}{Oh, you have trouble remembering? Do you know what happened? What almost killed you?}
+{9010}{}{I...I am not sure. I remember some animals...molerats...but it's all very blurry.}
+{10000}{}{Yes, our scouts saw molerats dragging you into their cave. Do you remember what happened before that?}
+{10010}{}{[you are trying to remember] I...don't. I don't really remember anything.}
+{11000}{}{Hm, let me see [she tooks a small spotlight and points it to your eyes]. How does your head feel? Do you feel any pain?}
+{11010}{}{No, not really. My head feels fine.}
+{11020}{}{Just a small pain here [you lie pointing on your penis].}
+{12000}{}{Temporary amnesia can be common in these types of shock you have been through. But if you have trouble remembering after couple of days, please, let me know.}
+{12010}{}{Thanks, doctor, you've saved my life. I wish I could repay you somehow.}
+{12020}{}{Thanks, doctor, you've saved my life.}
+{12030}{}{OK, then I will be off. See you.}
+{13000}{}{[she smiles] I was just doing my job. I am really glad you feel fine. I am sorry, but I have some other patient I have to take care of right now, but you should have a look around, maybe talking to some people will help your memory to return. Oh, yes, I almost forgot, Dr. Braun, our overseer, would like to see you. You can find him at second floor.}
+{13010}{}{Thanks, I will.}
+{13020}{}{Thanks, see you around.}
+{13030}{}{Bye, then.}
+{14000}{}{Please, I have much work to do. Come back later.@@Sorry, I don't have time right now. This man is dying.@@Could you come back later, please?}
+{15000}{}{My name is Claire, I am a doctor here. What is your name?}
+{15010}{}{My name is...[you are trying to remember]...@lex pname@. Yes, @lex pname@.}
+{15020}{}{[you are trying to remember, but you can't]...I don't remember.}
+{15030}{}{My name is not important.}
+{16000}{}{Aw, yes, sorry to tell you that. That's probably phantom pain, because those rats ripped it off. I am sorry.}
+{16010}{}{Wait, what?! [you check your penis and it is really not there] No. That's not possible, I don't remember anything.}
+

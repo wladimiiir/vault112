@@ -260,3 +260,94 @@
 /Tools/ObjectEditor/ObjectEditor.log
 /Tools/ObjectEditor/ObjectEditor.user.cfg
 /Tools/ObjectEditor/Template.lang
+/Client/data/art/intrface/default.ini~
+/Client/data/cache/default.cache
+/Client/data/cache/localhost.4000/2D_3Colors.fx.fxc
+/Client/data/cache/localhost.4000/2D_BlackWhite.fx.fxc
+/Client/data/cache/localhost.4000/2D_Default.fx.fxc
+/Client/data/cache/localhost.4000.cache
+/Client/data/cache/localhost.4000/Font_Default.fx.fxc
+/Client/data/cache/localhost.4000/Interface_Default.fx.fxc
+/Client/data/cache/localhost.4000/Primitive_Default.fx.fxc
+/Client/data/cache/localhost.4000/scripts.fonline_test_client.dll
+/Client/data/cache/localhost.4000/scripts.fonline_test_client.so
+/Client/data/cache/localhost.4000/scripts.fonline_tla_client.dll
+/Client/data/cache/localhost.4000/scripts.fonline_tla_client.so
+/Client/data/cache/singleplayer.cache
+/Client/data/CrashDump_FOnlineMapper_0260_2013.01.02_18-38-47.txt
+/Client/data/video/TheLifeAfterHell.ogg
+/Client/data/video/TheLifeAfterHell.ogv
+/Client/data/video/TheLifeAfterIntro.ogg
+/Client/data/video/TheLifeAfterIntro.ogv
+/Client/data/video/TheLifeAfterIntroSlideEN.ogg
+/Client/data/video/TheLifeAfterIntroSlide.ogv
+/Client/data/video/TheLifeAfterIntroSlideRU.ogg
+/Server/maps/green_forest1.fomapb
+/Server/maps/preset_cave.fomap
+/Server/maps/preset_green_forest.fomap
+/Server/save/clients/Mike Wall.client
+/Server/save/world0006.fo
+/Server/save/world0007.fo
+/Server/save/world0008.fo
+/Server/save/world0009.fo
+/Tools/EncounterEditor/worldmap_init.fos
+/Tools/Fonline Critter Proto Editor v0.54.0/BackupServerFiles/10-11-2012_18-03-43_backup_server_files.zip
+/Tools/Fonline Critter Proto Editor v0.54.0/BackupServerFiles/20-12-2012_21-00-46_backup_server_files.zip
+/Tools/Fonline Critter Proto Editor v0.54.0/BackupServerFiles/24-11-2012_17-52-25_backup_server_files.zip
+/Tools/Fonline Critter Proto Editor v0.54.0/BackupServerFiles/24-11-2012_17-53-51_backup_server_files.zip
+/Tools/Fonline Critter Proto Editor v0.54.0/BackupServerFiles/24-11-2012_17-54-32_backup_server_files.zip
+/Tools/Fonline Critter Proto Editor v0.54.0/BackupServerFiles/24-11-2012_17-55-42_backup_server_files.zip
+/Tools/Fonline Critter Proto Editor v0.54.0/BackupServerFiles/24-11-2012_18-12-54_backup_server_files.zip
+/Tools/Fonline Critter Proto Editor v0.54.0/BackupServerFiles/24-11-2012_19-34-36_backup_server_files.zip
+/Tools/Fonline Critter Proto Editor v0.54.0/BackupServerFiles/26-11-2012_22-34-47_backup_server_files.zip
+/Tools/Fonline Critter Proto Editor v0.54.0/BackupServerFiles/26-12-2012_10-32-37_backup_server_files.zip
+/Tools/Fonline Critter Proto Editor v0.54.0/BackupServerFiles/26-12-2012_10-39-19_backup_server_files.zip
+/Tools/Fonline Critter Proto Editor v0.54.0/BackupServerFiles/26-12-2012_10-44-55_backup_server_files.zip
+/Tools/Fonline Critter Proto Editor v0.54.0/BackupServerFiles/26-12-2012_10-52-48_backup_server_files.zip
+/Tools/Fonline Critter Proto Editor v0.54.0/BackupServerFiles/26-12-2012_11-06-17_backup_server_files.zip
+/Tools/Fonline Critter Proto Editor v0.54.0/BackupServerFiles/29-12-2012_20-51-47_backup_server_files.zip
+/Tools/Fonline Critter Proto Editor v0.54.0/CritterProtoEditor.ini
+/Tools/TiledMapper/TiledMapper.cfg
+/Tools/TraderEditor/settings.ini
+/Client/data/sound/music/01hub.acm
+/Client/data/sound/music/01 - No Fate No Fear.ogg
+/Client/data/sound/music/02 - Into The Dust.ogg
+/Client/data/sound/music/02mstrlr.acm
+/Client/data/sound/music/03 - A Way To Anywhere.ogg
+/Client/data/sound/music/03wrldmp.acm
+/Client/data/sound/music/04 - 12H. Dusk.ogg
+/Client/data/sound/music/05 - Anesthetic.ogg
+/Client/data/sound/music/05raider.acm
+/Client/data/sound/music/06 - Cluster Decay.ogg
+/Client/data/sound/music/07desert.acm
+/Client/data/sound/music/07 - Echelon.ogg
+/Client/data/sound/music/08 - Blue Grass.ogg
+/Client/data/sound/music/08vats.acm
+/Client/data/sound/music/09 - D.S.Brudge.ogg
+/Client/data/sound/music/09glow.acm
+/Client/data/sound/music/10 - Dystopian Dreams.ogg
+/Client/data/sound/music/10labone.acm
+/Client/data/sound/music/11 - Face To Face.ogg
+/Client/data/sound/music/12junktn.acm
+/Client/data/sound/music/12 - Kill Klesk.ogg
+/Client/data/sound/music/13carvrn.acm
+/Client/data/sound/music/13 - Killadrone.ogg
+/Client/data/sound/music/14necro.acm
+/Client/data/sound/music/14 - Organic Shadows.ogg
+/Client/data/sound/music/15 - Phagocyte Disaster.ogg
+/Client/data/sound/music/16follow.acm
+/Client/data/sound/music/16 - Stranglet.ogg
+/Client/data/sound/music/17arroyo.acm
+/Client/data/sound/music/17 - Trinity.ogg
+/Client/data/sound/music/18modoc.acm
+/Client/data/sound/music/19reno.acm
+/Client/data/sound/music/20car.acm
+/Client/data/sound/music/21sf.acm
+/Client/data/sound/music/22vcity.acm
+/Client/data/sound/music/23world.acm
+/Client/data/sound/music/24redd.acm
+/Client/fallout.dat
+/Tools/Fonline Critter Proto Editor v0.54.0/BackupServerFiles/05-01-2013_14-27-58_backup_server_files.zip
+/Client/ftrobots.bos
+/Server/dumps/CrashDump_FOnlineServer_0504_2013.01.05_15-57-19.txt
+/Server/data/CritterTypes.cfg~

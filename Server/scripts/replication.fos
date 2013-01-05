@@ -2,6 +2,7 @@
 #include "_macros.fos"
 #include "entire.fos"
 #include "_msgstr.fos"
+#include "_npc_roles.fos"
 
 import void DropDrugEffects( Critter& cr ) from "drugs";
 import void DropPoison( Critter& cr ) from "poison";
@@ -9,6 +10,7 @@ import void DropRadiation( Critter& cr ) from "radiation";
 import void PlayVideo( Critter& cr, string& videoName, bool canStop ) from "media";
 import void FindEncounter( Critter@[]& group, Item@ car, uint x, uint y, uint& encounterDescriptor, bool& waitForAnswer, bool empty ) from "worldmap";
 import void InviteToEncounter( Critter@[]& group, Item@ car, uint encounterDescriptor, int combatMode, uint& mapId, uint16& hexX, uint16& hexY, uint8& dir ) from "worldmap";
+import bool DialogNpc( Critter& player, int role ) from "stdlib";
 
 const uint16 HellMapPid = 0;
 const        uint16[] ReplicatorsMapPids = { MAP_v112_1 };
@@ -110,6 +112,11 @@ void SetStartLocation( Critter& cr ) // Export
     cr.SetFog( zoneX + 1, zoneY + 1, FOG_FULL );
 
     cr.TransitToMap( replicator.Id, ENTIRE_REPLICATION );
+    cr.StatBase[ST_CURRENT_HP] = 2;
+    cr.ModeBase[MODE_NO_WALK] = 1;
+    cr.ModeBase[MODE_NO_RUN] = 1;
+    cr.ModeBase[MODE_NO_HEAL] = 1;
+    DialogNpc(cr, ROLE_VAULT_112_OCCUPANT);
 
     //~ zoneX = cr.WorldX / __GlobalMapZoneLength;
     //~ zoneY = cr.WorldY / __GlobalMapZoneLength;

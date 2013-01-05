@@ -4,8 +4,8 @@ MaxHexX              159
 MaxHexY              150
 WorkHexX             58
 WorkHexY             66
-ScriptModule         -
-ScriptFunc           -
+ScriptModule         map_vault112
+ScriptFunc           InitVaultMap
 NoLogOut             0
 Time                 0
 DayTime              300  600  1140 1380
@@ -12882,5 +12882,10 @@ MapObjType           2
 ProtoId              6585
 MapX                 37
 MapY                 79
+
+MapObjType           2
+ProtoId              2067
+MapX                 43
+MapY                 74
 
 

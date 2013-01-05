@@ -263,7 +263,6 @@ void render_iface( uint layer )
 				ItemCl@ weapon = _CritGetItemHand(chosen);
 				if(valid(weapon))
 				{
-					Message("cursor");
 					int toHit = to_hit(GetChosen(), target, weapon.Proto, weapon.Mode);
 					DrawText(toHit == 0 ? "x" : (toHit + "%"), __MouseX + 6, __MouseY + 6,
 						((toHit / 10 >= 1 ? 2 : 1) + 2) * 10, 10, 
