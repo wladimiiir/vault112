@@ -329,7 +329,7 @@ void render_map()
 // Return true to disable engine events.
 bool mouse_down( int click )
 {
-	if(!CtrlDown && AltDown && ShiftDown)
+	if(!CtrlDown && AltDown && !ShiftDown)
 		if(ShowAdminPanel())
 			return true;
 			
@@ -390,6 +390,10 @@ bool key_up( uint8 key )
 {
     if( key == DIK_LMENU || key == DIK_RMENU )
         AltDown = false;
+	if( key == DIK_LCONTROL || key == DIK_RCONTROL )
+		CtrlDown = false;		
+	if( key == DIK_LSHIFT || key == DIK_RSHIFT )
+		ShiftDown = false;
     if( key == DIK_Z )
         __MapZooming = false;
 
@@ -401,6 +405,8 @@ bool key_up( uint8 key )
 void input_lost()
 {
     AltDown = false;
+    CtrlDown = false;
+    ShiftDown = false;
     __MapZooming = false;
 
     GUI_InputLost();

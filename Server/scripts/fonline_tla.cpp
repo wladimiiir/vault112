@@ -385,6 +385,12 @@ EXPORT void changedParam_Reputation( CritterMutual& cr, uint index, int oldValue
         const_cast< int* >( cr.Params )[ index ] += 0x80000000;
 }
 
+EXPORT int getParam_BonusLook( CritterMutual& cr, uint )
+{
+	int value = cr.Params[ ST_BONUS_LOOK ] + cr.Params[ ST_BONUS_LOOK_EXT ];
+	return CLAMP( value, -2000, 2000 );
+}
+
 /************************************************************************/
 /* Extended methods                                                     */
 /************************************************************************/

@@ -6,6 +6,7 @@
 #include "_animation.fos"
 #include "teams_table.fos"
 #include "utils_for_array.fos"
+#include "linetracer_h.fos"
 
 // Imports
 import void InitializeGame() from "config";
@@ -1303,7 +1304,112 @@ void karma_voting( Critter& crFrom, Critter& crTo, bool valUp )
 // Note: CRITTER_EVENT_SHOW_CRITTER_X, CRITTER_EVENT_HIDE_CRITTER_X is not processed.
 bool check_look( Map& map, Critter& cr, Critter& opponent )
 {
+	uint flags = cr.Param[VISIBILITY_FLAGS];
+	uint opponentFlags = opponent.Param[VISIBILITY_FLAGS];
+	if(flags & VISIBILITY_FLAG_SEE_ALL != 0)
+		return true;
+	if(cr.IsDead() || flags & VISIBILITY_FLAG_SEE_NOTHING != 0)
+		return false;
+	if(opponentFlags & VISIBILITY_FLAG_INVISIBLE != 0)
+		return false;
+	
+	int visibleDistance = 0;
+	if(cr.IsKnockout())
+		visibleDistance = 3;
+	else if(cr.Damage[DAMAGE_EYE] != 0)
+		visibleDistance = 3;
+	else
+	{
+		uint multiplier = 5;
+		if(IS_NIGHT(__Hour) && cr.Trait[TRAIT_NIGHT_PERSON] == 0 || !IS_NIGHT(__Hour) && cr.Trait[TRAIT_NIGHT_PERSON] != 0)
+			multiplier = 3;
+		visibleDistance = (2 + cr.Stat[ST_PERCEPTION]) * multiplier + cr.StatBase[ST_BONUS_LOOK];
+		
+		//here we have to use basic formula for visibility and create difference for correct visibility lines (Q) on client
+		int basicFormula = 20 + cr.Stat[ST_PERCEPTION] * 3 + cr.StatBase[ST_BONUS_LOOK];
+		cr.StatBase[ST_BONUS_LOOK_EXT] = visibleDistance - basicFormula;
+	}
+	
+	uint distance = GetDistantion(cr.HexX, cr.HexY, opponent.HexX, opponent.HexY);
+	uint8 direction = GetDirection(cr.HexX, cr.HexY, opponent.HexX, opponent.HexY);
+	
+	visibleDistance -= GetLookDirNerf(visibleDistance, ABS(int(cr.Dir) - int(direction)) % 6);
+	
+	if(visibleDistance < int(distance))
+		return false;
+	
+	if(flags & VISIBILITY_FLAG_IGNORE_WALLS == 0 
+		&& LineTracerHex(cr.HexX, cr.HexY, opponent.HexX, opponent.HexY, map, distance, @TraceContext) < distance)
+		return false;
+		
+	//sneak
+	if(opponent.Mode[MODE_HIDE] != 0 && distance > 3 && flags & VISIBILITY_FLAG_IGNORE_SNEAK == 0)
+	{
+		uint sneak = opponent.Skill[SK_SNEAK];
+		sneak -= GetSneakSkillNerf(sneak, ABS(int(cr.Dir) - int(direction)) % 6);
+		visibleDistance -= sneak / 6;
+		if(visibleDistance < int(distance))
+			return false;
+	}
+	
     return true;
+}
+
+uint GetLookDirNerf(uint distance, uint8 lookDir)
+{
+	uint nerf = 0;
+	switch(lookDir)
+	{
+		case 0:
+			nerf = __LookDir0;
+			break;
+		case 1:
+		case 5:
+			nerf = __LookDir1;
+			break;
+		case 2:
+		case 4:
+			nerf = __LookDir2;
+			break;
+		case 3:
+			nerf = __LookDir3;
+			break;
+	}
+	
+	return distance * nerf / 100;
+}
+
+uint GetSneakSkillNerf(uint skill, uint8 lookDir)
+{
+	uint nerf = 0;
+	switch(lookDir)
+	{
+		case 0:
+			nerf = __LookSneakDir0;
+			break;
+		case 1:
+		case 5:
+			nerf = __LookSneakDir1;
+			break;
+		case 2:
+		case 4:
+			nerf = __LookSneakDir2;
+			break;
+		case 3:
+			nerf = __LookSneakDir3;
+			break;
+	}
+	
+	return skill * nerf / 100;
+}
+
+WallTraceContext TraceContext();
+class WallTraceContext : ITraceContext
+{
+	bool Exec( Map& map, uint16 hx, uint16 hy ) override
+	{
+		return !map.IsHexRaked( hx, hy );
+	}
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////

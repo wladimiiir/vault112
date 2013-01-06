@@ -351,3 +351,10 @@
 /Client/ftrobots.bos
 /Server/dumps/CrashDump_FOnlineServer_0504_2013.01.05_15-57-19.txt
 /Server/data/CritterTypes.cfg~
+/Client/data/cache/localhost.4000/2D_BlackWhite_ext.fx.fxc
+/Client/data/cache/localhost.4000/2D_NoLight.fx.fxc
+/Client/data/cache/localhost.4000/2D_Red.fx.fxc
+/Client/data/cache/localhost.4000/NightVisor.fx.fxc
+/Client/data/cache/localhost.4000/VisorBack.fx.fxc
+/Server/save/clients/Scripter2.client
+/Server/save/world0010.fo

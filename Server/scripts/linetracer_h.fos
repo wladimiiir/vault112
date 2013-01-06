@@ -8,6 +8,7 @@ shared interface ITraceContext
 }
 
 #ifndef __LINETRACER_MODULE__
+import float GetDirectionF( uint16 hx, uint16 hy, uint16 tx, uint16 ty ) from "linetracer"; 
 import uint LineTracerHex( uint16 hx, uint16 hy, uint16 tx, uint16 ty, Map& map, uint dist, ITraceContext@ context ) from "linetracer";
 import uint LineTracerSquare( uint16 hx, uint16 hy, uint16 tx, uint16 ty, Map& map, uint dist, ITraceContext@ context ) from "linetracer";
 #endif

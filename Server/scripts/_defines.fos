@@ -408,6 +408,7 @@
 #define ST_NEXT_REPLICATION_MAP                  ( 131 )
 #define ST_NEXT_REPLICATION_ENTIRE               ( 132 )
 #define ST_CURRENT_AP_EXT						 ( 133 )
+#define ST_BONUS_LOOK_EXT						 ( 134 )
 // 133..149
 #ifdef PLAYERS_3D
 // Initial values of animation 3d layers
