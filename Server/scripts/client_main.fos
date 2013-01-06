@@ -64,7 +64,7 @@ void RefreshMouseOverText()
 	if(!valid(critter))
 		return;
 	
-	if(critter.IsNpc() || critter.IsPlayer() && !__ShowPlayerNames)
+	if(critter.IsNpc() && !__ShowNpcNames || critter.IsPlayer() && !__ShowPlayerNames)
 	{
 		uint color = critter.IsChosen() ? COLOR_WHITE : COLOR_LGRAY;
 		if(critter.IsNpc())
@@ -209,8 +209,6 @@ uint loop()
 {
 	RefreshMouseOverText();
 	RefreshBattleground();
-	__ShowCritId = true;
-	__ShowNpcNames = true;
     return 100;
 }
 
@@ -369,9 +367,12 @@ bool key_down( uint8 key )
         SetEffect( EFFECT_2D, -1, "2D_NoLight.fx" );
     if( key == DIK_Z )
         __MapZooming = true;
-        
-	if(key == DIK_F7)
+    
+    if(key == DIK_F7)
+		__ShowNpcNames = !__ShowNpcNames;
+	if(key == DIK_F9)
 		ToggleTimeoutScreen();
+	
 		
 	if(!AltDown && !ShiftDown && !CtrlDown && key == DIK_SPACE)
 		if(EndTurnBasedTurn())
@@ -492,6 +493,7 @@ bool map_message( string& message, uint16& hexX, uint16& hexY, uint& color, uint
 // By default delay == [TextDelay + message length * 100] ms
 bool in_message( string& message, int& sayType, uint& critterId, uint& delay )
 {
+	Log("in message: "+message);
     CritterCl@ cr = GetCritter( critterId );
     if( valid( cr ) && PlayerIgnored( cr ) )
         return false;

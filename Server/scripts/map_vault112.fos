@@ -47,7 +47,6 @@ void InitStartLocationMap(Map& map, Critter& player)
 	if(valid(bed))
 		return;
 		
-	Log("Adding bed");
 	map.AddItem(entires[0].HexX, entires[0].HexY, PID_BED_WITH_PATIENT(player), 1);
 }
 
