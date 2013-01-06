@@ -4,8 +4,8 @@ MaxHexX              113
 MaxHexY              197
 WorkHexX             56
 WorkHexY             55
-ScriptModule         map_vault112
-ScriptFunc           InitStartLocationMap
+ScriptModule         -
+ScriptFunc           -
 NoLogOut             0
 Time                 720
 DayTime              300  600  1140 1380

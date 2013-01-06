@@ -16,17 +16,17 @@ import bool DialogNpc( Critter& player, int role ) from "stdlib";
 #define ENTIRE_BED_WITH_PATIENT_POSITION	(1001)
 #define ENTIRE_EMPTY_BED_POSITION			(1002)
 #define ENTIRE_WAKE_UP_POSITION				(1003)
+#define PID_BED_WITH_PATIENT	# (player) (player.Stat[ST_GENDER] == GENDER_FEMALE ? PID_BED_WITH_PATIENT_FEMALE : PID_BED_WITH_PATIENT_MALE)
 
-void InitStartLocationMap(Map& map, bool firstTime)
+//import void InitStartLocationMap(Map& map, Critter& player) from "map_vault112";
+void InitStartLocationMap(Map& map, Critter& player)
 {
-	InitVaultMap(map, firstTime);
-	if(firstTime)
-	{
-		Critter@[] critters;
-		map.GetCritters(NPC_PID_Claire, FIND_ALL | FIND_ONLY_NPC, critters);
-		if(critters.length() > 0)	
-			critters[0].StatBase[ST_TALK_DISTANCE] = 10;
-	}
+	InitVaultMap(map, true);
+	
+	Critter@[] critters;
+	map.GetCritters(NPC_PID_Claire, FIND_ALL | FIND_ONLY_NPC, critters);
+	if(critters.length() > 0)	
+		critters[0].StatBase[ST_TALK_DISTANCE] = 10;
 	
 	Entire[] entires;
 	ParseEntires(map, entires, ENTIRE_EMPTY_BED_POSITION);
@@ -43,11 +43,12 @@ void InitStartLocationMap(Map& map, bool firstTime)
 	if(entires.length() == 0)
 		return;
 	
-	@bed = map.GetItem(entires[0].HexX, entires[0].HexY, PID_BED_WITH_PATIENT);
+	@bed = map.GetItem(entires[0].HexX, entires[0].HexY, PID_BED_WITH_PATIENT(player));
 	if(valid(bed))
 		return;
 		
-	map.AddItem(entires[0].HexX, entires[0].HexY, PID_BED_WITH_PATIENT, 1);
+	Log("Adding bed");
+	map.AddItem(entires[0].HexX, entires[0].HexY, PID_BED_WITH_PATIENT(player), 1);
 }
 
 void InitStartLocationDoor(Item& door, bool)
@@ -123,7 +124,7 @@ uint e_WakeUp(uint[]@ values)
 	
 	if(entires.length() > 0)
 	{
-		Item@ bed = map.GetItem(entires[0].HexX, entires[0].HexY, PID_BED_WITH_PATIENT);
+		Item@ bed = map.GetItem(entires[0].HexX, entires[0].HexY, PID_BED_WITH_PATIENT(player));
 		if(valid(bed))
 			DeleteItem(bed);
 	}
@@ -153,6 +154,7 @@ void InitVaultMap(Map& map, bool firstTime)
 		
 		switch(critter.Stat[ST_NPC_ROLE])
 		{
+			case ROLE_VAULT_112_STUFF_KEEPER:
 			case ROLE_VAULT_112_GUARD:
 				InitGuard(critter, firstTime);
 				break;
@@ -183,10 +185,16 @@ void InitGuard(Critter& critter, bool firstTime)
 			.AddSubAction(ProvideReinforcements(TEAM_Vault112))
 			.AddSubAction(WhenAttacked()
 				.IfNot(IsTeamMember())
-				.AddSubAction(attackReaction))
+				.AddSubAction(CrittersHolderAction()
+					.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70140))
+					.AddSubAction(CallReinforcements(TEAM_Vault112))
+					.AddSubAction(Attack())))
 			.AddSubAction(WhenSomeoneAttacks()
 				.IfNot(IsTeamMember())
-				.AddSubAction(attackReaction))
+				.AddSubAction(CrittersHolderAction()
+					.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70140))
+					.AddSubAction(CallReinforcements(TEAM_Vault112))
+					.AddSubAction(Attack())))
 		;
 		
 	actionManager.Start(critter, action);
@@ -212,10 +220,16 @@ void InitPatrol(Critter& critter, bool firstTime)
 			.AddSubAction(ProvideReinforcements(TEAM_Vault112))
 			.AddSubAction(WhenAttacked()
 				.IfNot(IsTeamMember())
-				.AddSubAction(attackReaction))
+				.AddSubAction(CrittersHolderAction()
+					.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70140))
+					.AddSubAction(CallReinforcements(TEAM_Vault112))
+					.AddSubAction(Attack())))
 			.AddSubAction(WhenSomeoneAttacks()
 				.IfNot(IsTeamMember())
-				.AddSubAction(attackReaction))
+				.AddSubAction(CrittersHolderAction()
+					.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70140))
+					.AddSubAction(CallReinforcements(TEAM_Vault112))
+					.AddSubAction(Attack())))
 			.AddSubAction(Patrol(DEFAULT_PATROL_ENTIRE, false))
 			.AddSubAction(LookAround(3, REAL_SECOND(5)))
 		;
