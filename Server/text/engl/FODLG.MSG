@@ -515,7 +515,8 @@
 {5001}{}{Robotic guard. You can see human brain that probably operates his functions.}
 {5010}{}{Claire}
 {5011}{}{Claire, local nurse.}
-{5020}{}{Raider}
+{5020}{}{Dr.Braun}
+{5021}{}{Dr.Braun.}
 {5030}{}{Raider}
 {5040}{}{Raider}
 {5050}{}{Giant wasp}

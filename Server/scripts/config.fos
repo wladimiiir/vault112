@@ -81,8 +81,8 @@ void InitializeGame()                    // Export
     __WisperDist                = 3;
     __ShoutDist                 = 400;
     __CustomItemCost            = true;
-    __RegistrationTimeout       = 5 * 60;  // In real seconds, 0 to disable
-    __AccountPlayTime           = 5 * 60; // In real seconds, 0 to disable
+    __RegistrationTimeout       = 0;  // In real seconds, 0 to disable
+    __AccountPlayTime           = 0; // In real seconds, 0 to disable
     __TalkDistance              = 3;
     __NpcMaxTalkers             = 1;
     __MinNameLength             = 4;       // Minimum 1
@@ -111,7 +111,7 @@ void InitializeGame()                    // Export
     __LookChecks |= LOOK_CHECK_SNEAK_WEIGHT; // Nerfe sneak by current weight
     __LookWeight = 100;                       // Lost 1 sneak point per 10 gramm
     __LookChecks |= LOOK_CHECK_TRACE; // Tracing for wall aviablility
-    // __LookChecks |= LOOK_CHECK_SCRIPT; // Allow bool check_look(...) in main.fos, all other defines ignored
+    __LookChecks |= LOOK_CHECK_SCRIPT; // Allow bool check_look(...) in main.fos, all other defines ignored
     // __LookChecks |= LOOK_CHECK_ITEM_SCRIPT; // Allow bool check_trap_look(...) in main.fos, for items with ITEM_TRAP flag
 
     // Range of values for client engine
@@ -215,6 +215,7 @@ void InitializeGame()                    // Export
         SetParameterGetBehaviour( i, dllName + "getParam_DamageThreshold"  );
     for( uint i = TIMEOUT_BEGIN; i <= TIMEOUT_END; i++ )
         SetParameterGetBehaviour( i, dllName + "getParam_Timeout"          );
+    SetParameterGetBehaviour( ST_BONUS_LOOK, dllName + "getParam_BonusLook" );
     // for(uint i = REPUTATION_BEGIN; i <= REPUTATION_END   ; i++) SetParameterGetBehaviour(i, dllName + "getParam_Reputation"       );
     // for(uint i = REPUTATION_BEGIN; i <= REPUTATION_END   ; i++) SetParameterChangeBehaviour(i, dllName + "changedParam_Reputation");
 

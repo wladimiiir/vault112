@@ -19729,7 +19729,7 @@ Flags=33554456
 [Proto]
 ProtoId=4800
 Type=11
-PicMap=art\scenery\bed_with_patient.png
+PicMap=art\scenery\bed_with_patient.fofrm
 PicInv=art\inven\reserved.frm
 Flags=24
 DisableEgg=1

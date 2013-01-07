@@ -1,0 +1,8 @@
+fps=10
+count=1
+
+offs_x=-57
+offs_y=-15
+
+[dir_0]
+frm_0=bed_with_patient_bjm.png

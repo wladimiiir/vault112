@@ -1,7 +1,7 @@
 #ifndef __VARS__
 #define __VARS__
 /*************************************************************************************
-***  VARS  *****  COUNT: 00000024  ***************************************************
+***  VARS  *****  COUNT: 00000027  ***************************************************
 *************************************************************************************/
 
 
@@ -21,6 +21,9 @@
 #define LVAR_last_electronic_locked                  (14)
 #define LLVAR_loc_delete_time                        (15)
 #define LVAR_timeout                                 (16)
+#define LVAR_v112_claire                             (101)
+#define LVAR_v112_drbraun                            (102)
+#define LVAR_v112_rx_module                          (103)
 #define UVAR_poker_fraud                             (1001)
 #define LVAR_poker_wins                              (1002)
 #define UVAR_poker_manywins                          (1003)
@@ -29,6 +32,7 @@
 #define LVAR_fixboy_700_nitro_express                (2002)
 #define LVAR_fixboy_ammo_press_operator              (2003)
 #define LVAR_fixboy_default                          (2004)
+
 
 /*************************************************************************************
 	Id	Type	Name		Start	Min	Max	Flags
@@ -121,6 +125,21 @@ $	15	3	loc_delete_time	0	0	0	4
 $	16	1	timeout	0	0	0	4
 **********
    TimeOut
+**********
+
+$	101	1	v112_claire	0	0	0	4
+**********
+
+**********
+
+$	102	1	v112_drbraun	0	0	0	4
+**********
+
+**********
+
+$	103	1	v112_rx_module	0	0	0	4
+**********
+
 **********
 
 $	1001	2	poker_fraud	0	0	0	4

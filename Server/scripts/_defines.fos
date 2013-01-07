@@ -408,6 +408,7 @@
 #define ST_NEXT_REPLICATION_MAP                  ( 131 )
 #define ST_NEXT_REPLICATION_ENTIRE               ( 132 )
 #define ST_CURRENT_AP_EXT						 ( 133 )
+#define ST_BONUS_LOOK_EXT						 ( 134 )
 // 133..149
 #ifdef PLAYERS_3D
 // Initial values of animation 3d layers
@@ -765,8 +766,18 @@
 #define JAILED									( 833 ) // if set then critter is in jail
 #define BATTLEGROUND							( 834 ) // 0 - no battleground, 1 - battle join screen, 2 - in battleground
 #define FACTION									( 835 ) // player faction from _factions.fos
+#define VISIBILITY_FLAGS						( 836 ) // critters visibility (what critter sees and who sees the critter), see visibility flags below
 
 #define PARAMS_COUNT                             ( 1000 )
+
+//visibility flags
+#define VISIBILITY_FLAG_DEFAULT					( 0 )
+#define VISIBILITY_FLAG_SEE_NOTHING				( 1 )
+#define VISIBILITY_FLAG_SEE_ALL					( 2 )
+#define VISIBILITY_FLAG_INVISIBLE				( 4 )
+#define VISIBILITY_FLAG_IGNORE_WALLS			( 8 )
+#define VISIBILITY_FLAG_IGNORE_SNEAK			( 16 )
+
 
 // Planes types
 #define AI_PLANE_MISC                            ( 0 )
@@ -929,8 +940,8 @@
 
 // Time
 #define IS_MORNING                               # (hour)          ( ( hour ) >= 7 && ( hour ) <= 11 )   // 5 hours
-#define IS_AFTERNOON                             # (hour)        ( ( hour ) >= 12 && ( hour ) <= 21 )    // 10 hours
-#define IS_NIGHT                                 # (hour)            ( ( hour ) >= 22 || ( hour ) <= 6 ) // 9 hours
+#define IS_AFTERNOON                             # (hour)        ( ( hour ) >= 12 && ( hour ) <= 20 )    // 9 hours
+#define IS_NIGHT                                 # (hour)            ( ( hour ) >= 21 || ( hour ) <= 6 ) // 10 hours
 
 // Item deterioration info
 #define MAX_DETERIORATION                        ( 10000 )                                               // Hardcoded
@@ -1081,8 +1092,8 @@
 
 // Critter base types
 #ifndef PLAYERS_3D
-# define CRTYPE_DEFAULT_M                        ( CRTYPE_VAULT_M )
-# define CRTYPE_DEFAULT_F                        ( CRTYPE_VAULT_F )
+# define CRTYPE_DEFAULT_M                        ( CRTYPE_BROWN_JUMPSUIT_M )
+# define CRTYPE_DEFAULT_F                        ( CRTYPE_BROWN_JUMPSUIT_F )
 #endif
 #ifdef PLAYERS_3D
 # define CRTYPE_DEFAULT_M                        ( CRTYPE_3D_MALE_NORMAL )
@@ -1099,8 +1110,11 @@
 #define CRTYPE_DW_TRIBAL_F                       ( 63 )
 #define CRTYPE_DW_TRIBAL_M                       ( 64 )
 // Vault citizen
-#define CRTYPE_VAULT_M                           ( 69 )
-#define CRTYPE_VAULT_F                           ( 74 )
+#define CRTYPE_VAULT_M							( 69 )
+#define CRTYPE_VAULT_F							( 74 )
+// Brown jumpsuit
+#define CRTYPE_BROWN_JUMPSUIT_M					( 117 )
+#define CRTYPE_BROWN_JUMPSUIT_F					( 118 )
 // Robots
 #define CRTYPE_ROBOT                             ( 66 )
 // Long Hair Dude

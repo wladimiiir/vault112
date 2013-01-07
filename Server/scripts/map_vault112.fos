@@ -1,8 +1,54 @@
 #include "_macros.fos"
+#include "_npc_pids.fos"
+#include "_npc_roles.fos"
+#include "_teams.fos"
+#include "entire.fos"
+#include "critter_action_basic.fos"
+#include "critter_action_find.fos"
+#include "critter_action_condition.fos"
+#include "critter_action_when.fos"
 
 import void FlushScreen(Critter& cr, bool fadeOut, uint timeMs) from "effects";
 import bool AutoClose(Item& locker) from "doors";
 import void PlayOpenLockerSound(Item& locker) from "sounds";
+import bool DialogNpc( Critter& player, int role ) from "stdlib";
+
+#define ENTIRE_BED_WITH_PATIENT_POSITION	(1001)
+#define ENTIRE_EMPTY_BED_POSITION			(1002)
+#define ENTIRE_WAKE_UP_POSITION				(1003)
+#define PID_BED_WITH_PATIENT	# (player) (player.Stat[ST_GENDER] == GENDER_FEMALE ? PID_BED_WITH_PATIENT_FEMALE : PID_BED_WITH_PATIENT_MALE)
+
+//import void InitStartLocationMap(Map& map, Critter& player) from "map_vault112";
+void InitStartLocationMap(Map& map, Critter& player)
+{
+	InitVaultMap(map, true);
+	
+	Critter@[] critters;
+	map.GetCritters(NPC_PID_Claire, FIND_ALL | FIND_ONLY_NPC, critters);
+	if(critters.length() > 0)	
+		critters[0].StatBase[ST_TALK_DISTANCE] = 10;
+	
+	Entire[] entires;
+	ParseEntires(map, entires, ENTIRE_EMPTY_BED_POSITION);
+	
+	if(entires.length() == 0)
+		return;
+	
+	Item@ bed = map.GetItem(entires[0].HexX, entires[0].HexY, PID_VAULT_BED);
+	if(valid(bed))
+		return;
+	
+	entires.resize(0);
+	ParseEntires(map, entires, ENTIRE_BED_WITH_PATIENT_POSITION);
+	if(entires.length() == 0)
+		return;
+	
+	@bed = map.GetItem(entires[0].HexX, entires[0].HexY, PID_BED_WITH_PATIENT(player));
+	if(valid(bed))
+		return;
+		
+	map.AddItem(entires[0].HexX, entires[0].HexY, PID_BED_WITH_PATIENT(player), 1);
+}
 
 void InitStartLocationDoor(Item& door, bool)
 {
@@ -56,3 +102,137 @@ uint e_TransitToStart(uint[]@ values)
 	
 	return 0;
 }
+
+void r_FallAsleep(Critter& player, Critter@ npc)
+{
+    FlushScreen(player, false, 5000);
+    FlushScreen(player, true, 2000);
+    
+    CreateTimeEvent(__FullSecond + REAL_SECOND(5), "e_WakeUp", player.Id, true);
+}
+
+uint e_WakeUp(uint[]@ values)
+{
+	Critter@ player = GetCritter(values[0]);
+	if(!valid(player))
+		return 0;
+	
+	Map@ map = player.GetMap();
+    Entire[] entires;
+	ParseEntires(map, entires, ENTIRE_BED_WITH_PATIENT_POSITION);
+	
+	if(entires.length() > 0)
+	{
+		Item@ bed = map.GetItem(entires[0].HexX, entires[0].HexY, PID_BED_WITH_PATIENT(player));
+		if(valid(bed))
+			DeleteItem(bed);
+	}
+	entires.resize(0);
+	ParseEntires(map, entires, ENTIRE_EMPTY_BED_POSITION);
+	if(entires.length() > 0)
+		map.AddItem(entires[0].HexX, entires[0].HexY, PID_VAULT_BED, 1);
+		
+	player.StatBase[ST_CURRENT_HP] = player.Stat[ST_MAX_LIFE];
+	player.ModeBase[MODE_NO_HEAL] = 0;
+	player.ModeBase[MODE_NO_WALK] = 0;
+	player.ModeBase[MODE_NO_RUN] = 0;
+	player.TransitToMap(map.Id, ENTIRE_WAKE_UP_POSITION);
+	DialogNpc(player, ROLE_VAULT_112_OCCUPANT);
+	
+	return 0;	
+}
+
+void InitVaultMap(Map& map, bool firstTime)
+{
+	Critter@[] critters;
+	map.GetCritters(0, FIND_ALL | FIND_ONLY_NPC, critters);
+	
+	for (uint i = 0; i < critters.length(); i++)
+	{
+		Critter@ critter = critters[i];
+		
+		switch(critter.Stat[ST_NPC_ROLE])
+		{
+			case ROLE_VAULT_112_STUFF_KEEPER:
+			case ROLE_VAULT_112_GUARD:
+				InitGuard(critter, firstTime);
+				break;
+			case ROLE_VAULT_112_PATROL:
+				InitPatrol(critter, firstTime);
+				break;
+		}
+	}
+}
+
+void InitGuard(Critter& critter, bool firstTime)
+{
+	if(true || firstTime)
+	{
+		critter.StatBase[ST_TEAM_ID] = TEAM_Vault112;
+	}
+	
+	Action@ attackReaction = 
+		CrittersHolderAction()
+			.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70140))
+			.AddSubAction(CallReinforcements(TEAM_Vault112))
+			.AddSubAction(Attack())
+		;
+		
+	
+	Action@ action = 
+		LoopAction()
+			.AddSubAction(ProvideReinforcements(TEAM_Vault112))
+			.AddSubAction(WhenAttacked()
+				.IfNot(IsTeamMember())
+				.AddSubAction(CrittersHolderAction()
+					.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70140))
+					.AddSubAction(CallReinforcements(TEAM_Vault112))
+					.AddSubAction(Attack())))
+			.AddSubAction(WhenSomeoneAttacks()
+				.IfNot(IsTeamMember())
+				.AddSubAction(CrittersHolderAction()
+					.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70140))
+					.AddSubAction(CallReinforcements(TEAM_Vault112))
+					.AddSubAction(Attack())))
+		;
+		
+	actionManager.Start(critter, action);
+}
+
+void InitPatrol(Critter& critter, bool firstTime)
+{
+	if(true || firstTime)
+	{
+		critter.StatBase[ST_TEAM_ID] = TEAM_Vault112;
+	}
+	
+	Action@ attackReaction = 
+		CrittersHolderAction()
+			.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70140))
+			.AddSubAction(CallReinforcements(TEAM_Vault112))
+			.AddSubAction(Attack())
+		;
+		
+	
+	Action@ action = 
+		LoopAction()
+			.AddSubAction(ProvideReinforcements(TEAM_Vault112))
+			.AddSubAction(WhenAttacked()
+				.IfNot(IsTeamMember())
+				.AddSubAction(CrittersHolderAction()
+					.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70140))
+					.AddSubAction(CallReinforcements(TEAM_Vault112))
+					.AddSubAction(Attack())))
+			.AddSubAction(WhenSomeoneAttacks()
+				.IfNot(IsTeamMember())
+				.AddSubAction(CrittersHolderAction()
+					.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70140))
+					.AddSubAction(CallReinforcements(TEAM_Vault112))
+					.AddSubAction(Attack())))
+			.AddSubAction(Patrol(DEFAULT_PATROL_ENTIRE, false))
+			.AddSubAction(LookAround(3, REAL_SECOND(5)))
+		;
+		
+	actionManager.Start(critter, action);
+}
+

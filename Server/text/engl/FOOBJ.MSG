@@ -106,7 +106,7 @@
 {4901}{}{A bottle containing a home-brewed antidote for poison. A milky liquid with floating pieces of radscorpion flesh.}
 {5000}{}{Steel}
 {5001}{}{A piece of steel.
-{5100}{}{Dynamite}
+{5001}{}{Dynamite}
 {5101}{}{A high explosive, consisting of nitroglycerin mixed with the absorbent substance kiselguhr. Includes a timer.}
 {5200}{}{Geiger Counter}
 {5201}{}{A Wattz Electronics C-Radz model Geiger Counter. Detects the presence and strength of radiation fields.}
@@ -1208,6 +1208,7 @@
 {59603}{}{Усовершенствованная версия хитиновой брони. За счет использования дополнительных армирующих элементов повышена устойчивость к повреждениям. Ручная работа, мастер: @lex craftername@}
 {59700}{}{Инструкция}
 {59701}{}{Руководство по упрочнению кожаной брони с помощью расплава хитина из панцирей гигантских насекомых.
+{59701}{}{Руководство по упрочнению кожаной брони с помощью расплава хитина из панцирей гигантских насекомых.
 [Примечание: бумага выглядит очень потрепанной, текст читается с трудом. По всей видимости, после первой же изготовленной брони, рецепта вы лишитесь]}
 {60000}{}{Подложные документы}
 {60001}{}{Мерзкое порождение извращенного ума Линетт. Нужно подбросить их  МакКлюру.}
@@ -1424,6 +1425,10 @@
 {103100}{}{!Unarmed!   hook kick}
 {103200}{}{!Unarmed!   piercing kick}
 {110000}{}{!Used in engine! default armor}
+{120000}{}{Bed with patient}
+{120001}{}{Bed with a man on it. The man is in pretty bad shape.}
+{120100}{}{Bed}
+{120101}{}{A bed, it looks pretty comfortable after what you have been sleeping on.}
 {200100}{}{Burning Metal Barrel}
 {200101}{}{The barrel contains burning paper and other flaming refuse.}
 {200200}{}{Wooden Door}

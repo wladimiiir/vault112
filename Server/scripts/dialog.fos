@@ -880,6 +880,20 @@ void r_TeamAttack( Critter& player, Critter@ npc )
     }
 }
 
+void r_SayMessage(Critter& player, Critter@ npc, int dialogNumber, int answerNumber, int nextDialogNumber)
+{
+	if(!valid(npc))
+		return;
+	
+	player.SayMsg(SAY_NORM, TEXTMSG_DLG, DLGSTR( npc.Stat[ST_DIALOG_ID], dialogNumber * 1000 + answerNumber * 10));
+	
+	if(nextDialogNumber != 0)
+	{
+		uint[] values = { npc.Id, SAY_NORM, nextDialogNumber * 1000 };
+	    CreateTimeEvent( __FullSecond + REAL_SECOND( 3 ), "e_SayMessage", values, false );
+	}
+}
+
 // Отложенная всплывающая строка над нпц
 void r_SayMessageDelayed( Critter& player, Critter @ npc, int strNum, int delaySeconds, int sayType )
 {

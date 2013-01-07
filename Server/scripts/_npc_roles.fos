@@ -3,11 +3,11 @@
 
 #define	ROLE_HELPLESS_CITIZEN			( 201 )
 #define ROLE_PEN_BRAHMIN				( 202 )
-#define VAULT_112_GUARD					( 203 )
-#define VAULT_112_PATROL				( 204 )
-#define VAULT_112_STUFF_KEEPER			( 205 )
-#define VAULT_112_OCCUPANT				( 206 )
-#define VAULT_112_TURRET				( 207 )
+#define ROLE_VAULT_112_GUARD			( 203 )
+#define ROLE_VAULT_112_PATROL			( 204 )
+#define ROLE_VAULT_112_STUFF_KEEPER		( 205 )
+#define ROLE_VAULT_112_OCCUPANT			( 206 )
+#define ROLE_VAULT_112_TURRET			( 207 )
 
 //encounter roles (500-599)
 #define ROLE_ENCOUNTER_HUMAN_GOOD		( 500 )

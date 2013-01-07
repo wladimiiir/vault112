@@ -824,6 +824,10 @@
 #define PID_KOTW_GRAIL                       ( 589 )
 #define PID_KOTW_STATUETTE                   ( 590 )
 
+#define PID_BED_WITH_PATIENT_MALE			( 1200 )
+#define PID_BED_WITH_PATIENT_FEMALE			( 1201 )
+#define PID_VAULT_BED						( 1202 )
+
 /******************************************************************
 ***************       Generic                       ***************
 ******************************************************************/

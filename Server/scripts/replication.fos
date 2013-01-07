@@ -2,6 +2,7 @@
 #include "_macros.fos"
 #include "entire.fos"
 #include "_msgstr.fos"
+#include "_npc_roles.fos"
 
 import void DropDrugEffects( Critter& cr ) from "drugs";
 import void DropPoison( Critter& cr ) from "poison";
@@ -9,6 +10,8 @@ import void DropRadiation( Critter& cr ) from "radiation";
 import void PlayVideo( Critter& cr, string& videoName, bool canStop ) from "media";
 import void FindEncounter( Critter@[]& group, Item@ car, uint x, uint y, uint& encounterDescriptor, bool& waitForAnswer, bool empty ) from "worldmap";
 import void InviteToEncounter( Critter@[]& group, Item@ car, uint encounterDescriptor, int combatMode, uint& mapId, uint16& hexX, uint16& hexY, uint8& dir ) from "worldmap";
+import void InitStartLocationMap(Map& map, Critter& player) from "map_vault112";
+import bool DialogNpc( Critter& player, int role ) from "stdlib";
 
 const uint16 HellMapPid = 0;
 const        uint16[] ReplicatorsMapPids = { MAP_v112_1 };
@@ -96,6 +99,8 @@ void SetStartLocation( Critter& cr ) // Export
     if( not valid( replicator ) )
         return;
 
+	InitStartLocationMap(replicator, cr);
+
     // Hidden fog on default player position
     uint zoneX = cr.WorldX / __GlobalMapZoneLength;
     uint zoneY = cr.WorldY / __GlobalMapZoneLength;
@@ -110,6 +115,11 @@ void SetStartLocation( Critter& cr ) // Export
     cr.SetFog( zoneX + 1, zoneY + 1, FOG_FULL );
 
     cr.TransitToMap( replicator.Id, ENTIRE_REPLICATION );
+    cr.StatBase[ST_CURRENT_HP] = 2;
+    cr.ModeBase[MODE_NO_WALK] = 1;
+    cr.ModeBase[MODE_NO_RUN] = 1;
+    cr.ModeBase[MODE_NO_HEAL] = 1;
+    DialogNpc(cr, ROLE_VAULT_112_OCCUPANT);
 
     //~ zoneX = cr.WorldX / __GlobalMapZoneLength;
     //~ zoneY = cr.WorldY / __GlobalMapZoneLength;
@@ -132,11 +142,10 @@ void SetReplicationTime( Critter& cr ) // Export
     if( replTime == 0 )                    // Take default values
     {
         if( cr.IsPlayer() )
-            replTime = 3;                  // 3 minutes
+            replTime = REAL_SECOND(20);                  // 
         else
-            replTime = Random( 90, 120 );  // 90-120 minutes
+            replTime = REAL_MINUTE(Random( 90, 120 ));  // 90-120 minutes
     }
-    replTime *= REAL_MINUTE( 1 );
     cr.TimeoutBase[ TO_REPLICATION ] = __FullSecond + replTime;
 }
 
@@ -191,35 +200,23 @@ void ReplicateCritter( Critter& cr ) // Export
         if( cr.Stat[ ST_NEXT_REPLICATION_MAP ] > 0 )
             customReplMap = true;             // репликация на других картах
 
-        if( not customReplMap && cr.Stat[ ST_REPLICATION_MONEY ] < 0 )
-        {
-            @map = GetMapByPid( HellMapPid, 0 );
+		// Permanent death
+		/*if( __PermanentDeath > 0 && 100000 > __PermanentDeath )
+		{
+			AddPermanentDeath( cr.Id );
+			cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_NET_PERMANENT_DEATH );
+			cr.Disconnect();
+		}*/
 
-            if( not dieMapIsHell )
-            {
-                // Permanent death
-                if( __PermanentDeath > 0 && 100000 > __PermanentDeath )
-                {
-                    AddPermanentDeath( cr.Id );
-                    cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_NET_PERMANENT_DEATH );
-                    cr.Disconnect();
-                }
-            }
-        }
-        else
-        {
-            if( customReplMap )
-            {
-                @map = GetMap( cr.Stat[ ST_NEXT_REPLICATION_MAP ] );
-            }
-            else
-                @map = GetNearReplicatorMap( cr );
-        }
+		if( customReplMap )
+			@map = GetMap( cr.Stat[ ST_NEXT_REPLICATION_MAP ] );
+		else
+			@map = GetNearReplicatorMap( cr );
 
         if( not valid( map ) || not GetEntireFreeHex( map, ( customReplMap ? cr.Stat[ ST_NEXT_REPLICATION_ENTIRE ] : ENTIRE_REPLICATION ), hx, hy ) )
         {
             // Continue dead
-            cr.TimeoutBase[ TO_REPLICATION ] = __FullSecond + REAL_MINUTE( 1 );
+            cr.TimeoutBase[ TO_REPLICATION ] = __FullSecond + REAL_SECOND( 10 );
             return;
         }
 
@@ -329,11 +326,9 @@ void ReplicateCritter( Critter& cr ) // Export
     }
 
     cr.TransitToMap( map.Id, hx, hy, Random( 0, 5 ) );
-    cr.DamageBase[ DAMAGE_EYE ] = 0;
-    cr.DamageBase[ DAMAGE_RIGHT_ARM ] = 0;
-    cr.DamageBase[ DAMAGE_LEFT_ARM ] = 0;
-    cr.DamageBase[ DAMAGE_RIGHT_LEG ] = 0;
-    cr.DamageBase[ DAMAGE_LEFT_LEG ] = 0;
+    for (uint i = DAMAGE_EYE; i <= DAMAGE_LEFT_LEG; i++)
+		cr.DamageBase[i] = Random(0, cr.Damage[i]);
+		
     if( cr.Stat[ ST_NEXT_CRTYPE ] > 0 )
     {
         cr.ChangeCrType( cr.Stat[ ST_NEXT_CRTYPE ] );
@@ -341,16 +336,17 @@ void ReplicateCritter( Critter& cr ) // Export
         cr.StatBase[ ST_NEXT_CRTYPE ] = 0;
     }
     cr.ToLife();
-    cr.StatBase[ ST_CURRENT_HP ] = cr.Stat[ ST_MAX_LIFE ];
+    cr.RefreshVisible();
+    cr.StatBase[ ST_CURRENT_HP ] = 10;
     cr.StatBase[ ST_CURRENT_AP ] = cr.Stat[ ST_ACTION_POINTS ] * 100;
-    DropPoison( cr );
-    DropRadiation( cr );
-    if( cr.IsNpc() || map.GetProtoId() != HellMapPid )
+    //DropPoison( cr );
+    //DropRadiation( cr );
+    if( cr.IsNpc() )
         DropDrugEffects( cr );                                              // Note: This function clear effects of all active drugs/radiation/poison!
-    cr.DropTimers();
-    for( uint i = TIMEOUT_BEGIN; i <= TIMEOUT_END; i++ )
-        if( i != TO_KARMA_VOTING )
-            cr.TimeoutBase[ i ] = 0;
+    //cr.DropTimers();
+    //for( uint i = TIMEOUT_BEGIN; i <= TIMEOUT_END; i++ )
+    //    if( i != TO_KARMA_VOTING )
+    //        cr.TimeoutBase[ i ] = 0;
 }
 
 //

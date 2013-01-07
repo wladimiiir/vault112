@@ -2,8 +2,8 @@
 Version              4
 MaxHexX              113
 MaxHexY              197
-WorkHexX             64
-WorkHexY             59
+WorkHexX             56
+WorkHexY             55
 ScriptModule         -
 ScriptFunc           -
 NoLogOut             0
@@ -11623,14 +11623,9 @@ MapX                 54
 MapY                 46
 
 MapObjType           2
-ProtoId              2034
-MapX                 56
-MapY                 47
-
-MapObjType           2
 ProtoId              4800
-MapX                 52
-MapY                 49
+MapX                 51
+MapY                 48
 
 MapObjType           2
 ProtoId              2021
@@ -11671,11 +11666,6 @@ MapObjType           2
 ProtoId              2067
 MapX                 55
 MapY                 47
-
-MapObjType           2
-ProtoId              2067
-MapX                 57
-MapY                 48
 
 MapObjType           2
 ProtoId              2067
@@ -11778,7 +11768,7 @@ Item_LockerCondition 1
 MapObjType           0
 ProtoId              501
 MapX                 53
-MapY                 49
+MapY                 48
 Dir                  4
 Critter_Cond         1
 Critter_Anim1        0
@@ -11824,19 +11814,28 @@ Critter_ParamValue5  0
 
 MapObjType           2
 ProtoId              3853
-MapX                 54
-MapY                 47
+MapX                 57
+MapY                 48
 Scenery_ToEntire     242
 Scenery_ToDir        2
 
 MapObjType           2
-ProtoId              2067
-MapX                 53
+ProtoId              3853
+MapX                 56
 MapY                 47
+Scenery_ToEntire     1002
 
 MapObjType           2
-ProtoId              2067
-MapX                 53
-MapY                 48
+ProtoId              3853
+MapX                 54
+MapY                 47
+Scenery_ToEntire     1003
+Scenery_ToDir        1
+
+MapObjType           2
+ProtoId              3853
+MapX                 56
+MapY                 50
+Scenery_ToEntire     1001
 
 
