@@ -2,8 +2,8 @@
 Version              4
 MaxHexX              113
 MaxHexY              197
-WorkHexX             61
-WorkHexY             42
+WorkHexX             68
+WorkHexY             57
 ScriptModule         map_vault112
 ScriptFunc           InitVaultMap
 NoLogOut             0
@@ -5723,7 +5723,7 @@ MapObjType           1
 ProtoId              2421
 MapX                 74
 MapY                 51
-Item_Val3            10
+Item_Val3            5
 
 MapObjType           2
 ProtoId              2067
@@ -11779,8 +11779,8 @@ Critter_ParamValue5  0
 
 MapObjType           0
 ProtoId              500
-MapX                 75
-MapY                 59
+MapX                 74
+MapY                 56
 Dir                  3
 Critter_Cond         1
 Critter_Anim1        0
@@ -11867,8 +11867,8 @@ Critter_ParamValue5  0
 
 MapObjType           2
 ProtoId              3853
-MapX                 75
-MapY                 59
+MapX                 74
+MapY                 56
 Scenery_ToEntire     401
 
 MapObjType           2

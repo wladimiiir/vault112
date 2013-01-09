@@ -51,6 +51,7 @@ void _DeletableMapLoop1( Map& map )
 // worldX, worldY - координаты локации на глобальной карте
 // delta - максимальное смещение локации относительно указанных координат
 // varNum - номер переменной игрока в которую сохраняется код Id локации
+//import Location@ CreateLocationForCritter( Critter& player, int locPid, int worldX, int worldY, int delta, int varNum ) from "location";
 Location@ CreateLocationForCritter( Critter& player, int locPid, int worldX, int worldY, int delta, int varNum )
 {
     uint locId = CreateLocation( locPid, worldX + Random( -1 * delta, delta ), worldY + Random( -1 * delta, delta ), null );

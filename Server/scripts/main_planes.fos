@@ -49,7 +49,8 @@ bool npc_plane_begin( Critter& npc, NpcPlane& plane, int reason, Critter@ someCr
 // REASON_NO_UNARMED
 bool npc_plane_end( Critter& npc, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem )
 {
-    //Log("npc_plane_end: reason="+reason);
+	if(reason != REASON_SUCCESS)
+		Log("npc_plane_end: reason="+reason+", type="+plane.Type);
     if( reason == REASON_CANT_WALK && npc.IsNoPlanes() )
         npc.Wait( Random( 1000, 2000 ) );
     else if( reason == REASON_HEX_BUSY || reason == REASON_HEX_BUSY_RING || reason == REASON_POSITION_NOT_FOUND )
@@ -59,27 +60,7 @@ bool npc_plane_end( Critter& npc, NpcPlane& plane, int reason, Critter@ someCr, 
 			Critter@ blocker = npc.GetMap().GetCritter(plane.Walk_HexX, plane.Walk_HexY);
 			if(valid(blocker) && !blocker.IsDead() && !blocker.IsKnockout())
 			{
-				uint distance = GetDistantion(npc.HexX, npc.HexY, blocker.HexX, blocker.HexY);
-				if(blocker.IsNpc())
-				{
-					blocker.MoveRandom();
-					return false;
-				}
-				else if(distance == 1)
-				{
-					_CritAnimatePunch(npc);
-					npc.EventUseSkill(SKILL_PUSH_CRITTER, blocker, null, null);
-					npc.Wait(__Breaktime);
-					
-					uint direction = GetDirection(npc.HexX, npc.HexY, blocker.HexX, blocker.HexY);
-					blocker.MoveRandom();
-					npc.MoveToDir(direction);
-					return false;
-				}
-				else
-				{
-					AddWalkPlane(npc, 0, plane.Walk_HexX, plane.Walk_HexY, Random(0, 5), plane.Run, 1);
-				}
+				UnblockHex(npc, blocker, plane);
 				return false;
 			}
 		}
@@ -92,7 +73,7 @@ bool npc_plane_end( Critter& npc, NpcPlane& plane, int reason, Critter@ someCr, 
         npc.Wait( 20000 );
     else if( reason == REASON_GAG_CRITTER )
     {
-		//Log("Gag");
+		//~ Log("Gag:"+valid(someCr));
         if( valid( someCr ) && someCr.IsPlayer() && int(someCr.Id) != npc.Merc[ MERC_MASTER_ID ] )
         {
             NpcPlane@ child = CreatePlane();
@@ -130,7 +111,7 @@ bool npc_plane_end( Critter& npc, NpcPlane& plane, int reason, Critter@ someCr, 
     {
         if( valid( someItem ) )
         {
-            if( someItem.GetType() == ITEM_TYPE_DOOR && !FLAG( someItem.LockerCondition, LOCKER_ISOPEN ) &&
+            if( someItem.GetType() == ITEM_TYPE_DOOR && _LockerIsClose(someItem) &&
                 AI_CAN_OPEN_DOORS( npc.Stat[ ST_AI_ID ] ) && IsKeyAvailable( npc, someItem.LockerId ) )
             {
                 NpcPlane@ child = CreatePlane();
@@ -145,6 +126,15 @@ bool npc_plane_end( Critter& npc, NpcPlane& plane, int reason, Critter@ someCr, 
                 plane.SetChild( child );
                 return false;                 // Cancel deleting
             }
+            else if( someItem.GetType() == ITEM_TYPE_DOOR && _LockerIsOpen(someItem) && plane.Type == AI_PLANE_WALK)
+            {
+				Critter@ blocker = npc.GetMap().GetCritter(someItem.HexX, someItem.HexY);
+				if(valid(blocker) && !blocker.IsDead() && !blocker.IsKnockout())
+				{
+					UnblockHex(npc, blocker, plane);
+					return false;
+				}
+			}
             else if( someItem.GetType() != ITEM_TYPE_DOOR )
             {
                 NpcPlane@ child = CreatePlane();
@@ -209,6 +199,36 @@ bool npc_plane_end( Critter& npc, NpcPlane& plane, int reason, Critter@ someCr, 
     }
     
     return true;
+}
+
+void UnblockHex(Critter& npc, Critter& blocker, NpcPlane& walkPlane)
+{
+	uint distance = GetDistantion(npc.HexX, npc.HexY, blocker.HexX, blocker.HexY);
+	if(distance == 1)
+	{
+		if(blocker.IsPlayer())
+		{
+			//~ _CritAnimatePunch(npc);
+			//~ npc.EventUseSkill(SKILL_PUSH_CRITTER, blocker, null, null);
+			//~ npc.Wait(__Breaktime);
+		}
+		
+		uint direction = GetDirection(npc.HexX, npc.HexY, blocker.HexX, blocker.HexY);
+		blocker.MoveRandom();
+		npc.MoveToDir(direction);
+	}
+	else
+	{
+		NpcPlane@ child = CreatePlane();
+		child.Type = AI_PLANE_WALK;
+		child.Priority = 0;
+		child.Walk_HexX = blocker.HexX;
+		child.Walk_HexY = blocker.HexY;
+		child.Walk_Dir = Random(0, 5);
+		child.Walk_Cut = 1;
+		child.Run = walkPlane.Run;
+		walkPlane.SetChild(child);
+	}
 }
 
 bool TryToAttack(Critter& attacker, Critter& target)

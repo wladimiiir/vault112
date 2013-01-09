@@ -1,10 +1,22 @@
+/**
+* Author: wladimiiir
+*/
+
 #include "_macros.fos"
 #include "entire.fos"
+#include "_npc_pids.fos"
+#include "critter_action_basic.fos"
+#include "critter_action_when.fos"
+#include "critter_action_find.fos"
+#include "critter_action_condition.fos"
 
 #define	ENTIRE_TERMINAL		(100)
 #define	ENTIRE_CRITTER1		(101)
 #define	ENTIRE_CRITTER2		(102)
 
+/**
+* Map script
+*/
 void MapInit(Map& map, bool firstTime)
 {
 	if(!firstTime)
@@ -16,12 +28,70 @@ void MapInit(Map& map, bool firstTime)
 	for (uint i = 0; i < entires.length(); i++)
 	{		
 		Item@ terminal = map.AddItem(entires[i].HexX, entires[i].HexY, PID_TERMINAL_SW, 1);
-		terminal.SetScript("TerminalInit");
+		if(valid(terminal))
+			terminal.SetScript("TerminalInit");
 	}
 	
-	
+	entires.resize(0);
+	ParseEntires(map, entires, ENTIRE_CRITTER1);
+	for (uint i = 0; i < entires.length(); i++)
+	{
+		uint count = Random(2, 5);
+		for (uint j = 0; j < count; j++)
+		{
+			int[] params = {ST_REPLICATION_TIME, -1, ST_TEAM_ID, 100 + i};
+			map.AddNpc(NPC_PID_GoldenGecko, entires[i].HexX, entires[i].HexY, Random(0, 5), params, null, "InitCritter1");
+		}
+	}
+
+	entires.resize(0);
+	ParseEntires(map, entires, ENTIRE_CRITTER2);
+	for (uint i = 0; i < entires.length(); i++)
+	{
+		uint count = Random(2, 5);
+		for (uint j = 0; j < count; j++)
+		{
+			int[] params = {ST_REPLICATION_TIME, -1, ST_TEAM_ID, 200 + i};
+			map.AddNpc(NPC_PID_SmallSilverGecko, entires[i].HexX, entires[i].HexY, Random(0, 5), params, null, "InitCritter2");
+		}
+	}
+		
 }
 
+/**
+* Initializing critter on first entire
+*/
+void InitCritter1(Critter& critter, bool)
+{
+	Action@ action = 
+		LoopAction()
+			.AddSubAction(FindCritters(FIND_LIFE | FIND_ONLY_PLAYERS)
+				.If(IsSeen())
+				.AddSubAction(Attack()))
+			.AddSubAction(RepeatAtInterval(REAL_SECOND(5), REAL_SECOND(20))
+				.If(NotAttacking())
+				.AddSubAction(ChangeDirection(RANDOM_DIRECTION, true)))
+			.AddSubAction(ProvideReinforcements(critter.Stat[ST_TEAM_ID])
+				.If(NotAttacking()))
+			.AddSubAction(WhenAttackEnds()
+				.AddSubAction(SetHome()))
+			.AddSubAction(WhenAttacked()
+				.AddSubAction(CallReinforcements(critter.Stat[ST_TEAM_ID])))
+	;
+	actionManager.Start(critter, action);
+}
+
+/**
+* Initializing critter on second entire
+*/
+void InitCritter2(Critter& critter, bool)
+{
+	InitCritter1(critter, false);
+}
+
+/**
+* Initializing terminal
+*/
 void TerminalInit(Item& item, bool)
 {
 	item.SetEvent(ITEM_EVENT_SKILL, "TerminalSkill");
@@ -36,3 +106,23 @@ bool TerminalSkill(Item& door, Critter& cr, int skill)
 	return true;
 }
 
+/**
+* Test scripts
+*
+* Green forest	=	300
+*/
+import Location@ CreateLocationForCritter( Critter& player, int locPid, int worldX, int worldY, int delta, int varNum ) from "location";
+
+void CreateVirtualReality(Critter& critter, int locationPid, int combatMode, int)
+{
+	Location@ location = CreateLocationForCritter(critter, locationPid, critter.WorldX, critter.WorldY, 0, 0);
+	if(!valid(location))
+		return;
+	
+	critter.SetKnownLoc(false, location.Id);
+	Map@ map = location.GetMapByIndex(0);
+	if(combatMode == COMBAT_MODE_TURN_BASED)
+		map.SetTurnBasedAvailability(true);
+	map.SetScript("MapInit");
+	critter.TransitToMap(map.Id, 0);
+}

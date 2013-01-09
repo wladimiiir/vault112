@@ -33,16 +33,16 @@ void InitializeGame()                    // Export
     __TurnBasedTick             = 30000;
     __Breaktime                 = 1200;
     __TimeoutTransfer           = 0;
-    __TimeoutBattle             = REAL_SECOND( 10 );
+    __TimeoutBattle             = REAL_SECOND( 7 );
     __ApRegeneration            = 7000;
     __RtApCostCritterWalk       = 0;     // 1 AP == 100, maximim 255
-    __RtApCostCritterRun        = 10;     // 1 AP == 100, maximim 255
+    __RtApCostCritterRun        = 0;     // 1 AP == 100, maximim 255
     __RtApCostMoveItemContainer = 0;
     __RtApCostMoveItemInventory = 2;
-    __RtApCostPickItem          = 1;
+    __RtApCostPickItem          = 2;
     __RtApCostDropItem          = 1;
     __RtApCostReloadWeapon      = 2;
-    __RtApCostPickCritter       = 1;
+    __RtApCostPickCritter       = 3;
     __RtApCostUseItem           = 3;
     __RtApCostUseSkill          = 3;
     __RtAlwaysRun               = false;
@@ -50,9 +50,9 @@ void InitializeGame()                    // Export
     __TbApCostMoveItemContainer = 0;
     __TbApCostMoveItemInventory = 2;
     __TbApCostPickItem          = 3;
-    __TbApCostDropItem          = 2;
+    __TbApCostDropItem          = 1;
     __TbApCostReloadWeapon      = 2;
-    __TbApCostPickCritter       = 2;
+    __TbApCostPickCritter       = 5;
     __TbApCostUseItem           = 3;
     __TbApCostUseSkill          = 3;
     __TbAlwaysRun               = false;
@@ -76,7 +76,7 @@ void InitializeGame()                    // Export
     __GlobalMapMaxGroupCount    = 10;
     __GlobalMapMoveTime         = 250;
     __EncounterTime             = 5000;
-    __DeadHitPoints             = -20;
+    __DeadHitPoints             = -40;
     __BagRefreshTime            = 60;     // Real minutes
     __WisperDist                = 3;
     __ShoutDist                 = 400;
@@ -119,7 +119,7 @@ void InitializeGame()                    // Export
     __SkillBegin      = 200;
     __SkillEnd        = 217;
     __TimeoutBegin    = 230;
-    __TimeoutEnd      = 249;
+    __TimeoutEnd      = 250;
     __KillBegin       = 260;
     __KillEnd         = 280;
     __PerkBegin       = 300;
@@ -222,6 +222,7 @@ void InitializeGame()                    // Export
     #  ifndef __CLIENT
     SetParameterChangeBehaviour( ST_CURRENT_HP, "parameters@changedParam_Hp"        );
     SetParameterChangeBehaviour( ST_EXPERIENCE, "parameters@changedParam_Experience" );
+    SetParameterChangeBehaviour( TO_BATTLE, "parameters@changedTimeout_Battle" );
     SetParameterChangeBehaviour( MODE_HIDE, "parameters@changedParam_Hide"      );
     SetParameterChangeBehaviour( TRAIT_FAST_SHOT, "parameters@changedParam_FastShot"  );
     for( uint i = PERK_BEGIN; i <= PERK_END; i++ )

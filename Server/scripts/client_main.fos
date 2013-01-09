@@ -372,6 +372,8 @@ bool key_down( uint8 key )
 		__ShowNpcNames = !__ShowNpcNames;
 	if(key == DIK_F9)
 		ToggleTimeoutScreen();
+	if( AltDown && key == DIK_D)
+		__ShowCritId = !__ShowCritId;
 	
 		
 	if(!AltDown && !ShiftDown && !CtrlDown && key == DIK_SPACE)
@@ -383,6 +385,9 @@ bool key_down( uint8 key )
 			
 	if(CtrlDown && key == DIK_G)
 		ShowGroundPickUpScreen();
+		
+	if(key == DIK_R)
+		Reload();
 
     return GUI_KeyDown( key );
 }

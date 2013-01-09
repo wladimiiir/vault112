@@ -269,11 +269,11 @@
 #define SLOT_GROUND                              ( 255 ) // Ground slot, used when critter drop/pick item
 
 // Critter timeevents identifiers
-#define CTE_POISON                               ( 1 )
-#define CTE_RADIATION                            ( 2 )
-#define CTE_TRADER                               ( 3 )
-#define CTE_OBSERVING                            ( 4 )
-#define CTE_AUTOKILL                             ( 5 )
+#define CTE_POISON								( 1 )
+#define CTE_RADIATION							( 2 )
+#define CTE_TRADER								( 3 )
+#define CTE_CHECK_EXPERIENCE					( 4 )
+
 // Drugs time events                40 (PID_STIMPAK) .. 1000
 
 // Parameters
@@ -409,6 +409,7 @@
 #define ST_NEXT_REPLICATION_ENTIRE               ( 132 )
 #define ST_CURRENT_AP_EXT						 ( 133 )
 #define ST_BONUS_LOOK_EXT						 ( 134 )
+#define ST_DAMAGE_EXPERIENCE					 ( 135 )
 // 133..149
 #ifdef PLAYERS_3D
 // Initial values of animation 3d layers

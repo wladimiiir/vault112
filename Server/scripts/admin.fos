@@ -27,6 +27,7 @@ void unsafe_RequestAdminActions(Critter& critter, int actionType, int, int, stri
 			menuItems += "Item menu:admin@ShowItemMenu;";
 			break;
 		case ACTION_TYPE_HEX:
+			menuItems += "Map menu:admin@ShowMapMenu;";
 			menuItems += "Add Npc:admin@AddNpc;";
 			menuItems += "Teleport player:admin@TeleportPlayer;";
 			menuItems += "Move here:admin@MoveTo;";
@@ -93,6 +94,63 @@ void ShowItemMenu(Critter& critter, int actionType, int, int, string@, int[]@ va
 	menuItems += "Duplicate:admin@DuplicateItem;";
 	
 	ShowAdminMenu(critter, actionType, menuItems, values);
+}
+
+void ShowMapMenu(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	if(actionType != ACTION_TYPE_HEX)
+		return;
+		
+	string@ menuItems = "";
+
+	menuItems += "Delete location:admin@DeleteLocation;";
+	menuItems += "Set real-time:admin@SetTurnBasedAvailability$0;";
+	menuItems += "Set turn-based:admin@SetTurnBasedAvailability$1;";
+	menuItems += "Transit to map:TransitToMap;";
+	
+	ShowAdminMenu(critter, actionType, menuItems, values);
+}
+
+void DeleteLocation(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	Map@ map = critter.GetMap();
+	if(!valid(map))
+		return;
+		
+	Location@ location = map.GetLocation();
+	if(!valid(location))
+		return;
+		
+	DeleteLocation(location.Id);
+}
+
+void SetTurnBasedAvailability(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	Map@ map = critter.GetMap();
+	if(!valid(map))
+		return;
+	
+	map.SetTurnBasedAvailability(values[0] > 0);
+}
+
+void TransitToMap(Critter& critter, int actionType, int, int, string@, int[]@ values)
+{
+	ShowSayScreen(critter, true, true, "Map ID:", "", "admin@unsafe_TransitToMap", values);
+}
+
+void unsafe_TransitToMap(Critter& critter, int, int, int, string@ answer, int[]@)
+{
+	if(critter.GetAccess() == ACCESS_CLIENT)
+		return;
+		
+	int mapId = 0;
+	if(!StrToInt(answer, mapId) || mapId <= 0)
+		return;
+	Map@ map = GetMap(mapId);
+	if(!valid(map))
+		return;
+		
+	critter.TransitToMap(map.Id, 0);
 }
 
 void DeleteItem(Critter& critter, int actionType, int, int, string@, int[]@ values)

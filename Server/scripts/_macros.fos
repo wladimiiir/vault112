@@ -116,4 +116,6 @@
 #define _LightSetInverse             # (lightItem)     ( SETFLAG( lightItem.LightFlags, 1 << 7 ) )
 #define _LightUnsetInverse           # (lightItem)     ( UNSETFLAG( lightItem.LightFlags, 1 << 7 ) )
 
+#define _DeadHitPoints				# (critter) (critter.Stat[ST_ENDURANCE] * -4)
+
 #endif // __MACROS__

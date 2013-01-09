@@ -1659,9 +1659,17 @@ void ApplyDamage( AttackStruct& attack, Critter& target, uint rounds, bool isCri
         if( target.Mode[ MODE_INVULNERABLE ] == 0 )
         {
             target.StatBase[ ST_CURRENT_HP ] -= totalDmg;
+            
+            //experience based on damage
+            if( valid( attacker ) && !(attacker.IsPlayer() && target.IsPlayer()))
+            {
+				int expDamage = MAX(0, int(totalDmg) + MIN(0, target.Stat[ST_CURRENT_HP]));
+				attacker.StatBase[ ST_DAMAGE_EXPERIENCE ] += expDamage * 3;
+			}
+				
             if( target.Stat[ ST_CURRENT_HP ] < 1 )
             {
-                if( target.Stat[ ST_CURRENT_HP ] > __DeadHitPoints && target.Mode[ MODE_NO_KNOCK ] == 0 )
+                if( target.Stat[ ST_CURRENT_HP ] > _DeadHitPoints(target) && target.Mode[ MODE_NO_KNOCK ] == 0 )
                 {
                     isKo = true;
                     isBelow = true;
@@ -1767,7 +1775,8 @@ void ApplyDamage( AttackStruct& attack, Critter& target, uint rounds, bool isCri
 
         if( valid( attacker ) )
         {
-            attacker.StatBase[ ST_EXPERIENCE ] += target.Stat[ ST_KILL_EXPERIENCE ];
+			//kill experience disabled (damage experience instead)
+            //~ attacker.StatBase[ ST_EXPERIENCE ] += target.Stat[ ST_KILL_EXPERIENCE ];
             attacker.KillBase[ KILL_BEGIN + bt ]++;
         }
 
@@ -2223,7 +2232,7 @@ void CriticalFailure( Critter& cr, ProtoItem& weapon, uint8 weaponUse, ProtoItem
 
     if( cr.Stat[ ST_CURRENT_HP ] < 1 )
     {
-        if( cr.Stat[ ST_CURRENT_HP ] > __DeadHitPoints && cr.Mode[ MODE_NO_KNOCK ] == 0 )
+        if( cr.Stat[ ST_CURRENT_HP ] > _DeadHitPoints(cr) && cr.Mode[ MODE_NO_KNOCK ] == 0 )
         {
             if( !cr.IsKnockout() )
                 cr.ToKnockout( KNOCKOUT_ANIM2_DEFAULT( true ), 0, cr.HexX, cr.HexY );

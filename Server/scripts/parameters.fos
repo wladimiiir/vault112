@@ -20,8 +20,8 @@ void changedParam_Hp( Critter& cr, uint, int oldValue )
     int curHp = cr.StatBase[ ST_CURRENT_HP ];
     if( curHp <= 0 && cr.IsLife() )
         cr.StatBase[ ST_CURRENT_HP ] = 1;
-    if( curHp < __DeadHitPoints && not cr.IsDead() )
-        cr.StatBase[ ST_CURRENT_HP ] = __DeadHitPoints + 1;
+    if( curHp < _DeadHitPoints(cr) && not cr.IsDead() )
+        cr.StatBase[ ST_CURRENT_HP ] = _DeadHitPoints(cr) + 1;
     if( curHp > cr.Stat[ ST_MAX_LIFE ] )
         cr.StatBase[ ST_CURRENT_HP ] = cr.Stat[ ST_MAX_LIFE ];
 }
@@ -54,10 +54,10 @@ void changedParam_Experience( Critter& cr, uint, int oldValue )
                     cr.StatBase[ ST_UNSPENT_SKILL_POINTS ] += 5;                                                      // Skilled trait
                 // if(cr.Trait[TRAIT_GIFTED]!=0) cr.StatBase[ST_UNSPENT_SKILL_POINTS]-=5; // Gifted trait
                 cr.StatBase[ ST_UNSPENT_SKILL_POINTS ] += cr.Perk[ PE_EDUCATED ] * 2;                                 // Educated perk
-                if( cr.StatBase[ ST_UNSPENT_SKILL_POINTS ] > 99 )
-                    cr.StatBase[ ST_UNSPENT_SKILL_POINTS ] = 99;                                                      // Clamp skill points
+                //if( cr.StatBase[ ST_UNSPENT_SKILL_POINTS ] > 99 )
+                    //cr.StatBase[ ST_UNSPENT_SKILL_POINTS ] = 99;                                                      // Clamp skill points
                 if( __MaxLifeLevelSoftCap == 0 || uint( cr.Stat[ ST_LEVEL ] ) <= __MaxLifeLevelSoftCap )
-                    cr.StatBase[ ST_MAX_LIFE ] += 2 + cr.StatBase[ ST_ENDURANCE ] / 2 + cr.Perk[ PE_LIFEGIVER ] * 4;  // Add max hp
+                    cr.StatBase[ ST_MAX_LIFE ] = 50 + cr.Stat[ ST_STRENGTH ] + (level - 1 ) * 2 * cr.Stat[ ST_ENDURANCE ] + 6 * (float(cr.Stat[ ST_ENDURANCE ]) / 10) + 40 * cr.Stat[ PE_LIFEGIVER ];
 
                 if( ( level % perkUp ) == 0 )
                 {
@@ -113,6 +113,32 @@ int getParamDialog_Reputation( Critter@ master, Critter@ slave, uint index )
         return master.ReputationBase[ index ];
     }
     return 0;
+}
+
+void changedTimeout_Battle( Critter& cr, uint, int oldValue )
+{
+	cr.EraseTimeEvents(CTE_CHECK_EXPERIENCE);
+	if(cr.Timeout[TO_BATTLE] != 0)
+	{
+		cr.AddTimeEvent("cte_CheckExperience", cr.Timeout[TO_BATTLE], CTE_CHECK_EXPERIENCE, 0);
+		return;
+	}
+		
+	if(cr.Stat[ST_DAMAGE_EXPERIENCE] > 0)
+	{
+		cr.StatBase[ST_EXPERIENCE] += cr.Stat[ST_DAMAGE_EXPERIENCE];
+		cr.StatBase[ST_DAMAGE_EXPERIENCE] = 0;
+	}
+}
+
+uint cte_CheckExperience(Critter& cr, int, uint& )
+{
+	if(cr.Stat[ST_DAMAGE_EXPERIENCE] > 0)
+	{
+		cr.StatBase[ST_EXPERIENCE] += cr.Stat[ST_DAMAGE_EXPERIENCE];
+		cr.StatBase[ST_DAMAGE_EXPERIENCE] = 0;
+	}
+	return 0;
 }
 #endif
 

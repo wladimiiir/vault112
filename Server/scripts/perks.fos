@@ -145,7 +145,10 @@ void PerkUp( Critter& cr, uint perk ) // Export
         PERKUP_STAT( ST_RADIATION_RESISTANCE, += 15 );
         break;
     case PE_TOUGHNESS:
-        PERKUP_STAT( ST_NORMAL_RESIST, += 10 );
+		for (uint i = ST_NORMAL_RESIST; i <= ST_EXPLODE_RESIST; i++)
+			PERKUP_STAT( i, += 5 );
+		for (uint i = ST_NORMAL_ABSORB; i <= ST_EXPLODE_ABSORB; i++)
+			PERKUP_STAT( i, += 2 );
         break;
     case PE_STRONG_BACK:
         PERKUP_STAT( ST_CARRY_WEIGHT, += LBS_TO_GRAMM( 50 ) );
@@ -349,7 +352,10 @@ void PerkDown( Critter& cr, uint perk ) // Export
         PERKDOWN_STAT( ST_RADIATION_RESISTANCE, -= 15 );
         break;
     case PE_TOUGHNESS:
-        PERKDOWN_STAT( ST_NORMAL_RESIST, -= 10 );
+        for (uint i = ST_NORMAL_RESIST; i <= ST_EXPLODE_RESIST; i++)
+			PERKDOWN_STAT( i, -= 5 );
+		for (uint i = ST_NORMAL_ABSORB; i <= ST_EXPLODE_ABSORB; i++)
+			PERKDOWN_STAT( i, -= 2 );
         break;
     case PE_STRONG_BACK:
         PERKDOWN_STAT( ST_CARRY_WEIGHT, -= LBS_TO_GRAMM( 50 ) );

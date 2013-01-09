@@ -1962,3 +1962,21 @@ void animate( Critter& cr, int anim1, int anim2, int )
 {
     cr.Animate( anim1, anim2, null, true, true );
 }
+
+void SetMikeWall( Critter& cr, int, int, int)
+{
+	cr.StatBase[ST_STRENGTH] = 5;
+	cr.StatBase[ST_PERCEPTION] = 9;
+	cr.StatBase[ST_CHARISMA] = 9;
+	cr.StatBase[ST_ENDURANCE] = 6;
+	cr.StatBase[ST_INTELLECT] = 8;
+	cr.StatBase[ST_AGILITY] = 10;
+	cr.StatBase[ST_LUCK] = 8;
+	cr.AddItem(PID_CURED_LEATHER_ARMOR, 1);
+	cr.AddItem(PID_SNIPER_RIFLE, 1);
+	cr.AddItem(PID_NEEDLER_PISTOL, 1);
+	cr.AddItem(PID_INDEPENDENT, 1);
+	cr.AddItem(PID_223_FMJ, 300);
+	cr.AddItem(PID_HN_NEEDLER_CARTRIDGE, 500);
+	cr.AddItem(PID_5MM_JHP, 1000);
+}

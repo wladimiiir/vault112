@@ -890,7 +890,7 @@ void r_SayMessage(Critter& player, Critter@ npc, int dialogNumber, int answerNum
 	if(nextDialogNumber != 0)
 	{
 		uint[] values = { npc.Id, SAY_NORM, nextDialogNumber * 1000 };
-	    CreateTimeEvent( __FullSecond + REAL_SECOND( 3 ), "e_SayMessage", values, false );
+	    CreateTimeEvent( __FullSecond + REAL_SECOND( nextDialogNumber == 2 ? 0 : 5 ), "e_SayMessage", values, false );
 	}
 }
 
