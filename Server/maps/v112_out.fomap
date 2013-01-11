@@ -2,8 +2,8 @@
 Version              4
 MaxHexX              110
 MaxHexY              116
-WorkHexX             48
-WorkHexY             50
+WorkHexX             43
+WorkHexY             45
 ScriptModule         -
 ScriptFunc           -
 NoLogOut             0
@@ -3460,7 +3460,7 @@ MapY                 28
 MapObjType           2
 ProtoId              2103
 MapX                 51
-MapY                 32
+MapY                 33
 
 MapObjType           2
 ProtoId              2105
@@ -11186,15 +11186,6 @@ MapX                 41
 MapY                 24
 Scenery_ToMapPid     2
 Scenery_ToEntire     1
-
-MapObjType           1
-ProtoId              545
-MapX                 50
-MapY                 31
-ScriptName           explode
-FuncName             _TimerMineInit
-Item_Val3            45
-Item_Val4            150
 
 MapObjType           2
 ProtoId              2121

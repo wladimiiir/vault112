@@ -106,7 +106,7 @@ void ShowMapMenu(Critter& critter, int actionType, int, int, string@, int[]@ val
 	menuItems += "Delete location:admin@DeleteLocation;";
 	menuItems += "Set real-time:admin@SetTurnBasedAvailability$0;";
 	menuItems += "Set turn-based:admin@SetTurnBasedAvailability$1;";
-	menuItems += "Transit to map:TransitToMap;";
+	menuItems += "Transit to map:admin@TransitToMap;";
 	
 	ShowAdminMenu(critter, actionType, menuItems, values);
 }
@@ -126,11 +126,14 @@ void DeleteLocation(Critter& critter, int actionType, int, int, string@, int[]@ 
 
 void SetTurnBasedAvailability(Critter& critter, int actionType, int, int, string@, int[]@ values)
 {
+	if(actionType != ACTION_TYPE_HEX)
+		return;
+		
 	Map@ map = critter.GetMap();
 	if(!valid(map))
 		return;
 	
-	map.SetTurnBasedAvailability(values[0] > 0);
+	map.SetTurnBasedAvailability(values[2] > 0);
 }
 
 void TransitToMap(Critter& critter, int actionType, int, int, string@, int[]@ values)
