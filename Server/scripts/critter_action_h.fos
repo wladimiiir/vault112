@@ -1,3 +1,7 @@
+/**
+* Author: wladimiiir
+*/
+
 #define WAIT_PLANE_IDENTIFIER		(104)
 #define PATROL_PLANE_IDENTIFIER		(105)
 #define MOVE_TO_PLANE_IDENTIFIER	(106)

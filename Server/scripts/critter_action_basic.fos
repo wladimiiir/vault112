@@ -1,3 +1,7 @@
+/**
+* Author: wladimiiir
+*/
+
 #include "_time.fos"
 #include "_math.fos"
 #include "npc_ai.fos"

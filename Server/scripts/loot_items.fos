@@ -1,3 +1,7 @@
+/**
+* Author: wladimiiir
+*/
+
 class LootItem {
 	uint16 ProtoId; //protoId of item
 	float Chance; //chance for item (in %)

@@ -1,3 +1,7 @@
+/**
+* Author: wladimiiir
+*/
+
 Trader@[]@ Traders;
 
 Trader@ GetTrader(Critter& npc)

@@ -1,4 +1,7 @@
-// Author: cvet
+/**
+* Author: wladimiiir
+*/
+
 #include "_macros.fos"
 #include "_npc_pids.fos"
 #include "_msgstr.fos"

@@ -1,3 +1,7 @@
+/**
+* Author: wladimiiir
+*/
+
 void r_SetSupplier(Critter& player, Critter@ npc, int days)
 {
 	if(!valid(npc))

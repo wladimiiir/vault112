@@ -1,3 +1,7 @@
+/**
+* Author: wladimiiir
+*/
+
 #define ACTION_TYPE_UNKNOWN		(0)
 #define ACTION_TYPE_CRITTER		(1) //values[0] - critterId
 #define ACTION_TYPE_ITEM		(2) //values[0] - itemId

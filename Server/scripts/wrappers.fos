@@ -1,3 +1,10 @@
+/**
+* Author: wladimiiir
+*/
+
+#ifndef __WRAPPERS__
+#define __WRAPPERS__
+
 #include "_macros.fos"
 #include "entire_h.fos"
 #include "serializator.fos"
@@ -146,3 +153,88 @@ class PatrolEntireWrapper
 		return patroller != 0;
 	}
 }
+
+class VirtualRealityInfo 
+{
+	#define _GetKey		("VRInfo_" + MapId)
+	
+	private uint MapId;
+	private uint Type;
+	private uint MinNpc1Count;
+	private uint MaxNpc1Count;
+	private uint MinNpc2Count;
+	private uint MaxNpc2Count;
+	
+	VirtualRealityInfo(Map& map)
+	{
+		MapId = map.Id;
+		Type = 0;
+		MinNpc1Count = 1;
+		MaxNpc1Count = 2;
+		MinNpc2Count = 1;
+		MaxNpc2Count = 1;
+		Load();
+	}
+	
+	private void Load()
+	{
+		Serializator serializator;
+		if(!serializator.Load(_GetKey))
+			return;
+		
+		serializator.Get(Type);
+		serializator.Get(MinNpc1Count);
+		serializator.Get(MaxNpc1Count);
+		serializator.Get(MinNpc2Count);
+		serializator.Get(MaxNpc2Count);
+	}
+	
+	private void Save()
+	{
+		Serializator serializator;
+		
+		serializator.Set(Type);
+		serializator.Set(MinNpc1Count);
+		serializator.Set(MaxNpc1Count);
+		serializator.Set(MinNpc2Count);
+		serializator.Set(MaxNpc2Count);
+		serializator.Save(_GetKey);
+	}
+	
+	void SetType(uint type)
+	{
+		Type = type;
+		Save();
+	}
+	
+	void SetNpc1Count(uint min, uint max)
+	{
+		MinNpc1Count = min;
+		MaxNpc1Count = max;
+		Save();
+	}
+	
+	void SetNpc2Count(uint min, uint max)
+	{
+		MinNpc2Count = min;
+		MaxNpc2Count = max;
+		Save();
+	}
+	
+	uint GetType()
+	{
+		return Type;
+	}
+	
+	uint GetNpc1Count()
+	{
+		return Random(MinNpc1Count, MaxNpc1Count);
+	}
+	
+	uint GetNpc2Count()
+	{
+		return Random(MinNpc2Count, MaxNpc2Count);
+	}
+}
+
+#endif //__WRAPPERS__

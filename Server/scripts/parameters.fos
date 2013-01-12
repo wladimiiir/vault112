@@ -57,11 +57,11 @@ void changedParam_Experience( Critter& cr, uint, int oldValue )
                 //if( cr.StatBase[ ST_UNSPENT_SKILL_POINTS ] > 99 )
                     //cr.StatBase[ ST_UNSPENT_SKILL_POINTS ] = 99;                                                      // Clamp skill points
                 if( __MaxLifeLevelSoftCap == 0 || uint( cr.Stat[ ST_LEVEL ] ) <= __MaxLifeLevelSoftCap )
-                    cr.StatBase[ ST_MAX_LIFE ] = 50 + cr.Stat[ ST_STRENGTH ] + (level - 1 ) * 2 * cr.Stat[ ST_ENDURANCE ] + 6 * (float(cr.Stat[ ST_ENDURANCE ]) / 10) + 40 * cr.Stat[ PE_LIFEGIVER ];
+                    cr.StatBase[ ST_MAX_LIFE ] = 50 + cr.Stat[ ST_STRENGTH ] + 2 * cr.Stat[ ST_ENDURANCE ] + (level - 1 ) * 6 * (float(cr.Stat[ ST_ENDURANCE ]) / 10) + 40 * cr.Stat[ PE_LIFEGIVER ];
 
                 if( ( level % perkUp ) == 0 )
                 {
-                    cr.StatBase[ ST_UNSPENT_PERKS ] = 1;
+                    cr.StatBase[ ST_UNSPENT_PERKS ] += 1;
                 }
             }
             else

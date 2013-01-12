@@ -45,6 +45,8 @@ import void ClearSkillProtection(Critter& critter) from "custom_data";
 import void CancelBattle(Critter& player) from "battleground";
 import void TurnBasedBegin(Map& map) from "battleground";
 import void TurnBasedEnd(Map& map) from "battleground";
+import void AddOnlinePlayer(Critter& player) from "online_players";
+import void RemoveOnlinePlayer(Critter& player) from "online_players";
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 // Called before world generation.
@@ -1042,6 +1044,9 @@ void critter_init( Critter& cr, bool firstTime )
 			ClearAttackProtection(cr);
 		}
     }
+    
+    if(cr.IsPlayer())
+		AddOnlinePlayer(cr);
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1058,6 +1063,9 @@ void critter_finish( Critter& cr, bool toDelete )
             DeleteItem( block );
         cr.StatBase[ ST_DEAD_BLOCKER_ID ] = 0;
     }
+    
+    if(cr.IsPlayer())
+		RemoveOnlinePlayer(cr);
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////

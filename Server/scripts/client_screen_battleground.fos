@@ -1,3 +1,7 @@
+/**
+* Author: wladimiiir
+*/
+
 #include "_macros.fos"
 #include "_client_defines.fos"
 #include "client_gui_h.fos"

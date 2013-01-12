@@ -1,3 +1,7 @@
+/**
+* Author: wladimiiir
+*/
+
 #include "_macros.fos"
 
 #ifdef __SERVER

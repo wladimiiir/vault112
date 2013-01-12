@@ -1,3 +1,7 @@
+/**
+* Author: wladimiiir
+*/
+
 #define	DEFAULT_HOUSE_HOLD_TIME	(REAL_MONTH(1))
 
 void dlg_AddOccupant(Critter& player, Critter@ npc, string@ playerName)

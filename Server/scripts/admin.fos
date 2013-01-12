@@ -1,3 +1,7 @@
+/**
+* Author: wladimiiir
+*/
+
 #ifndef _ADMIN_
 #define _ADMIN_
 #include "_macros.fos"

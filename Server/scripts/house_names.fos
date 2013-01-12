@@ -1,3 +1,7 @@
+/**
+* Author: wladimiiir
+*/
+
 #include "_maps.fos"
 
 HouseName@[] houseNames = {

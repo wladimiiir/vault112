@@ -1,3 +1,7 @@
+/**
+* Author: wladimiiir
+*/
+
 #define HOTEL_ROOM_MAX			(30)
 
 bool d_IsHotelTenant(Critter& player, Critter@ npc)

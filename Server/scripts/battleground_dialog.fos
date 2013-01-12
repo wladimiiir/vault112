@@ -1,4 +1,8 @@
 /**
+* Author: wladimiiir
+*/
+
+/**
 * Dialog scripts
 */
 void r_TeamDeathmatch(Critter& player, Critter@ npc, int combatMode)

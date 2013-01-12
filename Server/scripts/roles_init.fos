@@ -1,3 +1,7 @@
+/**
+* Author: wladimiiir
+*/
+
 #include "critter_action_basic.fos"
 #include "critter_action_find.fos"
 #include "critter_action_condition.fos"

@@ -1370,17 +1370,17 @@ void ApplyDamage( AttackStruct& attack, Critter& target, uint rounds, bool isCri
                 aim_ = HIT_LOCATION_UNCALLED;
             aim_--;
             int roll = Random( 0, 100 ) + ( validAttacker ? ( ( attacker.Perk[ PE_BETTER_CRITICALS ] != 0 ? 20 : 0 ) + ( attacker.Trait[ TRAIT_HEAVY_HANDED ] != 0 ? -30 : 0 ) ) : 0 );
-            if( roll <= 20 )
+            if( roll <= 20 )		// 20 
                 roll = 0;
-            else if( roll <= 45 )
+            else if( roll <= 45 )	// 25
                 roll = 1;
-            else if( roll <= 70 )
+            else if( roll <= 65 )	// 20
                 roll = 2;
-            else if( roll <= 90 )
+            else if( roll <= 85 )	// 20
                 roll = 3;
-            else if( roll <= 100 )
+            else if( roll <= 95 )	// 10
                 roll = 4;
-            else
+            else 					//  5
                 roll = 5;
 
             // 0x00000001 - knockout
@@ -1397,6 +1397,8 @@ void ApplyDamage( AttackStruct& attack, Critter& target, uint rounds, bool isCri
             // 0x00008000 - lose next turn
             // 0x00200000 - random
 
+			bt = 0; //disabled critical table for other body types
+			
             uint offset = bt * 9 * 6 * 7 + aim_ * 6 * 7 + roll * 7;
             dmgMul *= CriticalTable[ offset ];
             dmgMul >>= 1;

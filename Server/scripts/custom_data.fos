@@ -1,3 +1,7 @@
+/**
+* Author: wladimiiir
+*/
+
 #include "serializator.fos"
 #include "_macros.fos"
 #include "combat_h.fos"

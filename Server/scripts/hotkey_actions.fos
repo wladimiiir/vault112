@@ -4,6 +4,9 @@
 
 void Reload()
 {
+	if(__ConsoleActive)
+		return;
+	
 	CritterCl@ chosen = GetChosen();
 	ItemCl@ item = chosen.GetItem(0,SLOT_HAND1);
     if(!valid(item) || item.GetType() != ITEM_TYPE_WEAPON) 
@@ -14,7 +17,7 @@ void Reload()
 
 bool EndTurnBasedTurn()
 {
-	if(__ConsoleActive == true) 
+	if(__ConsoleActive) 
 		return false;
 	
 	CritterCl@ chosen = GetChosen();
@@ -29,7 +32,7 @@ bool EndTurnBasedTurn()
 
 bool EndTurnBasedCombat()
 {
-	if(__ConsoleActive == true) 
+	if(__ConsoleActive) 
 		return false;
 	
 	CritterCl@ chosen = GetChosen();

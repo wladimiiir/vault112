@@ -1,3 +1,7 @@
+/**
+* Author: wladimiiir
+*/
+
 #include "_macros.fos"
 #include "admin_h.fos"
 #include "_factions.fos"

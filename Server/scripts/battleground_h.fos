@@ -1,3 +1,7 @@
+/**
+* Author: wladimiiir
+*/
+
 #define BATTLEGROUND_NONE		(0)
 #define BATTLEGROUND_CREATED	(1)
 #define BATTLEGROUND_JOINED		(2)

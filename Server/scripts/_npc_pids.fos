@@ -84,7 +84,6 @@
 
 #define NPC_PID_GenericGhoul             ( 159 )
 
-#define NPC_PID_RaiderMale               ( 238 )
 #define NPC_PID_RaiderFemale             ( 239 )
 
 #define NPC_PID_Alien                    ( 242 )
@@ -163,6 +162,11 @@
 
 #define NPC_PID_Roboguard					(500)
 #define NPC_PID_Claire						(501)
+#define NPC_PID_DrBraun						(502)
+#define NPC_PID_RaiderPunk					(503)
+#define NPC_PID_RaiderMale					(504)
+#define NPC_PID_RaiderLongHair				(505)
+#define NPC_PID_RaiderBald					(506)
 
 
 /*const uint16[] Pids_AllNpc={

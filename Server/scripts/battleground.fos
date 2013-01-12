@@ -1,3 +1,7 @@
+/**
+* Author: wladimiiir
+*/
+
 #include "_macros.fos"
 #include "battleground_dialog.fos"
 #include "battleground_h.fos"

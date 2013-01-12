@@ -103,9 +103,9 @@ void InitializeGame()                    // Export
     __LookDir3 = 60;                         // Nerfe 60% of look radius with back look
     __LookDir4 = 60;                         // Nerfe 60% of look radius with back look (Square geometry)
     __LookChecks |= LOOK_CHECK_SNEAK_DIR; // Nerfe opponent sneak by directions of look
-    __LookSneakDir0 = 90;                    // Nerfe 90% of opponent sneak with direct look
+    __LookSneakDir0 = 80;                    // Nerfe 90% of opponent sneak with direct look
     __LookSneakDir1 = 60;                    // Nerfe 60% of opponent sneak with front side look
-    __LookSneakDir2 = 30;                    // Nerfe 30% of opponent sneak with back side look
+    __LookSneakDir2 = 10;                    // Nerfe 30% of opponent sneak with back side look
     __LookSneakDir3 =  0;                    // Nerfe 0% of opponent sneak with back look
     __LookSneakDir4 =  0;                    // Nerfe 0% of opponent sneak with back look (Square geometry)
     __LookChecks |= LOOK_CHECK_SNEAK_WEIGHT; // Nerfe sneak by current weight

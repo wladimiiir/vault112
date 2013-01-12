@@ -9,19 +9,21 @@
 #include "critter_action_when.fos"
 #include "critter_action_find.fos"
 #include "critter_action_condition.fos"
+#include "npc_spawn_h.fos"
+#include "wrappers.fos"
 
 #define	ENTIRE_TERMINAL		(100)
-#define	ENTIRE_CRITTER1		(101)
-#define	ENTIRE_CRITTER2		(102)
+
+const uint[] HEALING_DRUGS = {PID_SUPER_STIMPAK, PID_STIMPAK, PID_HEALING_POWDER};
 
 /**
 * Map script
 */
-void MapInit(Map& map, bool firstTime)
+void InitMap(Map& map, bool firstTime)
 {
 	if(!firstTime)
 		return;
-		
+
 	Entire[] entires;
 	ParseEntires(map, entires, ENTIRE_TERMINAL);
 	
@@ -31,31 +33,6 @@ void MapInit(Map& map, bool firstTime)
 		if(valid(terminal))
 			terminal.SetScript("TerminalInit");
 	}
-	
-	entires.resize(0);
-	ParseEntires(map, entires, ENTIRE_CRITTER1);
-	for (uint i = 0; i < entires.length(); i++)
-	{
-		uint count = Random(2, 5);
-		for (uint j = 0; j < count; j++)
-		{
-			int[] params = {ST_REPLICATION_TIME, -1, ST_TEAM_ID, 100 + i};
-			map.AddNpc(NPC_PID_GoldenGecko, entires[i].HexX, entires[i].HexY, Random(0, 5), params, null, "InitCritter1");
-		}
-	}
-
-	entires.resize(0);
-	ParseEntires(map, entires, ENTIRE_CRITTER2);
-	for (uint i = 0; i < entires.length(); i++)
-	{
-		uint count = Random(2, 5);
-		for (uint j = 0; j < count; j++)
-		{
-			int[] params = {ST_REPLICATION_TIME, -1, ST_TEAM_ID, 200 + i};
-			map.AddNpc(NPC_PID_SmallSilverGecko, entires[i].HexX, entires[i].HexY, Random(0, 5), params, null, "InitCritter2");
-		}
-	}
-		
 }
 
 /**
@@ -77,6 +54,9 @@ void InitCritter1(Critter& critter, bool)
 				.AddSubAction(SetHome()))
 			.AddSubAction(WhenAttacked()
 				.AddSubAction(CallReinforcements(critter.Stat[ST_TEAM_ID])))
+			.AddSubAction(WhenPlaneRun()
+				.If(IsInjured(70, true))
+				.AddSubAction(UseDrug(HEALING_DRUGS)))
 	;
 	actionManager.Start(critter, action);
 }
@@ -113,16 +93,23 @@ bool TerminalSkill(Item& door, Critter& cr, int skill)
 */
 import Location@ CreateLocationForCritter( Critter& player, int locPid, int worldX, int worldY, int delta, int varNum ) from "location";
 
-void CreateVirtualReality(Critter& critter, int locationPid, int combatMode, int)
+void CreateVirtualReality(Critter& critter, int locationPid, int combatMode, int spawnId)
 {
-	Location@ location = CreateLocationForCritter(critter, locationPid, critter.WorldX, critter.WorldY, 0, 0);
+	uint locationId = CreateLocation(locationPid, critter.WorldX, critter.WorldY, null);
+	if(locationId == 0)
+		return;
+		
+	Location@ location = GetLocation(locationId);
 	if(!valid(location))
 		return;
 	
-	critter.SetKnownLoc(false, location.Id);
 	Map@ map = location.GetMapByIndex(0);
 	if(combatMode == COMBAT_MODE_TURN_BASED)
 		map.SetTurnBasedAvailability(true);
-	map.SetScript("MapInit");
+		
+	map.SetScript("InitMap");
+	Critter@[] critters = SpawnNpcs(spawnId, map);
+	Log("Added "+critters.length() +" critters.");
+	
 	critter.TransitToMap(map.Id, 0);
 }

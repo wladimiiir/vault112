@@ -518,11 +518,13 @@
 {5020}{}{Dr.Braun}
 {5021}{}{Dr.Braun.}
 {5030}{}{Raider}
+{5031}{}{Punky raider woman. Look on her face says, that she has been through all kind of nasty stuff.}
 {5040}{}{Raider}
-{5050}{}{Giant wasp}
-{5051}{}{Огромное кровожадное насекомое}
-{5060}{}{Гвардеец}
-{5061}{}{Боец Гвардии ГУ}
+{5041}{}{His face frowns, life has not been very kind to him, obviously.}
+{5050}{}{Raider}
+{5051}{}{He looks like tough one. But his hair should use some shampoo.}
+{5060}{}{Raider}
+{5061}{}{Baldy raider. It looks like he shaves his head daily.}
 {5070}{}{Giant Bat}
 {5080}{}{Arroyo Patrol}
 {5090}{}{Arroyo Patrol}

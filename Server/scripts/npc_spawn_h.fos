@@ -1,0 +1,10 @@
+/**
+* Author: wladimiiir
+*/
+
+#define	NPC_SPAWN_VR_GECKOS			(1)
+#define	NPC_SPAWN_VR_RAIDERS		(2)
+
+#ifndef __NPC_SPAWN__
+import Critter@[] SpawnNpcs(uint npcSpawnId, Map& map) from "npc_spawn";
+#endif

@@ -1,6 +1,63 @@
-#include "_macros.fos"
+/**
+* Author: wladimiiir
+*/
 
+#include "_macros.fos"
+#include "utils_for_array.fos"
+
+uint[] OnlinePlayers;
+
+/**
+* Export functions
+*/
+//import uint[] GetOnlinePlayers() from "online_players";
 uint[] GetOnlinePlayers()
 {
-	return uint[](0);
+	return OnlinePlayers;
+}
+
+//import void AddOnlinePlayer(Critter& player) from "online_players";
+void AddOnlinePlayer(Critter& player)
+{
+	if(Present(player.Id, OnlinePlayers))
+		return;
+		
+	OnlinePlayers.insertLast(player.Id);
+}
+
+//import void RemoveOnlinePlayer(Critter& player) from "online_players";
+void RemoveOnlinePlayer(Critter& player)
+{
+	RemoveFromArray(OnlinePlayers, player.Id);
+}
+
+/**
+* Run scripts
+*/
+void ListOnline(Critter& critter, int, int, int)
+{
+	critter.Say(SAY_NETMSG, "========= Online ========== ");
+	for (uint i = 0; i < OnlinePlayers.length(); i++)
+	{
+		Critter@ player = GetCritter(OnlinePlayers[i]);
+		if(!valid(player))
+		{
+			critter.Say(SAY_NETMSG, "Player not found: "+OnlinePlayers[i]);
+			continue; 
+		}
+		string result = "";		
+		result += "Id: "+player.Id +", "; 
+		result += "Name: "+player.Name +", ";
+		
+		Map@ map = player.GetMap();
+		if(!valid(map))
+			result += "Location: Global map";
+		else
+			result += "Map ID: "+map.Id;
+		
+		critter.Say(SAY_NETMSG, result);	
+	}
+	critter.Say(SAY_NETMSG, "=========================== ");
+	critter.Say(SAY_NETMSG, "Total: " + OnlinePlayers.length());
+	critter.Say(SAY_NETMSG, "=========================== ");
 }

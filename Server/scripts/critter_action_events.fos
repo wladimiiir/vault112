@@ -1,3 +1,7 @@
+/**
+* Author: wladimiiir
+*/
+
 void _Idle(Critter& critter)
 {
 	actionManager.Idle(critter);

@@ -1,0 +1,287 @@
+/**
+* Author: wladimiiir
+*/
+
+#define __NPC_SPAWN__
+
+#include "_macros.fos"
+#include "entire.fos"
+#include "npc_spawn_h.fos"
+
+/**
+* Export script
+*/
+Critter@[] SpawnNpcs(uint npcSpawnId, Map& map)
+{
+	NpcSpawn@ spawn = GetNpcSpawn(npcSpawnId);
+	if(!valid(spawn))
+	{
+		Log("No spawn found for id: "+npcSpawnId);
+		return array<Critter@>(0);
+	}
+		
+	return spawn.SpawnNpcs(map);
+}
+
+/**
+* Initialization
+*/
+NpcSpawn@[]@ NpcSpawns;
+
+NpcSpawn@ GetNpcSpawn(uint spawnId)
+{
+	if(!valid(NpcSpawns))
+		InitNpcSpawns();
+	
+	for (uint i = 0; i < NpcSpawns.length(); i++)
+		if(NpcSpawns[i].GetId() == spawnId)
+			return @NpcSpawns[i];
+	
+	return null;
+}
+
+void InitNpcSpawns()
+{
+	NpcSpawn@[] spawns = 
+	{ 
+		#include "vr_npc_spawn_init.fos" 
+	};
+	@NpcSpawns = spawns;
+}
+
+
+
+/**
+* Entities
+*/
+class NpcSpawn
+{
+	private uint Id;
+	private SpawnPoint@[] SpawnPoints;
+	
+	NpcSpawn(uint id)
+	{
+		Id = id;
+	}
+	
+	uint GetId()
+	{
+		return Id;
+	}
+	
+	SpawnPoint@ AddSpawnPoint(uint entireNum)
+	{
+		SpawnPoint point(this, SpawnPoints.length(), entireNum);
+		SpawnPoints.insertLast(point);
+		return @point;
+	}
+	
+	Critter@[] SpawnNpcs(Map& map)
+	{
+		Critter@[] critters;
+		for (uint i = 0; i < SpawnPoints.length(); i++)
+			SpawnPoints[i].AddNpcs(critters, map);
+		return critters;
+	}
+}
+
+class SpawnPoint
+{
+	private NpcSpawn@ Parent;
+	private uint Index;
+	private uint EntireNum;
+	private SpawnCritter@[] Critters;
+	
+	SpawnPoint(NpcSpawn& parent, uint index, uint entireNum)
+	{
+		@Parent = parent;
+		Index = index;
+		EntireNum = entireNum;
+	}
+	
+	SpawnCritter@ AddCritter(uint npcPid)
+	{
+		SpawnCritter critter(this, npcPid);
+		Critters.insertLast(critter);
+		return @critter;
+	}
+	
+	NpcSpawn@ Finish()
+	{
+		return @Parent;
+	}
+	
+	void AddNpcs(Critter@[]& npcs, Map& map)
+	{
+		Entire[] entires;
+		ParseEntires(map, entires, EntireNum);
+		
+		for (uint i = 0; i < entires.length(); i++)
+			for (uint j = 0; j < Critters.length(); j++)
+				Critters[j].Spawn(npcs, map, entires[i].HexX, entires[i].HexY, (Index + 1) * 1000 + i);
+	}
+}
+
+class SpawnCritter
+{
+	private SpawnPoint@ Parent;
+	private uint NpcPid;
+	private CritterBag@[] OneOfBags;
+	private CritterBag@ AlwaysBag;
+	private float Chance;
+	private uint MinCount;
+	private uint MaxCount;
+	private uint MinMaxLife;
+	private uint MaxMaxLife;
+	private string@ InitScript;
+	private int[] Params;
+	private bool UseGroupTeamId;
+	
+	SpawnCritter(SpawnPoint& parent, uint npcPid)
+	{
+		@Parent = parent;
+		NpcPid = npcPid;
+		Chance = 100;
+		MinCount = 1;
+		MaxCount = 1;
+		MinMaxLife = 0;
+		MaxMaxLife = 0;
+		UseGroupTeamId = true;
+	}
+	
+	SpawnCritter@ SpawnChance(float chance)
+	{
+		Chance = chance;
+		return @this;
+	}
+	
+	SpawnCritter@ Count(uint min, uint max)
+	{
+		MinCount = min;
+		MaxCount = max;
+		return @this;
+	}
+	
+	SpawnCritter@ MaxLife(uint min, uint max)
+	{
+		MinMaxLife = min;
+		MaxMaxLife = max;
+		return @this;
+	}
+	
+	SpawnCritter@ Script(string@ script)
+	{
+		@InitScript = script;
+		return @this;
+	}
+	
+	SpawnCritter@ AddParam(int index, int value)
+	{
+		Params.insertLast(index);
+		Params.insertLast(value);
+		return @this;
+	}
+	
+	SpawnCritter@ Team(uint teamId)
+	{
+		Params.insertLast(ST_TEAM_ID);
+		Params.insertLast(teamId);
+		UseGroupTeamId = false;
+		return @this;
+	}
+	
+	CritterBag@ AddOneOfBag()
+	{
+		CritterBag bag(this);
+		OneOfBags.insertLast(bag);
+		return @bag;
+	}
+	
+	CritterBag@ AddAlwaysBag()
+	{
+		CritterBag bag(this);
+		@AlwaysBag = bag;
+		return @bag;
+	}
+	
+	SpawnPoint@ Finish()
+	{
+		return @Parent;
+	}
+	
+	void Spawn(Critter@[]& npcs, Map& map, uint hexX, uint hexY, uint group)
+	{
+		if(!HAS_CHANCE(Chance))
+			return;
+			
+		uint count = Random(MinCount, MaxCount);
+		for (uint i = 0; i < count; i++)
+		{
+			int[] params = {};
+			for (uint j = 0; j < Params.length(); j++)
+				params.insertLast(Params[j]);
+			
+			if(MinMaxLife != 0 && MaxMaxLife != 0)
+			{
+				params.insertLast(ST_MAX_LIFE);
+				params.insertLast(Random(MinMaxLife, MaxMaxLife));
+			}
+			if(UseGroupTeamId)
+			{
+				params.insertLast(ST_TEAM_ID);
+				params.insertLast(group);
+			}
+			Critter@ critter = map.AddNpc(NpcPid, hexX, hexY, Random(0, 5), params, null, @InitScript);
+			if(!valid(critter))
+				continue;
+				
+			if(OneOfBags.length() > 0)
+				OneOfBags[Random(0, OneOfBags.length() - 1)].AddItems(critter);
+			if(valid(AlwaysBag))
+				AlwaysBag.AddItems(critter);
+			
+			npcs.insertLast(critter);
+		}
+	}
+}
+
+class CritterBag 
+{
+	private SpawnCritter@ Parent;
+	private uint[] ItemPids;
+	private uint[] Slots;
+	private uint[] MinCounts;
+	private uint[] MaxCounts;
+	
+	CritterBag(SpawnCritter& parent)
+	{
+		@Parent = parent;
+	}
+	
+	CritterBag@ AddItem(uint itemPid, uint slot, uint minCount, uint maxCount)
+	{
+		ItemPids.insertLast(itemPid);
+		Slots.insertLast(slot);
+		MinCounts.insertLast(minCount);
+		MaxCounts.insertLast(maxCount);
+		return @this;
+	}
+	
+	SpawnCritter@ Finish()
+	{
+		return @Parent;
+	}
+	
+	void AddItems(Critter& critter)
+	{
+		for (uint i = 0; i < ItemPids.length(); i++)
+		{
+			Item@ item = critter.AddItem(ItemPids[i], Random(MinCounts[i], MaxCounts[i]));
+			if(!valid(item))
+				continue;
+				
+			if(Slots[i] != SLOT_INV)
+				critter.MoveItem(item.Id, item.GetCount(), Slots[i]);
+		}
+	}
+}
