@@ -1397,7 +1397,8 @@ void ApplyDamage( AttackStruct& attack, Critter& target, uint rounds, bool isCri
             // 0x00008000 - lose next turn
             // 0x00200000 - random
 
-			bt = 0; //disabled critical table for other body types
+			if(bt > BT_WOMEN)
+				bt = 0; //disabled critical table for other body types
 			
             uint offset = bt * 9 * 6 * 7 + aim_ * 6 * 7 + roll * 7;
             dmgMul *= CriticalTable[ offset ];

@@ -1034,10 +1034,6 @@ void critter_init( Critter& cr, bool firstTime )
         // Erase zero time events
         cr.EraseTimeEvents( 0 );
 
-        // TRAIT_FAST_SHOT migration, delete in future
-        if( cr.Trait[ TRAIT_FAST_SHOT ] != 0 )
-            cr.ModeBase[ MODE_NO_AIM ] = 1;
-            
         if(!cr.IsPlayer())
         {
 			//Log("critter_init: Clearing attack protection: "+cr.Id);

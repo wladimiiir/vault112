@@ -281,7 +281,10 @@ class CritterBag
 				continue;
 				
 			if(Slots[i] != SLOT_INV)
+			{
 				critter.MoveItem(item.Id, item.GetCount(), Slots[i]);
+				critter.SetFavoriteItem(Slots[i], ItemPids[i]);
+			}
 		}
 	}
 }

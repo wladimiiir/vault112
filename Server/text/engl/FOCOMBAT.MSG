@@ -680,83 +680,51 @@
 #
 # 5000 series - men (including generics)
 #
-{5000}{}{ and really hurts}
-{5001}{}{. A serious wound is inflicted}
-{5002}{}{ with no armor defenses}
-{5003}{}{. The damaging attack knocks him unconscious}
-{5004}{}{. The blow knocks him to the ground}
-{5005}{}{. The strong blow to the head knocks him out}
-{5006}{}{. The attack crushes the temple. Good night, Gracie}
-{5007}{}{, death is instantaneous}
-{5008}{}{, causing severe tennis elbow}
-{5009}{}{, pushing the arm out of the way}
-{5010}{}{, leaving a big bruise}
-{5011}{}{, crippling the left arm}
-{5012}{}{, leaving the left arm dangling by the skin}
-{5013}{}{. That arm now looks like a bloody stump}
-{5014}{}{, leaving a crippled right arm}
-{5015}{}{. His right arm is pulverized by this powerful blow}
-{5016}{}{ in a forceful blow}
-{5017}{}{ blowing through the armor}
-{5018}{}{, inflicting an extra helping of damage}
-{5019}{}{ with no armor, knocking the combatant to the ground}
-{5020}{}{ knocking the air out, he slumps to the ground out of the fight}
-{5021}{}{. Unfortunately, his spine is now clearly visible from the front}
-{5022}{}{ putting a major hurt on his leg}
-{5023}{}{, knocking him to the ground like a bowling pin in a league game}
-{5024}{}{, bowling him over and crippling that leg}
-{5025}{}{, smashing the knee into the next town. He falls}
-{5026}{}{. The intense pain of having a leg removed causes him to quit}
-{5027}{}{ inflicting some extra pain}
-{5028}{}{ causing blindness, unluckily for him}
-{5029}{}{, and with no protection there, causing serious pain}
-{5030}{}{, and blinding him with a stunning blow}
-{5031}{}{. The loss of an eye is too much for him, and he falls to the ground}
-{5032}{}{, sadly, he is too busy feeling the rush of air on the brain to notice death approaching}
-{5033}{}{. Ouch! That had to hurt}
-{5034}{}{, and he's not wearing a cup, either}
-{5035}{}{ and without protection, he falls over, groaning in agony}
-{5036}{}{. The pain is too much for him and he collapses like a rag}
-{5037}{}{. He mumbles "Mother", as his eyes roll into the back of his head}
+{5000}{}{, which really hurt}
+{5001}{}{, inflicting extra damage}
+{5002}{}{. A serious wound is inflicted}
+{5003}{}{. Ouch! That had to hurt}
+{5004}{}{. Damn, that wound is pretty serious}
+{5005}{}{. The pain must be unbelievable}
+{5006}{}{. The blow knocks him to the ground}
+{5007}{}{. The hit knocks him down}
+{5008}{}{. The hit makes him drop his gun}
+{5009}{}{ with no armor defenses}
+{5010}{}{. The hit to the head knocks him unconscious}
+{5011}{}{. The bullet hits his elbow knocking him out of the game}
+{5012}{}{. The bullet hits his knee knocking him out of the game}
+{5013}{}{. The bullet goes through armor, hits sensible part of his body, which knocks him out}
+{5014}{}{. The hit causes him blackout and knocks him out to recover}
+{5015}{}{. The bullet goes through his skin to the bone, crippling his left arm}
+{5016}{}{. The bullet goes through his skin to the bone, crippling his right arm}
+{5017}{}{, bowling him over and crippling right leg}
+{5018}{}{, bowling him over and crippling left leg}
+{5019}{}{. The loss of an eye is too much for him, and he falls to the ground}
+
 #
 # series 5100 - women
 #
-{5100}{}{ and really hurts}
-{5101}{}{. A serious wound is inflicted}
-{5102}{}{ with no armor}
-{5103}{}{. The damaging attack knocks her unconscious}
-{5104}{}{. The blow knocks her to the ground}
-{5105}{}{. The strong blow to the head knocks her out}
-{5106}{}{. The attack crushes her temple. Good night, Gracie}
-{5107}{}{, death is instantaneous}
-{5108}{}{, causing severe tennis elbow}
-{5109}{}{, pushing the arm out of the way}
-{5110}{}{, leaving a big bruise}
-{5111}{}{, crippling the left arm}
-{5112}{}{. The left arm is barely attached to her shoulder}
-{5113}{}{. That arm now looks like a bloody stump}
-{5114}{}{, leaving a crippled right arm}
-{5115}{}{. Her right arm is turned into hamburger by the blow}
-{5116}{}{ in a forceful blow}
-{5117}{}{ piercing through her defenses}
-{5118}{}{, inflicting an extra helping of damage}
-{5119}{}{ with no armor, knocking the female fighter to the ground}
-{5120}{}{ knocking the air out, she slumps to the ground}
-{5121}{}{. Unfortunately, her major organs have been exposed to the light}
-{5122}{}{ putting a major hurt on her leg}
-{5123}{}{, knocking her over like a bad blind date}
-{5124}{}{, knocking her down and crippling that leg}
-{5125}{}{, smashing the knee into the next town. She takes the fast track to the ground}
-{5126}{}{. She screams in pain from the broken leg}
-{5127}{}{ inflicting some extra pain}
-{5128}{}{ causing blindness. She grimaces}
-{5129}{}{, and with no protection there, causing serious pain}
-{5130}{}{. The wound causes severe blindness, as if there is any other kind}
-{5131}{}{. She faints from the blinding attack}
-{5132}{}{, sadly, she doesn't get to pray to her gods before she meets them}
-{5133}{}{. She takes it like a man. That is to say, it hurts}
-{5134}{}{, knocking her to the ground}
-{5135}{}{. Her childbearing days are in trouble as she collapses in a limp heap}
+{5100}{}{, which really hurt}
+{5101}{}{, inflicting extra damage}
+{5102}{}{. A serious wound is inflicted}
+{5103}{}{. Ouch! That had to hurt}
+{5104}{}{. Damn, that wound is pretty serious}
+{5105}{}{. The pain must be unbelievable}
+{5106}{}{. The blow knocks her to the ground}
+{5107}{}{. The hit knocks her down}
+{5108}{}{. The hit makes her drop her gun}
+{5109}{}{ with no armor defenses}
+{5110}{}{. The hit to the head knocks her unconscious}
+{5111}{}{. The bullet hits her elbow knocking her out of the game}
+{5112}{}{. The bullet hits her knee knocking her out of the game}
+{5113}{}{. The bullet goes through armor, hits sensible part of her body, which knocks her out}
+{5114}{}{. The hit causes her blackout and knocks her out to recover}
+{5115}{}{. The bullet goes through her skin to the bone, crippling her left arm}
+{5116}{}{. The bullet goes through her skin to the bone, crippling her right arm}
+{5117}{}{, bowling her over and crippling right leg}
+{5118}{}{, bowling her over and crippling left leg}
+{5119}{}{. The loss of an eye is too much for her, and he falls to the ground}
+
 #
 # series 5200 - children
 #
