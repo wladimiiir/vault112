@@ -388,3 +388,7 @@
 /Server/scripts/npc_spawn.fosp
 /Server/scripts/npc_spawn_h.fosb
 /Server/scripts/npc_spawn_h.fosp
+/Server/scripts/CLIENT_client_screen_debug.fosb
+/Server/scripts/CLIENT_client_screen_debug.fosp
+/Server/maps/green_forest2.fomapb
+/Server/maps/green_forest2.tilemap

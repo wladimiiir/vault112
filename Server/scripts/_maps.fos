@@ -67,6 +67,9 @@
 #define LOCATION_OceanRaft                     ( 196 )
 #define LOCATION_OceanTrader                   ( 197 )
 
+#define LOCATION_GreenForest1					( 300 )
+#define LOCATION_GreenForest2					( 301 )
+
 // ************************************************************************/
 // * Maps                                                                 */
 // ************************************************************************/
@@ -143,6 +146,8 @@
 #define MAP_e_coast11                          ( 391 )
 #define MAP_e_coast5_cave                      ( 392 )
 
+#define MAP_green_forest1						( 500 )
+#define MAP_green_forest2						( 501 )
 
 // ************************************************************************/
 // *                                                                      */
