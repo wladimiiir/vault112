@@ -1,0 +1,62 @@
+/**
+* Author: wladimiiir
+*/
+
+#include "_macros.fos"
+#include "_client_defines.fos"
+#include "client_gui_h.fos"
+
+bool Visible = false;
+IGUIElementTextOpt@ DebugInfo;
+
+//import void SetDebugScreenVisible(bool visible) from "client_screen_debug";
+void SetDebugScreenVisible(bool visible)
+{
+	if(!valid(DebugInfo))
+		InitDebugScreen();
+		
+	DebugInfo.setVisible(visible);
+}
+
+void InitDebugScreen()
+{
+	@DebugInfo = GUI_AddText(CLIENT_MAIN_SCREEN_GAME, "", 50, 50)
+		.AbsolutePosition(10, 30)
+		.TextOptions(FONT_FALLOUT, COLOR_YELLOW, 0)
+		.TextBoxSize(200, 100)
+		.CallbackMouseMove(DebugInfoMouseMoveCallback())
+	;
+}
+
+class DebugInfoMouseMoveCallback : IGUIElementCallbackMouseMove
+{
+	void OnMouseMove(int x, int y)
+	{
+		if(!DebugInfo.isVisible())
+			return;
+			
+		string info = "";
+		uint16 hexX = 0, hexY = 0;
+		if(GetMonitorHex(__MouseX, __MouseY, hexX, hexY))
+		{
+			info += "Hex X: " + hexX + "\n";
+			info += "Hex Y: " + hexY + "\n";
+		}
+		
+		CritterCl@ critter = GetMonitorCritter(__MouseX, __MouseY);
+		if(valid(critter))
+		{
+			info += "Critter:\n";
+			info += "   ID: " + critter.Id + "\n";
+		}
+		ItemCl@ item = GetMonitorItem(__MouseX, __MouseY);
+		if(valid(item))
+		{
+			info += "Item:\n";
+			info += "   ID: " + item.Id + "\n";
+			info += "   Count: " + item.GetCount() + "\n";
+			info += "   Proto: " + item.GetProtoId() + "\n";
+		}
+		DebugInfo.Text(info);
+	}
+}

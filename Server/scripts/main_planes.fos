@@ -6,6 +6,7 @@
 
 import void SetDeterioration( Item& item, int deteriorationProcent ) from "repair";
 import bool AddWalkPlane( Critter& npc, uint priority, uint16 hexX, uint16 hexY, uint8 dir, bool run, uint cut ) from "npc_planes";
+import bool AddAttackPlane( Critter& npc, uint priority, Critter& target, bool run ) from "npc_planes";
 import bool IsKeyAvailable( Critter& cr, uint lockerId ) from "lockers";
 import uint GetKeyId( Critter& cr, uint lockerId ) from "lockers";
 import int  RawToHit( Critter& cr, Critter& target, ProtoItem@ weapon, uint8 weaponUse, ProtoItem@ ammo ) from "combat";
@@ -197,6 +198,11 @@ bool npc_plane_end( Critter& npc, NpcPlane& plane, int reason, Critter@ someCr, 
         }
         npc.Wait( 10000 );
     }
+    else if( reason == REASON_TARGET_DISAPPEARED && plane.Type == AI_PLANE_ATTACK && valid(someCr) && valid(npc.GetMap()))
+    {
+		if(npc.GetMap().IsTurnBased())
+			AddAttackPlane( npc, 0, someCr, plane.Run );
+	}
     
     return true;
 }

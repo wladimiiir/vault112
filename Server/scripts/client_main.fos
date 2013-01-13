@@ -40,6 +40,7 @@ import bool IgnorePlayer( string& message ) from "ignore_list";
 import void InitIgnoreList() from "ignore_list";
 import void InitChosenTabs() from "chosen_tabs";
 import void DrawChosenTabs() from "chosen_tabs";
+import void SetDebugScreenVisible(bool visible) from "client_screen_debug";
 #ifdef PLAYERS_3D
 import void Init3DChaRegScreen() from "client_3d_cha_reg";
 import void Set3DRegistrationGender( int gender ) from "client_3d_cha_reg";
@@ -373,7 +374,10 @@ bool key_down( uint8 key )
 	if(key == DIK_F9)
 		ToggleTimeoutScreen();
 	if( AltDown && key == DIK_D)
+	{
 		__ShowCritId = !__ShowCritId;
+		SetDebugScreenVisible(__ShowCritId);
+	}
 	
 		
 	if(!AltDown && !ShiftDown && !CtrlDown && key == DIK_SPACE)
