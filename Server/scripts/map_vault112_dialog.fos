@@ -34,6 +34,7 @@ void r_GiveFirstTimeItems(Critter& player, Critter@ npc)
 	if(_CritIsTagSkill(player, SK_FIRST_AID) && _CritIsTagSkill(player, SK_DOCTOR))
 		items.insertLast(player.AddItem(PID_FIRST_AID_KIT, 1));
 	
+	items.insertLast(player.AddItem(PID_LEATHER_JACKET, 1));
 	player.AddItem(PID_BOTTLE_CAPS, Random(30, 50));
 	
 	for (uint i = 0; i < items.length(); i++)

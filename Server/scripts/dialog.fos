@@ -998,7 +998,7 @@ void dlg_PlayerInfo( Critter& player, Critter@ npc, string@ lexems)
 void r_ShowQuestMessage(Critter& player, Critter@ npc, int lvar)
 {
 	GameVar@ var = GetLocalVar(lvar, player.Id);
-	if(!valid(var) || !var.IsQuest())
+	if(!valid(var))
 		return;
 		
 	uint questNameMsgNum = lvar * 1000 + 102;
