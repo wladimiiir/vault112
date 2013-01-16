@@ -582,8 +582,9 @@
 // ***  FOQUEST.MSG  *********************************************************************
 // ***************************************************************************************
 
-#define STR_QUEST_NUMBER                     ( 4 )
-#define STR_QUEST_PROCESS                    ( 5 )
+#define STR_QUEST_NUMBER					( 4 )
+#define STR_QUEST_PROCESS					( 5 )
+#define STR_QUEST_MESSAGE					( 6 )
 #define STR_QUEST_MAP                        # (num)            ( ( num ) * 1000 + 101 )
 #define STR_QUEST_INFO                       # (num)           ( ( num ) * 1000 + 102 )
 

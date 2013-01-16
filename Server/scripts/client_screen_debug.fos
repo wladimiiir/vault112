@@ -22,7 +22,7 @@ void InitDebugScreen()
 {
 	@DebugInfo = GUI_AddText(CLIENT_MAIN_SCREEN_GAME, "", 50, 50)
 		.AbsolutePosition(10, 30)
-		.TextOptions(FONT_FALLOUT, COLOR_YELLOW, 0)
+		.TextOptions(FONT_FALLOUT, COLOR_YELLOW, FT_BORDERED)
 		.TextBoxSize(200, 100)
 		.CallbackMouseMove(DebugInfoMouseMoveCallback())
 	;

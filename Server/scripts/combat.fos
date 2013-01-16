@@ -1667,7 +1667,7 @@ void ApplyDamage( AttackStruct& attack, Critter& target, uint rounds, bool isCri
             if( valid( attacker ) && !(attacker.IsPlayer() && target.IsPlayer()))
             {
 				int expDamage = MAX(0, int(totalDmg) + MIN(0, target.Stat[ST_CURRENT_HP]));
-				attacker.StatBase[ ST_DAMAGE_EXPERIENCE ] += expDamage * 3;
+				attacker.StatBase[ ST_DAMAGE_EXPERIENCE ] += expDamage * 2.5;
 			}
 				
             if( target.Stat[ ST_CURRENT_HP ] < 1 )

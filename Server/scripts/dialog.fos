@@ -1,11 +1,15 @@
 // Author: cvet, heX, Тринитротолуол, Tab10id
 #include "_macros.fos"
+#include "_msgstr.fos"
 #include "stdlib_h.fos"
+#include "wrappers.fos"
+#include "utils_for_array.fos"
 
 // Возвращает размер группы (живых ее участников)
 // размер береться вне зависимости от того лидер это или просто партиец
 
 import void FlushScreen( Critter& cr, bool fadeOut, uint timeMs ) from "effects";
+import uint GetOffence(Critter& offender, uint areaId) from "custom_data";
 
 int DFGroupCount( Critter& player, Critter@ npc )
 {
@@ -885,12 +889,13 @@ void r_SayMessage(Critter& player, Critter@ npc, int dialogNumber, int answerNum
 	if(!valid(npc))
 		return;
 	
-	player.SayMsg(SAY_NORM, TEXTMSG_DLG, DLGSTR( npc.Stat[ST_DIALOG_ID], dialogNumber * 1000 + answerNumber * 10));
+	if(dialogNumber != 0 && answerNumber != 0)
+		player.SayMsg(SAY_NORM_ON_HEAD, TEXTMSG_DLG, DLGSTR( npc.Stat[ST_DIALOG_ID], dialogNumber * 1000 + answerNumber * 10));
 	
 	if(nextDialogNumber != 0)
 	{
-		uint[] values = { npc.Id, SAY_NORM, nextDialogNumber * 1000 };
-	    CreateTimeEvent( __FullSecond + REAL_SECOND( nextDialogNumber == 2 ? 0 : 5 ), "e_SayMessage", values, false );
+		uint[] values = { player.Id, npc.Id, SAY_NORM_ON_HEAD, nextDialogNumber * 1000 };
+	    CreateTimeEvent( __FullSecond + REAL_SECOND( nextDialogNumber == 2 ? 0 : 4 ), "e_SayMessage", values, false );
 	}
 }
 
@@ -899,21 +904,30 @@ void r_SayMessageDelayed( Critter& player, Critter @ npc, int strNum, int delayS
 {
     if( !valid( npc ) )
         return;
-    uint[] values = { npc.Id, uint( sayType ), uint( strNum ) };
+    uint[] values = { player.Id, npc.Id, uint( sayType ), uint( strNum ) };
     CreateTimeEvent( __FullSecond + delaySeconds, "e_SayMessage", values, false );
 }
 
 uint e_SayMessage( uint[] @ values )
 {
-    if( values.length() < 3 )
+    if( values.length() < 4 )
         return 0;
-    Critter @ cr = GetCritter( values[ 0 ] );
+    Critter@ player = GetCritter(values[0]);    
+    if(!valid(player))
+		return 0;
+    
+    Critter @ cr = GetCritter(values[1]);
     if( !valid( cr ) )
         return 0;
-    int did = cr.Stat[ ST_DIALOG_ID ];
-    if( did == 0 )
+    int dialogId = cr.Stat[ ST_DIALOG_ID ];
+    if( dialogId == 0 )
         return 0;
-    cr.SayMsg( values[ 1 ], TEXTMSG_DLG, DLGSTR( did, values[ 2 ] ) );
+        
+	//setting some lexem values
+    string lexems = "";
+    dlg_PlayerInfo(player, cr, lexems);
+    
+    cr.SayMsg( values[2], TEXTMSG_DLG, DLGSTR(dialogId, values[3]), lexems );
     return 0;
 }
 
@@ -971,3 +985,101 @@ void r_CreateLocation( Critter& player, Critter@ npc, int locPid, int worldX, in
     if( valid( loc ) )
         SetLocationDeleteTime( loc, 60 * 60 * 24 * dayDelete );
 }
+
+void dlg_PlayerInfo( Critter& player, Critter@ npc, string@ lexems)
+{
+    if( !IS_DIALOG_GENERATED(lexems) )
+        return;
+
+	lexems += "$playerId "+player.Id;
+
+}
+
+void r_ShowQuestMessage(Critter& player, Critter@ npc, int lvar)
+{
+	GameVar@ var = GetLocalVar(lvar, player.Id);
+	if(!valid(var) || !var.IsQuest())
+		return;
+		
+	uint questNameMsgNum = lvar * 1000 + 102;
+	uint questTaskMsgNum = var.GetQuestStr();
+	
+	player.SayMsg(SAY_QUEST_MSG, TEXTMSG_QUEST, STR_QUEST_MESSAGE, "$questName"+questNameMsgNum+"$questTask"+questTaskMsgNum);
+}
+
+bool d_IsOffender(Critter& player, Critter@ npc, int offenceArea)
+{
+	return GetOffence(player, offenceArea) > 0;
+}
+
+bool d_HoldsItems(Critter& player, Critter@ npc)
+{
+	if(!valid(npc))
+		return false;
+		
+	ItemHolderWrapper wrapper(npc);
+	return wrapper.HoldsItems(""+player.Id);
+}
+
+bool d_NotHoldsItems(Critter& player, Critter@ npc)
+{
+	return !d_HoldsItems(player, npc);
+}
+
+void r_RetrieveItems(Critter& player, Critter@ npc)
+{
+	if(!valid(npc))
+		return;
+		
+	ItemHolderWrapper wrapper(npc);
+	Item@[] items = wrapper.PopItems(""+player.Id);
+	MoveItems(items, player);
+}
+
+void r_GiveDangerousItems(Critter& player, Critter@ npc)
+{
+	if(!valid(npc))
+		return;
+	
+	Item@[] items;
+	player.GetItems(-1, items);
+	
+	Item@[] givenItems;
+	for (uint i = 0; i < items.length(); i++)
+		if(IsDangerous(items[i]))
+			givenItems.insertLast(items[i]);
+	
+	ItemHolderWrapper wrapper(npc);
+	wrapper.PutItems(""+player.Id, givenItems);
+}
+
+const uint16[] DangerousItemPids = {PID_DYNAMITE, PID_EXPLOSIVE_SWITCH, PID_PLASTIC_EXPLOSIVES};
+bool IsDangerous(Item& item)
+{
+	return item.GetType() == ITEM_TYPE_WEAPON || Present(item.GetProtoId(), DangerousItemPids);
+}
+
+void r_ChangeCrType(Critter& player, Critter@ npc, int baseCrType)
+{
+    player.StatBase[ ST_BASE_CRTYPE ] = baseCrType;
+	uint crType = baseCrType;
+	Item@[] armor;
+	player.GetItems(SLOT_ARMOR, armor);
+	if(armor.length() > 0)
+		if(player.Stat[ST_GENDER] == GENDER_MALE)
+		{
+			crType = armor[0].Proto.Armor_CrTypeMale;
+			CheckMaleCrType( baseCrType, crType );
+		}
+		else if(player.Stat[ST_GENDER] == GENDER_FEMALE)
+			crType = armor[0].Proto.Armor_CrTypeFemale;
+
+	player.ChangeCrType( crType );
+    FlushScreen(player, false, 2000);
+}
+
+bool d_HasWeapon(Critter& player, Critter@ npc)
+{
+	return player.GetItemsByType(ITEM_TYPE_WEAPON, null) > 0;
+}
+

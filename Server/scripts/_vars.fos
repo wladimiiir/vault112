@@ -1,7 +1,7 @@
 #ifndef __VARS__
 #define __VARS__
 /*************************************************************************************
-***  VARS  *****  COUNT: 00000027  ***************************************************
+***  VARS  *****  COUNT: 00000030  ***************************************************
 *************************************************************************************/
 
 
@@ -24,6 +24,9 @@
 #define LVAR_v112_claire                             (101)
 #define LVAR_v112_drbraun                            (102)
 #define LVAR_v112_rx_module                          (103)
+#define LVAR_v112_vr_authorization                   (104)
+#define LVAR_v112_overseer                           (105)
+#define LVAR_v112_stuff_keeper                       (106)
 #define UVAR_poker_fraud                             (1001)
 #define LVAR_poker_wins                              (1002)
 #define UVAR_poker_manywins                          (1003)
@@ -138,6 +141,21 @@ $	102	1	v112_drbraun	0	0	0	4
 **********
 
 $	103	1	v112_rx_module	0	0	0	4
+**********
+
+**********
+
+$	104	1	v112_vr_authorization	0	0	0	4
+**********
+
+**********
+
+$	105	1	v112_overseer	0	0	0	4
+**********
+
+**********
+
+$	106	1	v112_stuff_keeper	0	0	0	4
 **********
 
 **********

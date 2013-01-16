@@ -64,10 +64,10 @@ lang=engl
 {1020}{}{second time}
 {1030}{}{after initial dialog}
 {2000}{}{Oh, thanks God, you are awake.}
-{2010}{}{Wha- what happened? Where am I?}
+{2010}{}{Wha...what happened? Where am I?}
 {2020}{}{Agh, where am I?}
 {3000}{}{My name is Claire and I am local doctor here. Our scouts found you bleeding in the Wasteland few weeks ago. Do you remember what happened?}
-{3010}{}{What? Bleeding? I- I don't remember anything. Where I am?}
+{3010}{}{What? Bleeding? I...I don't remember anything. Where I am?}
 {3020}{}{Wait. What? No, I have to go.}
 {4000}{}{Calm down. Try not to make sudden moves. You still need some rest. Don't worry, you are safe here. As I said, my name is Claire and we are in ICU facility of Vault 112.}
 {4010}{}{Vault 112? [you feel sudden pain in your head] Aw, my head...}
@@ -91,7 +91,7 @@ lang=engl
 {10010}{}{[you are trying to remember] I...don't. I don't really remember anything.}
 {11000}{}{Hm, let me see [she tooks a small spotlight and points it to your eyes]. How does your head feel? Do you feel any pain?}
 {11010}{}{No, not really. My head feels fine.}
-{11020}{}{Just a small pain here [you lie pointing on your penis].}
+{11020}{}{Just a small pain here [you lie to her pointing on your penis].}
 {12000}{}{Temporary amnesia can be common in these types of shock you have been through. But if you have trouble remembering after couple of days, please, let me know.}
 {12010}{}{Thanks, doctor, you've saved my life. I wish I could repay you somehow.}
 {12020}{}{Thanks, doctor, you've saved my life.}

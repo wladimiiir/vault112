@@ -1,0 +1,64 @@
+/**
+* Author: wladimiiir
+*/
+
+#include "_macros.fos"
+#include "_maps.fos"
+
+import void SetDeterioration( Item& item, int deteriorationProcent ) from "repair";
+
+void r_GiveFirstTimeItems(Critter& player, Critter@ npc)
+{
+	Item@[] items;
+	if(_CritIsTagSkill(player, SK_SMALL_GUNS))
+	{
+		items.insertLast(player.AddItem(PID_DESERT_EAGLE, 1));
+		items.insertLast(player.AddItem(PID_44_MAGNUM_JHP, Random(70, 80)));
+	}
+	if(_CritIsTagSkill(player, SK_BIG_GUNS))
+	{
+		items.insertLast(player.AddItem(PID_FLAMER, 1));
+		items.insertLast(player.AddItem(PID_FLAMETHROWER_FUEL, Random(40, 50)));
+	}
+	if(_CritIsTagSkill(player, SK_ENERGY_WEAPONS))
+	{
+		items.insertLast(player.AddItem(PID_LASER_PISTOL, 1));
+		items.insertLast(player.AddItem(PID_SMALL_ENERGY_CELL, Random(60, 70)));
+	}
+	if(_CritIsTagSkill(player, SK_UNARMED))
+		items.insertLast(player.AddItem(PID_BRASS_KNUCKLES, 1));
+
+	if(_CritIsTagSkill(player, SK_MELEE_WEAPONS))
+		items.insertLast(player.AddItem(PID_SPEAR, 1));
+
+	if(_CritIsTagSkill(player, SK_FIRST_AID) && _CritIsTagSkill(player, SK_DOCTOR))
+		items.insertLast(player.AddItem(PID_FIRST_AID_KIT, 1));
+	
+	player.AddItem(PID_BOTTLE_CAPS, Random(30, 50));
+	
+	for (uint i = 0; i < items.length(); i++)
+		if(items[i].IsDeteriorable())
+			SetDeterioration(items[i], Random(70, 75));
+	
+}
+
+void r_TransferToVault(Critter& player, Critter@ npc)
+{
+	FlushScreen(player, false, 5000);
+	CreateTimeEvent(__FullSecond + REAL_SECOND(3), "e_TransferToVault", player.Id, false);
+}
+
+
+uint e_TransferToVault(uint[]@ values)
+{
+	Critter@ player = GetCritter(values[0]);
+	if(!valid(player))
+		return 0;
+	
+	Map@ map = GetMapByPid(MAP_v112_1, 0);
+	if(!valid(map))
+		return 0;
+	player.TransitToMap(map.Id, 0);
+		
+	return 0;
+}

@@ -12,7 +12,8 @@
 #include "npc_spawn_h.fos"
 #include "wrappers.fos"
 
-#define	ENTIRE_TERMINAL		(100)
+#define	ENTIRE_TERMINAL			(100)
+#define VIRTUAL_REALITY_TEAM	(1000)
 
 const uint[] HEALING_DRUGS = {PID_SUPER_STIMPAK, PID_STIMPAK, PID_HEALING_POWDER};
 
@@ -50,10 +51,14 @@ void InitCritter1(Critter& critter, bool)
 				.AddSubAction(ChangeDirection(RANDOM_DIRECTION, true)))
 			.AddSubAction(ProvideReinforcements(critter.Stat[ST_TEAM_ID])
 				.If(NotAttacking()))
+			.AddSubAction(ProvideReinforcements(VIRTUAL_REALITY_TEAM)
+				.If(NotAttacking())
+				.If(IsSeen()))
 			.AddSubAction(WhenAttackEnds()
 				.AddSubAction(SetHome()))
 			.AddSubAction(WhenAttacked()
-				.AddSubAction(CallReinforcements(critter.Stat[ST_TEAM_ID])))
+				.AddSubAction(CallReinforcements(critter.Stat[ST_TEAM_ID]))
+				.AddSubAction(CallReinforcements(VIRTUAL_REALITY_TEAM)))
 			.AddSubAction(WhenPlaneRun()
 				.If(IsInjured(70, true))
 				.AddSubAction(UseDrug(HEALING_DRUGS)))

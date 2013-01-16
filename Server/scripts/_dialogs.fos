@@ -8,7 +8,8 @@
 
 #define DIALOG_claire						( 500 )
 #define DIALOG_dr_braun						( 501 )
-#define DIALOG_robo_stuff_keeper			( 502 )
+#define DIALOG_v112_entrance_guard			( 502 )
+#define DIALOG_v112_stuff_keeper			( 503 )
 
 #define DIALOG_battleground					( 1000 )
 

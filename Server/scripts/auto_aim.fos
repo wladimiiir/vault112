@@ -1,0 +1,108 @@
+/**
+* Author: wladimiiir
+*/
+
+#include "_client_defines.fos"
+#include "client_gui_h.fos"
+#include "_colors.fos"
+#include "_macros.fos"
+
+uint8 autoAim = HIT_LOCATION_UNCALLED;
+IGUIElementTextOpt@ AutoAimText;
+
+//import void InitAutoAim() from "auto_aim";
+void InitAutoAim()
+{
+	@AutoAimText = GUI_AddText(CLIENT_MAIN_SCREEN_GAME, "", 575, 95)
+		.TextOptions(FONT_FAT, COLOR_SAND, FT_CENTERR)
+		.TextBoxSize(30, 20)
+	;
+	GUI_AddButton(CLIENT_MAIN_SCREEN_GAME, 585, 95)
+		.ClickableZone(20, 20)
+		.CallbackMouseClick(ChangeAutoAimAction())
+		.CallbackDraw(AutoAimDrawer())
+	;
+}
+
+//import uint8 GetAutoAim() from "auto_aim";
+uint8 GetAutoAim()
+{
+	return autoAim;
+}
+
+class ChangeAutoAimAction : IGUIElementCallbackMouseClick
+{
+	void OnMouseClick(int id, int click) override
+	{
+		if(click == MOUSE_CLICK_LEFT)
+			autoAim = (autoAim + 1) % (HIT_LOCATION_GROIN + 1);
+		else if(click == MOUSE_CLICK_RIGHT)
+			if(autoAim == 0)
+				autoAim = HIT_LOCATION_GROIN;
+			else
+				autoAim--;
+	}
+	
+}
+
+class AutoAimDrawer : IGUIElementCallbackDraw
+{
+	void OnDraw(int) override
+	{
+		if(!valid(AutoAimText))
+			InitAutoAim();
+			
+		RefreshAutoAimText();
+	}
+	
+	void RefreshAutoAimText()
+	{
+		CritterCl@ chosen = GetChosen();
+		if(!valid(chosen))
+			return;
+		
+		ItemCl@ item = chosen.GetItem(0, SLOT_HAND1);
+		if(valid(item))
+		{
+			int use = _WeaponModeUse(item.Mode);
+			int aim = _WeaponModeAim(item.Mode);
+			if(use != 0 || (aim != HIT_LOCATION_NONE && aim != HIT_LOCATION_UNCALLED))
+			{
+				AutoAimText.setText("");
+				return;
+			}
+		}
+		
+		
+		string text = "";
+		switch(autoAim)
+		{
+			case HIT_LOCATION_EYES:
+				text = "E";
+				break;
+			case HIT_LOCATION_HEAD:
+				text = "H";
+				break;
+			case HIT_LOCATION_TORSO:
+				text = "T";
+				break;
+			case HIT_LOCATION_LEFT_ARM:
+				text = "LA";
+				break;
+			case HIT_LOCATION_RIGHT_ARM:
+				text = "RA";
+				break;
+			case HIT_LOCATION_LEFT_LEG:
+				text = "LL";
+				break;
+			case HIT_LOCATION_RIGHT_LEG:
+				text = "RL";
+				break;
+			case HIT_LOCATION_GROIN:
+				text = "G";
+				break;
+		}
+		
+		AutoAimText.setText(text);
+	}
+}

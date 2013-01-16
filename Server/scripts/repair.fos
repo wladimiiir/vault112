@@ -138,6 +138,7 @@ void DeteriorateItem( Critter& cr, Item& item, int deteriorationCount ) // Expor
     item.Update();
 }
 
+//import void SetDeterioration( Item& item, int deteriorationProcent ) from "repair";
 void SetDeterioration( Item& item, int deteriorationProcent ) // Export
 {
     if( not item.IsDeteriorable() )

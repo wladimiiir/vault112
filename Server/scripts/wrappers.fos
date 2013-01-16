@@ -47,7 +47,7 @@ class ItemHolderWrapper
 		if(!valid(container))
 			return;
 			
-		Log("Moving items");
+		//~ Log("Moving items");
 		MoveItems(items, container, 0);
 	}
 	

@@ -60,8 +60,8 @@
 // Primary screens, hardcoded
 #define CLIENT_MAIN_SCREEN_LOGIN           ( 1 )
 #define CLIENT_MAIN_SCREEN_REGISTRATION    ( 2 )
-#define CLIENT_MAIN_SCREEN_OPTIONS         ( 3 )
-#define CLIENT_MAIN_SCREEN_CREDITS         ( 4 )
+#define CLIENT_MAIN_SCREEN_CREDITS         ( 3 )
+#define CLIENT_MAIN_SCREEN_OPTIONS         ( 4 )
 #define CLIENT_MAIN_SCREEN_GAME            ( 5 )
 #define CLIENT_MAIN_SCREEN_GLOBAL_MAP      ( 6 )
 #define CLIENT_MAIN_SCREEN_WAIT            ( 7 )

@@ -2,6 +2,7 @@
 * Author: wladimiiir
 */
 
+#include "map_vault112_dialog.fos"
 #include "_macros.fos"
 #include "_npc_pids.fos"
 #include "_npc_roles.fos"
@@ -188,16 +189,14 @@ void InitGuard(Critter& critter, bool firstTime)
 			.AddSubAction(ProvideReinforcements(TEAM_Vault112))
 			.AddSubAction(WhenAttacked()
 				.IfNot(IsTeamMember())
-				.AddSubAction(CrittersHolderAction()
-					.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70140))
-					.AddSubAction(CallReinforcements(TEAM_Vault112))
-					.AddSubAction(Attack())))
+				.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70140))
+				.AddSubAction(CallReinforcements(TEAM_Vault112))
+				.AddSubAction(Attack()))
 			.AddSubAction(WhenSomeoneAttacks()
 				.IfNot(IsTeamMember())
-				.AddSubAction(CrittersHolderAction()
-					.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70140))
-					.AddSubAction(CallReinforcements(TEAM_Vault112))
-					.AddSubAction(Attack())))
+				.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70140))
+				.AddSubAction(CallReinforcements(TEAM_Vault112))
+				.AddSubAction(Attack()))
 		;
 		
 	actionManager.Start(critter, action);

@@ -1767,7 +1767,7 @@
 {217201}{}{It looks like an advertisement for Gizmo's Casino.}
 {217300}{}{Vault 13 Outer Door}
 {217301}{}{This large door is the link between the vault and the outside world.}
-{217400}{}{Vault 13 Outer Door}
+{217400}{}{Vault Outer Door}
 {217401}{}{This large door is the link between the vault and the outside world.}
 {217500}{}{Casino Sign}
 {217501}{}{This part of the sign contains an electric motor that is slowly spinning the attached neon sign.}
@@ -4648,7 +4648,7 @@
 {475600}{}{Дверь}
 {475700}{}{Дверь}
 {475800}{}{Дверь}
-{475900}{}{Дверь}
+{475900}{}{Vault door}
 {476000}{}{Дверь}
 {476100}{}{Дверь}
 {476200}{}{Дверь}

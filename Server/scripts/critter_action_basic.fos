@@ -716,7 +716,7 @@ class RepeatAtInterval : DefaultAction
 	
 	void Perform(Critter& critter) override
 	{
-		if(__FullSecond < NextStart)
+		if(__FullSecond < NextStart || !Check(critter, null, null))
 		{
 			StartNextSuperAction(critter);
 			return;
@@ -1454,9 +1454,10 @@ class Attack : CrittersHolderAction
 	
 	int PlaneEndEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem) override
 	{ 
-		if(plane.Type != AI_PLANE_ATTACK)
+		if(plane.Type != AI_PLANE_ATTACK 
+			|| (reason == REASON_TARGET_DISAPPEARED && valid(critter.GetMap()) && critter.GetMap().IsTurnBased()))
 			return PLANE_RUN_GLOBAL;
-			
+		
 		RemoveFromArray(TargetIds, plane.Attack_TargId);
 
 		if(TargetIds.length() == 0)

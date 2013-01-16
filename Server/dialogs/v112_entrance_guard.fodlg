@@ -1,0 +1,122 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 1 #
+13 1010 D _script dialog@d_HasWeapon 0  #
+2 1020 R _script dialog@r_SayMessage 3 0 0 2 @
+2 2000 dialog@dlg_PlayerInfo 0 #
+3 2010 D _var p v112_overseer > 0 R _script dialog@r_SayMessage 3 2 1 3 #
+5 2020 R _script dialog@r_SayMessage 3 2 2 5 #
+6 2030 R _script dialog@r_SayMessage 3 2 3 6 #
+6 2040 D _var p v112_vr_authorization > 0 R _script dialog@r_SayMessage 3 2 4 6 #
+12 2050 R _script dialog@r_SayMessage 3 2 5 12 #
+0 2060 R _script dialog@r_SayMessage 3 2 6 0 #
+7 2070 D _var p v112_vr_authorization = 0 R _script dialog@r_SayMessage 3 2 7 7 @
+3 3000 None 0 #
+0 3010 R _script map_vault112@r_TransferToVault 0  #
+0 3020 @
+4 4000 None 0 #
+0 4010 @
+5 5000 None 0 #
+0 5010 R _script map_vault112@r_TransferToVault 0  #
+0 5020 @
+6 6000 None 0 #
+0 6010 R _script map_vault112@r_TransferToVault 0  #
+0 6020 @
+7 7000 None 0 #
+0 7010 R _script dialog@r_SayMessage 3 7 1 0 #
+8 7020 D _var p v112_vr_authorization = 0 R _script dialog@r_SayMessage 3 7 2 8 @
+8 8000 None 0 #
+3 8010 D _var p v112_overseer > 0 R _script dialog@r_SayMessage 3 8 1 3 #
+9 8020 R _script dialog@r_SayMessage 3 8 2 9 #
+4 8030 D _var p v112_overseer = 0 R _script dialog@r_SayMessage 3 8 3 4 @
+9 9000 None 0 #
+10 9010 D _param p ST_INTELLECT < 8 R _script dialog@r_SayMessage 3 9 1 10 #
+11 9020 D _param p ST_INTELLECT } 8 R _var p v112_vr_authorization = 1 R _param p ST_EXPERIENCE + 750 R _script dialog@r_ShowQuestMessage 1 104 R _script dialog@r_SayMessage 3 9 2 11 @
+10 10000 None 0 #
+0 10010 @
+11 11000 None 0 #
+0 11010 R _script map_vault112@r_TransferToVault 0  #
+0 11020 @
+12 12000 None 0 #
+0 12010 R _script map_vault112@r_TransferToVault 0  #
+0 12020 @
+13 13000 None 0 &
+
+[engl]
+{100}{}{Roboguard}
+{200}{}{Roboguard, guarding Vault 112 entrance.}
+{210}{}{It's guarding the entrance to the Vault 112. Nothing goes in without it knowing...it.}
+{1000}{}{Predialogue installations}
+{1010}{}{- has weapons}
+{1020}{}{- no weapons}
+{2000}{}{Outsider number @lex playerId@. State your name and reason to enter.}
+{2010}{}{My name is @pname@ and I want to speak with the overseer.}
+{2020}{}{My name is @pname@ and I want to see a doctor.}
+{2030}{}{My name is @pname@ and I am here to visit an inhabitant.}
+{2040}{}{I am @pname@ and I came here for some of your virtual reality.}
+{2050}{}{I am @pname@ and I am here for some business making.}
+{2060}{}{Nothing really.}
+{2070}{}{I am @pname@ and I came here for some of your virtual reality.}
+{3000}{}{Overseer is awaiting you on third floor.}
+{3010}{}{[go in]}
+{3020}{}{[go away]}
+{4000}{}{Overseer does not have time for you.}
+{4010}{}{[go away]}
+{5000}{}{Ground floor, right side.}
+{5010}{}{[go in]}
+{5020}{}{[go away]}
+{6000}{}{Go in and behave yourself, outsider.@@We will be watching you.@@Do not make any troubles.}
+{6010}{}{[go in]}
+{6020}{}{[go away]}
+{7000}{}{You are not authorized to use the facilty.}
+{7010}{}{I see. OK.}
+{7020}{}{And how do I get an authorization?}
+{8000}{}{Authorizations are given by the overseer.}
+{8010}{}{Can I see him now?}
+{8020}{}{OK, that's great, because me and 'the' overseer are old friends.}
+{8030}{}{Can I see him now?}
+{9000}{}{[it stops for a second or two] Cannot find proof of that in my database.}
+{9010}{}{I'd say my word is the proof for that.}
+{9020}{}{So that means I am not his enemy, therefore I am his friend.}
+{10000}{}{Negative. Leave the area.}
+{10010}{}{[go away]}
+{11000}{}{[it stops for a while again] Your logic is flawless. The overseer is on third floor.}
+{11010}{}{[go in]}
+{11020}{}{[go away]}
+{12000}{}{Second floor.}
+{12010}{}{[go in]}
+{12020}{}{[go away]}
+{13000}{}{Remove all your weapons.@@Leave your weapons outside.@@Not authorized to go in with weapons.@@Weapons are not allowed inside.}
+{100002000}{}{Outsider number @lex playerId@. State your name and reason to enter.}
+{100002010}{}{My name is @pname@ and I want to speak with the overseer.}
+{100002020}{}{My name is @pname@ and I want to see a doctor.}
+{100002030}{}{My name is @pname@ and I am here to visit an inhabitant.}
+{100002040}{}{I am @pname@ and I came here for some of your virtual reality.}
+{100002050}{}{I am @pname@ and I am here for some business making.}
+{100002060}{}{Nothing really.}
+{100002070}{}{I am @pname@ and I came here for some of your virtual reality.}
+{100003000}{}{Overseer is awaiting you on third floor.}
+{100004000}{}{Overseer does not have time for you.}
+{100005000}{}{Ground floor, right side.}
+{100006000}{}{Go in and behave yourself, outsider.@@We will be watching you.@@Do not make any troubles.}
+{100007000}{}{You are not authorized to use the facilty.}
+{100007010}{}{I see. OK.}
+{100007020}{}{And how do I get an authorization?}
+{100008000}{}{Authorizations are given by the overseer.}
+{100008010}{}{Can I see him now?}
+{100008020}{}{OK, that's great, because me and 'the' overseer are old friends.}
+{100008030}{}{Can I see him now?}
+{100009000}{}{[it stops for a second or two] Cannot find proof of that in my database.}
+{100009010}{}{I'd say my word is the proof for that.}
+{100009020}{}{So that means I am not his enemy, therefore I am his friend.}
+{100010000}{}{Negative. Leave the area.}
+{100011000}{}{[it stops for a while again] Your logic is flawless. The overseer is on third floor.}
+{100012000}{}{Second floor.}
+{100013000}{}{Remove all your weapons.@@Leave your weapons outside.@@Not authorized to go in with weapons.@@Weapons are not allowed inside.}
+

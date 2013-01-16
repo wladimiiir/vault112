@@ -47,10 +47,10 @@ bool PerkCheck( Critter& cr, uint perk ) // Export
         PROCESS_PERK2( PE_STRONG_BACK,         3,  3, cr.ParamBase[ ST_STRENGTH ] >= 6,     cr.ParamBase[ ST_ENDURANCE ] >= 6     );
         PROCESS_PERK2( PE_SHARPSHOOTER,        1,  9, cr.ParamBase[ ST_PERCEPTION ] >= 7,   cr.ParamBase[ ST_INTELLECT ] >= 6     );
         PROCESS_PERK2( PE_SILENT_RUNNING,      1,  6, cr.ParamBase[ ST_AGILITY ] >= 6,      cr.ParamBase[ SK_SNEAK ] >= 50        );
-        PROCESS_PERK3( PE_SURVIVALIST,         3,  3, cr.ParamBase[ ST_ENDURANCE ] >= 6,    cr.ParamBase[ ST_INTELLECT ] >= 6,    cr.ParamBase[ SK_OUTDOORSMAN ] >= 40 );
+        PROCESS_PERK3( PE_SURVIVALIST,         1,  3, cr.ParamBase[ ST_ENDURANCE ] >= 6,    cr.ParamBase[ ST_INTELLECT ] >= 6,    cr.ParamBase[ SK_OUTDOORSMAN ] >= 40 );
         PROCESS_PERK2( PE_MASTER_TRADER,       1,  9, cr.ParamBase[ ST_CHARISMA ] >= 7,     cr.ParamBase[ SK_BARTER ] >= 60       );
         PROCESS_PERK1( PE_EDUCATED,            3,  6, cr.ParamBase[ ST_INTELLECT ] >= 6     );
-        PROCESS_PERK4( PE_HEALER,              2,  3, cr.ParamBase[ ST_PERCEPTION ] >= 7,   cr.ParamBase[ ST_AGILITY ] >= 6,      cr.ParamBase[ ST_INTELLECT ] >= 5,        cr.ParamBase[ SK_FIRST_AID ] >= 40 );
+        PROCESS_PERK4( PE_HEALER,              3,  3, cr.ParamBase[ ST_PERCEPTION ] >= 7,   cr.ParamBase[ ST_AGILITY ] >= 6,      cr.ParamBase[ ST_INTELLECT ] >= 5,        cr.ParamBase[ SK_FIRST_AID ] >= 40 );
 //	PROCESS_PERK3(PE_BETTER_CRITICALS,    1,  9, cr.ParamBase[ST_PERCEPTION]>=6,   cr.ParamBase[ST_LUCK]>=6,         cr.ParamBase[ST_AGILITY]>=4);
         PROCESS_PERK5( PE_SLAYER,              1, 24, cr.ParamBase[ ST_AGILITY ] >= 8,      cr.ParamBase[ ST_STRENGTH ] >= 8,     cr.ParamBase[ SK_UNARMED ] >= 80,         cr.ParamBase[ PE_SNIPER ] == 0,            cr.ParamBase[ PE_TERMINATOR ] == 0 );
         PROCESS_PERK5( PE_SNIPER,              1, 24, cr.ParamBase[ ST_AGILITY ] >= 8,      cr.ParamBase[ ST_PERCEPTION ] >= 8,   cr.ParamBase[ SK_SMALL_GUNS ] >= 80,      cr.ParamBase[ PE_SLAYER ] == 0,            cr.ParamBase[ PE_TERMINATOR ] == 0 );
@@ -136,7 +136,7 @@ void PerkUp( Critter& cr, uint perk ) // Export
         PERKUP_STAT( ST_SEQUENCE, += 2 );
         break;
     case PE_FASTER_HEALING:
-        PERKUP_STAT( ST_HEALING_RATE, += 2 );
+        PERKUP_STAT( ST_HEALING_RATE, += 5 );
         break;
     case PE_MORE_CRITICALS:
         PERKUP_STAT( ST_CRITICAL_CHANCE, += 5 );
@@ -155,7 +155,7 @@ void PerkUp( Critter& cr, uint perk ) // Export
         break;
     case PE_SHARPSHOOTER:
         PERKUP_STAT( ST_BONUS_LOOK, += 6 ); /*+2 perception on ranged attack*/ break;
-    case PE_SILENT_RUNNING:     /*No steal off while running*/
+    case PE_SILENT_RUNNING:     /*No sneak off while running*/
         break;
     case PE_SURVIVALIST:
         PERKUP_SKILL( SK_OUTDOORSMAN, += 25 );

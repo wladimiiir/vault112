@@ -47,6 +47,8 @@ import void Set3DRegistrationGender( int gender ) from "client_3d_cha_reg";
 import void Fill3DRegistrationParameters( int[]& params ) from "client_3d_cha_reg";
 #endif
 import void PlayAnimSound( uint crType, int gender, uint anim1, uint anim2 ) from "animation";
+import void InitAutoAim() from "auto_aim";
+import uint8 GetAutoAim() from "auto_aim";
 
 string@ MouseOverText;
 void RefreshMouseOverText()
@@ -163,6 +165,7 @@ bool start()
 	InitGroundPickUpScreen();
 	InitMessagesScreenPanel();
     InitChosenTabs();
+    InitAutoAim();
     #ifdef PLAYERS_3D
     Init3DChaRegScreen();
     #endif
@@ -204,6 +207,7 @@ bool start()
     return true;
 }
 
+
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 // Main loop function. Returned time of next call in milliseconds.
 uint loop()
@@ -224,6 +228,9 @@ void get_active_screens( int[]& result )
 // Show/hide screen behaviour.
 void screen_change( bool show, int screen, int p0, int p1, int p2 )
 {
+	if(show && screen == CLIENT_MAIN_SCREEN_CREDITS)
+		PlayMusic("credits.ogg", 0, 1);
+		
     if( show )
         GUI_ShowScreen( screen, p0, p1, p2 );
     else
@@ -615,8 +622,12 @@ bool out_message( string& message, int& sayType )
 // To-hit chance.
 int to_hit( CritterCl& chosen, CritterCl& target, ProtoItem& weapon, uint8 weaponMode )
 {
-    int use         = _WeaponModeUse( weaponMode );
-    int hitLocation = _WeaponModeAim( weaponMode );
+    int use = _WeaponModeUse( weaponMode );
+    int aim = _WeaponModeAim( weaponMode );
+    
+    uint8 hitLocation = aim;
+    hit_aim(hitLocation);
+    
     if( use > 2 )
         return 0;
 
@@ -765,7 +776,19 @@ uint GetHitAim( int hitLocation )
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 // Override aim location set by player through targetting screen or simple click on target.
 void hit_aim( uint8& aim )
-{}
+{
+	if(GetAutoAim() == HIT_LOCATION_UNCALLED || GetAutoAim() == HIT_LOCATION_NONE)
+		return;
+	
+	CritterCl@ chosen = GetChosen();
+	if(!valid(chosen))
+		return;
+		
+	uint8 mode = 0;
+	ProtoItem@ proto = chosen.GetSlotProto(SLOT_HAND1, mode);
+	if(mode == 0 && proto.Weapon_Aim_0 && chosen.Trait[TRAIT_FAST_SHOT] == 0)
+		aim = GetAutoAim();
+}
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 // Combat results.

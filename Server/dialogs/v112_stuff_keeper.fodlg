@@ -1,0 +1,64 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 1 #
+5 1010 D _var p v112_stuff_keeper = 0 #
+2 1020 @
+2 2000 None 0 #
+3 2010 D _script dialog@d_HoldsItems 0  #
+4 2020 D _script dialog@d_NotHoldsItems 0  #
+0 2030 @
+3 3000 None 0 #
+0 3010 R _script dialog@r_RetrieveItems 0  #
+0 3020 #
+0 3030 @
+4 4000 None 0 #
+0 4010 R _script dialog@r_GiveDangerousItems 0  #
+0 4020 #
+0 4030 @
+5 5000 None 0 #
+6 5010 R _script map_vault112@r_GiveFirstTimeItems 0  R _var p v112_stuff_keeper = 1 R _param p ST_EXPERIENCE + 200 #
+6 5020 R _script map_vault112@r_GiveFirstTimeItems 0  R _var p v112_stuff_keeper = 1 R _param p ST_EXPERIENCE + 200 #
+6 5030 R _script map_vault112@r_GiveFirstTimeItems 0  R _var p v112_stuff_keeper = 1 R _param p ST_EXPERIENCE + 200 @
+6 6000 None 0 #
+7 6010 #
+7 6020 @
+7 7000 None 0 #
+0 7010 #
+0 7020 &
+
+[engl]
+{100}{}{Roboguard}
+{200}{}{Roboguard, that serves as stuff keeper.}
+{210}{}{It is here for keeping stuff of outsiders, when they want to go inside the Vault.}
+{1000}{}{Predialogue installations}
+{1010}{}{- first time}
+{1020}{}{-}
+{2000}{}{Do you need anything?@@May I help you?}
+{2010}{}{I would like my stuff back.@@I am back for my stuff.@@Can I get my stuff back, please?@@OK, I need my stuff back.}
+{2020}{}{Could you keep my weapons?@@Could you keep an eye on my stuff?@@I would like you to keep my weapons.@@Is it possible to leave my weapons with you?}
+{2030}{}{Nothing. Just passing by.}
+{3000}{}{Here is your stuff.@@Here you are.@@Here it is.}
+{3010}{}{[take your stuff] Thanks.}
+{3020}{}{Oh, I just remembered I need to go inside again.}
+{3030}{}{Sorry, I will be back later.}
+{4000}{}{Sure can do.@@Of course, outsider.@@Yes, but don't forget it here.}
+{4010}{}{[pass your weapons to the keeper] Thanks.}
+{4020}{}{Actually, I need it.}
+{4030}{}{Sorry, I'll be back later.}
+{5000}{}{Hello outsider. If I am not mistaken, and I know I am not, I should have your stuff you had on, when the scouts brought you here.}
+{5010}{}{That's great, can I have it back?}
+{5020}{}{My stuff? Oh, yeah, my stuff. Could you give it to me?}
+{5030}{}{Stuff? Like weapons and shit? Sure, give it to me.}
+{6000}{}{Sure, you can have it back. Here it is [he is giving you your stuff]. And when you need to go inside next time, you can keep your stuff with me.}
+{6010}{}{And why would I do that? I am not allowed to go inside with my stuff?}
+{6020}{}{What? I am not giving you my shit next time, you can forget it.}
+{7000}{}{You are not allowed to go inside with anything dangerous. So that includes weapons of any kind or explosives.}
+{7010}{}{Ah, OK. So, next time, then.}
+{7020}{}{Bullshit. I can go wherever I want with whatever I want. [turn around and leave like a boss]}
+

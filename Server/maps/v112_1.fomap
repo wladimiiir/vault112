@@ -2,8 +2,8 @@
 Version              4
 MaxHexX              113
 MaxHexY              197
-WorkHexX             68
-WorkHexY             57
+WorkHexX             66
+WorkHexY             64
 ScriptModule         map_vault112
 ScriptFunc           InitVaultMap
 NoLogOut             0
@@ -8828,11 +8828,6 @@ ProtoId              2344
 MapX                 97
 MapY                 99
 
-MapObjType           2
-ProtoId              3853
-MapX                 42
-MapY                 195
-
 MapObjType           0
 ProtoId              480
 MapX                 63
@@ -10649,7 +10644,6 @@ MapObjType           2
 ProtoId              3853
 MapX                 66
 MapY                 71
-Scenery_ToEntire     2
 Scenery_ToDir        5
 
 MapObjType           2
