@@ -8,6 +8,8 @@ import void FindEncounter( Critter@[]& group, Item@ car, uint x, uint y, uint& e
 import void InviteToEncounter( Critter@[]& group, Item@ car, uint encounterDescriptor, int combatMode, uint& mapId, uint16& hexX, uint16& hexY, uint8& dir ) from "worldmap";
 import uint GetGlobalMapRelief( uint x, uint y ) from "worldmap";
 
+#define _CanLead	# (player, groupCount) (CLAMP(player.Stat[ST_CHARISMA] + player.Perk[PE_MAGNETIC_PERSONALITY] * 2 + player.Stat[ST_LEVEL] / 20, 1, 10) > groupCount)
+
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 // int processType    - see in Global map events in _defines.fos;
 // Critter& cr        - who called this function, in most times is leader of group;
@@ -244,7 +246,7 @@ void global_process( int processType, Critter& cr, Item@ car,
 
             // Validate charisma
             Critter@ leader = group[ 0 ];
-            if( int( group.length() ) > leader.Stat[ ST_CHARISMA ] + leader.Perk[ PE_MAGNETIC_PERSONALITY ] )
+            if(leader.IsPlayer() && !_CanLead(leader, group.length()))
             {
                 leader.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_CRIT_BAD_CHARISMA );
                 speed = 0.0f;                 // Stop
@@ -294,7 +296,7 @@ void global_process( int processType, Critter& cr, Item@ car,
 
         // Validate charisma
         Critter@ leader = group[ 0 ];
-        if( int( group.length() ) > leader.Stat[ ST_CHARISMA ] + leader.Perk[ PE_MAGNETIC_PERSONALITY ] )
+        if(leader.IsPlayer() && !_CanLead(leader, group.length()))
         {
             leader.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_CRIT_BAD_CHARISMA );
             if( valid( car ) )

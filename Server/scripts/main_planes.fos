@@ -75,7 +75,7 @@ bool npc_plane_end( Critter& npc, NpcPlane& plane, int reason, Critter@ someCr, 
     else if( reason == REASON_GAG_CRITTER )
     {
 		//~ Log("Gag:"+valid(someCr));
-        if( valid( someCr ) && someCr.IsPlayer() && int(someCr.Id) != npc.Merc[ MERC_MASTER_ID ] )
+        if( valid( someCr ) && someCr.IsPlayer() )
         {
             NpcPlane@ child = CreatePlane();
             child.Type = AI_PLANE_ATTACK;
@@ -198,7 +198,12 @@ bool npc_plane_end( Critter& npc, NpcPlane& plane, int reason, Critter@ someCr, 
         }
         npc.Wait( 10000 );
     }
-    else if( reason == REASON_TARGET_DISAPPEARED && plane.Type == AI_PLANE_ATTACK && valid(someCr) && valid(npc.GetMap()))
+    else if( reason == REASON_TARGET_DISAPPEARED 
+		&& plane.Type == AI_PLANE_ATTACK 
+		&& valid(someCr) 
+		&& valid(npc.GetMap())
+		&& valid(someCr.GetMap())
+		&& npc.GetMap().Id == someCr.GetMap().Id)
     {
 		if(npc.GetMap().IsTurnBased())
 			AddAttackPlane( npc, 0, someCr, plane.Run );

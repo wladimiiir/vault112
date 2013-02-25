@@ -47,6 +47,8 @@ import void TurnBasedBegin(Map& map) from "battleground";
 import void TurnBasedEnd(Map& map) from "battleground";
 import void AddOnlinePlayer(Critter& player) from "online_players";
 import void RemoveOnlinePlayer(Critter& player) from "online_players";
+import void ProcessFollowerIn(Map& map, Critter& npc) from "follower";
+import void ProcessFollowerOut(Map& map, Critter& npc) from "follower";
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 // Called before world generation.
@@ -1244,6 +1246,10 @@ void map_critter_in( Map& map, Critter& cr )
         ClearAttackProtection(cr);
 		ClearSkillProtection(cr);
     }
+    else
+    {
+		ProcessFollowerIn(map, cr);
+	}
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1253,6 +1259,12 @@ void map_critter_out( Map& map, Critter& cr )
     OnCritterMapOut( cr, map );
     ClearAttackProtection(cr);
     ClearSkillProtection(cr);
+    if(cr.IsNpc())
+	{
+		ProcessFollowerOut(map, cr);
+		cr.StatBase[ST_WALK_TIME] = 0;
+		cr.StatBase[ST_RUN_TIME] = 0;
+	}
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////

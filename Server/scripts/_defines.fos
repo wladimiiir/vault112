@@ -713,7 +713,7 @@
 #define REPUTATION_BEGIN                         ( __ReputationBegin )
 #define REPUTATION_END                           ( __ReputationEnd )
 #define REPUTATION_COUNT                         ( REPUTATION_END - REPUTATION_BEGIN + 1 )
-#define REPUTATION_DEN                           ( 570 )
+#define REPUTATION_VAULT112						( 570 )
 #define REPUTATION_KLAMATH                       ( 571 )
 #define REPUTATION_MODOC                         ( 572 )
 #define REPUTATION_VAULT_CITY                    ( 573 )
@@ -740,21 +740,15 @@
 // #define GOOD_EVIL_LIST_END         (799)
 // #define GOOD_EVIL_LIST_COUNT       (GOOD_EVIL_LIST_END-GOOD_EVIL_LIST_BEGIN+1)
 
-// / Mercenary settings
-#define MERC_BEGIN                               ( 800 )
-#define MERC_END                                 ( 810 )
-#define MERC_COUNT                               ( MERC_END - MERC_BEGIN + 1 )
-#define MERC_MASTER_ID                           ( 800 ) // Id хоз€ина мерка
-#define MERC_ALWAYS_RUN                          ( 801 ) // ѕризнак, мерк перемещает€ бегом при следовании за хоз€ином
-#define MERC_CANCEL_ON_ATTACK                    ( 802 ) // ѕризнак, отмен€ет ли мерк службу, если хоз€ин атакует самого мерка.
-#define MERC_LOSE_DIST                           ( 803 ) // ƒистанци€, при превышении которой мерк "отстает" от хоз€ина и отмен€ет режиме мерка.
-#define MERC_MASTER_DIST                         ( 804 ) // ƒистанци€, которой придерживаетс€ мерк в режиме следовани€ за хоз€ином
-#define MERC_TYPE                                ( 805 ) // “ип мерка. —м. merc_h
-#define MERC_DEFEND_MASTER                       ( 806 ) // ѕризнак: мерк защищает хоз€ина, если тот атакован
-#define MERC_ASSIST_MASTER                       ( 807 ) // ѕризнак: если хоз€ин атакует цель, мерк присоедин€етс€ к атаке
-#define MERC_CANCEL_TIME                         ( 808 ) // ¬рем€ завершени€ службы
-#define MERC_CANCEL_ON_GLOBAL                    ( 809 ) // ѕризнак: мерк отмен€ет службу, если хоз€ин вышел на глобальную карту.
-#define MERC_WAIT_FOR_MASTER                     ( 810 ) // ѕризнак: мерк ожидает хоз€ина на конкретном месте
+// Followers
+#define FOLLOWER_BEGIN							( 800 )
+#define FOLLOWER_END							( 804 )
+#define FOLLOWER_COUNT							( FOLLOWER_END - FOLLOWER_BEGIN + 1 )
+#define FOLLOWER_LEADER_ID						( 800 )
+#define FOLLOWER_FORMATION						( 801 ) //formation used for leader (see formation.fos)
+#define FOLLOWER_COMMAND						( 802 ) //follower's current command (see follower_h.fos)
+#define FOLLOWER_NEXT_COMMAND					( 803 ) //follower's next command after current command is done (see follower_h.fos)
+#define FOLLOWER_DISTANCE						( 804 )
 
 //
 // 830..999
@@ -1381,7 +1375,7 @@
 # pragma crdata "Trait        550 565"
 # pragma crdata "Reputation   570 599"
 // #pragma crdata "GoodEvilList 600 799"
-# pragma crdata "Merc         800 829"
+# pragma crdata "Follower     800 804"
 
 // /
 // / Extended critter fields and methods

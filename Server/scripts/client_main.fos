@@ -566,6 +566,20 @@ bool out_message( string& message, int& sayType )
             RunServerScript( "battleground@ShowBattlegroundDialog", 0, 0, 0, null, null );
             return false;
         }
+        if(substring(message, 0, 10) == "~formation")
+        {
+			int formation = -1;
+			if(message.length() > 11 && StrToInt(substring(message, 11, message.length() - 11), formation))
+			{
+				if(formation < 0 || formation > 5)
+					formation = -1;
+			}
+			
+			if(formation == -1)
+				Message("usage: ~formation {formation}\nFormations:\n\t0. none\n\t1. wedge\n\t2. file\n\t3. line\n\t4. line behind\n\t5. around");
+			else
+				RunServerScriptUnsafe("follower@unsafe_SetFormation", formation, 0, 0, null, null);
+		}
 
         return true;
     }

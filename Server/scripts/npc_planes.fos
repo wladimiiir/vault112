@@ -73,7 +73,7 @@ bool AddAttackPlane( Critter& npc, uint priority, Critter& target )
     plane.Attack_GagHexY = 0;
     plane.Attack_LastHexX = target.HexX;
     plane.Attack_LastHexY = target.HexY;
-    plane.Run = true;
+    plane.Run = __RunOnCombat;
     return npc.AddPlane( plane );
 }
 

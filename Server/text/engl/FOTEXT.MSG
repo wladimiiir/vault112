@@ -1302,3 +1302,10 @@ P.S. Чузенов просьба не беспокоить.}
 {70308}{}{You cannot enter house while you are in battle.}
 {70309}{}{You cannot enter room while you are in battle.}
 {70310}{}{This is not your room.@@This room does not belong to you.@@Wrong door, I guess.}
+{70311}{}{Your follower has left you for attacking him.}
+
+# Followers
+{70401}{}{What do you think you are doing there?@@Oh, no. You sholdn't do that!@@That wasn't very clever?@@What? I thought we were friends.@@Finnaly, I am so fed up with you.@@You little scum.}
+
+
+

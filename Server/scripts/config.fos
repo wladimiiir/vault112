@@ -29,7 +29,7 @@ void InitializeGame()                    // Export
     __LevelCapAddExperience     = true;
     __LookNormal                = 20;
     __LookMinimum               = 3;
-    __CritterIdleTick           = 5000;
+    __CritterIdleTick           = 2000;
     __TurnBasedTick             = 30000;
     __Breaktime                 = 1200;
     __TimeoutTransfer           = 0;
@@ -216,6 +216,7 @@ void InitializeGame()                    // Export
     for( uint i = TIMEOUT_BEGIN; i <= TIMEOUT_END; i++ )
         SetParameterGetBehaviour( i, dllName + "getParam_Timeout"          );
     SetParameterGetBehaviour( ST_BONUS_LOOK, dllName + "getParam_BonusLook" );
+    SetParameterGetBehaviour( ST_RUN_TIME, dllName + "getParam_RunTime" );
     // for(uint i = REPUTATION_BEGIN; i <= REPUTATION_END   ; i++) SetParameterGetBehaviour(i, dllName + "getParam_Reputation"       );
     // for(uint i = REPUTATION_BEGIN; i <= REPUTATION_END   ; i++) SetParameterChangeBehaviour(i, dllName + "changedParam_Reputation");
 

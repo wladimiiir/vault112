@@ -1,0 +1,161 @@
+#include "_macros.fos"
+#include "serializator.fos"
+#include "utils_for_array.fos"
+
+#define FORMATION_NONE			(0)
+#define FORMATION_WEDGE			(1)
+#define FORMATION_FILE			(2)
+#define FORMATION_LINE			(3)
+#define FORMATION_LINE_BEHIND	(4)
+#define FORMATION_AROUND		(5)
+
+funcdef bool CheckFollower(Critter& follower);
+
+class Formation 
+{
+	#define	_GetKey	(""+Followed.Id)
+	
+	private Critter@ Followed;
+	private uint[] FollowersId;
+	private uint16[] FollowersHexX;
+	private uint16[] FollowersHexY;
+	
+	Formation(Critter& followed, CheckFollower@ checkFollower)
+	{
+		@Followed = followed;
+		Load();
+		CheckFollowers(checkFollower);
+	}
+	
+	private void CheckFollowers(CheckFollower@ checkFollower)
+	{
+		//checking followers on map
+		Map@ map = Followed.GetMap();
+		if(!valid(map))
+			return;
+			
+		for (int i = int(FollowersId.length()) - 1; i >= 0; i--)
+		{
+			Critter@ follower = GetCritter(FollowersId[i]);
+			if(!valid(follower)
+				|| (valid(checkFollower) && !checkFollower(follower))
+				|| !valid(follower.GetMap()) 
+				|| follower.GetMap().Id != Followed.GetMap().Id) //follower check
+			{
+				FollowersId.removeAt(i);
+				FollowersHexX.removeAt(i);
+				FollowersHexY.removeAt(i);
+			}
+		}
+	}
+	
+	private void Load()
+	{
+		Serializator serializator;
+		if(!serializator.Load(_GetKey))
+			return;
+		
+		serializator.Get(FollowersId);
+		serializator.Get(FollowersHexX);
+		serializator.Get(FollowersHexY);
+	}
+	
+	private void Save()
+	{
+		Serializator serializator;
+		
+		serializator.Set(FollowersId);
+		serializator.Set(FollowersHexX);
+		serializator.Set(FollowersHexY);
+		
+		serializator.Save(_GetKey);
+	}
+	
+	void RemoveFollower(Critter& follower)
+	{
+		int index = FindInArray(FollowersId, follower.Id);
+		if(index == -1)
+			return;
+		
+		FollowersId.removeAt(index);
+		FollowersHexX.removeAt(index);
+		FollowersHexY.removeAt(index);
+	}
+	
+	bool FindFormationPoint(Critter& follower, uint formation, uint16& hexX, uint16& hexY, uint8& dir)
+	{
+		Map@ map = Followed.GetMap();
+		if(!valid(map))
+			return false;
+			
+		int index = FindInArray(FollowersId, follower.Id);
+		
+		if(index == -1)
+		{
+			FollowersId.insertLast(follower.Id);
+			FollowersHexX.insertLast(hexX);
+			FollowersHexY.insertLast(hexY);
+			index = FollowersId.length() - 1;
+		}
+		
+		hexX = Followed.HexX;
+		hexY = Followed.HexY;
+		dir = Followed.Dir;
+		switch(formation)
+		{
+			case FORMATION_NONE:
+			{
+				if(!HAS_CHANCE(10))
+					return false;
+				dir = Random(0, 6);
+				map.MoveHexByDir(hexX, hexY, dir, Random(5, 10));
+				break;
+			}
+			case FORMATION_FILE:
+			{
+				map.MoveHexByDir(hexX, hexY, (Followed.Dir + 3) % 6, index + 1);
+				break;
+			}
+			case FORMATION_WEDGE:
+			{
+				uint8 dir = Followed.Dir + (index % 2 == 0 ? 2 : 4);
+				dir = dir % 6;
+				map.MoveHexByDir(hexX, hexY, dir, (index / 2) + 1);
+				break;
+			}
+			case FORMATION_LINE:
+			{
+				uint8 dir = Followed.Dir + (index % 2 == 0 ? 1 : 4);
+				dir = dir % 6;
+				map.MoveHexByDir(hexX, hexY, dir, (index / 2) + 1);
+				break;
+			}
+			case FORMATION_LINE_BEHIND:
+			{
+				uint8 dir = Followed.Dir + (index == 0 ? 3 : (index % 2 == 0 ? 1 : 4));
+				dir = dir % 6;
+				map.MoveHexByDir(hexX, hexY, (Followed.Dir + 3) % 6, 1);
+				if(index > 0)
+					map.MoveHexByDir(hexX, hexY, dir, ((index - 1) / 2) + 1);
+				break;
+			}
+			case FORMATION_AROUND:
+			{
+				uint8 dir = Followed.Dir + 1 + index % 5;
+				dir = dir % 6;
+				map.MoveHexByDir(hexX, hexY, dir, (index / 5) + 1);
+				break;
+			}
+			default:
+				hexX = follower.HexX;
+				hexY = follower.HexY;
+				return false;
+		}
+		
+		FollowersHexX[index] = hexX;
+		FollowersHexY[index] = hexY;
+		Save();
+		
+		return true;
+	}
+}

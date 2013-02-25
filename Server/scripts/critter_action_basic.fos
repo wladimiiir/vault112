@@ -206,8 +206,11 @@ class LookAround : DefaultAction
 
 class MoveTo : DefaultAction
 {
+	#define DIRECTION_VIEW	(100)
+	
 	private uint16 HexX;
 	private uint16 HexY;
+	private uint8 Dir;
 	private bool Run;
 	private bool SetHome;
 	private int EntireNum;
@@ -216,15 +219,27 @@ class MoveTo : DefaultAction
 	{
 		HexX = hexX;
 		HexY = hexY;
+		Dir = DIRECTION_VIEW;
 		Run = run;
 		SetHome = false;
 		EntireNum = 0;
 	}
-	
+
 	MoveTo(uint16 hexX, uint16 hexY, bool run, bool setHome)
 	{
 		HexX = hexX;
 		HexY = hexY;
+		Dir = DIRECTION_VIEW;
+		Run = run;
+		SetHome = setHome;
+		EntireNum = 0;
+	}
+	
+	MoveTo(uint16 hexX, uint16 hexY, uint8 dir, bool run, bool setHome)
+	{
+		HexX = hexX;
+		HexY = hexY;
+		Dir = dir;
 		Run = run;
 		SetHome = setHome;
 		EntireNum = 0;
@@ -233,6 +248,7 @@ class MoveTo : DefaultAction
 	MoveTo(int entireNum, bool run)
 	{
 		EntireNum = entireNum;
+		Dir = DIRECTION_VIEW;
 		Run = run;
 		SetHome = false;
 	}
@@ -246,10 +262,13 @@ class MoveTo : DefaultAction
 			return;
 		}
 		
+		uint8 dir = Dir == DIRECTION_VIEW 
+						? GetDirection(critter.HexX, critter.HexY, HexX, HexY)
+						: Dir;
 		critter.ErasePlane(AI_PLANE_WALK, false);
 		AddWalkPlane(critter, AI_PLANE_WALK_PRIORITY, 
 			MOVE_TO_PLANE_IDENTIFIER, 0, HexX, HexY, 
-			GetDirection(critter.HexX, critter.HexY, HexX, HexY), Run, 1);
+			dir, Run, 0);
 		SetListening(true);
 	}
 	

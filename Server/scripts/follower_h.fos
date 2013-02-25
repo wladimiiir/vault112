@@ -1,0 +1,10 @@
+/**
+* Follower commands
+*/
+
+#define	FREE_WILL			(0)
+#define	FOLLOW_LEADER		(1)
+#define	STAY				(2)
+#define	MOVE				(3)
+#define	ATTACK				(4)
+#define WAIT_ON_MAP			(5)

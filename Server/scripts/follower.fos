@@ -1,0 +1,354 @@
+/**
+* Author: wladimiiir
+*/
+
+#include "follower_h.fos"
+#include "_macros.fos"
+#include "formation.fos"
+#include "critter_action_basic.fos"
+
+#define	_GetMoveHexes		# (critter, hexes)		(GetAnyData("MoveHexX_"+critter.Id, hexes))
+#define	_GetAttackTargets	# (critter, targets)	(GetAnyData("AttackTargets_"+critter.Id, targets))
+#define	_SetAttackTargets	# (critter, targets)	(SetAnyData("AttackTargets_"+critter.Id, targets))
+
+/**
+* Export functions
+*/
+//import void SetFollower(Critter& npc, Critter& leader) from "follower";
+void SetFollower(Critter& npc, Critter& leader)
+{
+	npc.FollowerBase[FOLLOWER_LEADER_ID] = leader.Id;
+	npc.FollowerBase[FOLLOWER_DISTANCE] = 1;
+	npc.SetScript("InitFollower");
+}
+
+//import void ProcessFollowerIn(Map& map, Critter& npc) from "follower";
+void ProcessFollowerIn(Map& map, Critter& npc)
+{
+	if(npc.Follower[FOLLOWER_LEADER_ID] == 0)
+		return;
+		
+	GameVar@ isEncounter = GetLocalVar(LLVAR_is_encounter, map.GetLocation().Id);
+	if(!valid(isEncounter) || isEncounter == 0)
+		return;
+		
+	map.GetLocation().AutoGarbage = false;
+}
+
+//import void ProcessFollowerOut(Map& map, Critter& npc) from "follower";
+void ProcessFollowerOut(Map& map, Critter& npc)
+{
+	if(npc.Follower[FOLLOWER_LEADER_ID] == 0)
+		return;
+	
+	GameVar@ isEncounter = GetLocalVar(LLVAR_is_encounter, map.GetLocation().Id);
+	if(!valid(isEncounter) || isEncounter == 0)
+		return;
+		
+	Critter@[] npcs;
+	map.GetCritters(0, FIND_LIFE_AND_KO | FIND_ONLY_NPC, npcs);
+	for (uint i = 0; i < npcs.length(); i++)
+		if(npcs[i].Id != npc.Id && npcs[i].Follower[FOLLOWER_LEADER_ID] != 0)
+			return;
+	
+	Critter@ leader = GetCritter(npc.Follower[FOLLOWER_LEADER_ID]);
+	if(!valid(leader) || leader.IsKnownLoc(true, map.GetLocation().Id))
+		return;
+		
+	map.GetLocation().AutoGarbage = true;
+}
+
+/**
+* Init functions
+*/
+void InitFollower(Critter& npc, bool)
+{
+	npc.FollowerBase[FOLLOWER_COMMAND] = FOLLOW_LEADER;
+	
+	Action@ action = 
+		LoopAction()
+			.AddSubAction(DoCommand())
+			.AddSubAction(FollowLeaderInMap())
+			.AddSubAction(FollowLeaderToGlobalMap())
+			.AddSubAction(ProtectLeader())
+			.AddSubAction(ReinforceLeader())
+			.AddSubAction(RateLeader())
+	;
+	
+	actionManager.Start(npc, action);
+}
+
+/**
+* Unsafe functions
+*/
+void unsafe_SetFormation(Critter& player, int formation, int, int, string@, int[]@)
+{
+	player.FollowerBase[FOLLOWER_FORMATION] = formation;
+}
+
+/**
+* Dialog functions
+*/
+
+/**
+* Test functions
+*/
+void setFollower(Critter& player, int critterId, int leaderId, int)
+{
+	Critter@ critter = GetCritter(critterId);
+	if(!valid(critter))
+		return;
+	
+	if(leaderId == 0)
+		leaderId = player.Id;
+		
+	Critter@ leader = leaderId == 0 ? @player : GetCritter(leaderId);
+	if(!valid(leader))
+		return;
+		
+	SetFollower(critter, leader);
+}
+
+
+/**
+* Critter action manager
+*/
+import bool AddAttackPlane( Critter& npc, uint priority, Critter& target ) from "npc_planes";
+
+class DoCommand : DefaultAction
+{
+	void Perform(Critter& critter) override
+	{
+		if(critter.Follower[FOLLOWER_LEADER_ID] == 0)
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		
+		uint command = critter.Follower[FOLLOWER_COMMAND];
+		switch(command)
+		{
+			case MOVE:
+			{
+				uint16[] hexes;
+				_GetMoveHexes(critter, hexes);
+				uint16 hexX = hexes[0];
+				uint16 hexY = hexes[1];
+				MoveTo(hexX, hexY, GetDirection(critter.HexX, critter.HexY, hexX, hexY), 
+					GetDistantion(critter.HexX, critter.HexY, hexX, hexY) > 10, true).Start(critter);
+				critter.FollowerBase[FOLLOWER_COMMAND] = critter.Follower[FOLLOWER_NEXT_COMMAND];
+				break;
+			}
+			case ATTACK:
+			{
+				uint[] targets;
+				_GetAttackTargets(critter, targets);
+				for (uint i = 0; i < targets.length(); i++)
+				{
+					Critter@ target = GetCritter(targets[i]);
+					if(!valid(target))
+						continue;
+					AddAttackPlane(critter, AI_PLANE_ATTACK_PRIORITY, target);
+				}
+				targets.resize(0);
+				_SetAttackTargets(critter, targets);
+				critter.FollowerBase[FOLLOWER_COMMAND] = critter.Follower[FOLLOWER_NEXT_COMMAND];
+				break;
+			}
+			case WAIT_ON_MAP:
+			{
+				Critter@ leader = GetCritter(critter.Follower[FOLLOWER_LEADER_ID]);
+				if(!valid(leader))
+				{
+					StartNextSuperAction(critter);
+					return;
+				}
+				if(valid(critter.GetMap()))
+					critter.TransitToGlobal(false);
+				else if(!valid(leader.GetMap()))
+				{
+					critter.TransitToGlobalGroup(leader.Id);
+					critter.FollowerBase[FOLLOWER_COMMAND] = critter.Follower[FOLLOWER_NEXT_COMMAND];
+				}
+				else
+				{
+					StartNextSuperAction(critter);
+					return;
+				}
+				
+				break;
+			}
+			default:
+			{
+				StartNextSuperAction(critter);
+				return;
+			}
+		}
+		
+		Finish(critter);
+	}
+}
+
+class RateLeader : ListeningAction
+{
+	void DeadEvent(Critter& critter, Critter@ killer) override
+	{
+		if(!valid(killer))
+			return;
+			
+		killer.FollowerBase[FOLLOWER_LEADER_ID] = 0;
+		killer.SayMsg(SAY_NETMSG, TEXTMSG_TEXT, 70311);
+		Start(critter);
+	}
+	
+	bool AttackedEvent(Critter& critter, Critter& attacker) override
+	{
+		if(critter.Follower[FOLLOWER_LEADER_ID] != int(attacker.Id))
+			return true;
+			
+		attacker.FollowerBase[FOLLOWER_LEADER_ID] = 0;
+		critter.SayMsg(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70401);
+		attacker.SayMsg(SAY_NETMSG, TEXTMSG_TEXT, 70311);
+		AddAttackPlane(critter, AI_PLANE_ATTACK_PRIORITY, attacker);
+		Start(critter);
+		
+		return true;
+	}
+}
+
+class ProtectLeader : ListeningAction 
+{
+	void SeeSomeoneDeadEvent(Critter& critter, Critter& killed, Critter@ killer) override
+	{
+		if(!valid(killer) || critter.Follower[FOLLOWER_LEADER_ID] != int(killed.Id))
+			return;
+			
+		AddAttackPlane(critter, AI_PLANE_ATTACK_PRIORITY + 1, killer);
+		Start(critter);
+	}
+	
+	void SeeSomeoneAttackEvent(Critter& critter, Critter& attacker, Critter& attacked) override
+	{
+		if(critter.Follower[FOLLOWER_LEADER_ID] != int(attacked.Id))
+			return;
+		
+		AddAttackPlane(critter, AI_PLANE_ATTACK_PRIORITY + 1, attacker);
+		Start(critter);
+	}
+}
+
+class ReinforceLeader : ListeningAction 
+{
+	void SeeSomeoneAttackEvent(Critter& critter, Critter& attacker, Critter& attacked) override
+	{
+		if(critter.Follower[FOLLOWER_LEADER_ID] != int(attacker.Id))
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		
+		AddAttackPlane(critter, AI_PLANE_ATTACK_PRIORITY + 1, attacked);
+		Start(critter);
+	}
+}
+
+class FollowLeaderInMap : DefaultAction
+{
+	void Perform(Critter& critter) override
+	{
+		if(critter.Follower[FOLLOWER_LEADER_ID] == 0 || critter.Follower[FOLLOWER_COMMAND] != FOLLOW_LEADER)
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		
+		Critter@ leader = GetCritter(critter.Follower[FOLLOWER_LEADER_ID]);
+		if(!valid(leader))
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		if(!valid(leader.GetMap()))
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		
+		Formation formation(leader, @CheckFollowerCommand);
+		uint16 hexX = 0, hexY = 0;
+		uint8 dir = 0;
+		if(!formation.FindFormationPoint(critter, leader.Follower[FOLLOWER_FORMATION], hexX, hexY, dir) 
+				|| hexX == critter.HexX && hexY == critter.HexY && dir == critter.Dir)
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		
+		Log("Starting follow");
+		if(valid(critter.GetMap()) && critter.GetMap().Id == leader.GetMap().Id)
+		{
+			SetListening(true);
+			MoveTo(hexX, hexY, dir, GetDistantion(critter.HexX, critter.HexY, hexX, hexY) > 10, true).Start(critter);
+		}
+		else
+		{
+			critter.TransitToMap(leader.GetMap().Id, hexX, hexY, dir);
+			Finish(critter);
+		}
+	}
+	
+	int PlaneEndEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem) override
+	{
+		if(plane.Identifier != MOVE_TO_PLANE_IDENTIFIER)
+			return PLANE_RUN_GLOBAL;
+			
+		if(reason != REASON_SUCCESS)
+			critter.Wait(__CritterIdleTick);
+			
+		uint16 hexX = 0, hexY = 0;
+		uint8 dir = 0;
+		
+		critter.SetHomePos(critter.HexX, critter.HexY, critter.Dir);
+		Log("Finishing follow: "+reason);
+		SetListening(false);
+		Finish(critter);
+			
+		return PLANE_DISCARD;
+	}
+}
+
+class FollowLeaderToGlobalMap : DefaultAction
+{
+	void Perform(Critter& critter) override
+	{
+		if(critter.Follower[FOLLOWER_LEADER_ID] == 0 || critter.Follower[FOLLOWER_COMMAND] != FOLLOW_LEADER)
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		
+		Critter@ leader = GetCritter(critter.Follower[FOLLOWER_LEADER_ID]);
+		if(!valid(leader))
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		if(valid(leader.GetMap()) || !valid(critter.GetMap()))
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		
+		Log("Transiting to global");
+		critter.TransitToGlobalGroup(leader.Id);
+		Finish(critter);
+	}
+}
+
+
+bool CheckFollowerCommand(Critter& critter)
+{
+	return critter.Follower[FOLLOWER_COMMAND] == FOLLOW_LEADER;
+}
+
+

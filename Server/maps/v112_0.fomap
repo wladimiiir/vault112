@@ -2,8 +2,8 @@
 Version              4
 MaxHexX              159
 MaxHexY              150
-WorkHexX             53
-WorkHexY             54
+WorkHexX             66
+WorkHexY             39
 ScriptModule         map_vault112
 ScriptFunc           InitVaultMap
 NoLogOut             0
@@ -4741,11 +4741,6 @@ MapY                 40
 Dir                  4
 
 MapObjType           2
-ProtoId              2069
-MapX                 81
-MapY                 40
-
-MapObjType           2
 ProtoId              5622
 MapX                 91
 MapY                 40
@@ -4863,11 +4858,6 @@ ProtoId              5622
 MapX                 75
 MapY                 41
 Dir                  4
-
-MapObjType           2
-ProtoId              2070
-MapX                 83
-MapY                 41
 
 MapObjType           2
 ProtoId              5622
@@ -11532,11 +11522,6 @@ MapX                 107
 MapY                 31
 
 MapObjType           2
-ProtoId              2067
-MapX                 82
-MapY                 39
-
-MapObjType           2
 ProtoId              4023
 MapX                 63
 MapY                 24
@@ -12888,5 +12873,51 @@ ProtoId              5622
 MapX                 43
 MapY                 74
 Dir                  4
+
+MapObjType           0
+ProtoId              460
+MapX                 84
+MapY                 39
+Dir                  2
+Critter_Cond         1
+Critter_Anim1        0
+Critter_Anim2        0
+Critter_ParamIndex0  ST_DIALOG_ID
+Critter_ParamValue0  0
+Critter_ParamIndex1  ST_AI_ID
+Critter_ParamValue1  18
+Critter_ParamIndex2  ST_BAG_ID
+Critter_ParamValue2  0
+Critter_ParamIndex3  ST_TEAM_ID
+Critter_ParamValue3  0
+Critter_ParamIndex4  ST_NPC_ROLE
+Critter_ParamValue4  0
+Critter_ParamIndex5  ST_REPLICATION_TIME
+Critter_ParamValue5  0
+
+MapObjType           1
+ProtoId              197
+MapX                 87
+MapY                 34
+
+MapObjType           1
+ProtoId              197
+MapX                 86
+MapY                 35
+
+MapObjType           1
+ProtoId              198
+MapX                 87
+MapY                 36
+
+MapObjType           1
+ProtoId              199
+MapX                 89
+MapY                 35
+
+MapObjType           2
+ProtoId              2055
+MapX                 82
+MapY                 37
 
 
