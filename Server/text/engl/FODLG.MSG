@@ -525,19 +525,24 @@
 {5051}{}{He looks like tough one. But his hair should use some shampoo.}
 {5060}{}{Raider}
 {5061}{}{Baldy raider. It looks like he shaves his head daily.}
-{5070}{}{Giant Bat}
-{5080}{}{Arroyo Patrol}
-{5090}{}{Arroyo Patrol}
-{5100}{}{Arroyo Patrol}
-{5110}{}{Fugitive}
-{5120}{}{Fugitive}
-{5130}{}{Fugitive}
-{5140}{}{Fugitive}
-{5150}{}{Fugitive}
-{5160}{}{Eli}
-{5170}{}{Champion}
-{5180}{}{Helacyton type  1}
-{5181}{}{A strange creature resembling Master's pets.}
+{5070}{}{Generic weak male}
+{5080}{}{Generic normal male}
+{5090}{}{Generic tough male}
+{5100}{}{Generic weak female}
+{5110}{}{Generic normal female}
+{5120}{}{Generic tough female}
+{5130}{}{Silver gecko}
+{5131}{}{Small and fast creature that likes to tear a man up.}
+{5140}{}{Golden gecko}
+{5141}{}{Dangerous and strong wasteland creature that seems to have something against all human.}
+{5150}{}{Brahmin}
+{5151}{}{Brahmin, that doesn't seem to mind me.}
+{5160}{}{Wild brahmin}
+{5161}{}{Angry brahmin. I should be carefull around it.}
+{5170}{}{Super mutant}
+{5171}{}{Super mutation of some sort. Strong and dangerous.}
+{5180}{}{Nightkin}
+{5181}{}{Super mutation of some sort. Strong and dangerous.}
 {5190}{}{Angry helacyton type  1}
 {5191}{}{A strange creature resembling Master's pets.}
 {5200}{}{Helacyton type  2}
