@@ -50,6 +50,9 @@ import void PlayAnimSound( uint crType, int gender, uint anim1, uint anim2 ) fro
 import void InitAutoAim() from "auto_aim";
 import uint8 GetAutoAim() from "auto_aim";
 
+bool ShowHealthInfo = false;
+
+
 string@ MouseOverText;
 void RefreshMouseOverText()
 {
@@ -78,43 +81,12 @@ void RefreshMouseOverText()
 				color = chosen.Param[PVP_TEAM] == critter.Param[PVP_TEAM] ? COLOR_GREEN : COLOR_RED;
 		}
 		
-		
 		MouseOverText += "|"+color + " " + critter.Name;
 		if(critter.IsDead())
 			MouseOverText += "\n|" + COLOR_GRAY + " " + GetMsgStr(TEXTMSG_GAME, STR_CRIT_LOOK_STATE(0));
 		else 
 		{
-			int hpPercentage = critter.Stat[ST_CURRENT_HP] * 100 / critter.Stat[ST_MAX_LIFE];
-			string hpText;
-			if( hpPercentage < 34 )
-			{
-				color = COLOR_RED;
-				hpText = awareness 
-					? critter.Stat[ST_CURRENT_HP] + "/" + critter.Stat[ST_MAX_LIFE]
-					: GetMsgStr(TEXTMSG_GAME, STR_CRIT_LOOK_STATE(1));
-			}
-			else if( hpPercentage < 67 )
-			{
-				color = COLOR_ORANGE;
-				hpText = awareness 
-					? critter.Stat[ST_CURRENT_HP] + "/" + critter.Stat[ST_MAX_LIFE]
-					: GetMsgStr(TEXTMSG_GAME, STR_CRIT_LOOK_STATE(2));
-			}
-			else if( hpPercentage < 100 )
-			{
-				color = COLOR_DGREEN;
-				hpText = awareness 
-					? critter.Stat[ST_CURRENT_HP] + "/" + critter.Stat[ST_MAX_LIFE]
-					: GetMsgStr(TEXTMSG_GAME, STR_CRIT_LOOK_STATE(3));
-			}
-			else
-			{
-				color = COLOR_GREEN;
-				hpText = awareness 
-					? critter.Stat[ST_CURRENT_HP] + "/" + critter.Stat[ST_MAX_LIFE]
-					: GetMsgStr(TEXTMSG_GAME, STR_CRIT_LOOK_STATE(4));
-			}
-			MouseOverText += "\n|" + color + " " + hpText;
+			MouseOverText += "\n" + GetHpText(critter, awareness);
 		}
 	}
 	if(awareness)
@@ -136,7 +108,73 @@ void RefreshMouseOverText()
 
 void RefreshOnHeadText()
 {
+	CritterCl@ chosen = GetChosen();
+	if(!valid(chosen))
+		return;
 	
+	bool awareness = chosen.Perk[PE_AWARENESS] != 0;
+	
+	CritterCl@[] critters;
+	GetCritters(0, FIND_ALL, critters);
+	
+	for (uint i = 0; i < critters.length(); i++)
+	{
+		CritterCl@ critter = critters[i];
+		if(!valid(critter) || critter is chosen)
+			continue;
+			
+		critter.NameOnHead = "";
+		if(critter.Param[INCOGNITO] == 0) //name is visible only if critter is not in incognito mode
+			if(critter.IsNpc())
+				critter.NameOnHead = __ShowNpcNames ? critter.Name : "";
+			else
+				critter.NameOnHead = __ShowPlayerNames ? critter.Name : "";
+		
+		if(ShowHealthInfo)
+		{
+			if(critter.NameOnHead.length() > 0)
+				critter.NameOnHead += "\n";
+			critter.NameOnHead += GetHpText(critter, awareness);
+		}
+	}
+}
+
+string GetHpText(CritterCl& critter, bool awareness)
+{
+	uint color;
+	string hpText;
+	int hpPercentage = critter.Stat[ST_CURRENT_HP] * 100 / critter.Stat[ST_MAX_LIFE];
+	
+	if( hpPercentage < 34 )
+	{
+		color = COLOR_RED;
+		hpText = awareness 
+			? critter.Stat[ST_CURRENT_HP] + "/" + critter.Stat[ST_MAX_LIFE]
+			: GetMsgStr(TEXTMSG_GAME, STR_CRIT_LOOK_STATE(1));
+	}
+	else if( hpPercentage < 67 )
+	{
+		color = COLOR_ORANGE;
+		hpText = awareness 
+			? critter.Stat[ST_CURRENT_HP] + "/" + critter.Stat[ST_MAX_LIFE]
+			: GetMsgStr(TEXTMSG_GAME, STR_CRIT_LOOK_STATE(2));
+	}
+	else if( hpPercentage < 100 )
+	{
+		color = COLOR_DGREEN;
+		hpText = awareness 
+			? critter.Stat[ST_CURRENT_HP] + "/" + critter.Stat[ST_MAX_LIFE]
+			: GetMsgStr(TEXTMSG_GAME, STR_CRIT_LOOK_STATE(3));
+	}
+	else
+	{
+		color = COLOR_GREEN;
+		hpText = awareness 
+			? critter.Stat[ST_CURRENT_HP] + "/" + critter.Stat[ST_MAX_LIFE]
+			: GetMsgStr(TEXTMSG_GAME, STR_CRIT_LOOK_STATE(4));
+	}
+	
+	return "|" + color + " " + hpText;
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -218,6 +256,7 @@ bool start()
 uint loop()
 {
 	RefreshMouseOverText();
+	RefreshOnHeadText();
 	RefreshBattleground();
     return 100;
 }
@@ -384,6 +423,8 @@ bool key_down( uint8 key )
     if(key == DIK_F7)
 		__ShowNpcNames = !__ShowNpcNames;
 	if(key == DIK_F9)
+		ShowHealthInfo = !ShowHealthInfo;
+	if(key == DIK_F10)
 		ToggleTimeoutScreen();
 	if( AltDown && key == DIK_D)
 	{
