@@ -1,9 +1,9 @@
 [Header]
-Version              2
+Version              4
 MaxHexX              147
 MaxHexY              146
-WorkHexX             116
-WorkHexY             92
+WorkHexX             81
+WorkHexY             79
 ScriptModule         -
 ScriptFunc           -
 NoLogOut             0
@@ -19968,4 +19968,41 @@ MapX                 125
 MapY                 97
 Scenery_ToEntire     13
 
+MapObjType           2
+ProtoId              2118
+MapX                 89
+MapY                 113
+
+MapObjType           2
+ProtoId              2116
+MapX                 77
+MapY                 99
+
+MapObjType           2
+ProtoId              2221
+MapX                 95
+MapY                 98
+ScriptName           resources
+FuncName             _ScavengeSourceInit
+
+MapObjType           2
+ProtoId              2221
+MapX                 80
+MapY                 54
+ScriptName           resources
+FuncName             _ScavengeSourceInit
+
+MapObjType           2
+ProtoId              2252
+MapX                 78
+MapY                 54
+ScriptName           resources
+FuncName             _ScavengeSourceInit
+
+MapObjType           2
+ProtoId              2270
+MapX                 94
+MapY                 76
+ScriptName           resources
+FuncName             _ScavengeSourceInit
 

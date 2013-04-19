@@ -16816,6 +16816,8 @@ MapObjType           2
 ProtoId              2006
 MapX                 77
 MapY                 71
+ScriptName           resources
+FuncName             _ScavengeSourceInit
 
 MapObjType           2
 ProtoId              2067
@@ -16878,6 +16880,8 @@ MapObjType           2
 ProtoId              2221
 MapX                 53
 MapY                 80
+ScriptName           resources
+FuncName             _ScavengeSourceInit
 
 MapObjType           2
 ProtoId              5449
@@ -16970,6 +16974,8 @@ MapObjType           2
 ProtoId              2275
 MapX                 53
 MapY                 78
+ScriptName           resources
+FuncName             _ScavengeSourceInit
 
 MapObjType           2
 ProtoId              2113
@@ -18105,6 +18111,8 @@ MapObjType           2
 ProtoId              2006
 MapX                 88
 MapY                 66
+ScriptName           resources
+FuncName             _ScavengeSourceInit
 
 MapObjType           2
 ProtoId              2946
@@ -20308,5 +20316,4 @@ MapObjType           1
 ProtoId              98
 MapX                 68
 MapY                 61
-
 
