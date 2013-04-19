@@ -216,7 +216,7 @@ void InitializeGame()                    // Export
     for( uint i = TIMEOUT_BEGIN; i <= TIMEOUT_END; i++ )
         SetParameterGetBehaviour( i, dllName + "getParam_Timeout"          );
     SetParameterGetBehaviour( ST_BONUS_LOOK, dllName + "getParam_BonusLook" );
-    SetParameterGetBehaviour( ST_RUN_TIME, dllName + "getParam_RunTime" );
+    //SetParameterGetBehaviour( ST_RUN_TIME, dllName + "getParam_RunTime" );
     // for(uint i = REPUTATION_BEGIN; i <= REPUTATION_END   ; i++) SetParameterGetBehaviour(i, dllName + "getParam_Reputation"       );
     // for(uint i = REPUTATION_BEGIN; i <= REPUTATION_END   ; i++) SetParameterChangeBehaviour(i, dllName + "changedParam_Reputation");
 
