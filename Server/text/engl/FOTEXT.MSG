@@ -1278,7 +1278,7 @@ P.S. Чузенов просьба не беспокоить.}
 {70133}{}{Hey, come closer, I have the best stuff from @lex supplierName@.@@The best stuff from @lex supplierName@ can be found here.@@You know who's got the best stuff? Of course @lex supplierName@.@@@lex supplierName@ is supplying me with the best stuff. Just come and have a look.}
 {70134}{}{This is your room. Don't break anything or you'll pay extra.@@Here is your room. Enjoy your stay.@@Here. This is your room. Make sure you lock the door when you are leaving.}
 
-{70140}{}{Offence detected. Attack initiated.@@Defense mode initiated.@@Counter-attack initiated.}
+{70140}{}{AOffence detected. Attack initiated.@@ADefense mode initiated.@@CAounter-attack initiated.}
 
 # Dialogs
 # "Everything is fine."
@@ -1303,6 +1303,9 @@ P.S. Чузенов просьба не беспокоить.}
 {70309}{}{You cannot enter room while you are in battle.}
 {70310}{}{This is not your room.@@This room does not belong to you.@@Wrong door, I guess.}
 {70311}{}{Your follower has left you for attacking him.}
+{70312}{}{You are now incognito.}
+{70313}{}{You are not incognito anymore.}
+{70314}{}{You have nothing to cover your face and go incognito. Maybe a robe could be helpful.}
 
 # Followers
 {70401}{}{What do you think you are doing there?@@Oh, no. You sholdn't do that!@@That wasn't very clever?@@What? I thought we were friends.@@Finnaly, I am so fed up with you.@@You little scum.}

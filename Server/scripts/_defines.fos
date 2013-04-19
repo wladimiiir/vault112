@@ -751,10 +751,9 @@
 #define FOLLOWER_DISTANCE						( 804 )
 
 //
+// PARAMS
 // 830..999
 //
-#define INVIS_LEVEL								 ( 900 ) //TODO
-#define VISION_LEVEL							 ( 901 ) //TODO
 #define ENCOUNTER_CRITTER						( 830 ) // value > 0, if critter is created by encounter
 #define PVP_TEAM								( 831 ) // value is equal to team number or 0 if no team
 #define ATTACK_FORCE_FLAGS						( 832 ) // force flags when attacking
@@ -762,6 +761,8 @@
 #define BATTLEGROUND							( 834 ) // 0 - no battleground, 1 - battle join screen, 2 - in battleground
 #define FACTION									( 835 ) // player faction from _factions.fos
 #define VISIBILITY_FLAGS						( 836 ) // critters visibility (what critter sees and who sees the critter), see visibility flags below
+#define INCOGNITO								( 837 ) // >0 - critter in incognito mode (no name is visible for player)
+
 
 #define PARAMS_COUNT                             ( 1000 )
 

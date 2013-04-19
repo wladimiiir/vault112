@@ -119,6 +119,12 @@ void critter_move_item( Critter& cr, Item& item, uint8 fromSlot )
             break;
         }
         cr.StatBase[ ST_CURRENT_ARMOR_PERK ] = ( toSlot == SLOT_ARMOR ? item.Proto.Armor_Perk : 0 );
+        
+        if(cr.Param[INCOGNITO] > 0)
+        {
+			cr.ParamBase[INCOGNITO] = 0;
+			cr.SayMsg(SAY_NETMSG, TEXTMSG_TEXT, 70313);
+		}
     }
 
     // Slot modifiers

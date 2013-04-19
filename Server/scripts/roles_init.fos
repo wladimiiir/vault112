@@ -119,8 +119,8 @@ void _InitTeamMedic(Critter& npc, bool firstTime)
 
 void InitInvisibleLaw(Critter& npc, uint jailMapProtoId, uint jailEntire, uint offenceArea, uint16[] forbidenItems)
 {
-	npc.ParamBase[INVIS_LEVEL] = 100;
-	npc.StatBase[ST_BONUS_LOOK] = 1000;
+	npc.ParamBase[VISIBILITY_FLAGS] |= VISIBILITY_FLAG_INVISIBLE;
+	npc.ParamBase[VISIBILITY_FLAGS] |= VISIBILITY_FLAG_SEE_ALL;
 	Action@ action = LoopAction()
 						.AddSubAction(RecordOffence(offenceArea))
 						.AddSubAction(SetAttackerJailTimeout(DEFAULT_JAIL_TIMEOUT))

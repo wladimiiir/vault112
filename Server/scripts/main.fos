@@ -101,6 +101,7 @@ bool start()
     SetSendParameter( MODE_NO_TALK, true );
     SetSendParameter( MODE_BARTER_ONLY_CASH, true );
     SetSendParameter( SK_BARTER, true ); //needed for correct price calculation
+    
     // 3d animation layers
     #ifdef PLAYERS_3D
     // Enable sending 3d layers, from Skin to Backpack
@@ -122,6 +123,7 @@ bool start()
     SetSendParameter( ST_RUN_TIME, true );
     
     SetSendParameter( PVP_TEAM, true );
+    SetSendParameter( INCOGNITO, true );
 
     // Send item data masks
     // Look fields in fonline.h 'struct Item::ItemData'

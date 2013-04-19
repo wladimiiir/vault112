@@ -785,7 +785,7 @@ class Hide : DefaultAction
 {
 	void Perform(Critter& critter)
 	{
-		critter.ParamBase[INVIS_LEVEL] = 100;
+		critter.ParamBase[VISIBILITY_FLAGS] |= VISIBILITY_FLAG_INVISIBLE;
 		Finish(critter);
 	}
 }
@@ -794,7 +794,7 @@ class Show : DefaultAction
 {
 	void Perform(Critter& critter)
 	{
-		critter.ParamBase[INVIS_LEVEL] = 0;
+		critter.ParamBase[VISIBILITY_FLAGS] &= ~VISIBILITY_FLAG_INVISIBLE;
 		Finish(critter);
 	}
 }

@@ -354,3 +354,39 @@ void NpcProcessLevel( Critter& npc ) // Export
     }
 }
 #endif
+
+/**
+* Unsafe scripts functions
+*/
+#ifdef __SERVER
+void unsafe_ToggleIncognito(Critter& critter, int, int, int, string@, int[]@)
+{
+	if(critter.Param[INCOGNITO] > 0)
+	{
+		critter.ParamBase[INCOGNITO] = 0;
+		critter.SayMsg(SAY_NETMSG, TEXTMSG_TEXT, 70313);
+	}
+	else if(canGoIncognito(critter))
+	{
+		critter.ParamBase[INCOGNITO] = 1;
+		critter.SayMsg(SAY_NETMSG, TEXTMSG_TEXT, 70312);
+	}
+	else
+		critter.SayMsg(SAY_NETMSG, TEXTMSG_TEXT, 70314);
+}
+
+#include "utils_for_array.fos"
+bool canGoIncognito(Critter& critter)
+{
+	//player must wear robe to be able to go incognito
+	Item@ armor = _CritGetItemArmor(critter);
+	
+	if(!valid(armor))
+		return false;
+		
+	uint16[] robes = {PID_PURPLE_ROBE, PID_BLACK_ROBE};
+	
+	return Present(armor.GetProtoId(), robes);
+}
+
+#endif

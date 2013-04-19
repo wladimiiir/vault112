@@ -134,6 +134,11 @@ void RefreshMouseOverText()
 	}
 }
 
+void RefreshOnHeadText()
+{
+	
+}
+
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 // Call on client loaded or new client_main.fos script received.
 bool start()
@@ -509,7 +514,6 @@ bool map_message( string& message, uint16& hexX, uint16& hexY, uint& color, uint
 // By default delay == [TextDelay + message length * 100] ms
 bool in_message( string& message, int& sayType, uint& critterId, uint& delay )
 {
-	Log("in message: "+message);
     CritterCl@ cr = GetCritter( critterId );
     if( valid( cr ) && PlayerIgnored( cr ) )
         return false;
@@ -580,6 +584,8 @@ bool out_message( string& message, int& sayType )
 			else
 				RunServerScriptUnsafe("follower@unsafe_SetFormation", formation, 0, 0, null, null);
 		}
+		if(message == "~incognito")
+			RunServerScriptUnsafe("parameters@unsafe_ToggleIncognito", 0, 0, 0, null, null);
 
         return true;
     }

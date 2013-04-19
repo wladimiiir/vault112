@@ -16,9 +16,9 @@ uint16[] SpecialJunk = {
 
 void AddResource(uint mapId)
 {
-	uint16 hexX=0;
-	uint16 hexY=0;
-	Map@ map = GetMap( mapId );
+	uint16 hexX = 0;
+	uint16 hexY = 0;
+	Map@ map = GetMap(mapId);
 	if (!valid(map))
 		return;
 	Location @ location = map.GetLocation();
@@ -51,7 +51,7 @@ bool _ScavengeSourceInit( Critter& critter, Scenery& scenery, int skill, Item@ i
 {
 	if(skill == SKILL_PICK_ON_GROUND)
 	{
-		critter.Say(SAY_NETMSG, "There could be some usefull stuff here. I should check it out.");
+		critter.Say(SAY_NETMSG, "There could be some usefull stuff here. I should check it out. (use Science skill)");
 		return true;
 	}
 	if(skill != SK_SCIENCE)
