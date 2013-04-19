@@ -14,7 +14,7 @@ indent_mode=2
 
 [project]
 name=fonlinev112
-base_path=/home/wladimiiir/-development/fonline_vault112/Server
+base_path=/home/wladimiiir/Vault112
 description=FOnline Vault 112
 file_patterns=
 
@@ -23,7 +23,27 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=-1
+current_page=4
+FILE_NAME_0=1666;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2F_animation.fos;0;4
+FILE_NAME_1=0;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fcar.fos;0;4
+FILE_NAME_2=319;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2F_dialogs.fos;0;4
+FILE_NAME_3=426;None;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fdialogs%2Fdialogs.lst;0;4
+FILE_NAME_4=715;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fresources.fos;0;4
+FILE_NAME_5=0;C++;0;EISO-8859-1;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Freplication.fos;0;4
+FILE_NAME_6=0;C++;0;EISO-8859-1;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fposter.fos;0;4
+FILE_NAME_7=0;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fshopkeeper.fos;0;4
 
 [VTE]
 last_dir=/home/wladimiiir
+
+[build-menu]
+C++FT_00_LB=ASCompile Client
+C++FT_00_CM=wineconsole /home/wladimiiir/Vault112/Tools/ASCompiler/compileC.bat "%f" "%d"
+C++FT_00_WD=
+C++FT_01_LB=ASCompile Server
+C++FT_01_CM=wineconsole /home/wladimiiir/Vault112/Tools/ASCompiler/compileS.bat "%f" "%d"
+C++FT_01_WD=
+C++FT_02_LB=ASCompile Mapper
+C++FT_02_CM=wineconsole /home/wladimiiir/Vault112/Tools/ASCompiler/compileM.bat "%f" "%d"
+C++FT_02_WD=
+filetypes=C++;
