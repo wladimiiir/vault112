@@ -7,104 +7,104 @@ lang=engl
 [dialog]
 &
 1 1000 None 1 #
-2 1010 D _var p v112_claire = 0 #
-6 1020 D _var p v112_claire = 1 #
-14 1030 D _var p v112_claire = 2 @
+2 1010 @
 2 2000 None 0 #
-3 2010 #
-3 2020 @
+3 2010 D _var p v112_overseer = 1 #
+4 2020 #
+0 2030 #
+8 2040 D _var p v112_overseer = 2 R _var p v112_drbraun = 3 R _var p v112_rx_module = 1 @
 3 3000 None 0 #
-4 3010 #
-4 3020 @
+5 3010 #
+5 3020 #
+5 3030 @
 4 4000 None 0 #
-5 4010 #
-5 4020 @
+9 4010 #
+4 4020 @
 5 5000 None 0 #
-0 5010 R _var p v112_claire = 1 R _script map_vault112@r_FallAsleep 0  #
-0 5020 R _var p v112_claire = 1 R _script map_vault112@r_FallAsleep 0  @
+8 5010 R _var p v112_drbraun = 3 R _var p v112_rx_module = 1 #
+7 5020 #
+6 5030 R _var p v112_drbraun = 2 #
+8 5040 R _var p v112_drbraun = 3 R _var p v112_rx_module = 1 @
 6 6000 None 0 #
-7 6010 #
-7 6020 @
+0 6010 R _var p v112_drbraun = 2 #
+0 6020 R _var p v112_drbraun = 2 #
+7 6030 @
 7 7000 None 0 #
-8 7010 #
-15 7020 @
+8 7010 R _var p v112_drbraun = 3 R _var p v112_rx_module = 1 #
+0 7020 R _var p v112_drbraun = 2 @
 8 8000 None 0 #
-9 8010 #
-9 8020 #
-9 8030 @
+0 8010 R _script dialog@r_ShowQuestMessage 1 105 #
+0 8020 @
 9 9000 None 0 #
-10 9010 @
+11 9010 #
+4 9020 @
 10 10000 None 0 #
 11 10010 @
 11 11000 None 0 #
-12 11010 #
-16 11020 @
+12 11010 @
 12 12000 None 0 #
-13 12010 R _var p v112_claire = 2 #
-13 12020 R _var p v112_claire = 2 #
-0 12030 R _var p v112_claire = 2 @
+13 12010 D _var p v112_vr_authorization = 1 #
+14 12020 D _var p v112_vr_authorization ! 1 @
 13 13000 None 0 #
-0 13010 R _var p v112_drbraun = 1 #
-0 13020 R _var p v112_drbraun = 1 #
-0 13030 R _var p v112_drbraun = 1 @
-14 14000 None 0 @
+4 13010 #
+0 13020 @
+14 14000 None 0 #
+0 14010 #
+5 14020 @
 15 15000 None 0 #
-9 15010 #
-9 15020 #
-9 15030 @
-16 16000 None 0 #
-12 16010 &
+4 15010 #
+0 15020 &
 
 [engl]
-{100}{}{Claire}
-{200}{}{Claire, local doctor.}
-{210}{}{Claire, local doctor. She is very pretty woman and she seems to be very carefull about her patients.}
+{100}{}{Dr. Stanislaus Braun}
+{200}{}{Dr. Stanislaus Braun, overseer of this vault.}
+{210}{}{He looks busy working on his computer, monitoring everything and he is not even noticing me in here.}
 {1000}{}{Predialogue installations}
-{1010}{}{first time}
-{1020}{}{second time}
-{1030}{}{after initial dialog}
-{2000}{}{Oh, thanks God, you are awake.}
-{2010}{}{Wha- what happened? Where am I?}
-{2020}{}{Agh, where am I?}
-{3000}{}{My name is Claire and I am local doctor here. Our scouts found you bleeding in the Wasteland few weeks ago. Do you remember what happened?}
-{3010}{}{What? Bleeding? I- I don't remember anything. Where I am?}
-{3020}{}{Wait. What? No, I have to go.}
-{4000}{}{Calm down. Try not to make sudden moves. You still need some rest. Don't worry, you are safe here. As I said, my name is Claire and we are in ICU facility of Vault 112.}
-{4010}{}{Vault 112? [you feel sudden pain in your head] Aw, my head...}
-{4020}{}{What the fuck is Vault 112? I have never heard of it. [you feel sudden pain in your head] Aw, the fuck, my head...}
-{5000}{}{Please, you have to sleep some more time to recover. You are still in pretty bad shape, but you are out of the worst. Don't worry, everything will be OK.}
-{5010}{}{[close your eyes and slowly fall asleep]}
-{5020}{}{No, no, no, I have to go [you are trying getting up from the bed, but Claire injects sedative to your arm and you are falling asleep].}
-{6000}{}{You are awake. Good. How are you feeling?}
-{6010}{}{Good, I guess.}
-{6020}{}{Not very good, I guess.}
-{7000}{}{You will feel like a new person in couple of days [she smiles at you]. I am glad you made it...you are good to go now, I have done the best I could do.}
-{7010}{}{Thanks...Claire was it?}
-{7020}{}{Thanks, nice lady.}
-{8000}{}{You remember [she smiles]. But...I don't know your name.}
-{8010}{}{My name is...[you are trying to remember]...@lex pname@. Yes, @lex pname@.}
-{8020}{}{[you are trying to remember, but you can't]...I don't remember.}
-{8030}{}{My name is not important.}
-{9000}{}{Oh, you have trouble remembering? Do you know what happened? What almost killed you?}
-{9010}{}{I...I am not sure. I remember some animals...molerats...but it's all very blurry.}
-{10000}{}{Yes, our scouts saw molerats dragging you into their cave. Do you remember what happened before that?}
-{10010}{}{[you are trying to remember] I...don't. I don't really remember anything.}
-{11000}{}{Hm, let me see [she tooks a small spotlight and points it to your eyes]. How does your head feel? Do you feel any pain?}
-{11010}{}{No, not really. My head feels fine.}
-{11020}{}{Just a small pain here [you lie pointing on your penis].}
-{12000}{}{Temporary amnesia can be common in these types of shock you have been through. But if you have trouble remembering after couple of days, please, let me know.}
-{12010}{}{Thanks, doctor, you've saved my life. I wish I could repay you somehow.}
-{12020}{}{Thanks, doctor, you've saved my life.}
-{12030}{}{OK, then I will be off. See you.}
-{13000}{}{[she smiles] I was just doing my job. I am really glad you feel fine. I am sorry, but I have some other patient I have to take care of right now, but you should have a look around, maybe talking to some people will help your memory to return. Oh, yes, I almost forgot, Dr. Braun, our overseer, would like to see you. You can find him at second floor.}
-{13010}{}{Thanks, I will.}
-{13020}{}{Thanks, see you around.}
-{13030}{}{Bye, then.}
-{14000}{}{Please, I have much work to do. Come back later.@@Sorry, I don't have time right now. This man is dying.@@Could you come back later, please?}
-{15000}{}{My name is Claire, I am a doctor here. What is your name?}
-{15010}{}{My name is...[you are trying to remember]...@lex pname@. Yes, @lex pname@.}
-{15020}{}{[you are trying to remember, but you can't]...I don't remember.}
-{15030}{}{My name is not important.}
-{16000}{}{Aw, yes, sorry to tell you that. That's probably phantom pain, because those rats ripped it off. I am sorry.}
-{16010}{}{Wait, what?! [you check your penis and it is really not there] No. That's not possible, I don't remember anything.}
+{1010}{}{-}
+{2000}{}{What do you want? I am busy man.@@Be quick, I am busy.}
+{2010}{}{I was told that you would like to see me.}
+{2020}{}{I just want to ask you some questions, only the man of your brain can answer.@@I have some questions, may I?}
+{2030}{}{Oh, nevermind then. [leave]}
+{2040}{}{OK, I have changed my mind, I will get that thingy for you.}
+{3000}{}{Ah, yes, you are the one found dead near our cave entrance. Well, not dead, but let's say, you were lucky, that you have been found.}
+{3010}{}{Uhm, yes.}
+{3020}{}{Thanks to your scouts for that.}
+{3030}{}{Dead? I bet I was quite allright. I didn't need your help.}
+{4000}{}{Oh, well, I guess I can make some time to find the answers for you. What do you want to know?}
+{4010}{}{What is this place?}
+{4020}{}{Who are you?}
+{5000}{}{Yes, yes, listen... You look like you can handle yourself outside and I need someone who will bring me some electronic parts from one of my good friend. Well, not good friend, but we help each other once and then. Well, not help, he just makes some electronic stuff for me and I pay him. What do you say? Can you get that for me?}
+{5010}{}{Well, of course I can. You saved my life after all.}
+{5020}{}{Maybe. What is it for me?}
+{5030}{}{Nah, I don't think so. I have some other stuff to do right now.}
+{5040}{}{Sure, I can.}
+{6000}{}{That's OK, that's OK. But if you change your mind, don't hesitate to tell me. I can offer you something in return [winks].}
+{6010}{}{OK, I will be back later. [leave]}
+{6020}{}{Don't wait for me. [leave]}
+{6030}{}{What do you mean? What do you have for me?}
+{7000}{}{Let me think...For example I can give you acces to our Tranquility Loungers. Or what about free medical care? Or you are just looking for some caps? Or maybe a robot would be handy for you? Yes, yes, I have many things to offer. So, what do you say? Can we make some deal?}
+{7010}{}{Hm, I can see, that you are a good negotiator. Count me in.}
+{7020}{}{I don't know. I really need to think it over. [leave]}
+{8000}{}{Great. Very good decision, veeery goood [doing something on his computer]. OK, here it is. I have transmitted the location to you PipBoy. You just go there, ask for Gyro, tell him that I sent you for the usuall parts and come back to me. OK?}
+{8010}{}{Understood, I will be back as soon as possible. [leave]}
+{8020}{}{Actually I don't have time for this nonsense. [leave]}
+{9000}{}{This is Vault 112. I don't think you heard about us, because we have been sealed until recently. I want to make a better future with my latest invention...wait for it...are you ready? Tranquility Lounger. [he spreads his heads while saying that like he wanted to write it in the air]}
+{9010}{}{Tranquility Lounger? And what is it good for?}
+{9020}{}{Good for you. But I have other questions.}
+{10000}{}{What is it good for? It is something great beyond your comprehension. Have you ever heard about Virtual Reality machines that existed before the War? This is virtual reality, but much much better.}
+{10010}{}{[listen]}
+{11000}{}{It is statis device, which will halt and slow your aging process, so you can live longer and what's more important much more qualitative life. You can do whatever you want, of course, what is really programmed into the device.}
+{11010}{}{[listen further]}
+{12000}{}{And what is really fantastic about this, is that everything what you live inside the device will be permanently recorded to your brain as the experience that you really have lived through. Well, except of physical harm like injuries and death, because it is completelly safe in this manner.}
+{12010}{}{Wow, that sounds really cool. Can I try it?}
+{12020}{}{Wow, that sounds really cool. Can I try it?}
+{13000}{}{Sure you can, I've told you, that you've gained the access to Tranquility Lane program.}
+{13010}{}{Yes, I forgot about that. Can I ask you something else?}
+{13020}{}{Oh, yes, I almost forgot. See you later. [leave]}
+{14000}{}{You don't have access to the program right now, so that's no. But if you could do something for me, I think I might help you with that. What do you say?}
+{14010}{}{I'm not doing nothing for you. I will find another way how to use your virtual reality. [leave]}
+{14020}{}{I say that you can tell me what I need and I will see what I can do about it.}
+{15000}{}{I am doctor Stanislaus Braun, overseer of this facility, scientist, inventor...and probably the greatest mind of all the history.}
+{15010}{}{Fair enough. Let me ask you something else.}
+{15020}{}{Yeah, I am sure you are. See ya. [leave]}
 
