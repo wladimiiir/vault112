@@ -208,7 +208,11 @@ void critter_attacked( Critter& cr, Critter& attacker )
 			return;
 		}
 		else
-			AddAttackPlane( cr, 0, attacker ); 
+		{
+			NpcPlane@ plane = cr.GetCurPlane();
+			if(!valid(plane) || plane.Type != AI_PLANE_ATTACK || plane.Attack_TargId != attacker.Id)
+				AddAttackPlane(cr, 0, attacker );
+		}
 	}
 
     uint helpers = 0;
