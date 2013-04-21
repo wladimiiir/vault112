@@ -173,16 +173,10 @@ void InitGuard(Critter& critter, bool firstTime)
 {
 	if(true || firstTime)
 	{
+		critter.StatBase[ST_AI_ID] = AIPACKET_GENERAL_TOWN_GUARDS;
 		critter.StatBase[ST_TEAM_ID] = TEAM_Vault112;
+		critter.ParamBase[SPECIAL_ATTACK_FLAGS] = SPECIAL_ATTACK_ELECTRIFY | SPECIAL_ATTACK_PACIFY;
 	}
-	
-	Action@ attackReaction = 
-		CrittersHolderAction()
-			.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70140))
-			.AddSubAction(CallReinforcements(TEAM_Vault112))
-			.AddSubAction(Attack())
-		;
-		
 	
 	Action@ action = 
 		LoopAction()
@@ -206,16 +200,10 @@ void InitPatrol(Critter& critter, bool firstTime)
 {
 	if(true || firstTime)
 	{
+		critter.StatBase[ST_AI_ID] = AIPACKET_GENERAL_TOWN_GUARDS;
 		critter.StatBase[ST_TEAM_ID] = TEAM_Vault112;
+		critter.ParamBase[SPECIAL_ATTACK_FLAGS] = SPECIAL_ATTACK_ELECTRIFY | SPECIAL_ATTACK_PACIFY;
 	}
-	
-	Action@ attackReaction = 
-		CrittersHolderAction()
-			.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70140))
-			.AddSubAction(CallReinforcements(TEAM_Vault112))
-			.AddSubAction(Attack())
-		;
-		
 	
 	Action@ action = 
 		LoopAction()

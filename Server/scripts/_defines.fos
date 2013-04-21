@@ -762,9 +762,15 @@
 #define FACTION									( 835 ) // player faction from _factions.fos
 #define VISIBILITY_FLAGS						( 836 ) // critters visibility (what critter sees and who sees the critter), see visibility flags below
 #define INCOGNITO								( 837 ) // >0 - critter in incognito mode (no name is visible for player)
+#define SPECIAL_ATTACK_FLAGS					( 838 ) // next attack performed will be this special attack
 
 
 #define PARAMS_COUNT                             ( 1000 )
+
+//special attack flags
+#define SPECIAL_ATTACK_CLEAR_AFTER_ATTACK		( 1 )
+#define SPECIAL_ATTACK_ELECTRIFY				( 2 )
+#define SPECIAL_ATTACK_PACIFY					( 4 )
 
 //visibility flags
 #define VISIBILITY_FLAG_DEFAULT					( 0 )

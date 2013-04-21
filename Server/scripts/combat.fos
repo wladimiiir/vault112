@@ -155,6 +155,11 @@ void CombatAttack( Critter& cr, Critter& target, ProtoItem& weapon, uint8 weapon
     bool     useNormal = false; // used to change target during RunFlyEffect
     bool     useHex = false;    // used to change end hex of RunFlyEffect, i.e. for thrown weapons and rockets.
     Critter@ normalTarget;      // used as a target for weapon animations;
+    uint	 specialAttackFlags = cr.Param[SPECIAL_ATTACK_FLAGS];
+    bool	 isSpecialAttack = specialAttackFlags != 0;
+    
+    if(isSpecialAttack && FLAG(specialAttackFlags, SPECIAL_ATTACK_CLEAR_AFTER_ATTACK))
+		cr.ParamBase[SPECIAL_ATTACK_FLAGS] = 0;
 
     CombatRes[] results;
 
@@ -340,13 +345,14 @@ void CombatAttack( Critter& cr, Critter& target, ProtoItem& weapon, uint8 weapon
         toHit += 15;
 
     toHit = CLAMP( toHit, 5, 95 );
+    
     // smoke penalty
     if( !isHthAttack )
         toHit -= GetSmokePenalty( map, cr, target );
     // main roll
     int margin = toHit - Random( 1, 100 );
 
-    if( margin < 0 ) // if missed
+    if( !isSpecialAttack && margin < 0 ) // if missed (cannot miss with special attack)
     {
         // not setting isHit, we try a critical failure
         if( cr.Mode[ MODE_INVULNERABLE ] == 0 )
@@ -425,7 +431,25 @@ void CombatAttack( Critter& cr, Critter& target, ProtoItem& weapon, uint8 weapon
     // commencing attack, various instances
     bool criticalHit = isHit && isCritical;
 
-    if( isHthAttack ) // UNARMED AND MELEE ATTACK
+	if( isSpecialAttack ) //SPECIAL ATTACK
+	{
+		if(FLAG(specialAttackFlags, SPECIAL_ATTACK_ELECTRIFY) && valid(realTarget))
+		{
+			//~ _CritAnimate(realTarget, ANIM2_DEAD_PULSE);
+			realTarget.StatBase[ST_CURRENT_AP] = 0;
+		}
+		
+		if(FLAG(specialAttackFlags, SPECIAL_ATTACK_PACIFY) && valid(realTarget))
+		{
+			realTarget.ToKnockout(KNOCKOUT_ANIM2_STUNNED(true), 0, realTarget.HexX, realTarget.HexY );
+			realTarget.StatBase[ST_CURRENT_HP] -= realTarget.Stat[ST_CURRENT_HP] + 1;
+		}
+		else 
+		{
+			ApplyDamage(attack, realTarget, 1, false, true, results);
+		}
+	}
+    else if( isHthAttack ) // UNARMED AND MELEE ATTACK
     {
         if( isHit )
         {
