@@ -73,6 +73,9 @@ int GetCaps(Item@[]& items, uint[]& counts)
 	return caps;
 }
 
+/**
+* Init scripts
+*/
 void TraderInit(Critter& npc, bool)
 {
     Trader@ trader = GetTrader(npc);

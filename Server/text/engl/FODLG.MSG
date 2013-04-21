@@ -543,8 +543,8 @@
 {5171}{}{Super mutation of some sort. Strong and dangerous.}
 {5180}{}{Nightkin}
 {5181}{}{Super mutation of some sort. Strong and dangerous.}
-{5190}{}{Angry helacyton type  1}
-{5191}{}{A strange creature resembling Master's pets.}
+{5190}{}{Gyro}
+{5191}{}{Gyro}
 {5200}{}{Helacyton type  2}
 {5201}{}{A strange creature resembling Master's pets.}
 {5210}{}{Angry helacyton type  2}

@@ -10,6 +10,7 @@
 #define DIALOG_dr_braun						( 501 )
 #define DIALOG_v112_entrance_guard			( 502 )
 #define DIALOG_v112_stuff_keeper			( 503 )
+#define DIALOG_gyro							( 504 )
 
 #define DIALOG_battleground					( 1000 )
 

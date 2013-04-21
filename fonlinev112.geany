@@ -23,15 +23,7 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=4
-FILE_NAME_0=1666;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2F_animation.fos;0;4
-FILE_NAME_1=0;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fcar.fos;0;4
-FILE_NAME_2=319;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2F_dialogs.fos;0;4
-FILE_NAME_3=426;None;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fdialogs%2Fdialogs.lst;0;4
-FILE_NAME_4=715;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fresources.fos;0;4
-FILE_NAME_5=0;C++;0;EISO-8859-1;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Freplication.fos;0;4
-FILE_NAME_6=0;C++;0;EISO-8859-1;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fposter.fos;0;4
-FILE_NAME_7=0;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fshopkeeper.fos;0;4
+current_page=0
 
 [VTE]
 last_dir=/home/wladimiiir

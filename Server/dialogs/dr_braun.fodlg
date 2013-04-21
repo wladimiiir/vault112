@@ -12,7 +12,7 @@ lang=engl
 3 2010 D _var p v112_overseer = 1 #
 4 2020 #
 0 2030 #
-8 2040 D _var p v112_overseer = 2 R _var p v112_drbraun = 3 R _var p v112_rx_module = 1 @
+8 2040 D _var p v112_overseer = 2 R _var p v112_drbraun = 3 R _var p v112_rx_module = 1 R _script map_junkyard@r_RevealLocation 0  @
 3 3000 None 0 #
 5 3010 #
 5 3020 #
@@ -21,16 +21,16 @@ lang=engl
 9 4010 #
 4 4020 @
 5 5000 None 0 #
-8 5010 R _var p v112_drbraun = 3 R _var p v112_rx_module = 1 #
+8 5010 R _var p v112_drbraun = 3 R _var p v112_rx_module = 1 R _script map_junkyard@r_RevealLocation 0  #
 7 5020 #
 6 5030 R _var p v112_drbraun = 2 #
-8 5040 R _var p v112_drbraun = 3 R _var p v112_rx_module = 1 @
+8 5040 R _var p v112_drbraun = 3 R _var p v112_rx_module = 1 R _script map_junkyard@r_RevealLocation 0  @
 6 6000 None 0 #
 0 6010 R _var p v112_drbraun = 2 #
 0 6020 R _var p v112_drbraun = 2 #
 7 6030 @
 7 7000 None 0 #
-8 7010 R _var p v112_drbraun = 3 R _var p v112_rx_module = 1 #
+8 7010 R _var p v112_drbraun = 3 R _var p v112_rx_module = 1 R _script map_junkyard@r_RevealLocation 0  #
 0 7020 R _var p v112_drbraun = 2 @
 8 8000 None 0 #
 0 8010 R _script dialog@r_ShowQuestMessage 1 105 #

@@ -1,0 +1,33 @@
+/**
+* Author: wladimiiir
+*/
+
+#include "_macros.fos"
+#include "trader.fos"
+
+/**
+* Init scripts
+*/
+void InitGyro(Critter& critter, bool firstTime)
+{
+	TraderInit(critter, firstTime);
+}
+
+/**
+* Dialog scripts
+*/
+void r_RevealLocation(Critter& player, Critter@ npc)
+{
+	Location@ location = GetLocationByPid(LOCATION_Junkyard, 0);
+	if(!valid(location))
+		return;
+		
+	uint zoneX = location.WorldX / __GlobalMapZoneLength;
+    uint zoneY = location.WorldY / __GlobalMapZoneLength;
+    
+    if(player.GetFog(zoneX, zoneY) == FOG_FULL)
+		player.SetFog(zoneX, zoneY, FOG_HALF);
+    if(player.GetFog(zoneX - 1, zoneY) == FOG_FULL)
+		player.SetFog(zoneX - 1, zoneY, FOG_HALF);
+    player.SetKnownLoc(true, location.Id);
+}

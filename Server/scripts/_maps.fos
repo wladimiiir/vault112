@@ -11,6 +11,7 @@
 
 #define LOCATION_Vault112						( 1 )
 #define LOCATION_Vault112_Start					( 2 )
+#define LOCATION_Junkyard						( 3 )
 
 #define LOCATION_DesertEncounter1              ( 101 )
 #define LOCATION_DesertEncounter2              ( 102 )
