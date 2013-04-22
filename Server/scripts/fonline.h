@@ -3,8 +3,8 @@
 
 //
 // FOnline engine structures, for native working
-// Last update 20.10.2012
-// Server version 504, MSVS, GCC
+// Last update 16.04.2013
+// Server version 510, MSVS 2010, GCC 4.7.2
 // Default calling convention - cdecl
 //
 
@@ -13,6 +13,8 @@
 # define FO_WINDOWS
 #elif defined ( __linux__ )
 # define FO_LINUX
+#elif defined ( __APPLE__ )
+# define FO_MACOSX
 #else
 # error "Unknown operating system."
 #endif
@@ -31,6 +33,7 @@
 # define FO_X86
 #elif ( defined ( FO_MSVC ) && defined ( _M_X64 ) ) || ( defined ( FO_GCC ) && defined ( __LP64__ ) )
 # define FO_X64
+# error "X64 CPU not supported for now."
 #else
 # error "Unknown CPU."
 #endif
@@ -463,6 +466,7 @@ struct GameOptions
 
     // Client and Mapper
     const bool         Quit;
+    const bool         OpenGLRendering;
     const bool         OpenGLDebug;
     const bool         AssimpLogging;
     const int          MouseX;
@@ -510,6 +514,9 @@ struct GameOptions
     const bool         ScrollCheck;
     const ScriptString FoDataPath;
     const int          FixedFPS;
+    const uint         FPS;
+    const uint         PingPeriod;
+    const uint         Ping;
     const bool         MsgboxInvert;
     const int          ChangeLang;
     const uint8        DefaultCombatMode;
@@ -532,7 +539,6 @@ struct GameOptions
     const bool         HidePassword;
     const ScriptString PlayerOffAppendix;
     const int          CombatMessagesType;
-    const bool         DisableDrawScreens;
     const uint         Animation3dSmoothTime;
     const uint         Animation3dFPS;
     const int          RunModMul;
@@ -613,6 +619,7 @@ struct GameOptions
 
     int                ( * Random )( int minimum, int maximumInclusive );
     uint               ( * GetTick )();
+    void               ( * SetLogCallback )( void ( * function )( const char* ), bool enable );
 
     // Callbacks
     uint               ( * GetUseApCost )( CritterMutual& cr, Item& item, uint8 mode );
@@ -623,7 +630,8 @@ EXPORT_UNINITIALIZED GameOptions* FOnline;
 
 struct Mutex
 {
-    const int Locker[ 6 ];      // CRITICAL_SECTION, include Windows.h
+    const int Locker1[ 6 ];      // Windows - CRITICAL_SECTION (Locker1), Linux - pthread_mutex_t (Locker1)
+    const int Locker2[ 5 ];      // MacOSX - pthread_mutex_t (Locker1 + Locker2)
 };
 
 struct Spinlock
@@ -1385,6 +1393,7 @@ struct CritterCl
     const uint          BaseType, BaseTypeAlias;
     const uint          ApRegenerationTick;
     const int16         Multihex;
+    void*               DrawEffect;
 
     const ScriptString  Name;
     const ScriptString  NameOnHead;
@@ -1751,7 +1760,7 @@ struct SpriteInfo
     const uint16 Height;
     const int16  OffsX;
     const int16  OffsY;
-    const void*  Effect;
+    const void*  DrawEffect;
     const void*  Anim3d;     // If Anim3d != NULL than this is pure 3d animation
 };
 
@@ -1784,6 +1793,7 @@ struct Sprite
     const uint    ContourColor;
     const uint    Color;
     const uint    FlashMask;
+    const void*   DrawEffect;
     const bool*   ValidCallback;
     const bool    Valid;     // If Valid == false than this sprite not valid
 
@@ -1935,14 +1945,14 @@ inline void static_asserts()
     STATIC_ASSERT( sizeof( IntSet )       == 24   );
     STATIC_ASSERT( sizeof( IntPair )      == 8    );
     STATIC_ASSERT( sizeof( ProtoItem )    == 908  );
-    STATIC_ASSERT( sizeof( Mutex )        == 24   );
-    STATIC_ASSERT( sizeof( GameOptions )  == 1332 );
+    STATIC_ASSERT( sizeof( Mutex )        == 44   );
+    STATIC_ASSERT( sizeof( GameOptions )  == 1344 );
     STATIC_ASSERT( sizeof( SpriteInfo )   == 36   );
     STATIC_ASSERT( sizeof( Field )        == 76   );
     # ifdef __MAPPER
-    STATIC_ASSERT( sizeof( Sprite )       == 116  );
+    STATIC_ASSERT( sizeof( Sprite )       == 120  );
     # else
-    STATIC_ASSERT( sizeof( Sprite )       == 108  );
+    STATIC_ASSERT( sizeof( Sprite )       == 112  );
     # endif
 
     STATIC_ASSERT( offsetof( TemplateVar, Flags )              == 68   );
@@ -1953,10 +1963,10 @@ inline void static_asserts()
     STATIC_ASSERT( offsetof( Critter, RefCounter )             == 9388 );
     STATIC_ASSERT( offsetof( Client, LanguageMsg )             == 9456 );
     STATIC_ASSERT( offsetof( Npc, Reserved )                   == 9408 );
-    STATIC_ASSERT( offsetof( CritterCl, MoveSteps )            == 5704 );
+    STATIC_ASSERT( offsetof( CritterCl, MoveSteps )            == 5708 );
     STATIC_ASSERT( offsetof( MapEntire, Dir )                  == 8    );
     STATIC_ASSERT( offsetof( SceneryToClient, Reserved1 )      == 30   );
-    STATIC_ASSERT( offsetof( Map, RefCounter )                 == 774  );
+    STATIC_ASSERT( offsetof( Map, RefCounter )                 == 794  );
     STATIC_ASSERT( offsetof( ProtoLocation, GeckVisible )      == 76   );
     STATIC_ASSERT( offsetof( Location, RefCounter )            == 282  );
 

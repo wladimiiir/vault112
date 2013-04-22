@@ -8,11 +8,9 @@ namespace FOnline
     public partial class Map : IManagedWrapper
     {
         readonly IntPtr thisptr;
-
         public Map(IntPtr ptr)
 	    {
             thisptr = ptr;
-            maps[ptr] = this;
             AddRef();
 	    }
         ~Map()
@@ -28,11 +26,15 @@ namespace FOnline
         // for dev purposes
         static Dictionary<IntPtr, Map> maps = new Dictionary<IntPtr, Map>();
         public static IEnumerable<Map> AllMaps { get { return maps.Values; } } 
-        public static Map Add(IntPtr ptr)
+        static Map Add(IntPtr ptr)
         {
-            return new Map(ptr);
+            if(maps.ContainsKey(ptr))
+                throw new InvalidOperationException(string.Format("Map 0x{0:x} already added.", (int)ptr));
+            var map = new Map(ptr);
+            maps[ptr] = map;
+            return map;
         }
-        public static void Remove(Map map)
+        static void Remove(Map map) // called by engine
         {
             maps.Remove(map.ThisPtr);
         }

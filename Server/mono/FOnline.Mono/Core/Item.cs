@@ -8,11 +8,9 @@ namespace FOnline
     public partial class Item : IManagedWrapper
     {
         readonly IntPtr thisptr;
-
         public Item(IntPtr ptr)
         {
             thisptr = ptr;
-            items[ptr] = this;
             AddRef();
             //Program.Log("Item created: (0x{0:x})", (int)ptr);
         }
@@ -34,12 +32,16 @@ namespace FOnline
         static Dictionary<IntPtr, Item> items = new Dictionary<IntPtr, Item>();
         public static IEnumerable<Item> AllItems { get { return items.Values; } }
 
-        public static Item Add(IntPtr ptr)
+        static Item Add(IntPtr ptr)
         {
             //Program.Log("Adding item: (0x{0:x})", (int)ptr);
-            return new Item(ptr);
+            if(items.ContainsKey(ptr))
+                throw new InvalidOperationException(string.Format("Item 0x{0:x} already added.", (int)ptr));
+            var item = new Item(ptr);
+            items[ptr] = item;
+            return item;
         }
-        public static void Remove(Item item)
+        static void Remove(Item item)
         {
             //Program.Log("Removing item: {0}(0x{1:x})", item.Id, (int)item.ThisPtr);
             items.Remove(item.ThisPtr);

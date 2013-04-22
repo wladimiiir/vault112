@@ -86,7 +86,7 @@ namespace FOnline
                         statement.Clear();
                     }
                 }
-                else if (line.EndsWith("?"))
+                else if (line.Length > 0 && line.EndsWith("?"))
                 {
                     var strip = line.Remove(line.Length - 1);
                     string prefix;

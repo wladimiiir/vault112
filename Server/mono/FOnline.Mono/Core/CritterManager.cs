@@ -27,6 +27,8 @@ namespace FOnline
         bool IsCritterCanArmor(uint cr_type);
         bool IsCritterAnim1(uint cr_type);
 		uint GetCrittersDistantion(Critter cr1, Critter cr2);
+        bool SwapCritters(Critter cr1, Critter cr2, bool with_inv, bool with_vars);
+        uint GetAllNpc(ushort pid, CritterArray npc);
     }
     public class CritterManager : ICritterManager
     {
@@ -127,8 +129,7 @@ namespace FOnline
 		public uint GetCrittersDistantion(Critter cr1, Critter cr2)
 		{
 			return Global_GetCrittersDistantion(cr1.ThisPtr, cr2.ThisPtr);
-		}
-
+		} 
         [MethodImpl(MethodImplOptions.InternalCall)]
         extern static void Global_SetChosenSendParameter(int index, bool enabled);
         public void SetChosenSendParameter(int index, bool enabled)
@@ -146,6 +147,18 @@ namespace FOnline
         public void SetSendParameter(int index, bool enabled, string allow_func)
         {
             Global_SetSendParameterFunc(index, enabled, CoreUtils.ParseFuncName(allow_func).ThisPtr);
+        }
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        extern static bool Global_SwapCritters(IntPtr cr1, IntPtr cr2, bool with_inv, bool with_vars);
+        public bool SwapCritters(Critter cr1, Critter cr2, bool with_inv, bool with_vars)
+        {
+            return Global_SwapCritters(cr1.ThisPtr, cr2.ThisPtr, with_inv, with_vars);
+        }
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        extern static uint Global_GetAllNpc(ushort pid, IntPtr array);
+        public uint GetAllNpc(ushort pid, CritterArray npc)
+        {
+            return Global_GetAllNpc(pid, (IntPtr)npc);
         }
     }
 }

@@ -13,10 +13,7 @@ namespace FOnline
             this.thisptr = ptr;
             Param = new Data(ptr);
             InitData(ptr);
-
-            critters[ptr] = this;
             AddRef();
-            //Program.Log("Critter created: (0x{0:x})", (int)ptr);
         }
         ~Critter()
         {
@@ -37,16 +34,28 @@ namespace FOnline
         static Dictionary<IntPtr, Critter> critters = new Dictionary<IntPtr, Critter>();
         public static IEnumerable<Critter> AllCritters { get { return critters.Values; } }
 
-        public static Critter Add(IntPtr ptr)
+        static Critter Add(IntPtr ptr)
         {
+            if(critters.ContainsKey(ptr))
+                throw new InvalidOperationException(string.Format("Critter 0x{0:x} already added.", (int)ptr));
             return new Critter(ptr); // TODO: allow custom factory
         }
-        public static void Remove(Critter cr)
+        static void Remove(Critter cr)
         {
-            //Program.Log("Removing critter: {0}(0x{1:x})", cr.Id, (int)cr.ThisPtr);
             critters.Remove(cr.ThisPtr);
         }
-        
+
+        string name = null;
+        public string Name
+        { 
+            get
+            {
+                if(name == null)
+                    name = GetName(thisptr);
+                return name;
+            }
+        }
+
         public class Data
         {
             IntPtr crptr;

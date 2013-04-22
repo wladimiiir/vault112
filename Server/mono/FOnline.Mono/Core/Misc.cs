@@ -13,6 +13,8 @@ namespace FOnline
         uint GetBagItems(uint bag_id, UInt16Array pids, UIntArray min_counts, UIntArray max_counts, IntArray slots);
         bool AddTextListener(Say say_type, string first_str, ushort parameter, string script_name);
         void EraseTextListener(Say say_type, string first_str, ushort parameter);
+        uint GetScriptId(string script_name, string func_decl);
+        string GetScriptName(uint script_id);
     }
 	public class Misc : IMisc
 	{
@@ -66,6 +68,17 @@ namespace FOnline
         {
             Global_EraseTextListener((int)say_type, new ScriptString(first_str).ThisPtr, parameter);
         }
-	}
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        extern static uint Global_GetScriptId(IntPtr script_name, IntPtr func_decl);
+        public uint GetScriptId(string script_name, string func_decl)
+        {
+            return Global_GetScriptId(new ScriptString(script_name).ThisPtr, new ScriptString(func_decl).ThisPtr);
+        }
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        extern static IntPtr Global_GetScriptName(uint script_id);
+        public string GetScriptName(uint script_id)
+        {
+            return new ScriptString(Global_GetScriptName(script_id)).ToString();
+        }
+    }
 }
-

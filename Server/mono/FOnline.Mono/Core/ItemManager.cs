@@ -19,6 +19,7 @@ namespace FOnline
         void DeleteItem(Item item);
         void DeleteItems(ItemArray items);
         ulong WorldItemCount(ushort pid);
+        uint GetAllItems(ushort pid, ItemArray items);
     }
     public class ItemManager : IItemManager
     {
@@ -87,6 +88,12 @@ namespace FOnline
         public ulong WorldItemCount(ushort pid)
         {
             return Global_WorldItemCount(pid);
+        }
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        extern static uint Global_GetAllItems(ushort pid, IntPtr array);
+        public uint GetAllItems(ushort pid, ItemArray items)
+        {
+            return Global_GetAllItems(pid, (IntPtr)items);
         }
     }
 }

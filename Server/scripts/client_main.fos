@@ -23,7 +23,7 @@ import void GUI_Init() from "client_gui";
 import void GUI_GetActiveScreens( int[]& result ) from "client_gui";
 import void GUI_ShowScreen( int screenIndex, int p0, int p1, int p2 ) from "client_gui";
 import void GUI_HideScreen( int screenIndex, int p0, int p1, int p2 ) from "client_gui";
-import void GUI_Render() from "client_gui";
+import void GUI_Render( bool mainScreen ) from "client_gui";
 import bool GUI_MouseDown( int click, int x, int y ) from "client_gui";
 import bool GUI_MouseUp( int click, int x, int y ) from "client_gui";
 import void GUI_MouseMove( int x, int y ) from "client_gui";
@@ -284,28 +284,27 @@ void screen_change( bool show, int screen, int p0, int p1, int p2 )
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 // Render interface function. You can use Draw* functions only there.
 // Layer specification:
-//    0
-// Game map, Global map, Login, Registration, Credits, Wait
 //    1
-// Game interface
+// Game map
 //    2
 // Console, Messbox
 //    3
-// Inventory, PickUp, MiniMap, Dialog/Barter, PipBoy, FixBoy, Options menu, Character, Aim
-// Split, Timer, DialogBox, Elevator, Say, Character name, Character age, Character sex, Global map town, InputBox, SkillBox, Use, Perk
-//    4
 // PopUp menu, Cursor
-//    5
+//    4
 //
 // Extra layers:
 // Global map
-//    100, 101
+//    100 (over map), 101 (over all)
 void render_iface( uint layer )
 {
-    if( layer == 3 )
+	if( layer == 2 )
+    {
+        GUI_Render( true );
+    }
+    else if( layer == 3 )
     {
         DrawChosenTabs();
-        GUI_Render();
+        GUI_Render( false );
         
         if(GetCurrentCursor() == CURSOR_USE_WEAPON) 
         {
@@ -353,7 +352,7 @@ void render_iface( uint layer )
 		}
 		
 	}*/ //TODO: visibility lines
-    if( layer == 100 && __GmapActive )
+    else if( layer == 100 && __GmapActive )
     {
         // Here you can draw on global map
 
@@ -413,10 +412,22 @@ bool key_down( uint8 key )
 	if( key == DIK_LSHIFT || key == DIK_RSHIFT )
 		ShiftDown = true;
         
-    if( AltDown && key == DIK_Q )
-        SetEffect( EFFECT_2D, -1, "2D_Default.fx" );
-    if( AltDown && key == DIK_W )
-        SetEffect( EFFECT_2D, -1, "2D_NoLight.fx" );
+    if( __OpenGLRendering )
+    {
+        if( AltDown && key == DIK_Q )
+            SetEffect( EFFECT_FLUSH_MAP, 0, null );
+        if( AltDown && key == DIK_W )
+            SetEffect( EFFECT_FLUSH_MAP, 0, "Flush_Map_BlackWhite.glsl" );
+    }
+    else
+    {
+        int effectType = EFFECT_2D_GENERIC | EFFECT_2D_CRITTER | EFFECT_2D_TILE | EFFECT_2D_ROOF | EFFECT_2D_RAIN;
+        if( AltDown && key == DIK_Q )
+            SetEffect( effectType, 0, null );
+        if( AltDown && key == DIK_W )
+            SetEffect( effectType, 0, "2D_BlackWhite.fx" );
+    }
+	
     if( key == DIK_Z )
         __MapZooming = true;
     

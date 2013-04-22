@@ -19,6 +19,9 @@ namespace FOnline
         Map FromNativeMap(IntPtr ptr);
         Map GetMap(uint map_id);
         Map GetMapByPid(ushort pid, uint skip_count);
+
+        uint GetAllMaps(ushort pid, MapArray maps);
+        uint GetAllLocations(ushort pid, LocationArray locations);
     }
     /// <summary>
     /// Exposes global map/location managing facilities.
@@ -88,6 +91,19 @@ namespace FOnline
         public Map GetMapByPid(ushort pid, uint skip_count)
         {
             return (Map)Global_GetMapByPid(pid, skip_count);
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        extern static uint Global_GetAllMaps(ushort pid, IntPtr array);
+        public uint GetAllMaps(ushort pid, MapArray maps)
+        {
+            return Global_GetAllMaps(pid, (IntPtr)maps);
+        }
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        extern static uint Global_GetAllLocations(ushort pid, IntPtr array);
+        public uint GetAllLocations(ushort pid, LocationArray locations)
+        {
+            return Global_GetAllLocations(pid, (IntPtr)locations);
         }
     }
 }

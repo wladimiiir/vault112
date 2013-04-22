@@ -2045,7 +2045,7 @@ class GUIScreen : IGUIScreenOpt
 		}
 		else if(IsCloseOnMiss && not IS_COLLISION(x,y,PosX,PosY,screenWidth,screenHeight))
 		{
-			::HideScreen(0,0,0,0);
+			HideScreen(0, 0, 0, 0);
 			return true;
 		}
 
@@ -2583,8 +2583,8 @@ void GUI_ShowScreen(int screenIndex, int p0, int p1, int p2)
 		// Set screen cursor
 		if(screen.IsAutoCursor)
 		{
-			screen.AutoCursorPrev=::GetCurrentCursor();
-			::ChangeCursor(screen.AutoCursorType);
+			screen.AutoCursorPrev=GetCurrentCursor();
+			ChangeCursor(screen.AutoCursorType);
 		}
 
 		// Call init callbacks
@@ -2630,7 +2630,7 @@ void GUI_HideScreen(int screenIndex, int p0, int p1, int p2)
 			// Restore cursor
 			if(screen.IsAutoCursor)
 			{
-				::ChangeCursor(screen.AutoCursorPrev);
+				ChangeCursor(screen.AutoCursorPrev);
 			}
 
 			// Store position for non-multiinstance screens
@@ -2653,20 +2653,30 @@ void ScreenText_Render()
 	}
 }
 
-void GUI_Render()
+void GUI_Render( bool mainScreen )
 {
-	ScreenText_Render();
-
-	for(uint i=0,j=ActiveScreens.length();i<j;i++)
-	{
-		GUIScreen@ screen=ActiveScreens[i];
-		if(screen.IsHardcoded)
-		{
-			::DrawHardcodedScreen(screen.Index);
-			::GetHardcodedScreenPos(screen.Index,screen.PosX,screen.PosY);
-		}
-		screen.Draw();
-	}
+    if( mainScreen )
+    {
+        if( ActiveScreens.length() > 0 )
+        {
+            GUIScreen@ screen = ActiveScreens[ 0 ];
+            DrawHardcodedScreen( screen.Index );
+            GetHardcodedScreenPos( screen.Index, screen.PosX, screen.PosY );
+        }
+    }
+    else
+    {
+        for( uint i = 1, j = ActiveScreens.length(); i < j; i++ )
+        {
+            GUIScreen@ screen = ActiveScreens[ i ];
+            if( screen.IsHardcoded )
+            {
+                DrawHardcodedScreen( screen.Index );
+                GetHardcodedScreenPos( screen.Index, screen.PosX, screen.PosY );
+            }
+            screen.Draw();
+        }
+    }
 }
 
 bool GUI_MouseDown(int click, int x, int y)
@@ -2814,7 +2824,7 @@ bool ProcessKey(uint8 key, string& text, uint8& letter)
 		bool shiftDown=(KeyPressed[DIK_LSHIFT] || KeyPressed[DIK_RSHIFT]);
 		uint len=text.length();
 		text.resize(text.length()+1);
-		text[len]=k.Char[::GetKeybLang()*2+(shiftDown?1:0)];
+		text[len]=k.Char[GetKeybLang()*2+(shiftDown?1:0)];
 		letter=text[len];
 		return true;
 	}

@@ -24,7 +24,7 @@ void main( void )
 {
 	gl_FragColor = texture2D( ColorMap, TexCoord );
 	
-	gl_FragColor.rgb = ( gl_FragColor.r + gl_FragColor.g + gl_FragColor.b ) / 3.0; 
+	gl_FragColor.rgb = vec3( ( gl_FragColor.r + gl_FragColor.g + gl_FragColor.b ) / 3.0 );
 	
 	if( gl_FragColor.r < 0.2 || gl_FragColor.r > 0.9 )
 		gl_FragColor.r = 0.0;

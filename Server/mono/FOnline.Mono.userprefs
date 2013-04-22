@@ -1,0 +1,16 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="FOnline.Mono\Core\Global.cs">
+    <Files>
+      <File FileName="FOnline.Mono\Program.cs" Line="1" Column="1" />
+      <File FileName="FOnline.Mono\Den\DenBus.cs" Line="18" Column="40" />
+      <File FileName="FOnline.Mono\Items\Lock.cs" Line="20" Column="30" />
+      <File FileName="FOnline.Mono\Critter.cs" Line="1" Column="1" />
+      <File FileName="FOnline.Mono\Core\Global.cs" Line="34" Column="24" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

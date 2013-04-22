@@ -14,7 +14,9 @@ namespace FOnline
         extern static void Release(IntPtr ptr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		extern static int GetRefCount(IntPtr ptr);
-		
+		[MethodImpl(MethodImplOptions.InternalCall)]
+        extern static string GetName(IntPtr ptr);
+
 		public virtual void AddRef()
         {
             AddRef(thisptr);
@@ -919,7 +921,7 @@ namespace FOnline
         extern static bool Crit_EventAttacked(IntPtr thisptr, IntPtr attacker);
         public virtual bool EventAttacked(Critter attacker)
         {
-            return Crit_EventAttacked(thisptr, attacker != null ? attacker.ThisPtr : IntPtr.Zero);
+            return Crit_EventAttacked(thisptr, attacker.ThisPtr);
         }
         [MethodImpl(MethodImplOptions.InternalCall)]
         extern static bool Crit_EventStealing(IntPtr thisptr, IntPtr thief, IntPtr item, uint count);

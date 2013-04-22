@@ -27,16 +27,20 @@ void main( void )
 	vec4 weights = InBlendWeights;
 	vec4 indices = InBlendIndices;
 	vec4 position = vec4( 0.0 );
-	vec3 normal = vec3( 0.0 );  
-	for( int i = 0; i < int( BoneInfluences ); i++ )
+	vec3 normal = vec3( 0.0 );
+	int boneInfluences = int( BoneInfluences );
+	for( int i = 0; i < 4; i++ )
 	{
-		mat4 m44 = WorldMatrices[ int( indices.x ) ];
-		mat3 m33 = mat3( m44[ 0 ].xyz, m44[ 1 ].xyz, m44[ 2 ].xyz );
-		float w = weights.x;
-		position += m44 * InPosition * w;
-		normal += m33 * InNormal * w;
-		weights = weights.yzwx;
-		indices = indices.yzwx;
+		if ( i < boneInfluences )
+		{
+			mat4 m44 = WorldMatrices[ int( indices.x ) ];
+			mat3 m33 = mat3( m44[ 0 ].xyz, m44[ 1 ].xyz, m44[ 2 ].xyz );
+			float w = weights.x;
+			position += m44 * InPosition * w;
+			normal += m33 * InNormal * w;
+			weights = weights.yzwx;
+			indices = indices.yzwx;
+		}
 	}
 	
 	// Position
@@ -92,13 +96,17 @@ void main( void )
 	vec4 weights = InBlendWeights;
 	vec4 indices = InBlendIndices;
 	vec4 position = vec4( 0.0 );
-	for( int i = 0; i < int( BoneInfluences ); i++ )
+	int boneInfluences = int( BoneInfluences );
+	for( int i = 0; i < 4; i++ )
 	{
-		mat4 m44 = WorldMatrices[ int( indices.x ) ];
-		float w = weights.x;
-		position += m44 * InPosition * w;
-		weights = weights.yzwx;
-		indices = indices.yzwx;
+		if ( i < boneInfluences )
+		{
+			mat4 m44 = WorldMatrices[ int( indices.x ) ];
+			float w = weights.x;
+			position += m44 * InPosition * w;
+			weights = weights.yzwx;
+			indices = indices.yzwx;
+		}
 	}
 	
 	// Calculate shadow position
