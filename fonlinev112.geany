@@ -24,18 +24,19 @@ long_line_column=72
 
 [files]
 current_page=0
+FILE_NAME_0=245;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2F_factions.fos;0;4
 
 [VTE]
 last_dir=/home/wladimiiir
 
 [build-menu]
 C++FT_00_LB=ASCompile Client
-C++FT_00_CM=wineconsole /home/wladimiiir/Vault112/Tools/ASCompiler/compileC.bat "%f" "%d"
+C++FT_00_CM=/home/wladimiiir/Vault112/Tools/ASCompiler/ASCompiler "%f" -client
 C++FT_00_WD=
 C++FT_01_LB=ASCompile Server
-C++FT_01_CM=wineconsole /home/wladimiiir/Vault112/Tools/ASCompiler/compileS.bat "%f" "%d"
+C++FT_01_CM=/home/wladimiiir/Vault112/Tools/ASCompiler/ASCompiler "%f"
 C++FT_01_WD=
 C++FT_02_LB=ASCompile Mapper
-C++FT_02_CM=wineconsole /home/wladimiiir/Vault112/Tools/ASCompiler/compileM.bat "%f" "%d"
+C++FT_02_CM=/home/wladimiiir/Vault112/Tools/ASCompiler/compileM.bat "%f" "%d"
 C++FT_02_WD=
 filetypes=C++;
