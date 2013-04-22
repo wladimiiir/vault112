@@ -3,14 +3,34 @@
 */
 
 #include "_macros.fos"
-#include "trader.fos"
+#include "_teams.fos"
+#include "_ai.fos"
+#include "critter_action_basic.fos"
+
+import void InitTrader(Critter& npc) from "trader";
 
 /**
 * Init scripts
 */
 void InitGyro(Critter& critter, bool firstTime)
 {
-	TraderInit(critter, firstTime);
+	InitTrader(critter);
+}
+
+void InitGuard(Critter& critter, bool firstTime)
+{
+	if(firstTime)
+	{
+		critter.StatBase[ST_AI_ID] = AIPACKET_GENERAL_RANGED_TOUGH_GOOD_GUYS;
+		critter.StatBase[ST_TEAM_ID] = TEAM_Junkyard;
+	}
+	
+	Action@ action = LoopAction(true)
+							.AddSubAction(Patrol(DEFAULT_PATROL_ENTIRE, false, true, true))
+							.AddSubAction(LookAround(3, REAL_SECOND(15)))
+	;
+	
+	actionManager.Start(critter, action);
 }
 
 /**

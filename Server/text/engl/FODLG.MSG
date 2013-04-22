@@ -545,10 +545,10 @@
 {5181}{}{Super mutation of some sort. Strong and dangerous.}
 {5190}{}{Gyro}
 {5191}{}{Gyro}
-{5200}{}{Helacyton type  2}
-{5201}{}{A strange creature resembling Master's pets.}
-{5210}{}{Angry helacyton type  2}
-{5211}{}{A strange creature resembling Master's pets.}
+{5200}{}{Guard}
+{5201}{}{Guard}
+{5210}{}{Guard}
+{5211}{}{Guard}
 {5220}{}{Helacyton type  3}
 {5221}{}{A strange creature resembling Master's pets.}
 {5230}{}{Henrietta}

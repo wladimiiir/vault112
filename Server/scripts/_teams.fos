@@ -55,7 +55,7 @@
 #define TEAM_Raider					( 51 )
 
 //Town teams
-#define TEAM_Junktown				( 101 )
+#define TEAM_Junkyard				( 101 )
 #define TEAM_Hub					( 102 )
 
 #endif // __TEAMS__

@@ -2,8 +2,8 @@
 Version              4
 MaxHexX              158
 MaxHexY              162
-WorkHexX             56
-WorkHexY             65
+WorkHexX             73
+WorkHexY             64
 ScriptModule         -
 ScriptFunc           -
 NoLogOut             0
@@ -22445,5 +22445,146 @@ Critter_ParamIndex4  ST_NPC_ROLE
 Critter_ParamValue4  0
 Critter_ParamIndex5  ST_REPLICATION_TIME
 Critter_ParamValue5  0
+
+MapObjType           0
+ProtoId              520
+MapX                 81
+MapY                 70
+Dir                  3
+ScriptName           map_junkyard
+FuncName             InitGuard
+Critter_Cond         1
+Critter_Anim1        0
+Critter_Anim2        0
+Critter_ParamIndex0  ST_DIALOG_ID
+Critter_ParamValue0  0
+Critter_ParamIndex1  ST_AI_ID
+Critter_ParamValue1  0
+Critter_ParamIndex2  ST_BAG_ID
+Critter_ParamValue2  0
+Critter_ParamIndex3  ST_TEAM_ID
+Critter_ParamValue3  0
+Critter_ParamIndex4  ST_NPC_ROLE
+Critter_ParamValue4  0
+Critter_ParamIndex5  ST_REPLICATION_TIME
+Critter_ParamValue5  0
+
+MapObjType           0
+ProtoId              520
+MapX                 53
+MapY                 85
+Dir                  3
+ScriptName           map_junkyard
+FuncName             InitGuard
+Critter_Cond         1
+Critter_Anim1        0
+Critter_Anim2        0
+Critter_ParamIndex0  ST_DIALOG_ID
+Critter_ParamValue0  0
+Critter_ParamIndex1  ST_AI_ID
+Critter_ParamValue1  0
+Critter_ParamIndex2  ST_BAG_ID
+Critter_ParamValue2  0
+Critter_ParamIndex3  ST_TEAM_ID
+Critter_ParamValue3  0
+Critter_ParamIndex4  ST_NPC_ROLE
+Critter_ParamValue4  0
+Critter_ParamIndex5  ST_REPLICATION_TIME
+Critter_ParamValue5  0
+
+MapObjType           0
+ProtoId              521
+MapX                 85
+MapY                 111
+ScriptName           map_junkyard
+FuncName             InitGuard
+Critter_Cond         1
+Critter_Anim1        0
+Critter_Anim2        0
+Critter_ParamIndex0  ST_DIALOG_ID
+Critter_ParamValue0  0
+Critter_ParamIndex1  ST_AI_ID
+Critter_ParamValue1  0
+Critter_ParamIndex2  ST_BAG_ID
+Critter_ParamValue2  0
+Critter_ParamIndex3  ST_TEAM_ID
+Critter_ParamValue3  0
+Critter_ParamIndex4  ST_NPC_ROLE
+Critter_ParamValue4  0
+Critter_ParamIndex5  ST_REPLICATION_TIME
+Critter_ParamValue5  0
+
+MapObjType           0
+ProtoId              521
+MapX                 74
+MapY                 125
+Dir                  2
+ScriptName           map_junkyard
+FuncName             InitGuard
+Critter_Cond         1
+Critter_Anim1        0
+Critter_Anim2        0
+Critter_ParamIndex0  ST_DIALOG_ID
+Critter_ParamValue0  0
+Critter_ParamIndex1  ST_AI_ID
+Critter_ParamValue1  0
+Critter_ParamIndex2  ST_BAG_ID
+Critter_ParamValue2  0
+Critter_ParamIndex3  ST_TEAM_ID
+Critter_ParamValue3  0
+Critter_ParamIndex4  ST_NPC_ROLE
+Critter_ParamValue4  0
+Critter_ParamIndex5  ST_REPLICATION_TIME
+Critter_ParamValue5  0
+
+MapObjType           2
+ProtoId              3853
+MapX                 81
+MapY                 70
+Scenery_ToEntire     401
+
+MapObjType           2
+ProtoId              3853
+MapX                 61
+MapY                 72
+Scenery_ToEntire     401
+
+MapObjType           2
+ProtoId              3853
+MapX                 67
+MapY                 107
+Scenery_ToEntire     401
+
+MapObjType           2
+ProtoId              3853
+MapX                 83
+MapY                 100
+Scenery_ToEntire     401
+
+MapObjType           2
+ProtoId              3853
+MapX                 74
+MapY                 125
+Scenery_ToEntire     401
+
+MapObjType           1
+ProtoId              189
+MapX                 59
+MapY                 62
+
+MapObjType           1
+ProtoId              189
+MapX                 59
+MapY                 63
+
+MapObjType           1
+ProtoId              189
+MapX                 59
+MapY                 64
+
+MapObjType           1
+ProtoId              189
+MapX                 59
+MapY                 65
 
 

@@ -73,12 +73,10 @@ int GetCaps(Item@[]& items, uint[]& counts)
 	return caps;
 }
 
-/**
-* Init scripts
-*/
-void TraderInit(Critter& npc, bool)
+//import void InitTrader(Critter& npc) from "trader";
+void InitTrader(Critter& npc)
 {
-    Trader@ trader = GetTrader(npc);
+	Trader@ trader = GetTrader(npc);
     if(!valid(trader))
 		return;
     
@@ -101,6 +99,14 @@ void TraderInit(Critter& npc, bool)
 		if(nextCall > 0)
 			npc.AddTimeEvent( "cte_UpdateTraderItems", nextCall, CTE_TRADER );
 	}
+}
+
+/**
+* Init scripts
+*/
+void TraderInit(Critter& npc, bool)
+{
+    InitTrader(npc);
 }
 
 bool _TraderBarter(Critter& npc, Critter& player, bool attach, uint barterCount)
@@ -194,7 +200,7 @@ class Trader
 		{
 			Item@[] items;
 		    trader.GetItems(SLOT_INV, items);
-		    DeleteItems(items);
+		    ::DeleteItems(items);
 		}
 		
 		Items.AddItems(trader);
