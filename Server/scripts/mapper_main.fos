@@ -665,7 +665,7 @@ void InitializeTabs()
     pids.insertLast( PID_DECK_OF_TRAGIC_CARDS );
     pids.insertLast( PID_YELLOW_REACTOR_KEYCARD );
     pids.insertLast( PID_RED_REACTOR_KEYCARD );
-    pids.insertLast( PID_PLASMA_TRANSFORMER );
+    pids.insertLast( PID_RX_TESLA_MODULE );
     pids.insertLast( PID_SUPER_TOOL_KIT );
     pids.insertLast( PID_TALISMAN );
     pids.insertLast( PID_PART_REQUISITION_FORM );

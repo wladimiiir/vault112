@@ -498,15 +498,15 @@
 #define PID_INSULATE_TAPE                    ( 649 ) // Изолента
 
 // Self-special parts
-#define PID_MOTOR                            ( 89 )
-#define PID_MOTIVATOR                        ( 229 )
-#define PID_PLASMA_TRANSFORMER               ( 307 )
-#define PID_MINE_PART                        ( 419 )
-#define PID_EXPLOSIVE_SWITCH                 ( 454 )
-#define PID_ROBOT_MOTIVATOR                  ( 364 )
-#define PID_EXCAVATOR_CHIP                   ( 422 )
-#define PID_NAVCOM_PARTS                     ( 479 )
-#define PID_K9_MOTIVATOR                     ( 488 )
+#define PID_MOTOR							( 89 )
+#define PID_MOTIVATOR						( 229 )
+#define PID_RX_TESLA_MODULE					( 307 )
+#define PID_MINE_PART						( 419 )
+#define PID_EXPLOSIVE_SWITCH				( 454 )
+#define PID_ROBOT_MOTIVATOR					( 364 )
+#define PID_EXCAVATOR_CHIP					( 422 )
+#define PID_NAVCOM_PARTS					( 479 )
+#define PID_K9_MOTIVATOR					( 488 )
 
 // Special parts
 #define PID_WATER_CHIP                       ( 55 )
