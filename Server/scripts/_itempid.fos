@@ -666,7 +666,7 @@
 #define PID_REBEL_TAG                        ( 579 ) // Бирка рейнджеров
 #define PID_RAIDERS_MAP                      ( 444 )
 #define PID_SHERIFF_BADGE                    ( 445 ) // Значек шерифа
-#define PID_ACCOUNT_BOOK                     ( 448 ) // Книга по разборкам в Нью-Рено
+#define PID_DIGITAL_CREDIT                   ( 448 )
 #define PID_TORN_PAPER_1                     ( 450 ) // Part1 password
 #define PID_TORN_PAPER_2                     ( 451 ) // Part2 password
 #define PID_TORN_PAPER_3                     ( 452 ) // Part3 password

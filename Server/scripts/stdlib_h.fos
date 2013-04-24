@@ -111,3 +111,5 @@ import void SkillAdd(Critter& player, int skill, int value) from "stdlib";
 import void CheckMaleCrType(uint crBaseType, uint& crType) from "stdlib";
 
 import void ShowSayScreen(Critter& critter, bool onlyNumbers, bool closeOnDone, string title, string initialText, string answerScript, int[]@ values) from "stdlib";
+
+import Item@ FindHiddenContainer(Map& map) from "stdlib";

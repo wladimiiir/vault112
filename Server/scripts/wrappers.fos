@@ -11,14 +11,21 @@
 
 class ItemHolderWrapper
 {
-	#define _GetKey		("ItemHolder_" + Npc.Id)
+	#define _GetKey		("ItemHolder_" + (valid(Npc) ? ("NPC_"  + Npc.Id) : ("Container_" + Container.Id)))
 	
 	private Critter@ Npc;
+	private Item@ Container;
 	private dictionary Containers;
 	
 	ItemHolderWrapper(Critter& npc)
 	{
 		@Npc = npc;
+		Load();
+	}
+	
+	ItemHolderWrapper(Item& container)
+	{
+		@Container = container;
 		Load();
 	}
 	
@@ -61,7 +68,10 @@ class ItemHolderWrapper
 		}
 		else if(create)
 		{
-			@container = Npc.AddItem(PID_HIDDEN_CONTAINER, 1);
+			if(valid(Npc))
+				@container = Npc.AddItem(PID_HIDDEN_CONTAINER, 1);
+			else
+				@container = Container.AddItem(PID_HIDDEN_CONTAINER, 1, 0);
 			if(!valid(container))
 				return null;
 			_ItemSetHidden(container);

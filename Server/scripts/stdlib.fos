@@ -405,3 +405,11 @@ void ShowSayScreen(Critter& critter, bool onlyNumbers, bool closeOnDone, string 
 	critter.RunClientScript("client_screen_custom_say@ShowSayScreen", 
 		onlyNumbers ? 1 : 0, closeOnDone ? 1 : 0, 0, title +"^"+ initialText +"^"+answerScript, values);
 }
+
+Item@ FindHiddenContainer(Map& map)
+{
+	Item@[] items;
+	map.GetItems(PID_HIDDEN_CONTAINER, items);
+	
+	return items.isEmpty() ? null : items[0];
+}

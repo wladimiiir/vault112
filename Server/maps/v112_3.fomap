@@ -2,8 +2,8 @@
 Version              4
 MaxHexX              174
 MaxHexY              180
-WorkHexX             104
-WorkHexY             96
+WorkHexX             83
+WorkHexY             90
 ScriptModule         map_vault112
 ScriptFunc           InitVaultMap
 NoLogOut             0
@@ -19673,5 +19673,10 @@ MapObjType           2
 ProtoId              5622
 MapX                 80
 MapY                 92
+
+MapObjType           1
+ProtoId              467
+MapX                 73
+MapY                 99
 
 

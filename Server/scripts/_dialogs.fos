@@ -11,6 +11,7 @@
 #define DIALOG_v112_entrance_guard			( 502 )
 #define DIALOG_v112_stuff_keeper			( 503 )
 #define DIALOG_gyro							( 504 )
+#define DIALOG_vr_simulation				( 505 )
 
 #define DIALOG_battleground					( 1000 )
 

@@ -1,0 +1,234 @@
+/**
+* Author: wladimiiir
+*/
+
+#include "_macros.fos"
+#include "serializator.fos"
+#include "npc_spawn_h.fos"
+#include "virtual_reality_dialog.fos"
+#include "wrappers.fos"
+
+#define	SIMULATION_TYPE_HUNT				( 0 )
+#define	SIMULATION_TYPE_TEAM_DEATHMATCH		( 1 )
+
+import Item@ FindHiddenContainer(Map& map) from "stdlib";
+
+/**
+* Init functions
+*/
+void InitVRProvider(Critter& critter, bool firstTime)
+{
+	if(firstTime)
+		critter.StatBase[ST_DIALOG_ID] = DIALOG_vr_simulation;
+		
+	critter.SetEvent(CRITTER_EVENT_BARTER, "_VRProviderBarter");
+}
+
+bool _VRProviderBarter(Critter& npc, Critter& player, bool attach, uint barterCount)
+{
+	#define	REAL_WORLD_ITEMS_PREFIX				("RW_")
+	#define	VIRTUAL_REALITY_ITEMS_PREFIX		("VR_")
+	
+	Item@ hiddenContainer = FindHiddenContainer(npc.GetMap());
+	ItemHolderWrapper itemHolder;
+	
+	if(valid(hiddenContainer))
+		itemHolder = ItemHolderWrapper(hiddenContainer);
+	else
+		itemHolder = ItemHolderWrapper(npc);
+	
+	if(attach)
+	{
+		//holding current real world items
+		Item@[] items;
+		player.GetItems(SLOT_INV, items);
+		itemHolder.PutItems(REAL_WORLD_ITEMS_PREFIX + player.Id, items);
+		
+		//adding digital credit
+		if(player.Param[DIGITAL_CREDIT] > 0)
+			player.AddItem(PID_DIGITAL_CREDIT, player.Param[DIGITAL_CREDIT]);
+		
+		//getting his virtual reality items
+		items = itemHolder.PopItems(VIRTUAL_REALITY_ITEMS_PREFIX + player.Id);
+		MoveItems(items, player);
+	}
+	else
+	{
+		//getting VR items
+		Item@[] items;
+		player.GetItems(SLOT_INV, items);
+		
+		for (uint i = 0; i < items.length(); i++)
+		{
+			//setting current digital credit
+			if(items[i].GetProtoId() == PID_DIGITAL_CREDIT)
+			{
+				player.ParamBase[DIGITAL_CREDIT] = items[i].GetCount();
+				items.removeAt(i);
+				DeleteItem(items[i]);
+				break;
+			}
+		}
+		
+		//switching VR items with real world items
+		itemHolder.PutItems(VIRTUAL_REALITY_ITEMS_PREFIX + player.Id, items);
+		items = itemHolder.PopItems(REAL_WORLD_ITEMS_PREFIX + player.Id);
+		MoveItems(items, player);
+	}
+	
+	return true;
+}
+
+
+/**
+* Entities
+*/
+class VRSimulation
+{
+	#define _GetKey	("VRSimulation_" + _Critter.Id)
+	
+	private Critter@ _Critter;
+	private uint Type;
+	private uint LocationPid;
+	private uint Duration;
+	private uint CombatMode;
+	private uint Spawn;
+	
+	VRSimulation(Critter& critter)
+	{
+		@_Critter = critter;
+		Type = SIMULATION_TYPE_HUNT;
+		LocationPid = LOCATION_GreenForest2;
+		Duration = 0;
+		CombatMode = COMBAT_MODE_TURN_BASED;
+		Spawn = NPC_SPAWN_VR_GECKOS;
+		Load();
+	}
+	
+	private void Load()
+	{
+		Serializator serializator;
+		if(!serializator.Load(_GetKey))
+			return;
+		
+		serializator.Get(Type);
+		serializator.Get(LocationPid);
+		serializator.Get(Duration);
+		serializator.Get(CombatMode);
+		serializator.Get(Spawn);
+	}
+	
+	private void Save()
+	{
+		Serializator serializator;
+		serializator.Set(Type);
+		serializator.Set(LocationPid);
+		serializator.Set(Duration);
+		serializator.Set(CombatMode);
+		serializator.Set(Spawn);
+		serializator.Save(_GetKey);
+	}
+	
+	void SetType(uint simulationType)
+	{
+		Type = simulationType;
+		Save();
+	}
+	
+	void SetLocation(uint locationPid)
+	{
+		LocationPid = locationPid;
+		Save();
+	}
+	
+	void SetDuration(uint duration)
+	{
+		Duration = duration;
+		Save();
+	}
+	
+	void SetCombatMode(uint combatMode)
+	{
+		CombatMode = combatMode;
+		Save();
+	}
+	
+	void SetSpawn(uint spawn)
+	{
+		Spawn = spawn;
+		Save();
+	}
+	
+	bool IsDurationAvailable()
+	{
+		return Type == SIMULATION_TYPE_TEAM_DEATHMATCH;
+	}
+	
+	bool IsSpawnAvailable()
+	{
+		return Type == SIMULATION_TYPE_HUNT;
+	}
+	
+	string GetTypeInfo()
+	{
+		switch(Type)
+		{
+			case SIMULATION_TYPE_HUNT:
+				return "Hunt";
+			case SIMULATION_TYPE_TEAM_DEATHMATCH:
+				return "Team deathmatch";
+		}
+		return "NA";
+	}
+	
+	string GetLocationInfo()
+	{
+		switch(LocationPid)
+		{
+			case LOCATION_GreenForest1:
+				return "Green forest labyrinth";
+			case LOCATION_GreenForest2:
+				return "Green forest lane";
+		}
+		return "Unknown (PID: " + LocationPid + ")";
+	}
+	
+	string GetCombatModeInfo()
+	{
+		switch(CombatMode)
+		{
+			case COMBAT_MODE_REAL_TIME:
+				return "Real time";
+			case COMBAT_MODE_TURN_BASED:
+				return "Turn-based";
+		}
+		return "NA";
+	}
+	
+	string GetDurationInfo()
+	{
+		if(IsDurationAvailable())
+			return Duration + " minutes";
+		else
+			return "NA";
+	}
+	
+	string GetSpawnInfo()
+	{
+		switch(Spawn)
+		{
+			case 0:
+				return "NA";
+			case NPC_SPAWN_VR_GECKOS:
+				return "Geckos";
+			case NPC_SPAWN_VR_RAIDERS:
+				return "Raiders";
+		}
+		return "Unknown: " + Spawn;
+	}
+		
+	void Start()
+	{
+		
+	}
+}

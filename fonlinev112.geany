@@ -23,8 +23,32 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=0
+current_page=24
 FILE_NAME_0=245;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2F_factions.fos;0;4
+FILE_NAME_1=11421;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fmain.fos;0;4
+FILE_NAME_2=485;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fmap_junkyard.fos;0;4
+FILE_NAME_3=2332;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2F_teams.fos;0;4
+FILE_NAME_4=22916;C++;0;EISO-8859-1;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2F_defines.fos;0;4
+FILE_NAME_5=437;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fentire_h.fos;0;4
+FILE_NAME_6=1494;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fcritter_action_basic.fos;0;4
+FILE_NAME_7=6627;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fmap_vault112.fos;0;4
+FILE_NAME_8=20962;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fcritter_action.fos;0;4
+FILE_NAME_9=3852;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2F_ai.fos;0;4
+FILE_NAME_10=2533;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Ftrader.fos;0;4
+FILE_NAME_11=11210;C++;0;EISO-8859-1;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fclient_main.fos;0;4
+FILE_NAME_12=65489;C++;0;EISO-8859-1;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fclient_gui.fos;0;4
+FILE_NAME_13=44752;C++;0;EISO-8859-1;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fworldmap.fos;0;4
+FILE_NAME_14=0;C++;0;EISO-8859-1;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fgeiger.fos;0;4
+FILE_NAME_15=16031;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fglobalmap_group.fos;0;4
+FILE_NAME_16=485;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fhotel.fos;0;4
+FILE_NAME_17=1830;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fmap_vault112_dialog.fos;0;4
+FILE_NAME_18=2447;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fmap_virtual_reality.fos;0;4
+FILE_NAME_19=26892;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fmapper_main.fos;0;4
+FILE_NAME_20=11839;C++;0;EISO-8859-1;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2F_itempid.fos;0;4
+FILE_NAME_21=681;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2F_mapper_defines.fos;0;4
+FILE_NAME_22=1079;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fvr_npc_spawn_init.fos;0;4
+FILE_NAME_23=1966;C++;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fnpc_spawn.fos;0;4
+FILE_NAME_24=20781;C;0;EUTF-8;1;1;0;%2Fhome%2Fwladimiiir%2FVault112%2FServer%2Fscripts%2Fintellisense.h;0;4
 
 [VTE]
 last_dir=/home/wladimiiir

@@ -23,6 +23,9 @@ import bool DialogNpc( Critter& player, int role ) from "stdlib";
 #define ENTIRE_WAKE_UP_POSITION				(1003)
 #define PID_BED_WITH_PATIENT	# (player) (player.Stat[ST_GENDER] == GENDER_FEMALE ? PID_BED_WITH_PATIENT_FEMALE : PID_BED_WITH_PATIENT_MALE)
 
+/**
+* Export functions
+*/
 //import void InitStartLocationMap(Map& map, Critter& player) from "map_vault112";
 void InitStartLocationMap(Map& map, Critter& player)
 {
@@ -55,6 +58,9 @@ void InitStartLocationMap(Map& map, Critter& player)
 	map.AddItem(entires[0].HexX, entires[0].HexY, PID_BED_WITH_PATIENT(player), 1);
 }
 
+/**
+* Init functions
+*/
 void InitStartLocationDoor(Item& door, bool)
 {
 	door.SetEvent(ITEM_EVENT_SKILL, "StartLocationDoorSkill");

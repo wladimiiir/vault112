@@ -1,0 +1,96 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 1 @
+2 2000 None 1 #
+3 2010 #
+4 2020 #
+2 2030 @
+3 3000 virtual_reality@dlg_InitSimulation 1 #
+0 3010 R _script virtual_reality@r_StartSimulation 0  #
+5 3020 #
+6 3030 #
+7 3040 #
+8 3050 D _script virtual_reality@d_DurationAvailable 0  #
+9 3060 D _script virtual_reality@d_SpawnAvailable 0  #
+2 3070 @
+4 4000 None 0 @
+5 5000 None 1 #
+3 5010 R _script virtual_reality@r_SetType 1 1 #
+3 5020 R _script virtual_reality@r_SetType 1 2 #
+3 5030 @
+6 6000 None 1 #
+3 6010 R _script virtual_reality@r_SetLocation 1 300 #
+3 6020 R _script virtual_reality@r_SetLocation 1 301 #
+3 6030 #
+3 6040 @
+7 7000 None 1 #
+3 7010 R _script virtual_reality@r_SetCombatMode 1 2 #
+3 7020 R _script virtual_reality@r_SetCombatMode 1 1 #
+3 7030 @
+8 8000 None 1 #
+3 8010 R _script virtual_reality@r_SetDuration 1 5 #
+3 8020 R _script virtual_reality@r_SetDuration 1 10 #
+3 8030 R _script virtual_reality@r_SetDuration 1 15 #
+3 8040 R _script virtual_reality@r_SetDuration 1 20 #
+3 8050 R _script virtual_reality@r_SetDuration 1 30 #
+3 8060 R _script virtual_reality@r_SetDuration 1 60 #
+3 8070 @
+9 9000 None 1 #
+3 9010 R _script virtual_reality@r_SetSpawn 1 1 #
+3 9020 R _script virtual_reality@r_SetSpawn 1 2 #
+3 9030 &
+
+[engl]
+{100}{}{none}
+{1000}{}{Predialogue installations}
+{2000}{}{Welcome to Tranquility Simulation Program.}
+{2010}{}{Start new simulation}
+{2020}{}{Join existing simulation}
+{2030}{}{Exit}
+{3000}{}{Simulation
+Type: @lex type@
+Location: @lex location@
+Combat mode: @lex combatMode@
+Duration: @lex duration@
+Hostiles: @lex spawn@
+}
+{3010}{}{Start simulation}
+{3020}{}{Change type}
+{3030}{}{Change location}
+{3040}{}{Change combat mode}
+{3050}{}{Change duration}
+{3060}{}{Change hostiles}
+{3070}{}{Cancel}
+{4000}{}{List of initialized simulations:}
+{5000}{}{Choose type:}
+{5010}{}{Hunt}
+{5020}{}{Team deathmatch}
+{5030}{}{Back}
+{6000}{}{Choose location:}
+{6010}{}{Green forest labyrinth}
+{6020}{}{Green forest lane}
+{6030}{}{Small town}
+{6040}{}{Back}
+{7000}{}{Choose combat mode:}
+{7010}{}{Turn based}
+{7020}{}{Real time}
+{7030}{}{Back}
+{8000}{}{Choose duration:}
+{8010}{}{5 minutes}
+{8020}{}{10 minutes}
+{8030}{}{15 minutes}
+{8040}{}{20 minutes}
+{8050}{}{30 minutes}
+{8060}{}{60 minutes}
+{8070}{}{Back}
+{9000}{}{Choose hostiles:}
+{9010}{}{Geckos}
+{9020}{}{Raiders}
+{9030}{}{Back}
+

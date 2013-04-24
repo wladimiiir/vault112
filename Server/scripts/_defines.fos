@@ -763,6 +763,7 @@
 #define VISIBILITY_FLAGS						( 836 ) // critters visibility (what critter sees and who sees the critter), see visibility flags below
 #define INCOGNITO								( 837 ) // >0 - critter in incognito mode (no name is visible for player)
 #define SPECIAL_ATTACK_FLAGS					( 838 ) // next attack performed will be this special attack
+#define DIGITAL_CREDIT							( 839 ) // current credit (e.g. for VR)
 
 
 #define PARAMS_COUNT                             ( 1000 )
