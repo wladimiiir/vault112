@@ -11,6 +11,7 @@
 /**
 * Export script
 */
+//import Critter@[] SpawnNpcs(uint npcSpawnId, Map& map) from "npc_spawn";
 Critter@[] SpawnNpcs(uint npcSpawnId, Map& map)
 {
 	NpcSpawn@ spawn = GetNpcSpawn(npcSpawnId);

@@ -7,24 +7,42 @@
 #include "npc_spawn_h.fos"
 #include "virtual_reality_dialog.fos"
 #include "wrappers.fos"
+#include "battleground_h.fos"
 
 #define	SIMULATION_TYPE_HUNT				( 0 )
 #define	SIMULATION_TYPE_TEAM_DEATHMATCH		( 1 )
 
 import Item@ FindHiddenContainer(Map& map) from "stdlib";
+import bool UpdateItems(Critter& npc) from "trader";
+import Battle@ AddHunt(Critter& creator, uint combatMode) from "battleground";
+import Battle@ AddTeamDeathmatch(Critter& creator, uint combatMode) from "battleground";
 
 /**
 * Init functions
 */
-void InitVRProvider(Critter& critter, bool firstTime)
+void InitAdmin(Critter& critter, bool firstTime)
 {
 	if(firstTime)
-		critter.StatBase[ST_DIALOG_ID] = DIALOG_vr_simulation;
+		critter.StatBase[ST_DIALOG_ID] = DIALOG_vr_administrator;
 		
-	critter.SetEvent(CRITTER_EVENT_BARTER, "_VRProviderBarter");
+	critter.SetEvent(CRITTER_EVENT_BARTER, "_VRAdministratorBarter");
 }
 
-bool _VRProviderBarter(Critter& npc, Critter& player, bool attach, uint barterCount)
+void InitTerminal(Item& item, bool)
+{
+	item.SetEvent(ITEM_EVENT_SKILL, "_TerminalSkill");
+}
+
+bool _TerminalSkill(Item& item, Critter& cr, int skill)
+{
+	if(skill != SKILL_PICK_ON_GROUND)
+		return false;
+	
+	RunDialog(cr, DIALOG_vr_simulation, item.HexX, item.HexY, true);
+	return true;
+}
+
+bool _VRAdministratorBarter(Critter& npc, Critter& player, bool attach, uint barterCount)
 {
 	#define	REAL_WORLD_ITEMS_PREFIX				("RW_")
 	#define	VIRTUAL_REALITY_ITEMS_PREFIX		("VR_")
@@ -229,6 +247,30 @@ class VRSimulation
 		
 	void Start()
 	{
+		Battle@ battle;
+		switch(Type)
+		{
+			case SIMULATION_TYPE_HUNT:
+				@battle = AddHunt(_Critter, CombatMode);
+				break;
+			case SIMULATION_TYPE_TEAM_DEATHMATCH:
+				@battle = AddTeamDeathmatch(_Critter, CombatMode);
+				break;
+		}
 		
+		if(!valid(battle))
+		{
+			_Critter.Say(SAY_NETMSG, "<error vr01> Cannot start simulation - battle creation failed");
+			return;
+		}
+
+		battle.SetLocation(LocationPid);
+		if(IsDurationAvailable())
+			battle.SetDuration(Duration);
+		if(IsSpawnAvailable() && valid(battle.GetMap()))
+			SpawnNpcs(Spawn, battle.GetMap());
+			
+		battle.Start();
 	}
 }
+

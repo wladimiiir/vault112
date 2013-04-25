@@ -2,8 +2,8 @@
 Version              4
 MaxHexX              174
 MaxHexY              180
-WorkHexX             83
-WorkHexY             90
+WorkHexX             108
+WorkHexY             108
 ScriptModule         map_vault112
 ScriptFunc           InitVaultMap
 NoLogOut             0
@@ -17968,11 +17968,15 @@ MapObjType           2
 ProtoId              2182
 MapX                 98
 MapY                 106
+ScriptName           virtual_reality
+FuncName             InitTerminal
 
 MapObjType           2
 ProtoId              2182
 MapX                 94
 MapY                 106
+ScriptName           virtual_reality
+FuncName             InitTerminal
 
 MapObjType           2
 ProtoId              2011
@@ -18263,11 +18267,15 @@ MapObjType           2
 ProtoId              2182
 MapX                 94
 MapY                 112
+ScriptName           virtual_reality
+FuncName             InitTerminal
 
 MapObjType           2
 ProtoId              2182
 MapX                 98
 MapY                 112
+ScriptName           virtual_reality
+FuncName             InitTerminal
 
 MapObjType           2
 ProtoId              2183
@@ -18353,41 +18361,57 @@ MapObjType           2
 ProtoId              2182
 MapX                 98
 MapY                 114
+ScriptName           virtual_reality
+FuncName             InitTerminal
 
 MapObjType           2
 ProtoId              2182
 MapX                 94
 MapY                 114
+ScriptName           virtual_reality
+FuncName             InitTerminal
 
 MapObjType           2
 ProtoId              2182
 MapX                 94
 MapY                 104
+ScriptName           virtual_reality
+FuncName             InitTerminal
 
 MapObjType           2
 ProtoId              2182
 MapX                 98
 MapY                 104
+ScriptName           virtual_reality
+FuncName             InitTerminal
 
 MapObjType           2
 ProtoId              2182
 MapX                 98
 MapY                 116
+ScriptName           virtual_reality
+FuncName             InitTerminal
 
 MapObjType           2
 ProtoId              2182
 MapX                 94
 MapY                 116
+ScriptName           virtual_reality
+FuncName             InitTerminal
 
 MapObjType           2
 ProtoId              2182
 MapX                 94
 MapY                 102
+ScriptName           virtual_reality
+FuncName             InitTerminal
 
 MapObjType           2
 ProtoId              2182
 MapX                 98
 MapY                 102
+ScriptName           virtual_reality
+FuncName             InitTerminal
 
 MapObjType           2
 ProtoId              2067
@@ -19678,5 +19702,74 @@ MapObjType           1
 ProtoId              467
 MapX                 73
 MapY                 99
+
+MapObjType           0
+ProtoId              522
+MapX                 91
+MapY                 96
+Dir                  3
+ScriptName           virtual_reality
+FuncName             InitAdmin
+Critter_Cond         1
+Critter_Anim1        0
+Critter_Anim2        0
+Critter_ParamIndex0  ST_DIALOG_ID
+Critter_ParamValue0  0
+Critter_ParamIndex1  ST_AI_ID
+Critter_ParamValue1  0
+Critter_ParamIndex2  ST_BAG_ID
+Critter_ParamValue2  0
+Critter_ParamIndex3  ST_TEAM_ID
+Critter_ParamValue3  0
+Critter_ParamIndex4  ST_NPC_ROLE
+Critter_ParamValue4  0
+Critter_ParamIndex5  ST_REPLICATION_TIME
+Critter_ParamValue5  0
+
+MapObjType           0
+ProtoId              522
+MapX                 99
+MapY                 121
+Dir                  5
+ScriptName           virtual_reality
+FuncName             InitAdmin
+Critter_Cond         1
+Critter_Anim1        0
+Critter_Anim2        0
+Critter_ParamIndex0  ST_DIALOG_ID
+Critter_ParamValue0  0
+Critter_ParamIndex1  ST_AI_ID
+Critter_ParamValue1  0
+Critter_ParamIndex2  ST_BAG_ID
+Critter_ParamValue2  0
+Critter_ParamIndex3  ST_TEAM_ID
+Critter_ParamValue3  0
+Critter_ParamIndex4  ST_NPC_ROLE
+Critter_ParamValue4  0
+Critter_ParamIndex5  ST_REPLICATION_TIME
+Critter_ParamValue5  0
+
+MapObjType           0
+ProtoId              522
+MapX                 113
+MapY                 98
+Dir                  2
+ScriptName           virtual_reality
+FuncName             InitAdmin
+Critter_Cond         1
+Critter_Anim1        0
+Critter_Anim2        0
+Critter_ParamIndex0  ST_DIALOG_ID
+Critter_ParamValue0  0
+Critter_ParamIndex1  ST_AI_ID
+Critter_ParamValue1  0
+Critter_ParamIndex2  ST_BAG_ID
+Critter_ParamValue2  0
+Critter_ParamIndex3  ST_TEAM_ID
+Critter_ParamValue3  0
+Critter_ParamIndex4  ST_NPC_ROLE
+Critter_ParamValue4  0
+Critter_ParamIndex5  ST_REPLICATION_TIME
+Critter_ParamValue5  0
 
 

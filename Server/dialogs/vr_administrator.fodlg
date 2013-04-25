@@ -1,0 +1,78 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 1 #
+2 1010 D _var p vr_administrator = 0 #
+3 1020 D _var p vr_administrator ! 0 @
+2 2000 None 0 #
+4 2010 R _var p vr_administrator = 1 #
+0 2020 @
+3 3000 None 0 #
+65506 3010 #
+5 3020 #
+0 3030 @
+4 4000 None 0 #
+5 4010 #
+0 4020 #
+65506 4030 @
+5 5000 None 0 #
+6 5010 #
+7 5020 #
+0 5030 #
+8 5040 #
+9 5050 @
+6 6000 None 0 #
+5 6010 #
+0 6020 @
+7 7000 None 0 #
+5 7010 #
+0 7020 @
+8 8000 None 0 #
+5 8010 #
+0 8020 @
+9 9000 None 0 #
+5 9010 #
+0 9020 &
+
+[engl]
+{100}{}{Administrator}
+{200}{}{Administrator}
+{210}{}{Administrator for Tranquility Simulation Program. He keeps track of everything that happens in simulations.}
+{1000}{}{Predialogue installations}
+{1010}{}{first time}
+{1020}{}{already know}
+{2000}{}{Hi, you are our newest guinea pig, heh? Just kidding, everything is well tested and completelly safe, so you don' t have to worry. As you are new, let me tell you some basic information.}
+{2010}{}{[listen]}
+{2020}{}{[walk away]}
+{3000}{}{Hey there again. So, what can I do for you this time?@@What's up? Need something?}
+{3010}{}{I would like to buy some equipment for simulation. [simulation barter]}
+{3020}{}{I would like to ask you something.}
+{3030}{}{Actually, nothing. [leave]}
+{4000}{}{OK, those big tanks you can see around are called Tranquility Lounges and basically you are put into them to perceive Virtual Reality. To enter one of those lounges you have to setup your simulation in one of the terminals in the middle. Every entry will cost you some of your digital credit. What else?... Oh yeah, you can also buy equipment for your simulation with me. That will cost you some more digital credit, though. Any questions?}
+{4010}{}{Yes, I have few questions.}
+{4020}{}{No, not really. I am going to try it right away. [leave]}
+{4030}{}{I would like to buy some stuff. [simulation barter]}
+{5000}{}{Yeah, feel free to ask.@@What would you like to know?}
+{5010}{}{What happens with the stuff I will aquire during the simulation?}
+{5020}{}{Is it possible to meet my friends in a simulation?}
+{5030}{}{No further questions, actually. [leave]}
+{5040}{}{What happens when I die in simulation?}
+{5050}{}{What about drugs? Can I use them in simulation?}
+{6000}{}{Ah, that's a good one. All the stuff you gain in the simulation will stay in the system, meaning that you can use them in your next simulation.}
+{6010}{}{Let me ask you something else.}
+{6020}{}{Thanks. That would be all. [leave]}
+{7000}{}{Yes, it is possible. When you create a simulation, others will have chance to join your simulation if you want.}
+{7010}{}{Let me ask you something else.}
+{7020}{}{Thanks. That would be all. [leave]}
+{8000}{}{What happens after you die depends on the type of simulation. When you have time limited simulation, like team deathmatch is, you will respawn every time you die, until the time is up.}
+{8010}{}{Let me ask you something else.}
+{8020}{}{Thanks. That would be all. [leave]}
+{9000}{}{It is very interesting with the drugs. In our research we have found out that using the drug in real world affects the Virtual Reality perception, but what is more interesting is, that when you use drugs in simulation, the effect will last even if you go out of it. It looks like a brain cannot differentiate between the simulation and real world and it is producing the chemicals by itself.}
+{9010}{}{Let me ask you something else.}
+{9020}{}{Thanks. That would be all. [leave]}
+

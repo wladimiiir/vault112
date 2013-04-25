@@ -167,6 +167,11 @@
 #define NPC_PID_RaiderMale					(504)
 #define NPC_PID_RaiderLongHair				(505)
 #define NPC_PID_RaiderBald					(506)
+//... TODO ...
+#define NPC_PID_Gyro						(519)
+#define NPC_PID_JacketGuard					(520)
+#define NPC_PID_JacketHairedGuard			(521)
+#define NPC_PID_VRAdministrator				(522)
 
 
 /*const uint16[] Pids_AllNpc={

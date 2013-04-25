@@ -14,6 +14,9 @@ import void SetDeterioration( Item& item, int deteriorationProcent ) from "repai
 #define TRADER_ID_JunktownTrader		     ( 60 ) //TODO: trader ids
 #define TRADER_ID_JunktownDoctor		     ( 88 )
 
+/**
+* Export functions
+*/
 //import bool TraderAccepts(Critter& npc, Critter& player, Item@[]& saleItems, uint[]& saleItemsCount, uint[]& saleItemsCost, Item@[]& buyItems, uint[]& buyItemsCount, uint[]& buyItemsCost) from "trader";
 bool TraderAccepts(Critter& npc, Critter& player, Item@[]& saleItems, uint[]& saleItemsCount, uint[]& saleItemsCost, Item@[]& buyItems, uint[]& buyItemsCount, uint[]& buyItemsCost)
 {
@@ -99,6 +102,17 @@ void InitTrader(Critter& npc)
 		if(nextCall > 0)
 			npc.AddTimeEvent( "cte_UpdateTraderItems", nextCall, CTE_TRADER );
 	}
+}
+
+//import bool UpdateItems(Critter& npc) from "trader";
+bool UpdateItems(Critter& npc)
+{
+	Trader@ trader = GetTrader(npc);
+    if(!valid(trader))
+		return false;
+		
+	trader.UpdateItems(npc);
+	return true;
 }
 
 /**
@@ -200,7 +214,14 @@ class Trader
 		{
 			Item@[] items;
 		    trader.GetItems(SLOT_INV, items);
-		    ::DeleteItems(items);
+		    for (uint i = 0; i < items.length(); i++)
+		    {
+				//keeping hidden items
+				if(_ItemIsHidden(items[i]))
+					continue;
+					
+				DeleteItem(items[i]);
+			}
 		}
 		
 		Items.AddItems(trader);

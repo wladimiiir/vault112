@@ -1,0 +1,59 @@
+/**
+* Author: wladimiiir
+*/
+
+void dlg_InitSimulation(Critter& player, Critter@ npc, string@ lexems)
+{
+	if(!IS_DIALOG_SAY_MODE(lexems) || IS_DIALOG_END(lexems))
+		return;
+		
+	VRSimulation simulation(player);
+		
+	lexems += "$type " + simulation.GetTypeInfo();
+	lexems += "$location " + simulation.GetLocationInfo();
+	lexems += "$combatMode " + simulation.GetCombatModeInfo();
+	lexems += "$duration " + simulation.GetDurationInfo();
+	lexems += "$spawn " + simulation.GetSpawnInfo();
+}
+
+bool d_DurationAvailable(Critter& player, Critter@ npc)
+{
+	VRSimulation simulation(player);
+	return simulation.IsDurationAvailable();
+}
+
+bool d_SpawnAvailable(Critter& player, Critter@ npc)
+{
+	VRSimulation simulation(player);
+	return simulation.IsSpawnAvailable();
+}
+
+void r_SetType(Critter& player, Critter@ npc, int simulationType)
+{
+	VRSimulation simulation(player);
+	simulation.SetType(simulationType);
+}
+
+void r_SetLocation(Critter& player, Critter@ npc, int locationPid)
+{
+	VRSimulation simulation(player);
+	simulation.SetLocation(locationPid);
+}
+
+void r_SetCombatMode(Critter& player, Critter@ npc, int combatMode)
+{
+	VRSimulation simulation(player);
+	simulation.SetCombatMode(combatMode);
+}
+
+void r_SetDuration(Critter& player, Critter@ npc, int minutes)
+{
+	VRSimulation simulation(player);
+	simulation.SetDuration(minutes);
+}
+
+void r_SetSpawn(Critter& player, Critter@ npc, int spawn)
+{
+	VRSimulation simulation(player);
+	simulation.SetSpawn(spawn);
+}
