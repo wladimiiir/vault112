@@ -11,3 +11,42 @@
 #define INFO_TYPE_TEAM_PLAYERS	(0)
 #define INFO_TYPE_TEAM_SCORE	(1)
 #define INFO_TYPE_TURN_BASED	(2)
+
+interface Battle
+{
+	void AddBattleListener(BattleListener& listener);
+	
+	//uint GetTeamScore(Team& team);
+	void SetCost(uint cost);
+	void SetDuration(uint duration);
+	void SetLocation(uint location);
+	
+	void RefreshTurnBased(Map& map);
+	void EndTurnBased(Map& map);
+		
+	bool CanJoin();
+	void ChangeTeam(Critter& player, uint teamIndex);
+	void Join(Critter& critter);
+	bool IsCreator(Critter& player);
+	bool IsPlayer(Critter& player);
+	bool IsMap(Map& map);
+	Map@ GetMap();
+	string GetCreatorName();
+	
+	void Start();
+	void End(Critter& creator);
+	void Cancel(Critter& critter);
+	
+	void RefreshClients();
+	void RefreshClient(Critter& critter);
+	
+	void PlayerKilled(Critter& killed, Critter@ killer);
+	void Respawn(Critter& critter);
+}
+
+interface BattleListener
+{
+	void BattleStarted(Battle& battle);
+	void BattleFinished(Battle& battle);
+	void BattleCancelled(Battle& battle);
+}
