@@ -28,17 +28,12 @@ void InitAdmin(Critter& critter, bool firstTime)
 	critter.SetEvent(CRITTER_EVENT_BARTER, "_VRAdministratorBarter");
 }
 
-void InitTerminal(Item& item, bool)
-{
-	item.SetEvent(ITEM_EVENT_SKILL, "_TerminalSkill");
-}
-
-bool _TerminalSkill(Item& item, Critter& cr, int skill)
+bool InitTerminal(Critter& critter, Scenery& scenery, int skill, Item@ item)
 {
 	if(skill != SKILL_PICK_ON_GROUND)
 		return false;
 	
-	RunDialog(cr, DIALOG_vr_simulation, item.HexX, item.HexY, true);
+	RunDialog(critter, DIALOG_vr_simulation, item.HexX, item.HexY, true);
 	return true;
 }
 

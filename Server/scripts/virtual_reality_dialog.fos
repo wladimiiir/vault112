@@ -57,3 +57,9 @@ void r_SetSpawn(Critter& player, Critter@ npc, int spawn)
 	VRSimulation simulation(player);
 	simulation.SetSpawn(spawn);
 }
+
+void r_StartSimulation(Critter& player, Critter@ npc)
+{
+	VRSimulation simulation(player);
+	simulation.Start();
+}

@@ -12,7 +12,8 @@
 #define INFO_TYPE_TEAM_SCORE	(1)
 #define INFO_TYPE_TURN_BASED	(2)
 
-interface Battle
+#ifdef __SERVER
+shared interface Battle
 {
 	void AddBattleListener(BattleListener& listener);
 	
@@ -44,9 +45,10 @@ interface Battle
 	void Respawn(Critter& critter);
 }
 
-interface BattleListener
+shared interface BattleListener
 {
 	void BattleStarted(Battle& battle);
 	void BattleFinished(Battle& battle);
 	void BattleCancelled(Battle& battle);
 }
+#endif
