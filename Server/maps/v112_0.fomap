@@ -2,12 +2,12 @@
 Version              4
 MaxHexX              159
 MaxHexY              150
-WorkHexX             66
-WorkHexY             39
+WorkHexX             70
+WorkHexY             51
 ScriptModule         map_vault112
 ScriptFunc           InitVaultMap
 NoLogOut             0
-Time                 0
+Time                 1140
 DayTime              300  600  1140 1380
 DayColor0            18  18  53 
 DayColor1            128 128 128
@@ -4217,13 +4217,6 @@ MapX                 59
 MapY                 35
 
 MapObjType           2
-ProtoId              2141
-MapX                 65
-MapY                 35
-LightDistance        5
-LightIntensity       50
-
-MapObjType           2
 ProtoId              5622
 MapX                 70
 MapY                 35
@@ -5284,12 +5277,6 @@ Dir                  4
 
 MapObjType           2
 ProtoId              5622
-MapX                 68
-MapY                 47
-Dir                  4
-
-MapObjType           2
-ProtoId              5622
 MapX                 78
 MapY                 47
 Dir                  4
@@ -5367,12 +5354,6 @@ MapObjType           2
 ProtoId              5227
 MapX                 60
 MapY                 48
-
-MapObjType           2
-ProtoId              5622
-MapX                 67
-MapY                 48
-Dir                  4
 
 MapObjType           2
 ProtoId              5622
@@ -5471,16 +5452,6 @@ ProtoId              5621
 MapX                 60
 MapY                 49
 Dir                  4
-
-MapObjType           2
-ProtoId              2079
-MapX                 67
-MapY                 49
-
-MapObjType           2
-ProtoId              2078
-MapX                 69
-MapY                 49
 
 MapObjType           2
 ProtoId              5622
@@ -5619,17 +5590,6 @@ MapX                 61
 MapY                 50
 
 MapObjType           2
-ProtoId              5622
-MapX                 67
-MapY                 50
-Dir                  4
-
-MapObjType           2
-ProtoId              2075
-MapX                 68
-MapY                 50
-
-MapObjType           2
 ProtoId              5239
 MapX                 72
 MapY                 50
@@ -5698,12 +5658,6 @@ MapX                 61
 MapY                 51
 
 MapObjType           2
-ProtoId              5622
-MapX                 68
-MapY                 51
-Dir                  4
-
-MapObjType           2
 ProtoId              5621
 MapX                 72
 MapY                 51
@@ -5764,11 +5718,6 @@ MapX                 61
 MapY                 52
 
 MapObjType           2
-ProtoId              2075
-MapX                 69
-MapY                 52
-
-MapObjType           2
 ProtoId              5231
 MapX                 72
 MapY                 52
@@ -5820,11 +5769,6 @@ ProtoId              5622
 MapX                 62
 MapY                 53
 Dir                  4
-
-MapObjType           2
-ProtoId              2069
-MapX                 63
-MapY                 53
 
 MapObjType           2
 ProtoId              5622
@@ -11080,11 +11024,6 @@ MapY                 53
 Dir                  4
 
 MapObjType           2
-ProtoId              2067
-MapX                 64
-MapY                 52
-
-MapObjType           2
 ProtoId              3853
 MapX                 126
 MapY                 79
@@ -11946,27 +11885,6 @@ ProtoId              116
 MapX                 85
 MapY                 34
 Dir                  4
-Critter_Cond         1
-Critter_Anim1        0
-Critter_Anim2        0
-Critter_ParamIndex0  ST_DIALOG_ID
-Critter_ParamValue0  5000
-Critter_ParamIndex1  ST_AI_ID
-Critter_ParamValue1  0
-Critter_ParamIndex2  ST_BAG_ID
-Critter_ParamValue2  0
-Critter_ParamIndex3  ST_TEAM_ID
-Critter_ParamValue3  30
-Critter_ParamIndex4  ST_NPC_ROLE
-Critter_ParamValue4  0
-Critter_ParamIndex5  ST_REPLICATION_TIME
-Critter_ParamValue5  0
-
-MapObjType           0
-ProtoId              116
-MapX                 84
-MapY                 51
-Dir                  5
 Critter_Cond         1
 Critter_Anim1        0
 Critter_Anim2        0
@@ -12919,5 +12837,12 @@ MapObjType           2
 ProtoId              2055
 MapX                 82
 MapY                 37
+
+MapObjType           2
+ProtoId              2141
+MapX                 37
+MapY                 71
+LightDistance        10
+LightIntensity       -20
 
 
