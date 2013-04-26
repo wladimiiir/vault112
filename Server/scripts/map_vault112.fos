@@ -233,3 +233,14 @@ void InitPatrol(Critter& critter, bool firstTime)
 	actionManager.Start(critter, action);
 }
 
+void InitChuck(Critter& critter, bool firstTime)
+{
+	if(firstTime)
+	{
+		critter.StatBase[ST_AI_ID] = AIPACKET_GENERAL_TOWN_GUARDS;
+		critter.StatBase[ST_TEAM_ID] = TEAM_Vault112;
+		critter.StatBase[ST_DIALOG_ID] = DIALOG_chuck;
+		critter.ModeBase[MODE_NO_BARTER] = 0;
+	}
+}
+

@@ -551,8 +551,8 @@
 {5211}{}{Guard}
 {5220}{}{Simulation administrator}
 {5221}{}{Simulation administrator.}
-{5230}{}{Henrietta}
-{5231}{}{Skin of this animal looks like one big callus.}
+{5230}{}{Chuck}
+{5231}{}{Chuck}
 {5240}{}{Android}
 {5250}{}{Tim Cain}
 {5260}{}{Carlos Jackal}

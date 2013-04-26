@@ -13,6 +13,7 @@
 #define DIALOG_gyro							( 504 )
 #define DIALOG_vr_simulation				( 505 )
 #define DIALOG_vr_administrator				( 506 )
+#define DIALOG_chuck						( 507 )
 
 #define DIALOG_battleground					( 1000 )
 
