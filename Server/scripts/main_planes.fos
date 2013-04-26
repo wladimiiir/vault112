@@ -22,9 +22,6 @@ import void CombatAttack(Critter& cr, Critter& target, ProtoItem& weapon, uint8 
 // REASON_RUN_AWAY
 bool npc_plane_begin( Critter& npc, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem )
 {
-	if(plane.Type == AI_PLANE_ATTACK)
-		Log("Begin attack plane: "+reason +", minHp: " +plane.Attack_MinHp);
-		
 	if(reason == REASON_FOUND_IN_ENEMY_STACK && plane.Type == AI_PLANE_ATTACK)
 	{
 		plane.Run = __RunOnCombat; //always check run when attacking someone
@@ -53,8 +50,8 @@ bool npc_plane_begin( Critter& npc, NpcPlane& plane, int reason, Critter@ someCr
 // REASON_NO_UNARMED
 bool npc_plane_end( Critter& npc, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem )
 {
-	if(reason != REASON_SUCCESS)
-		Log("npc_plane_end: reason="+reason+", type="+plane.Type);
+	//~ if(reason != REASON_SUCCESS)
+		//~ Log("npc_plane_end: reason="+reason+", type="+plane.Type);
     if( reason == REASON_CANT_WALK && npc.IsNoPlanes() )
         npc.Wait( Random( 1000, 2000 ) );
     else if( reason == REASON_HEX_BUSY || reason == REASON_HEX_BUSY_RING || reason == REASON_POSITION_NOT_FOUND )

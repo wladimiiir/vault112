@@ -177,6 +177,8 @@ void SetBattleground(Critter& cr, int critterId, int battleground, int)
 //import Battle@ AddHunt(Critter& creator, uint combatMode) from "battleground";
 Battle@ AddHunt(Critter& creator, uint combatMode)
 {
+	DeleteBattle(creator);
+	
 	Hunt hunt(creator, combatMode);
 	Battles.insertLast(hunt);
 	return hunt;
@@ -185,6 +187,8 @@ Battle@ AddHunt(Critter& creator, uint combatMode)
 //import Battle@ AddTeamDeathmatch(Critter& creator, uint combatMode) from "battleground";
 Battle@ AddTeamDeathmatch(Critter& creator, uint combatMode)
 {
+	DeleteBattle(creator);
+	
 	TeamDeathmatch teamDeathmatch(creator, combatMode);
 	Battles.insertLast(teamDeathmatch);
 	return teamDeathmatch;
@@ -221,9 +225,9 @@ void TurnBasedEnd(Map& map)
 }
 
 /**
-* Map functions
+* Init functions
 */
-void _SmallTownInit(Map& map, bool)
+void InitMap(Map& map, bool)
 {
 	map.SetEvent(MAP_EVENT_CRITTER_DEAD, "PlayerKilled");
 	//~ map.SetEvent(MAP_EVENT_TURN_BASED_BEGIN, "_TurnBasedBegin"); //todo: some bug causing server to crash
@@ -241,7 +245,6 @@ void PlayerKilled(Map& map, Critter& killed, Critter@ killer)
 
 void _TurnBasedProcess(Map& map, Critter& critter, bool beginTurn)
 {
-	Log("turn based process");
 	Battle@ battle = GetBattle(critter);
 	if(!valid(battle))
 		return;
@@ -263,21 +266,25 @@ class DefaultBattle : Battle
 	private uint Creator;
 	private uint16 CombatMode;
 	private int Duration;
+	private int RespawnCount;
 	private Team@[] Teams;
 	private uint LocationId;
 	private uint Cost;
 	private uint StartTime;
 	private uint EndTime;
+	private uint EndTimeEventId;
 	
 	DefaultBattle(uint creator, uint16 combatMode)
 	{
 		Creator = creator;
 		CombatMode = combatMode;
 		Duration = -1;
+		RespawnCount = -1;
 		LocationId = 0;
 		Cost = 0;
 		StartTime = 0;
 		EndTime = 0;
+		EndTimeEventId = 0;
 	}
 	
 	void AddBattleListener(BattleListener& listener)
@@ -308,7 +315,7 @@ class DefaultBattle : Battle
 	
 	void RefreshTurnBased(Map& map)
 	{
-		Log("rounds: "+map.TurnBasedRound);
+		//~ Log("rounds: "+map.TurnBasedRound);
 		if(Duration != -1 && Duration <= int(map.TurnBasedRound))
 		{
 			Critter@ creator = GetCritter(Creator);
@@ -321,7 +328,7 @@ class DefaultBattle : Battle
 	
 	void EndTurnBased(Map& map)
 	{
-		Log("end rounds: "+map.TurnBasedRound);
+		//~ Log("end rounds: "+map.TurnBasedRound);
 		if(Duration != -1)
 			Duration -= MAX(Duration - map.TurnBasedRound, 0);
 	}
@@ -341,6 +348,12 @@ class DefaultBattle : Battle
 		Location@ loc = GetLocation(LocationId);
 		if(!valid(loc))
 			return;
+			
+		Map@[] maps;
+		loc.GetMaps(maps);
+		for (uint i = 0; i < maps.length(); i++)
+			maps[i].SetScript("InitMap");
+		
 		loc.AutoGarbage = false;
 	}
 	
@@ -392,7 +405,7 @@ class DefaultBattle : Battle
 		if(CombatMode == COMBAT_MODE_REAL_TIME && Duration != -1)
 		{
 			EndTime = StartTime + Duration;
-			CreateTimeEvent(EndTime, "e_EndBattle", Creator, false);
+			EndTimeEventId = CreateTimeEvent(EndTime, "e_EndBattle", Creator, false);
 		}
 		else
 		{
@@ -599,11 +612,7 @@ class DefaultBattle : Battle
 	{
 		Player@ killedPlayer = GetPlayer(killed);
 		if(valid(killedPlayer))
-		{
 			killedPlayer.Deaths++;
-			uint[] values = {killed.Id};
-			CreateTimeEvent(__FullSecond + BATTLE_RESPAWN_WAIT, "e_Respawn", values, false);
-		}
 			
 		Player@ killerPlayer = valid(killer) ? GetPlayer(killer) : null;
 		if(valid(killerPlayer))
@@ -621,6 +630,20 @@ class DefaultBattle : Battle
 					killerPlayer.Kills++;
 					
 		}
+		
+		//respawning or ending it
+		if(valid(killedPlayer))
+			if(RespawnCount == -1 || RespawnCount > 0)
+			{
+				uint[] values = {killed.Id};
+				CreateTimeEvent(__FullSecond + BATTLE_RESPAWN_WAIT, "e_Respawn", values, false);
+				if(RespawnCount != -1)
+					RespawnCount--;
+			}
+			else if(IsCreator(killed))
+				End(killed); //ending the battle when creator dies
+			else
+				killedPlayer.End(); //killed player is kicked out from battle
 		
 		RefreshClients();
 	}
@@ -863,10 +886,11 @@ class Player
 			GetCritter().TimeoutBase[TO_REPLICATION] = 0;
 			GetCritter().ToLife();
 			GetCritter().StatBase[ST_CURRENT_HP] = Critter.Stat[ST_MAX_LIFE];
+			
 			if(slotHand1Items.length() > 0)
 				_CritMoveItem(GetCritter(), slotHand1Items[0], SLOT_HAND1);
 			if(slotHand2Items.length() > 0)
-				GetCritter().MoveItem(slotHand2Items[0].Id, slotHand2Items[0].GetCount(), SLOT_HAND2);
+				_CritMoveItem(GetCritter(), slotHand2Items[0], SLOT_HAND2);
 		}
 		GetCritter().TransitToMap(map.Id, entireNum);
 	}

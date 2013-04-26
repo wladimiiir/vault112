@@ -4,16 +4,16 @@
 
 void dlg_InitSimulation(Critter& player, Critter@ npc, string@ lexems)
 {
-	if(!IS_DIALOG_SAY_MODE(lexems) || IS_DIALOG_END(lexems))
+	if(!IS_DIALOG_GENERATED(lexems))
 		return;
 		
 	VRSimulation simulation(player);
 		
-	lexems += "$type " + simulation.GetTypeInfo();
+	lexems += "$type" + simulation.GetTypeInfo();
 	lexems += "$location " + simulation.GetLocationInfo();
-	lexems += "$combatMode " + simulation.GetCombatModeInfo();
-	lexems += "$duration " + simulation.GetDurationInfo();
-	lexems += "$spawn " + simulation.GetSpawnInfo();
+	lexems += "$combatMode" + simulation.GetCombatModeInfo();
+	lexems += "$duration" + simulation.GetDurationInfo();
+	lexems += "$spawn" + simulation.GetSpawnInfo();
 }
 
 bool d_DurationAvailable(Critter& player, Critter@ npc)

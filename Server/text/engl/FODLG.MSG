@@ -549,8 +549,8 @@
 {5201}{}{Guard}
 {5210}{}{Guard}
 {5211}{}{Guard}
-{5220}{}{Vault inhabitant}
-{5221}{}{Vault inhabitant.}
+{5220}{}{Simulation administrator}
+{5221}{}{Simulation administrator.}
 {5230}{}{Henrietta}
 {5231}{}{Skin of this animal looks like one big callus.}
 {5240}{}{Android}

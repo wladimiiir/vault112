@@ -23,7 +23,10 @@ import Battle@ AddTeamDeathmatch(Critter& creator, uint combatMode) from "battle
 void InitAdmin(Critter& critter, bool firstTime)
 {
 	if(firstTime)
+	{
 		critter.StatBase[ST_DIALOG_ID] = DIALOG_vr_administrator;
+		critter.ModeBase[MODE_NO_BARTER] = 0;
+	}
 		
 	critter.SetEvent(CRITTER_EVENT_BARTER, "_VRAdministratorBarter");
 }
@@ -33,7 +36,7 @@ bool InitTerminal(Critter& critter, Scenery& scenery, int skill, Item@ item)
 	if(skill != SKILL_PICK_ON_GROUND)
 		return false;
 	
-	RunDialog(critter, DIALOG_vr_simulation, item.HexX, item.HexY, true);
+	RunDialog(critter, DIALOG_vr_simulation, scenery.HexX, scenery.HexY, true);
 	return true;
 }
 
@@ -52,6 +55,9 @@ bool _VRAdministratorBarter(Critter& npc, Critter& player, bool attach, uint bar
 	
 	if(attach)
 	{
+		//adding items to admin
+		UpdateItems(npc);
+		
 		//holding current real world items
 		Item@[] items;
 		player.GetItems(SLOT_INV, items);
@@ -265,7 +271,7 @@ class VRSimulation
 		if(IsSpawnAvailable() && valid(battle.GetMap()))
 			SpawnNpcs(Spawn, battle.GetMap());
 			
-		battle.Start();
+		battle.Join(_Critter);
 	}
 }
 
