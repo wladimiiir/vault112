@@ -30,6 +30,7 @@ IGUIElementTextOpt@ ServerMessageText;
 IGUIElementTextOpt@ WMServerMessageText;
 uint QuestMessageHideTime = 0;
 uint ServerMessageHideTime = 0;
+
 //import void ShowQuestMessage(string@ questName, string@ questTask) from "client_screen_messages";
 void ShowQuestMessage(string@ questName, string@ questTask)
 {
@@ -47,9 +48,8 @@ void ShowServerMessage( int time, int , int, string@ message, int[] @ )
 	ServerMessageText.AbsolutePosition(10 ,10);
 	WMServerMessageText.AbsolutePosition(10 ,10);
 	ServerMessageHideTime = __FullSecond + SERVER_MESSAGE_SHOW_TIME;
-	
-	
 }
+
 //import void InitMessagesScreenPanel() from "client_screen_messages";
 void InitMessagesScreenPanel()
 {
@@ -83,9 +83,6 @@ void InitMessagesScreenPanel()
       .CallbackDraw(serverMessageTextDrawCallback); 
   
 }
-
-
-
 
 class QuestNameDrawCallback : IGUIElementCallbackDraw
 {
@@ -146,7 +143,6 @@ class QuestTaskDrawCallback : IGUIElementCallbackDraw
 		}
 	}
 }
-
 
 class ServerMessageTextDrawCallback : IGUIElementCallbackDraw
 {

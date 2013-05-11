@@ -378,7 +378,7 @@ void render_map()
 // Return true to disable engine events.
 bool mouse_down( int click )
 {
-	if(!CtrlDown && AltDown && !ShiftDown)
+	if(CtrlDown && !AltDown && ShiftDown)
 		if(ShowAdminPanel())
 			return true;
 			

@@ -62,15 +62,22 @@ class AutoAimDrawer : IGUIElementCallbackDraw
 			return;
 		
 		ItemCl@ item = chosen.GetItem(0, SLOT_HAND1);
+		uint8 mode = 0;
 		if(valid(item))
 		{
-			int use = _WeaponModeUse(item.Mode);
-			int aim = _WeaponModeAim(item.Mode);
-			if(use != 0 || (aim != HIT_LOCATION_NONE && aim != HIT_LOCATION_UNCALLED))
-			{
-				AutoAimText.setText("");
-				return;
-			}
+			mode = item.Mode;
+		}
+		else //unarmed
+		{
+			chosen.GetSlotProto(SLOT_HAND1, mode);
+		}
+		
+		int use = _WeaponModeUse(mode);
+		int aim = _WeaponModeAim(mode);
+		if(use != 0 || (aim != HIT_LOCATION_NONE && aim != HIT_LOCATION_UNCALLED))
+		{
+			AutoAimText.setText("");
+			return;
 		}
 		
 		

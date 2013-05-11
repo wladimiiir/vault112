@@ -2662,6 +2662,7 @@ void GUI_Render( bool mainScreen )
             GUIScreen@ screen = ActiveScreens[ 0 ];
             DrawHardcodedScreen( screen.Index );
             GetHardcodedScreenPos( screen.Index, screen.PosX, screen.PosY );
+            screen.Draw();
         }
     }
     else

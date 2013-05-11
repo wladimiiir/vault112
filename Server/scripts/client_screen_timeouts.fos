@@ -13,6 +13,7 @@ bool Enabled = true;
 void ToggleTimeoutScreen()
 {
 	Enabled = !Enabled;
+	Message("Enabled: "+Enabled);
 }
 
 //import void InitTimeoutScreenPanel() from "client_screen_timeouts";
