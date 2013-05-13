@@ -66,7 +66,7 @@ import IGUIElementEditBoxOpt@ GUI_GetElementEditBoxOptions() from "client_gui";
 shared interface IGUIScreenCallbackShow { void OnShow(int p0, int p1, int p2); }
 shared interface IGUIScreenCallbackHide { void OnHide(int p0, int p1, int p2); }
 shared interface IGUIScreenCallbackMove { void OnMove(int posX, int posY); }
-shared interface IGUIScreenCallbackKeyPress { bool OnKeyPress(uint8 key); }
+shared interface IGUIScreenCallbackKeyPress { bool OnKeyPress( uint8 key, string& keyText ); }
 
 shared interface IGUIScreenOpt
 {
@@ -95,7 +95,7 @@ shared interface IGUIScreenOpt
 shared interface IGUIElementCallbackInit       { void OnInit(int id); }
 shared interface IGUIElementCallbackDraw       { void OnDraw(int id); }
 shared interface IGUIElementCallbackMouseClick { void OnMouseClick(int id, int click); }
-shared interface IGUIElementCallbackKeyPress   { bool OnKeyPress(uint8 key, uint8 letter); }
+shared interface IGUIElementCallbackKeyPress   { bool OnKeyPress( uint8 key, string& keyText ); }
 shared interface IGUIElementCallbackMouseMove  { void OnMouseMove(int x, int y); }
 shared interface IGUIElementCallbackValueChange  { void OnValueChange(int newValue); }
 shared interface IGUIElementCallbackStateChange { void OnStateChange(bool state); }
@@ -144,7 +144,7 @@ shared interface IGUIElementOpt
 	int getPosY();
 	int getHeight();
 	int getWidth();
-	bool KeyPress(uint8 key);
+	bool KeyPress(uint8 key, string& keyText);
 }
 
 

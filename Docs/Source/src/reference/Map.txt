@@ -624,15 +624,15 @@ public:
      */
     //@{
 
-    /** \~russian Проверяет, можно ли поставить на данный гексагон карты указанную машину.
+    /** \~russian Проверяет, можно ли поставить на данный гексагон карты указанный предмет.
      *
      * @param  hexX, hexY  Предполагаемые координаты машины.
-     * @param  protoCar    Номер прототипа машины.
+     * @param  protoCar    Номер прототипа предмета.
      *
-     * @return @c true – если место подходит для парковки машины;
+     * @return @c true – если место подходит для установки предмета;
      *         @c false – если место не подходит.
      */
-    bool CheckPlaceForCar(uint16 hexX, uint16 hexY, uint16 protoCar);
+    bool CheckPlaceForItem(uint16 hexX, uint16 hexY, uint16 protoCar);
 
     /** \~russian Возвращает количество специально обозначенных гексагонов.
      *

@@ -19,8 +19,8 @@
  *
  * \section reference_sec Справочник
  *
- * Актуальность документации: ревизия №<a href="http://www2.xp-dev.com/sc/change/94227/148" target="_blank">148</a> SDK.<br />
- * Об ошибках в документации сообщайте в этой теме: <a href="http://www.fonline.ru/forum/showthread.php?t=19697" target="_blank">http://www.fonline.ru/forum/showthread.php?t=19697</a><br />
+ * Актуальность документации: ревизия №<a href="https://xp-dev.com/sc/change/76003/396" target="_blank">396</a> SDK.<br />
+ * Об ошибках в документации сообщайте в этой теме: <a href="http://www.fonline.ru/forum/threads/2991/" target="_blank">http://www.fonline.ru/forum/threads/2991/</a><br />
  *
  * \section other_formats Другие форматы:
  * - <a href="./FOnline.chm.zip">Microsoft Compiled HTML Help (.chm)</a>

@@ -248,13 +248,13 @@ class TextboxChannel : IGUIElementCallbackInit, IGUIElementCallbackKeyPress
 		@Options=GUI_GetElementEditBoxOptions();
 	}
 
-	bool OnKeyPress(uint8 key, uint8 letter)
+	bool OnKeyPress(uint8 key, string& keyText)
 	{
 		string@ tekst=Options.getText();
 
 		if((Instance.RadioFlags&RADIO_DISABLE_SHIFT_CHANNEL)==0)
 		{
-			if(tekst.length()>0 && tekst[tekst.length()-1]=='\n') tekst.resize(tekst.length()-1);
+			if(tekst.length()>0 && tekst[tekst.length()-1]=="\n") tekst.rawResize(tekst.length()-1);
 
 			int channel=0;
 			StrToInt(tekst,channel);

@@ -165,8 +165,8 @@ uint TryCreateCar(Critter& player, uint16 protoCar)
 	
 	// Настраиваем параметры автомобиля
 	car.LockerId=keyId;
-	car.CarFuel=car.Proto.Car_FuelTank;
-	car.CarDeteoration=0;
+	car.Charge=car.Proto.Car_FuelTank;
+	car.Deterioration=0;
 	car.Update();
 
 	Item@ bag=car.CarGetBag(0);

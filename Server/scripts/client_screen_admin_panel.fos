@@ -104,7 +104,7 @@ class RunScriptAction : IGUIElementCallbackMouseClick
 			Values.insertLast(values[i]);
 			
 		for (uint i = 0; i < Script.length(); i++)
-			if(Script[i] == '$')
+			if(Script[i] == "$")
 			{
 				int value = 0;
 				if(StrToInt(substring(Script, i + 1, Script.length() - i - 1), value))

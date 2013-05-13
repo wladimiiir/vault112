@@ -34,8 +34,8 @@ void InitNameColorizing() // Export
 
                 // Change & to space
                 for( uint i = 0, j = colorName.length(); i < j; i++ )
-                    if( colorName[ i ] == '&' )
-                        colorName[ i ] = ' ';
+                    if( colorName[ i ] == "&" )
+                        colorName[ i ] = " ";
 
                 // Store
                 colors.set( colorName, uint( COLOR_RGB( r, g, b ) ) );
@@ -94,14 +94,14 @@ bool CompareName( string& crName, string& nameStr )
     uint rLen = nameStr.length();
     while( r < rLen && l < lLen )
     {
-        uint8 lC = crName[ l ];
-        uint8 rC = nameStr[ r ];
+        string@ lC = crName[ l ];
+        string@ rC = nameStr[ r ];
 
-        if( rC == '*' )
+        if( rC == "*" )
         {
             // Skip some letters
             for( r++; r < rLen; r++ )
-                if( nameStr[ r ] != '*' && nameStr[ r ] != '?' )
+                if( nameStr[ r ] != "*" && nameStr[ r ] != "?" )
                     break;
             if( r >= rLen )
                 return true;
@@ -113,7 +113,7 @@ bool CompareName( string& crName, string& nameStr )
             if( l >= lLen )
                 return false;
         }
-        else if( rC == '?' )
+        else if( rC == "?" )
         {
             // Skip one letter
         }

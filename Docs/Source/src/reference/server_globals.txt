@@ -227,6 +227,56 @@ uint __GlobalMapZoneLength;
 /** \~russian Максимальная численность группы. */
 uint __GlobalMapMaxGroupCount;
 
+/** \~russian Указывает на то как часто вызывать обработчик глобальной карты GLOBAL_PROCESS_MOVE. */
+uint __GlobalMapMoveTime;
+//@}
+
+/**
+ * \~russian @name Геомертия игровой сетки
+ * \~english @name Grid geometry
+ * \~ @weight 475
+ * В скрипте config.fos, в функции InitializeGeometry(), добавлены необходимые настройки для трех игр: Fallout1/2, Fallout Tactics и Arcanum. Данная функция вызывается в скриптах сервера, клиента и маппера, т.к. информация о геометрии нужна всем трем.
+ * Четырехугольная изометрия использует восемь направлений, гексогональная шесть.\n
+ * Рабочие спрайты для геометрии находятся в art/geometry/.\n
+ */
+//@{
+
+/** \~russian Тип изометрии true - гексогональная, false - четырехугольная. */
+bool __MapHexagonal;
+
+/** \~russian Ширина гекса */
+int __MapHexWidth;
+
+/** \~russian Высота гекса */
+int __MapHexHeight;
+
+/** \~russian Высота линии гексов */
+int __MapHexLineHeight;
+
+/** \~russian Смещение тайлов земли по горизонтали */
+int __MapTileOffsX;
+
+/** \~russian Смещение тайлов земли по вертикали */
+int __MapTileOffsY;
+
+/** \~russian Смещение тайлов крыши по горизонтали */
+int __MapRoofOffsX;
+
+/** \~russian Смещение тайлов крыши по вертикали */
+int __MapRoofOffsY;
+
+/** \~russian Кол-во гексов на один тайл крыши (нужно для его корректного скрывания) */
+int __MapRoofSkipSize;
+
+/** \~russian Угол для рендеринга трехмерных моделей */
+float __MapCameraAngle;
+
+/** \~russian Сглаживание пути при перемещениях */
+bool __MapSmoothPath;
+
+/** \~russian Путь и префикс для файлов геометрии */
+string __MapDataPrefix;
+
 //@}
 
 /**
@@ -245,12 +295,6 @@ uint __FixBoyDefaultExperience;
  * <code>(20 + Perception * 3) - (Sneak / __SneakDivider)</code>.
  */
 uint __SneakDivider;
-
-/** \~russian Опция бесплатного экспириенса. */
-bool __FreeExp;
-
-/** \~russian ПвП ограничитель. */
-bool __RegulatePvP;
 
 /** \~russian Запрет перемешивания вариантов диалога. */
 bool __NoAnswerShuffle;
@@ -307,12 +351,18 @@ bool __CustomItemCost;
  */
 uint __AccountPlayTime;
 
+/** \~russian минимальное время оффлайна, после которого клиент полностью выйдет из игры */
+uint __MinimumOfflineTime;
+
 /** \~russian Позволяет отключить повторную проверку диалоговых условий в функциях диалоговых условий.
  *
  * @remarks При повторном вызове диалогового условия переменная равна @c true; при первом – @c false.
  *
  */
 bool __DialogDemandRecheck;
+
+/** \~russian максимальное количество одновременно запущенных для нпц диалогов по-умолчанию */
+uint __NpcMaxTalkers;
 
 /**
  * \~russian Максимальная дистанция ведения диалога.
@@ -372,6 +422,9 @@ uint __LookDir2;
 /** \~russian Процентный штраф к радиусу видимости при нахождении сзади. */
 uint __LookDir3;
 
+/** \~russian Дополнительная переменная для восьминаправленной геометрии */
+uint __LookDir4;
+
 /** \~russian Процентный штраф к навыку скрытности при прямом взгляде. */
 uint __LookSneakDir0;
 
@@ -384,6 +437,9 @@ uint __LookSneakDir2;
 /** \~russian Процентный штраф к навыку скрытности при нахождении сзади. */
 uint __LookSneakDir3;
 
+/** \~russian Дополнительная переменная для восьминаправленной геометрии. */
+uint __LookSneakDir4;
+
 /** \~russian Вес (в граммах), за который который навык скрытности уменьшается на 1%. */
 uint __LookWeight;
 
@@ -393,6 +449,17 @@ int __MouseY;
 
 /** \~russian частоты вызова @ref GLOBAL_PROCESS_MOVE . */
 uint __EncounterTime;
+
+int __StartSpecialPoints;
+int __StartTagSkillPoints;
+int __SkillMaxValue;
+int __SkillModAdd2;
+int __SkillModAdd3;
+int __SkillModAdd4;
+int __SkillModAdd5;
+int __SkillModAdd6;
+
+
 
 //@{
 
@@ -481,6 +548,17 @@ void RadioMessage(uint16 channel, string& text);
  * @param  strNum   Номер строки.
  */
 void RadioMessageMsg(uint16 channel, uint16 textMsg, uint strNum);
+
+/** \~russian Посылает сообщение по радио с обработкой лексем.
+ *
+ * Строка берется из MSG-файлов.
+ *
+ * @param  channel  Номер канала.
+ * @param  textMsg  Номер MSG-файла (см. @link MsgNums Msg nums@endlink).
+ * @param  strNum   Номер строки.
+ * @param  lexems   лексемы.
+ */
+void RadioMessageMsg(uint16 channel, uint16 textMsg, uint strNum, string@+ lexems);
 
 /** \~russian Установка текста в таблице статистики.
  *
@@ -584,6 +662,14 @@ string@ GetScriptName(uint scriptId);
  * @return Дистанция между криттерами в гексагонах.
  */
 uint GetCrittersDistantion(Critter& cr1, Critter& cr2);
+
+/** \~russian возвращает возможность смены брони для заданного типа криттера.
+ *
+ * @param  crType -  Тип криттера (см. CritterTypes.cfg).
+ *
+ * @return @c true – в случае если тип криттера может носить броню; @c false – в противном случае.
+ */
+bool IsCritterCanArmor(uint crType);
 
 /** \~russian Определяет дистанцию между двумя гексагонами.
  *
@@ -753,6 +839,23 @@ uint GetPlayerId(string& name);
  */
 string@+ GetPlayerName(uint playerId);
 
+/** \~russian Позволяет получить указатели на всех игроков, а так же их количество
+ *
+ * @param  players  В данный массив поместятся указатели на игроков.
+ *
+ * @return Количество игроков.
+ */
+uint GetAllPlayers(Critter@[]@ players);
+
+/** \~russian Позволяет получить идентификаторы всех игроков, зарегистрированных на сервере, а так же их количество
+ *
+ * @param  ids    Массив идентификаторов.
+ * @param  names  Массив имен.
+ *
+ * @return Количество игроков.
+ */
+uint GetRegisteredPlayers( array<uint>& ids, array<string>& names );
+
 /** \~russian Удаляет из игры указанного NPC в конце игрового цикла.
  *
  * @param  npc  NPC, которого необходимо удалить.
@@ -770,6 +873,19 @@ void DeleteNpc(Critter& npc);
  * @return
  */
 bool SwapCritters(Critter& cr1, Critter& cr2, bool withInventory, bool withVars);
+
+/** \~russian Возвращает видимые локации в определенном радиусе, если задан параметр visibleBy, то будет так же учитываться видит ли локацию данный криттер.
+ *
+ * @param  worldX     Координата X.
+ * @param  worldY     Координата Y.
+ * @param  radius     Радиус.
+ * @param  visibleBy  Если параметр задан, то будет так же учитываться видит ли локацию данный криттер.
+ * @param  locations  Массив локаций.
+ *
+ * @return количество
+ *
+ */
+uint GetVisibleLocations(uint16 worldX, uint16 worldY, uint radius, Critter@+ visibleBy, Location@[]@+ locations);
 
 /** \~russian  Для выборки криттеров с глобальной карты */
 uint GetGlobalMapCritters(uint16 worldX, uint16 worldY, uint radius, int findType, Critter@[]@+ critters);
@@ -814,6 +930,26 @@ bool SetParameterGetBehaviour(uint index, string& funcName);
  *
  */
 bool SetParameterChangeBehaviour(uint index, string& funcName);
+
+/** \~russian Позволяет определить собственную функцию-обработчик 
+ *            значения для указанного параметра криттера для последующей проверки данного параметра в диалоге.
+ *
+ * Сигнатура функции:
+ * @code
+ * void _FuncName(Critter@ master, Critter@ slave, uint index)
+ * @endcode
+ *
+ * @param   index     Индекс параметра (см. @link Params Параметры криттеров@endlink).
+ * @param   funcName  Имя функции.
+ *
+ * @return  @c true – в случае успешной установки обработчика;
+ *          @c false – в противном случае.
+ *
+ * @see     Critter::Param
+ * @see     Critter::ParamBase
+ *
+ */
+bool SetParameterDialogGetBehaviour(uint index, string& funcName);
 
 /** \~russian Позволяет разрешить пересылку клиенту параметров других персонажей,
  *            по-умолчанию отправка всех параметров выключена.
@@ -1575,5 +1711,81 @@ bool SetAnyData(string& name, uint16[]& data, uint dataSize);
 bool SetAnyData(string& name, uint8[]& data, uint dataSize);
 
 //@}
+
+/**
+ * \~russian @name Функции для работы с константами (*Names.lst)
+ * \~english @name For constants (*Names.lst)
+ */
+//@{
+
+/** \~russian Определение значения константы по имени.
+ *
+ * @param  constCollection  Номер коллекции, см. Constants collections в _defines.fos.
+ * @param  name             Имя константы.
+ *
+ * @return Значение константы.
+ */
+int GetConstantValue(int constCollection, string@+ name);
+
+/** \~russian Определение имени константы по значению.
+ *
+ * @param  constCollection  Номер коллекции, см. Constants collections в _defines.fos.
+ * @param  value            Значение константы.
+ *
+ * @return Имя константы.
+ */
+string@ GetConstantName(int constCollection, int value);
+
+/** \~russian Добавление отдельной константы в коллекцию.
+ *
+ * @param  constCollection  Номер коллекции, см. Constants collections в _defines.fos.
+ * @param  name             Имя константы.
+ * @param  value            Значение константы.
+ *
+ */
+void AddConstant(int constCollection, string@+ name, int value);
+
+/** \~russian Загрузка/перезагрузка коллекции.
+ *
+ * @param  constCollection  Номер коллекции, см. Constants collections в _defines.fos.
+ * @param  fileName         Имя файла.
+ * @param  pathType         Путь.
+ *
+ */
+bool LoadConstants(int constCollection, string@+ fileName, int pathType);
+//@}
+
+/**
+ * \~russian @name Функции для работы с изображениями
+ * \~english @name Image functions
+ */
+//@{
+
+/** \~russian загрузка изображения.
+ *
+ * @param  index            Номер изображения, с которым идет работа, перечисления см. в Game images _defines.fos;
+ * @param  imageName        Имя файла, формат должен быть только PNG, при null удаляется текущее изображение;
+ * @param  imageDepth       Глубина создаваемого изображения, допустимые значения 4 - ARGB, 3 - RGB, 2 - GB, 1 - B, необходима для оптимизации работы с памятью, что бы не выделять память, которая не будет использоваться (узнать кол-во выделенной памяти под изображения можно во вкладке сервера Memory -> Images);
+ * @param  pathType         Тип пути.
+ *
+ * @return @c true, если операция успешна; @c false – если нет.
+ *
+ */
+bool LoadImage(uint index, string@+ imageName, uint imageDepth, int pathType);
+
+/** \~russian определение цвета пикселя.
+ *
+ * @param  index            Номер изображения, с которым идет работа, перечисления см. в Game images _defines.fos;
+ * @param  x                Координаты пикселя X;
+ * @param  y                Координаты пикселя Y.
+ *
+ * @return цвет
+ *
+ */
+uint GetImageColor(uint index, uint x, uint y);
+//@}
+
+/** Получает CraftItem@ по номеру
+CraftItem@ GetCraftItem(uint num);
 
 /*@}*/

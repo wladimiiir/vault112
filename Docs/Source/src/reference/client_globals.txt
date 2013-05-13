@@ -43,20 +43,12 @@ int __FlushVal;
 int __BaseTex;
 int __ScreenClear;
 int __Light;
-int __ScrollDelay;
+uint __ScrollDelay;
 int __ScrollStep;
 bool __MouseScroll;
 bool __ScrollCheck;
 int __MouseSpeed;
 bool __GlobalSound;
-
-/** \~russian Путь к файлу master.dat. */
-/** \~english Path to master.dat. */
-string __MasterPath;
-
-/** \~russian Путь к файлу critter.dat. */
-/** \~english Path to critter.dat. */
-string __CritterPath;
 
 string __FoPatchPath;
 
@@ -131,16 +123,12 @@ int __GmapOffsetX;
 int __GmapOffsetY;
 
 /** \~russian координаты группы игрока. */
-int __GmapGroupX
-int __GmapGroupY;
+int __GmapGroupCurX;
+int __GmapGroupCurXY;
 
 /** \~russian координаты точки назначения. */
-int __GmapMoveX;
-int __GmapMoveY;
-
-/** \~russian скорость передвижения каждые 50мс. */
-float __GmapSpeedX;
-float __GmapSpeedY;
+int __GmapGroupToXX;
+int __GmapGroupToXY;
 
 /** \~russian Путь к папке клиента. */
 /** \~english Path to client folder. */
@@ -152,6 +140,9 @@ string __ServerPath;
 
 /** \~russian индикация открытой консоли. */
 bool __ConsoleActive;
+
+/** \~russian максимальное количество одновременно запущенных для нпц диалогов по-умолчанию */
+uint __NpcMaxTalkers;
 
 /** \~russian Боевые сообщения
  *
@@ -180,6 +171,58 @@ uint __Anim2CombatEnd;
  *
  */
 uint __CritterFidgetTime;
+
+/**
+ * \~russian @name Геомертия игровой сетки
+ * \~english @name Grid geometry
+ * \~
+ * В скрипте config.fos, в функции InitializeGeometry(), добавлены необходимые настройки для трех игр: Fallout1/2, Fallout Tactics и Arcanum. Данная функция вызывается в скриптах сервера, клиента и маппера, т.к. информация о геометрии нужна всем трем.
+ * Четырехугольная изометрия использует восемь направлений, гексогональная шесть.\n
+ * Рабочие спрайты для геометрии находятся в art/geometry/.\n
+ */
+//@{
+
+/** \~russian Тип изометрии 
+ *
+ * - @c true - гексогональная;
+ * - @c false - четырехугольная.
+ */
+bool __MapHexagonal;
+
+/** \~russian Ширина гекса */
+int __MapHexWidth;
+
+/** \~russian Высота гекса */
+int __MapHexHeight;
+
+/** \~russian Высота линии гексов */
+int __MapHexLineHeight;
+
+/** \~russian Смещение тайлов земли по горизонтали */
+int __MapTileOffsX;
+
+/** \~russian Смещение тайлов земли по вертикали */
+int __MapTileOffsY;
+
+/** \~russian Смещение тайлов крыши по горизонтали */
+int __MapRoofOffsX;
+
+/** \~russian Смещение тайлов крыши по вертикали */
+int __MapRoofOffsY;
+
+/** \~russian Кол-во гексов на один тайл крыши (нужно для его корректного скрывания) */
+int __MapRoofSkipSize;
+
+/** \~russian Угол для рендеринга трехмерных моделей */
+float __MapCameraAngle;
+
+/** \~russian Сглаживание пути при перемещениях */
+bool __MapSmoothPath;
+
+/** \~russian Путь и префикс для файлов геометрии */
+string __MapDataPrefix;
+
+//@}
 
 /**
  * \~russian @name Настройки сети
@@ -239,12 +282,41 @@ bool __FullScr;
 /** \~english VSync. */
 bool __VSync;
 
-/** Sleep. */
-int __Sleep;
-
 /** \~russian Поверх всех окон. */
 /** \~english Always on top. */
 bool __AlwaysOnTop;
+
+/** \~russian Установка фиксированного FPS. При отрицательных значениях играет роль sleep */
+/** \~english Fixed FPS setting. Negative values work as "sleep" */
+uint __FixedFPS;
+
+/** \~russian Поверх всех окон. */
+/** \~english Always on top. */
+bool __OpenGLRendering;
+
+/** \~russian Текущий FPS. */
+/** \~english Curent FPS. */
+uint __FPS;
+
+/** \~russian Поверх всех окон. */
+/** \~english Ping period. */
+uint __PingPeriod;
+
+/** \~russian Текущий пинг. */
+/** \~english Curent ping. */
+uint __Ping;
+
+/** \~russian Включает механизи зуминга карты. */
+bool __MapZooming;
+
+/** \~russian Необходима для отладки загрузки трехмерной графики.
+ *            При включении и загрузке модели будет создан файл Assimp.log,
+ *            куда библиотека Assimp будет писать необходимую информацию.
+ */
+bool __AssimpLogging;
+
+/** \~russian При установке переменной в true, клиент закрывается */
+bool __Quit;
 
 //@}
 
@@ -310,7 +382,20 @@ void Log(string& text);
  * @return @c true – в случае удачного преобразования;
  *         @c false – в противном случае.
  */
-bool StrToInt(string& text, int& result);
+bool StrToInt(string@+ text, int& result);
+
+/** \~russian Конвертирует текст в вещественное число.
+ *
+ * Понимает отрицательные значения. Пробелы, стоящие впереди, игнорируются.
+ * Данные после числа, после первого пробела, игнорируются.
+ *
+ * @param  text    Строка, содержащая число.
+ * @param  result  Переменная, в которую записывается результат преобразования.
+ *
+ * @return @c true – в случае удачного преобразования;
+ *         @c false – в противном случае.
+ */
+bool StrToFloat(string@+ text, float& result);
 
 /** \~russian Возвращает рандомное значение.
  *
@@ -711,15 +796,20 @@ void QuakeScreen(uint noise, uint ms);
  * @param  repeat     Количество миллисекунд, через которые трек будет воспроизведен вновь.
  *
  * @remarks Файлы с музыкой ищутся в папке <i>data/sound/music</i> клиента.
+ * @remarks При repeat == 1, музыка повторяется без перерывов.
  */
 void PlayMusic(string& musicName, uint pos, uint repeat);
 
 /** \~russian Проигрывает видео в клиенте.
  *
- * @param  videoName  Название файла видео.
+ * @param  videoName  Название файла видео в формате "video_name.ext|video_sound_name.ext"
+ *                    сначала указывается имя файла видео, потом, опционально, '|' и далее имя файла звука.
+ *                    Кодеки http://wiki.xiph.org/index.php/TheoraSoftwareEncoders
+ *                    Аудио формат может быть любой, который поддерживается движком, на данный момент это WAV, ACM и OGG.
  * @param  canStop    Можно ли остановить видео во время проигрывания.
  *
- * @remarks Файлы с видео ищутся в папке <i>data/video</i> клиента.
+ * @remarks Если в имени нет слешей ('/'), то поиск производится в папке Client/data/video, если есть, то относительно папки Client/data.
+ * @remarks Воспроизведение видео добавлено только для OGL версии движка..
  */
 void PlayVideo(string& videoName, bool canStop);
 
@@ -855,6 +945,22 @@ void DrawSprite(uint sprId, int sprIndex, int x, int y, uint color);
 void DrawSprite(uint sprId, int sprIndex,
     int x, int y, int w, int h,
     bool scratch, bool center, uint color);
+    
+/** \~russian Отрисовывает спрайт в указанной прямоугольной области c полным ее заполнением, своими копиями.
+ *
+ * @param  sprId     Идентификатор анимации.
+ * @param  sprIndex  Номер спрайта в анимации.
+ *                   При отрицательном значении выводится текущий спрайт анимации.
+ *                   При этом учитывается скорость воспроизведения анимации.
+ * @param  x, y      Позиция верхнего левого угла
+ * @param  w, h      Ширина и высота области отрисовки.
+ * @param  sprWidth  Ширина спрайта (при нуле берется исходная).
+ * @param  sprHeight Высота спрайта (при нуле берется исходная).
+ * @param  color     Оттенок спрайта. При 0 берется значение по-умолчанию.
+ *
+ * @see    #render_iface
+ */
+void DrawSpritePattern(uint sprId, int sprIndex, int x, int y, int w, int h, int sprWidth, int sprHeight, uint color);
 
 /** \~russian Выводит текст.
  *
@@ -1042,6 +1148,21 @@ void DrawHardcodedScreen(int screen);
  */
 int GetKeybLang();
 
+/** \~russian Обработка нажатия одной или двух клавиш.
+ *
+ * @param key1, key2 - код клавиши (см. Keyboard key codes в _client_defines.fos).
+ *
+ */
+void KeyboardPress(uint8 key1, uint8 key2);
+
+/** \~russian Возывается при клике мышью.
+ *
+ * @param x, y - координаты мыши;
+ * @param button - клавиша мыши (см. Mouse click states в _client_defines.fos);
+ * @param cursor - курсор при клике (см. Cursors в _client_defines.fos или _mapper_defines.fos).
+ *
+ */
+void MouseClick(int x, int y, int button, int cursor);
 //@}
 
 /**
@@ -1165,7 +1286,63 @@ uint GetCrittersPath(uint16 fromHx, uint16 fromHy,
     uint16 toHx, uint16 toHy,
     float angle, uint dist, int findType, CritterCl@[]@+ critters,
     uint16& preBlockHx, uint16& preBlockHy, uint16& blockHx, uint16& blockHy);
+    
+/** \~russian возвращает возможность смены брони для заданного типа криттера.
+ *
+ * @param  crType -  Тип криттера (см. CritterTypes.cfg).
+ *
+ * @return @c true – в случае если тип криттера может носить броню; @c false – в противном случае.
+ */
+bool IsCritterCanArmor(uint crType);
 
+/** \~russian Устанавливает имена анимаций для падающей и упавшей капли
+ *            по-умолчанию значения равны "art/misc/rain_fall.fofrm" и "art/misc/rain_drop.fofrm".
+ */
+void SetRainAnimation(string@ fallAnimName, string@ dropAnimName);
+
+//@}
+
+/**
+ * \~russian @name Функции для работы с константами (*Names.lst)
+ * \~english @name For constants (*Names.lst)
+ */
+//@{
+
+/** \~russian Определение значения константы по имени.
+ *
+ * @param  constCollection  Номер коллекции, см. Constants collections в _defines.fos.
+ * @param  name             Имя константы.
+ *
+ * @return Значение константы.
+ */
+int GetConstantValue(int constCollection, string@+ name);
+
+/** \~russian Определение имени константы по значению.
+ *
+ * @param  constCollection  Номер коллекции, см. Constants collections в _defines.fos.
+ * @param  value            Значение константы.
+ *
+ * @return Имя константы.
+ */
+string@ GetConstantName(int constCollection, int value);
+
+/** \~russian Добавление отдельной константы в коллекцию.
+ *
+ * @param  constCollection  Номер коллекции, см. Constants collections в _defines.fos.
+ * @param  name             Имя константы.
+ * @param  value            Значение константы.
+ *
+ */
+void AddConstant(int constCollection, string@+ name, int value);
+
+/** \~russian Загрузка/перезагрузка коллекции.
+ *
+ * @param  constCollection  Номер коллекции, см. Constants collections в _defines.fos.
+ * @param  fileName         Имя файла.
+ * @param  pathType         Путь.
+ *
+ */
+bool LoadConstants(int constCollection, string@+ fileName, int pathType);
 //@}
 
 /**
@@ -1180,7 +1357,19 @@ uint GetCrittersPath(uint16 fromHx, uint16 fromHy,
  * @return true в случае успеха.
  *
  */
-bool AppendIfaceIni(string& iniName)
+bool AppendIfaceIni(string& iniName);
+
+/** \~russian Устанавливет шейдерный эффект.
+ *
+ * @param  effectType       тип эффекта (см. _client_defines.fos).
+ * @param  effectSubtype    подтип эффекта (используется с шрифтами).
+ * @param  effectName       имя файла эффекта (вместе с расширением) в папке data\effects.
+ * @param  effectDefines    директивы препрцессора для эффекта (null по умолчанию).
+ *
+ * @return Указывает на успешность загрузки и компиляции эффекта.
+ *
+ */
+bool SetEffect(int effectType, int effectSubtype, string@+ effectName, string@+ effectDefines = null);
 
 //@}
 

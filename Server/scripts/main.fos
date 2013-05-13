@@ -40,6 +40,7 @@ import void EditRadioSettings( Critter& player, Item& radio ) from "radio";
 import void SetNoPvp() from "nopvp_maps";
 import void OnCritterMapOut( Critter& cr, Map& map ) from "nopvp_maps";
 import void OnCitterMapIn( Critter& cr, Map& map ) from "nopvp_maps";
+import uint CheckPlayerName( const string& name ) from "parameters";
 import void ClearAttackProtection(Critter& critter) from "custom_data";
 import bool IsProtectedFromSkill(Critter& critter, int skill, Critter@ targetCritter, Item@ targetItem, Scenery@ targetScenery) from "custom_data";
 import void ClearSkillProtection(Critter& critter) from "custom_data";
@@ -1760,6 +1761,13 @@ void world_save( uint currentIndex, uint[]& deleteIndexes )
 // Return true to allow, false to disallow
 bool player_registration( uint ip, string& name, uint& textMsg, uint& strNum )
 {
+    uint nameError = CheckPlayerName( name );
+    if( nameError != 0 )
+    {
+        textMsg = TEXTMSG_GAME;
+        strNum = nameError;
+        return false;
+    }
     return true;
 }
 

@@ -1366,6 +1366,10 @@
 # pragma globalvar "uint __MaxLifeLevelSoftCap = 0" // Максимальный уровень персонажа, на котором происходит увеличение хп. 0  = не используется
 # pragma globalvar "uint __EncounterTime = 0"       // Как часто пробовать создать энкаунтер, в миллисекундах
 
+# pragma globalvar "string __ValidNameLettersCommon"   
+# pragma globalvar "string __ValidNameLettersCulture1" 
+# pragma globalvar "string __ValidNameLettersCulture2" 
+
 // /
 // / Critter data parameters
 // /

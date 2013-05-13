@@ -15,8 +15,8 @@
 // bool mouse_down(int click)
 // bool mouse_up(int click)
 // void mouse_move(int x, int y)
-// bool key_down(uint8 key)
-// bool key_up(uint8 key)
+// bool key_down(uint8 key, string& keyText)
+// bool key_up(uint8 key, string& keyText)
 // void input_lost()
 
 // / User functions
@@ -1664,12 +1664,12 @@ void mouse_move( int x, int y )
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 // Keyboard behaviours. Key codes look in _mapper_defines.fos DirectInput keyboard scan codes.
 // Return true to disable engine events.
-bool key_down( uint8 key )
+bool key_down( uint8 key, string& keyText )
 {
     return false;
 }
 
-bool key_up( uint8 key )
+bool key_up( uint8 key, string& keyText )
 {
     return false;
 }

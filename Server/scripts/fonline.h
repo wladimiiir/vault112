@@ -3,8 +3,8 @@
 
 //
 // FOnline engine structures, for native working
-// Last update 16.04.2013
-// Server version 510, MSVS 2010, GCC 4.7.2
+// Last update 27.04.2013
+// Server version 516, MSVS 2010, GCC 4.7.2
 // Default calling convention - cdecl
 //
 
@@ -215,6 +215,7 @@ EXPORT_UNINITIALIZED const char* (ScriptGetLibraryVersion) ( );
 #define SQRT3_FLOAT                  ( 1.732050807568877f )
 #define RAD2DEG                      ( 57.29577951f )
 #define CONVERT_GRAMM( x )               ( ( x ) * 453 )
+#define UTF8_BUF_SIZE( count )           ( ( count ) * 4 )
 
 #define LEXEMS_SIZE                  ( 128 )
 #define MAX_HOLO_INFO                ( 250 )
@@ -314,9 +315,6 @@ EXPORT_UNINITIALIZED const char* (ScriptGetLibraryVersion) ( );
 #define FH_NOWAY                     BIN16( 00010001, 00000001 )
 #define FH_NOSHOOT                   BIN16( 00100000, 00000010 )
 
-// GameOptions::ChangeLang
-#define CHANGE_LANG_CTRL_SHIFT       ( 0 )
-#define CHANGE_LANG_ALT_SHIFT        ( 1 )
 // GameOptions::IndicatorType
 #define INDICATOR_LINES              ( 0 )
 #define INDICATOR_NUMBERS            ( 1 )
@@ -518,7 +516,6 @@ struct GameOptions
     const uint         PingPeriod;
     const uint         Ping;
     const bool         MsgboxInvert;
-    const int          ChangeLang;
     const uint8        DefaultCombatMode;
     const bool         MessNotify;
     const bool         SoundNotify;
@@ -1359,7 +1356,7 @@ struct Critter
 
 struct Client: Critter
 {
-    const char  Name[ MAX_NAME + 1 ];
+    const char  Name[ UTF8_BUF_SIZE( MAX_NAME ) ];
     const char  PassHash[ PASS_HASH_SIZE ];
     const uint8 Access;
     const uint  LanguageMsg;
@@ -1399,7 +1396,7 @@ struct CritterCl
     const ScriptString  NameOnHead;
     const ScriptString  Lexems;
     const ScriptString  Avatar;
-    const char          PasswordReg[ MAX_NAME + 1 ];
+    const string        PasswordReg;
 
     const ItemVec       InvItems;
     const Item*         DefItemSlotHand;
@@ -1946,7 +1943,7 @@ inline void static_asserts()
     STATIC_ASSERT( sizeof( IntPair )      == 8    );
     STATIC_ASSERT( sizeof( ProtoItem )    == 908  );
     STATIC_ASSERT( sizeof( Mutex )        == 44   );
-    STATIC_ASSERT( sizeof( GameOptions )  == 1344 );
+    STATIC_ASSERT( sizeof( GameOptions )  == 1340 );
     STATIC_ASSERT( sizeof( SpriteInfo )   == 36   );
     STATIC_ASSERT( sizeof( Field )        == 76   );
     # ifdef __MAPPER
@@ -1961,9 +1958,9 @@ inline void static_asserts()
     STATIC_ASSERT( offsetof( Item, IsNotValid )                == 146  );
     STATIC_ASSERT( offsetof( CritterTimeEvent, Identifier )    == 12   );
     STATIC_ASSERT( offsetof( Critter, RefCounter )             == 9388 );
-    STATIC_ASSERT( offsetof( Client, LanguageMsg )             == 9456 );
+    STATIC_ASSERT( offsetof( Client, LanguageMsg )             == 9548 );
     STATIC_ASSERT( offsetof( Npc, Reserved )                   == 9408 );
-    STATIC_ASSERT( offsetof( CritterCl, MoveSteps )            == 5708 );
+    STATIC_ASSERT( offsetof( CritterCl, MoveSteps )            == 5700 );
     STATIC_ASSERT( offsetof( MapEntire, Dir )                  == 8    );
     STATIC_ASSERT( offsetof( SceneryToClient, Reserved1 )      == 30   );
     STATIC_ASSERT( offsetof( Map, RefCounter )                 == 794  );

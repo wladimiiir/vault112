@@ -24,14 +24,8 @@
 //                                          flags    actionExt                                                      item
 #define ACTION_MOVE                 (0)  // l
 #define ACTION_RUN                  (1)  // l
-
-/** \~russian
- * @par actionExt
- * Предыдущий слот (см. @ref Slots).
- */
-#define ACTION_SHOW_ITEM            (2)  // l s      prev slot                                                      +
-
-#define ACTION_HIDE_ITEM            (3)  // l s      prev slot                                                      +
+#define ACTION_MOVE_ITEM            (2)  // l s      from slot                                                      +
+#define ACTION_MOVE_ITEM_SWAP       (3)  // l s      from slot                                                      +
 #define ACTION_MOVE_ITEM            (4)  // l s      prev slot                                                      +
 #define ACTION_USE_ITEM             (5)  // l s                                                                     +
 #define ACTION_DROP_ITEM            (6)  // l s      prev slot                                                      +

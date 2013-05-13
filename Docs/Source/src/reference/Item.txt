@@ -158,13 +158,13 @@ public:
     //@{
 
     /** (?) */
-    int8 BrokenFlags;
+    uint8 BrokenFlags;
 
     /** (?) */
     uint8 BrokenCount;
 
-    /** (?) */
-    uint16 BrokenWear;
+    /** Степень износа */
+    uint16 Deterioration;
 
     //@}
 
@@ -414,19 +414,19 @@ public:
      */
     Map@+ GetMapPosition(uint16& hexX, uint16& hexY);
 
-    /** \~russian Позволяет проверить, группируется ли предмет.
+    /** \~russian Группируются ли предметы.
      *
-     * @see  ProtoItem::IsGrouped()
+     * @see ProtoItem::Stackable
      *
      */
-    bool IsGrouped();
+    bool IsStackable();
 
-    /** \~russian Позволяет проверить, изнашивается ли предмет.
+    /** \~russian Изнашиваются ли предметы.
      *
-     * @see  ProtoItem::IsWeared()
+     * @see ProtoItem::Deteriorable
      *
      */
-    bool IsWeared();
+    bool IsDeteriorable();
 
     /** \~russian Обновление инфы об предмете у игроков.
      *
@@ -452,19 +452,13 @@ public:
      */
     //@{
 
-    /** \~russian Проверяет, является ли предмет машиной.
+    /** \~russian Возвращает указатель на дочерний предмет.
      *
-     * @return @c true – если машина; @c false – в противном случае.
-     */
-    bool IsCar();
-
-    /** \~russian Возвращает указатель на предмет-контейнер, представляющий багажник авто.
-     *
-     * @param  numBag  Номер предмета-контейнера. Обычно 0. Всего машина может иметь 3 багажника.
+     * @param  childIndex  Номер предмета. Обычно 0. Максимум - 4.
      *
      * @return Указатель на экземпляр класса Item. В случае провала – @c null.
      */
-    Item@+ CarGetBag(int numBag);
+    Item@+ GetChild(uint childIndex);
 
     //@}
 

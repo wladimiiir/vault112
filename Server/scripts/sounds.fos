@@ -26,7 +26,7 @@ void PlayOpenLockerSound(Item& locker)
 	else if(locker.GetType() == ITEM_TYPE_CONTAINER)
 	{
 		string sound = "IOCNTNRA";
-		sound[sound.length()-1] = proto.SoundId;
+		sound[sound.length() - 1] = "" + proto.SoundId;
 		sound += ".ACM";
 		for (uint i = 0; i < critters.length(); i++)
 		{
@@ -54,7 +54,7 @@ void PlayCloseLockerSound(Item& locker)
 	else if(locker.GetType() == ITEM_TYPE_CONTAINER)
 	{
 		string sound = "ICCNTNRA";
-		sound[sound.length()-1] = proto.SoundId;
+		sound[sound.length() - 1] = "" + proto.SoundId;
 		sound += ".ACM";
 		for (uint i = 0; i < critters.length(); i++)
 		{
@@ -82,7 +82,7 @@ void PlayLockedLockerSound(Item& locker)
 	else if(locker.GetType() == ITEM_TYPE_CONTAINER)
 	{
 		string sound = "ILCNTNRA";
-		sound[sound.length()-1] = proto.SoundId;
+		sound[sound.length() - 1] = "" + proto.SoundId;
 		sound += ".ACM";
 		for (uint i = 0; i < critters.length(); i++)
 		{
@@ -110,7 +110,7 @@ void PlayUnlockedLockerSound(Item& locker)
 	else if(locker.GetType() == ITEM_TYPE_CONTAINER)
 	{
 		string sound = "INCNTNRA";
-		sound[sound.length()-1] = proto.SoundId;
+		sound[sound.length() - 1] = "" + proto.SoundId;
 		sound += ".ACM";
 		for (uint i = 0; i < critters.length(); i++)
 		{

@@ -25,6 +25,9 @@
  */
 bool start();
 
+/** \~russian Вызывается при старте сервера раньше, чем start(), когда мир еще не сгенерирован. */
+void init();
+
 /** \~russian Вызывается при остановке сервера. */
 void finish();
 
@@ -291,7 +294,7 @@ bool critter_use_skill(Critter& cr, int skill, Critter@ targetCr, Item@ targetIt
  * @param  item      Предмет.
  * @param  fromSlot  Слот (см. @link Slots@endlink).
  */
-void critter_change_item(Critter& cr, Item& item, int fromSlot);
+void critter_move_item(Critter& cr, Item& item, int fromSlot);
 
 /** \~russian Вызывается при перезарядке или разрядке оружия криттером.
  *
@@ -308,7 +311,18 @@ void critter_reload_weapon(Critter& cr, Item& weapon, Item@ ammo);
  * @param  item      Предмет, который меняется.
  * @param  fromSlot  Слот, из которого берется предмет.
  */
-void critter_change_item(Critter& cr, Item& item, uint8 fromSlot);
+void critter_move_item(Critter& cr, Item& item, uint8 fromSlot);
+
+/** \~russian Вызызывается перед каждым перемещением предмета у криттера.
+ *
+ * @param  cr        Криттер, который меняет предмет;
+ * @param  item      Предмет, который перемещается;
+ * @param  toSlot    Слот, из которого берется предмет;
+ * @param  itemSwap  предмет, который уже находится в слоте назначения и который переместится в слот перемещаемого предмета при успешной транзакции.
+ *
+ * @return Если возвратить @c false, то предмет не переместится; если @c true, то переместится.
+ */
+bool critter_check_move_item(Critter& cr, Item& item, uint8 toSlot, Item@ itemSwap);
 
 //@}
 
@@ -393,6 +407,21 @@ void karma_voting(Critter& crFrom, Critter& crTo, bool valUp);
  */
 bool check_look(Critter& cr, Critter& opponent);
 
+/** \~russian Обработчик, позволяющий проверять в скрипте видимость предмета криттером.
+ *
+ * Чтобы эта функция использовалась при расчётах видимости,
+ * установите флаг @c LOOK_CHECK_ITEM_SCRIPT глобальной переменной #__LookChecks.
+ *
+ * @param   map       Карта, на которой проверяется видимость.
+ * @param   cr        Криттер, относительно которого определяется видимость предмета.
+ * @param   item      Предмет, видимость которого проверяется.
+ *
+ * @return  @c true, в случае, если один криттер видит другого;
+ *          @c false – в противном случае.
+ *
+ */
+bool check_trap_look(Map& map, Critter& cr, Item& item);
+
 /** \~russian Обработчик, позволяющий определять в скрипте цену предметов.
  *
  * Чтобы эта функция использовалась при расчётах цен предметов,
@@ -451,6 +480,16 @@ bool items_barter(Item@[]& saleItems, uint[]& saleItemsCount, Item@[]& buyItems,
  * @param  perkIndex   Номер выбранного перка (см. @link Perks Перки@endlink).
  */
 void player_levelup(Critter& player, uint skillIndex, uint skillUp, uint perkIndex);
+
+/** Вызывается перед каждым новым раундом в пошаговом бое.
+ *
+ * @param  map               Карта боя.
+ * @param  critters          Все игроки с карты.
+ * @param  firstTurnCrit     Игрок, который ходит первым. Данный аргумент берется из Map::BeginTurnBased.
+ *
+ * @remark Отсортированная очередь возвращается в переданном массиве Critter@[]& critters.
+ */
+void turn_based_sequence( Map& map, Critter@[]& critters, Critter@ firstTurnCrit );
 
 /*@}*/
 

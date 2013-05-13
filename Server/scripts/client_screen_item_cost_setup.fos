@@ -265,7 +265,7 @@ void MoveDown()
 
 class ChangeCostCallback : IGUIScreenCallbackKeyPress
 {
-	bool OnKeyPress(uint8 key) override
+	bool OnKeyPress(uint8 key, string& keyText) override
 	{
 		if(!valid(ChosenItemProto))
 			return true;

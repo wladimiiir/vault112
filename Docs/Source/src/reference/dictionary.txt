@@ -127,4 +127,11 @@ class dictionary
 	/** \~russian Удаляет все ключи из словаря. */
 	/** \~english Deletes all keys. */
 	void deleteAll();
+    
+    /** \~russian Возвращает все ключи и их количество. */
+	/** \~english Return all keys and their number. */
+    uint keys(string@[]@ keys) const;
+    
+    bool isEmpty() const;
+    uint getSize() const;
 }

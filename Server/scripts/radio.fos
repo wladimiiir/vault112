@@ -286,14 +286,14 @@ class TextboxChannel : IGUIElementCallbackInit, IGUIElementCallbackKeyPress
         @Options = GUI_GetElementOptions();
     }
 
-    void OnKeyPress( uint8 key, uint8 letter )
+    void OnKeyPress( uint8 key, string& keyText )
     {
         string@ text = Options.GetText();
 
         if( ( Instance.RadioFlags & RADIO_DISABLE_SHIFT_CHANNEL ) == 0 )
         {
-            if( text.length() > 0 && text[ text.length() - 1 ] == '\n' )
-                text.resize( text.length() - 1 );
+            if( text.length() > 0 && text[ -1 ] == "\n" )
+                text[ -1 ] = "";
 
             int channel = 0;
             StrToInt( text, channel );

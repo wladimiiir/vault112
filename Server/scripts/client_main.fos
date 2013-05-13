@@ -27,8 +27,8 @@ import void GUI_Render( bool mainScreen ) from "client_gui";
 import bool GUI_MouseDown( int click, int x, int y ) from "client_gui";
 import bool GUI_MouseUp( int click, int x, int y ) from "client_gui";
 import void GUI_MouseMove( int x, int y ) from "client_gui";
-import bool GUI_KeyDown( uint8 key ) from "client_gui";
-import bool GUI_KeyUp( uint8 key ) from "client_gui";
+import bool GUI_KeyDown( uint8 key, string& keyText ) from "client_gui";
+import bool GUI_KeyUp( uint8 key, string& keyText ) from "client_gui";
 import void GUI_InputLost() from "client_gui";
 import bool PerkCheck( CritterCl& cr, uint perk ) from "perks";
 import void CritterGenerate( int[]& data ) from "parameters";
@@ -47,6 +47,7 @@ import void Set3DRegistrationGender( int gender ) from "client_3d_cha_reg";
 import void Fill3DRegistrationParameters( int[]& params ) from "client_3d_cha_reg";
 #endif
 import void PlayAnimSound( uint crType, int gender, uint anim1, uint anim2 ) from "animation";
+import uint CheckPlayerName( const string& name ) from "parameters";
 import void InitAutoAim() from "auto_aim";
 import uint8 GetAutoAim() from "auto_aim";
 
@@ -150,28 +151,28 @@ string GetHpText(CritterCl& critter, bool awareness)
 		color = COLOR_RED;
 		hpText = awareness 
 			? critter.Stat[ST_CURRENT_HP] + "/" + critter.Stat[ST_MAX_LIFE]
-			: GetMsgStr(TEXTMSG_GAME, STR_CRIT_LOOK_STATE(1));
+			: "\u25a0\u25a1\u25a1\u25a1";
 	}
 	else if( hpPercentage < 67 )
 	{
 		color = COLOR_ORANGE;
 		hpText = awareness 
 			? critter.Stat[ST_CURRENT_HP] + "/" + critter.Stat[ST_MAX_LIFE]
-			: GetMsgStr(TEXTMSG_GAME, STR_CRIT_LOOK_STATE(2));
+			: "\u25a0\u25a0\u25a1\u25a1";
 	}
 	else if( hpPercentage < 100 )
 	{
 		color = COLOR_DGREEN;
 		hpText = awareness 
 			? critter.Stat[ST_CURRENT_HP] + "/" + critter.Stat[ST_MAX_LIFE]
-			: GetMsgStr(TEXTMSG_GAME, STR_CRIT_LOOK_STATE(3));
+			: "\u25a0\u25a0\u25a0\u25a1";
 	}
 	else
 	{
 		color = COLOR_GREEN;
 		hpText = awareness 
 			? critter.Stat[ST_CURRENT_HP] + "/" + critter.Stat[ST_MAX_LIFE]
-			: GetMsgStr(TEXTMSG_GAME, STR_CRIT_LOOK_STATE(4));
+			: "\u25a0\u25a0\u25a0\u25a0";
 	}
 	
 	return "|" + color + " " + hpText;
@@ -403,7 +404,7 @@ void mouse_move( int x, int y )
 bool AltDown = false;
 bool CtrlDown = false;
 bool ShiftDown = false;
-bool key_down( uint8 key )
+bool key_down( uint8 key, string& keyText )
 {
     if( key == DIK_LMENU || key == DIK_RMENU )
         AltDown = true;
@@ -457,10 +458,10 @@ bool key_down( uint8 key )
 	if(key == DIK_R)
 		Reload();
 
-    return GUI_KeyDown( key );
+    return GUI_KeyDown( key, keyText );
 }
 
-bool key_up( uint8 key )
+bool key_up( uint8 key, string& keyText )
 {
     if( key == DIK_LMENU || key == DIK_RMENU )
         AltDown = false;
@@ -471,7 +472,7 @@ bool key_up( uint8 key )
     if( key == DIK_Z )
         __MapZooming = false;
 
-    return GUI_KeyUp( key );
+    return GUI_KeyUp( key, keyText );
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -590,7 +591,7 @@ bool in_message( string& message, int& sayType, uint& critterId, uint& delay )
 // Call on send message.
 bool out_message( string& message, int& sayType )
 {
-    if( message[ 0 ] == '~' ) // Command
+    if( message[ 0 ] == "~" ) // Command
     {
         if( message == "~names" )
         {
@@ -644,33 +645,31 @@ bool out_message( string& message, int& sayType )
 
     if( sayType == SAY_NORM )
     {
-        if( message.length() > 2 && ( message[ 0 ] == '/' || message[ 0 ] == '.' ) )
+        if( message.length() > 2 && ( message[ 0 ] == "/" || message[ 0 ] == "." ) )
         {
-            int  eraseCount = 1;
-            int8 ch = message[ 1 ];
-            if(     ch == 'ê' || ch == 'Ê' || ch == 's' || ch == 'S' )
+            string ch = message[ 1 ];
+            if(  ch == "s" || ch == "S" )
                 sayType = SAY_SHOUT;
-            else if( ch == 'ý' || ch == 'Ý' || ch == 'e' || ch == 'E' )
+            else if( ch == "e" || ch == "E" )
                 sayType = SAY_EMOTE;
-            else if( ch == 'ø' || ch == 'Ø' || ch == 'w' || ch == 'W' )
+            else if( ch == "w" || ch == "W" )
                 sayType = SAY_WHISP;
-            else if( ch == 'ñ' || ch == 'Ñ' || ch == '$'             )
+            else if( ch == "$" )
                 sayType = SAY_SOCIAL;
-            else if( ch == 'ð' || ch == 'Ð' || ch == 'r' || ch == 'R' )
+            else if( ch == "r" || ch == "R" )
                 sayType = SAY_RADIO;
 
             if( sayType != SAY_NORM )
             {
-                eraseCount++;
-                if( message[ 2 ] == ' ' )
-                    eraseCount++;
+                message[ 0 ] = "";
+                message[ 0 ] = "";
+                while( message[ 0 ] == " " )
+                    message[ 0 ] = "";
             }
-
-            message = substring( message, eraseCount, message.length() - eraseCount );
         }
         else if(         // RegExp: [*]([^*].*[^*])[*]
-            message.length() >= 4 && message[ 0 ] == '*' && message[ 1 ] != '*' &&
-            message[ message.length() - 2 ] != '*' && message[ message.length() - 1 ] == '*' )
+            message.length() >= 4 && message[ 0 ] == "*" && message[ 1 ] != "*" &&
+            message[ message.length() - 2 ] != "*" && message[ message.length() - 1 ] == "*" )
         {
             sayType = SAY_EMOTE;
             message = substring( message, 1, message.length() - 2 );
@@ -680,7 +679,7 @@ bool out_message( string& message, int& sayType )
     bool result = false;
     for( uint i = 0, j = message.length(); i < j; i++ )
     {
-        if( message[ i ] != ' ' )
+        if( message[ i ] != " " )
         {
             result = true;
             break;
@@ -1563,7 +1562,7 @@ string critter_description( CritterCl& cr, int lookType )
     // Additional description
     if( lookType == CRITTER_LOOK_FULL )
     {
-        if( result.length() > 0 && result[ result.length() - 1 ] != '.' )
+        if( result.length() > 0 && result[ result.length() - 1 ] != "." )
             result += ".";
         result += " ";
 
@@ -1748,11 +1747,19 @@ void player_data_generate( int[]& data )
     #endif
 }
 
-bool player_data_check( int[]& data )
+bool player_data_check( string& name, int[]& data )
 {
     #ifdef PLAYERS_3D
     Fill3DRegistrationParameters( data );
     #endif
+
+	// Check name
+    uint nameError = CheckPlayerName( name );
+    if( nameError != 0 )
+    {
+        Message( GetMsgStr( TEXTMSG_GAME, nameError ) );
+        return false;
+    }
 
     return CritterGenerateCheck( data );
 }

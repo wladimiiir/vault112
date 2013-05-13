@@ -263,6 +263,11 @@ void InitializeGame()                    // Export
     AllowSlot( SLOT_HEAD, "InvHead" );
     #   endif
     #  endif
+    
+    // Valid name letters
+    __ValidNameLettersCommon = "_ .-1234567890";
+    __ValidNameLettersCulture1 = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz";
+    __ValidNameLettersCulture2 = "АаБбВвГгДдЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщЪъЫыЬьЭэЮюЯя";
 
     // / Geometry
     InitializeGeometry();

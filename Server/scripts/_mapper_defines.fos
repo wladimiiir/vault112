@@ -173,6 +173,7 @@
 #define DIK_DELETE                      0xD3 /* Delete on arrow keypad */
 #define DIK_LWIN                        0xDB /* Left Windows key */
 #define DIK_RWIN                        0xDC /* Right Windows key */
+#define DIK_CLIPBOARD_PASTE             0xFF
 
 // Draw primitive types
 #define DRAW_PRIMITIVE_POINTLIST        ( 0 )

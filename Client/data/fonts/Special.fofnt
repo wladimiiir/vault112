@@ -1,7 +1,8 @@
+Version  2
 Image    Special.png
 YAdvance 3
 
-Letter 24 # ''
+Letter ''
   PositionX 49
   PositionY 1
   Width     7
@@ -9,7 +10,7 @@ Letter 24 # ''
   OffsetY   -3
   XAdvance  8
 
-Letter 25 # ''
+Letter ''
   PositionX 58
   PositionY 1
   Width     7
@@ -17,14 +18,14 @@ Letter 25 # ''
   OffsetY   -3
   XAdvance  8
 
-Letter 32 # ' '
+Letter ' '
   PositionX 79
   PositionY 1
   Width     4
   OffsetY   -9
   XAdvance  4
 
-Letter 33 # '!'
+Letter '!'
   PositionX 85
   PositionY 1
   Width     3
@@ -32,7 +33,7 @@ Letter 33 # '!'
   OffsetY   -1
   XAdvance  4
 
-Letter 34 # '"'
+Letter '"'
   PositionX 90
   PositionY 1
   Width     5
@@ -40,7 +41,7 @@ Letter 34 # '"'
   OffsetY   -1
   XAdvance  6
 
-Letter 35 # '#'
+Letter '#'
   PositionX 97
   PositionY 1
   Width     7
@@ -48,7 +49,7 @@ Letter 35 # '#'
   OffsetY   -1
   XAdvance  8
 
-Letter 36 # '$'
+Letter '$'
   PositionX 106
   PositionY 1
   Width     8
@@ -56,7 +57,7 @@ Letter 36 # '$'
   OffsetY   -1
   XAdvance  9
 
-Letter 37 # '%'
+Letter '%'
   PositionX 116
   PositionY 1
   Width     11
@@ -64,7 +65,7 @@ Letter 37 # '%'
   OffsetY   -1
   XAdvance  12
 
-Letter 38 # '&'
+Letter '&'
   PositionX 129
   PositionY 1
   Width     8
@@ -72,7 +73,7 @@ Letter 38 # '&'
   OffsetY   -1
   XAdvance  9
 
-Letter 39 # '''
+Letter '''
   PositionX 139
   PositionY 1
   Width     2
@@ -80,7 +81,7 @@ Letter 39 # '''
   OffsetY   -1
   XAdvance  3
 
-Letter 40 # '('
+Letter '('
   PositionX 143
   PositionY 1
   Width     4
@@ -88,7 +89,7 @@ Letter 40 # '('
   OffsetY   -1
   XAdvance  5
 
-Letter 41 # ')'
+Letter ')'
   PositionX 149
   PositionY 1
   Width     3
@@ -96,7 +97,7 @@ Letter 41 # ')'
   OffsetY   -1
   XAdvance  4
 
-Letter 42 # '*'
+Letter '*'
   PositionX 154
   PositionY 1
   Width     3
@@ -104,7 +105,7 @@ Letter 42 # '*'
   OffsetY   -1
   XAdvance  4
 
-Letter 43 # '+'
+Letter '+'
   PositionX 159
   PositionY 1
   Width     6
@@ -112,7 +113,7 @@ Letter 43 # '+'
   OffsetY   -2
   XAdvance  7
 
-Letter 44 # ','
+Letter ','
   PositionX 167
   PositionY 1
   Width     2
@@ -120,7 +121,7 @@ Letter 44 # ','
   OffsetY   -5
   XAdvance  3
 
-Letter 45 # '-'
+Letter '-'
   PositionX 171
   PositionY 1
   Width     4
@@ -128,7 +129,7 @@ Letter 45 # '-'
   OffsetY   -4
   XAdvance  5
 
-Letter 46 # '.'
+Letter '.'
   PositionX 177
   PositionY 1
   Width     2
@@ -136,14 +137,14 @@ Letter 46 # '.'
   OffsetY   -5
   XAdvance  3
 
-Letter 47 # '/'
+Letter '/'
   PositionX 181
   PositionY 1
   Width     5
   Height    9
   XAdvance  6
 
-Letter 48 # '0'
+Letter '0'
   PositionX 188
   PositionY 1
   Width     8
@@ -151,7 +152,7 @@ Letter 48 # '0'
   OffsetY   -1
   XAdvance  9
 
-Letter 49 # '1'
+Letter '1'
   PositionX 198
   PositionY 1
   Width     5
@@ -159,7 +160,7 @@ Letter 49 # '1'
   OffsetY   -1
   XAdvance  6
 
-Letter 50 # '2'
+Letter '2'
   PositionX 205
   PositionY 1
   Width     8
@@ -167,7 +168,7 @@ Letter 50 # '2'
   OffsetY   -1
   XAdvance  9
 
-Letter 51 # '3'
+Letter '3'
   PositionX 215
   PositionY 1
   Width     7
@@ -175,7 +176,7 @@ Letter 51 # '3'
   OffsetY   -1
   XAdvance  8
 
-Letter 52 # '4'
+Letter '4'
   PositionX 224
   PositionY 1
   Width     8
@@ -183,7 +184,7 @@ Letter 52 # '4'
   OffsetY   -1
   XAdvance  9
 
-Letter 53 # '5'
+Letter '5'
   PositionX 234
   PositionY 1
   Width     7
@@ -191,7 +192,7 @@ Letter 53 # '5'
   OffsetY   -1
   XAdvance  8
 
-Letter 54 # '6'
+Letter '6'
   PositionX 243
   PositionY 1
   Width     7
@@ -199,7 +200,7 @@ Letter 54 # '6'
   OffsetY   -1
   XAdvance  8
 
-Letter 55 # '7'
+Letter '7'
   PositionX 1
   PositionY 12
   Width     7
@@ -207,7 +208,7 @@ Letter 55 # '7'
   OffsetY   -1
   XAdvance  8
 
-Letter 56 # '8'
+Letter '8'
   PositionX 10
   PositionY 12
   Width     7
@@ -215,7 +216,7 @@ Letter 56 # '8'
   OffsetY   -1
   XAdvance  8
 
-Letter 57 # '9'
+Letter '9'
   PositionX 19
   PositionY 12
   Width     7
@@ -223,7 +224,7 @@ Letter 57 # '9'
   OffsetY   -1
   XAdvance  8
 
-Letter 58 # ':'
+Letter ':'
   PositionX 28
   PositionY 12
   Width     2
@@ -231,7 +232,7 @@ Letter 58 # ':'
   OffsetY   -3
   XAdvance  3
 
-Letter 59 # ';'
+Letter ';'
   PositionX 32
   PositionY 12
   Width     3
@@ -239,7 +240,7 @@ Letter 59 # ';'
   OffsetY   -3
   XAdvance  4
 
-Letter 60 # '<'
+Letter '<'
   PositionX 37
   PositionY 12
   Width     5
@@ -247,7 +248,7 @@ Letter 60 # '<'
   OffsetY   -2
   XAdvance  6
 
-Letter 61 # '='
+Letter '='
   PositionX 44
   PositionY 12
   Width     6
@@ -255,7 +256,7 @@ Letter 61 # '='
   OffsetY   -3
   XAdvance  7
 
-Letter 62 # '>'
+Letter '>'
   PositionX 52
   PositionY 12
   Width     4
@@ -263,7 +264,7 @@ Letter 62 # '>'
   OffsetY   -2
   XAdvance  5
 
-Letter 63 # '?'
+Letter '?'
   PositionX 58
   PositionY 12
   Width     6
@@ -271,14 +272,14 @@ Letter 63 # '?'
   OffsetY   -1
   XAdvance  7
 
-Letter 64 # '@'
+Letter '@'
   PositionX 66
   PositionY 12
   Width     8
   Height    9
   XAdvance  9
 
-Letter 65 # 'A'
+Letter 'A'
   PositionX 76
   PositionY 12
   Width     9
@@ -286,7 +287,7 @@ Letter 65 # 'A'
   OffsetY   -1
   XAdvance  10
 
-Letter 66 # 'B'
+Letter 'B'
   PositionX 87
   PositionY 12
   Width     7
@@ -294,7 +295,7 @@ Letter 66 # 'B'
   OffsetY   -1
   XAdvance  8
 
-Letter 67 # 'C'
+Letter 'C'
   PositionX 96
   PositionY 12
   Width     7
@@ -302,7 +303,7 @@ Letter 67 # 'C'
   OffsetY   -1
   XAdvance  8
 
-Letter 68 # 'D'
+Letter 'D'
   PositionX 105
   PositionY 12
   Width     8
@@ -310,7 +311,7 @@ Letter 68 # 'D'
   OffsetY   -1
   XAdvance  9
 
-Letter 69 # 'E'
+Letter 'E'
   PositionX 115
   PositionY 12
   Width     7
@@ -318,7 +319,7 @@ Letter 69 # 'E'
   OffsetY   -1
   XAdvance  8
 
-Letter 70 # 'F'
+Letter 'F'
   PositionX 124
   PositionY 12
   Width     6
@@ -326,7 +327,7 @@ Letter 70 # 'F'
   OffsetY   -1
   XAdvance  7
 
-Letter 71 # 'G'
+Letter 'G'
   PositionX 132
   PositionY 12
   Width     8
@@ -334,7 +335,7 @@ Letter 71 # 'G'
   OffsetY   -1
   XAdvance  9
 
-Letter 72 # 'H'
+Letter 'H'
   PositionX 142
   PositionY 12
   Width     8
@@ -342,7 +343,7 @@ Letter 72 # 'H'
   OffsetY   -1
   XAdvance  9
 
-Letter 73 # 'I'
+Letter 'I'
   PositionX 152
   PositionY 12
   Width     2
@@ -350,7 +351,7 @@ Letter 73 # 'I'
   OffsetY   -1
   XAdvance  3
 
-Letter 74 # 'J'
+Letter 'J'
   PositionX 156
   PositionY 12
   Width     6
@@ -358,7 +359,7 @@ Letter 74 # 'J'
   OffsetY   -1
   XAdvance  7
 
-Letter 75 # 'K'
+Letter 'K'
   PositionX 164
   PositionY 12
   Width     8
@@ -366,7 +367,7 @@ Letter 75 # 'K'
   OffsetY   -1
   XAdvance  9
 
-Letter 76 # 'L'
+Letter 'L'
   PositionX 174
   PositionY 12
   Width     6
@@ -374,7 +375,7 @@ Letter 76 # 'L'
   OffsetY   -1
   XAdvance  7
 
-Letter 77 # 'M'
+Letter 'M'
   PositionX 182
   PositionY 12
   Width     9
@@ -382,7 +383,7 @@ Letter 77 # 'M'
   OffsetY   -1
   XAdvance  10
 
-Letter 78 # 'N'
+Letter 'N'
   PositionX 193
   PositionY 12
   Width     8
@@ -390,7 +391,7 @@ Letter 78 # 'N'
   OffsetY   -1
   XAdvance  9
 
-Letter 79 # 'O'
+Letter 'O'
   PositionX 203
   PositionY 12
   Width     8
@@ -398,7 +399,7 @@ Letter 79 # 'O'
   OffsetY   -1
   XAdvance  9
 
-Letter 80 # 'P'
+Letter 'P'
   PositionX 213
   PositionY 12
   Width     8
@@ -406,7 +407,7 @@ Letter 80 # 'P'
   OffsetY   -1
   XAdvance  9
 
-Letter 81 # 'Q'
+Letter 'Q'
   PositionX 223
   PositionY 12
   Width     9
@@ -414,7 +415,7 @@ Letter 81 # 'Q'
   OffsetY   -1
   XAdvance  10
 
-Letter 82 # 'R'
+Letter 'R'
   PositionX 234
   PositionY 12
   Width     8
@@ -422,7 +423,7 @@ Letter 82 # 'R'
   OffsetY   -1
   XAdvance  9
 
-Letter 83 # 'S'
+Letter 'S'
   PositionX 244
   PositionY 12
   Width     8
@@ -430,7 +431,7 @@ Letter 83 # 'S'
   OffsetY   -1
   XAdvance  9
 
-Letter 84 # 'T'
+Letter 'T'
   PositionX 1
   PositionY 23
   Width     7
@@ -438,7 +439,7 @@ Letter 84 # 'T'
   OffsetY   -1
   XAdvance  8
 
-Letter 85 # 'U'
+Letter 'U'
   PositionX 10
   PositionY 23
   Width     8
@@ -446,7 +447,7 @@ Letter 85 # 'U'
   OffsetY   -1
   XAdvance  9
 
-Letter 86 # 'V'
+Letter 'V'
   PositionX 20
   PositionY 23
   Width     7
@@ -454,7 +455,7 @@ Letter 86 # 'V'
   OffsetY   -1
   XAdvance  8
 
-Letter 87 # 'W'
+Letter 'W'
   PositionX 29
   PositionY 23
   Width     12
@@ -462,7 +463,7 @@ Letter 87 # 'W'
   OffsetY   -1
   XAdvance  13
 
-Letter 88 # 'X'
+Letter 'X'
   PositionX 43
   PositionY 23
   Width     8
@@ -470,7 +471,7 @@ Letter 88 # 'X'
   OffsetY   -1
   XAdvance  9
 
-Letter 89 # 'Y'
+Letter 'Y'
   PositionX 53
   PositionY 23
   Width     8
@@ -478,7 +479,7 @@ Letter 89 # 'Y'
   OffsetY   -1
   XAdvance  9
 
-Letter 90 # 'Z'
+Letter 'Z'
   PositionX 63
   PositionY 23
   Width     8
@@ -486,7 +487,7 @@ Letter 90 # 'Z'
   OffsetY   -1
   XAdvance  9
 
-Letter 91 # '['
+Letter '['
   PositionX 73
   PositionY 23
   Width     3
@@ -494,14 +495,14 @@ Letter 91 # '['
   OffsetY   -1
   XAdvance  4
 
-Letter 92 # '\'
+Letter '\'
   PositionX 78
   PositionY 23
   Width     5
   Height    9
   XAdvance  6
 
-Letter 93 # ']'
+Letter ']'
   PositionX 85
   PositionY 23
   Width     4
@@ -509,7 +510,7 @@ Letter 93 # ']'
   OffsetY   -1
   XAdvance  5
 
-Letter 94 # '^'
+Letter '^'
   PositionX 91
   PositionY 23
   Width     4
@@ -517,7 +518,7 @@ Letter 94 # '^'
   OffsetY   -1
   XAdvance  5
 
-Letter 95 # '_'
+Letter '_'
   PositionX 97
   PositionY 23
   Width     5
@@ -525,7 +526,7 @@ Letter 95 # '_'
   OffsetY   -7
   XAdvance  6
 
-Letter 96 # '`'
+Letter '`'
   PositionX 104
   PositionY 23
   Width     3
@@ -533,7 +534,7 @@ Letter 96 # '`'
   OffsetY   -1
   XAdvance  4
 
-Letter 97 # 'a'
+Letter 'a'
   PositionX 109
   PositionY 23
   Width     6
@@ -541,14 +542,14 @@ Letter 97 # 'a'
   OffsetY   -2
   XAdvance  7
 
-Letter 98 # 'b'
+Letter 'b'
   PositionX 117
   PositionY 23
   Width     6
   Height    9
   XAdvance  7
 
-Letter 99 # 'c'
+Letter 'c'
   PositionX 125
   PositionY 23
   Width     5
@@ -556,14 +557,14 @@ Letter 99 # 'c'
   OffsetY   -2
   XAdvance  6
 
-Letter 100 # 'd'
+Letter 'd'
   PositionX 132
   PositionY 23
   Width     6
   Height    9
   XAdvance  7
 
-Letter 101 # 'e'
+Letter 'e'
   PositionX 140
   PositionY 23
   Width     6
@@ -571,14 +572,14 @@ Letter 101 # 'e'
   OffsetY   -2
   XAdvance  7
 
-Letter 102 # 'f'
+Letter 'f'
   PositionX 148
   PositionY 23
   Width     4
   Height    9
   XAdvance  5
 
-Letter 103 # 'g'
+Letter 'g'
   PositionX 154
   PositionY 23
   Width     5
@@ -586,42 +587,42 @@ Letter 103 # 'g'
   OffsetY   -2
   XAdvance  6
 
-Letter 104 # 'h'
+Letter 'h'
   PositionX 161
   PositionY 23
   Width     5
   Height    9
   XAdvance  6
 
-Letter 105 # 'i'
+Letter 'i'
   PositionX 168
   PositionY 23
   Width     1
   Height    9
   XAdvance  2
 
-Letter 106 # 'j'
+Letter 'j'
   PositionX 171
   PositionY 23
   Width     2
   Height    9
   XAdvance  3
 
-Letter 107 # 'k'
+Letter 'k'
   PositionX 175
   PositionY 23
   Width     5
   Height    9
   XAdvance  6
 
-Letter 108 # 'l'
+Letter 'l'
   PositionX 182
   PositionY 23
   Width     1
   Height    9
   XAdvance  2
 
-Letter 109 # 'm'
+Letter 'm'
   PositionX 185
   PositionY 23
   Width     9
@@ -629,7 +630,7 @@ Letter 109 # 'm'
   OffsetY   -2
   XAdvance  10
 
-Letter 110 # 'n'
+Letter 'n'
   PositionX 196
   PositionY 23
   Width     6
@@ -637,7 +638,7 @@ Letter 110 # 'n'
   OffsetY   -2
   XAdvance  7
 
-Letter 111 # 'o'
+Letter 'o'
   PositionX 204
   PositionY 23
   Width     6
@@ -645,7 +646,7 @@ Letter 111 # 'o'
   OffsetY   -2
   XAdvance  7
 
-Letter 112 # 'p'
+Letter 'p'
   PositionX 212
   PositionY 23
   Width     6
@@ -653,7 +654,7 @@ Letter 112 # 'p'
   OffsetY   -2
   XAdvance  7
 
-Letter 113 # 'q'
+Letter 'q'
   PositionX 220
   PositionY 23
   Width     5
@@ -661,7 +662,7 @@ Letter 113 # 'q'
   OffsetY   -2
   XAdvance  6
 
-Letter 114 # 'r'
+Letter 'r'
   PositionX 227
   PositionY 23
   Width     5
@@ -669,7 +670,7 @@ Letter 114 # 'r'
   OffsetY   -2
   XAdvance  6
 
-Letter 115 # 's'
+Letter 's'
   PositionX 234
   PositionY 23
   Width     5
@@ -677,7 +678,7 @@ Letter 115 # 's'
   OffsetY   -2
   XAdvance  6
 
-Letter 116 # 't'
+Letter 't'
   PositionX 241
   PositionY 23
   Width     4
@@ -685,7 +686,7 @@ Letter 116 # 't'
   OffsetY   -1
   XAdvance  5
 
-Letter 117 # 'u'
+Letter 'u'
   PositionX 247
   PositionY 23
   Width     5
@@ -693,7 +694,7 @@ Letter 117 # 'u'
   OffsetY   -2
   XAdvance  6
 
-Letter 118 # 'v'
+Letter 'v'
   PositionX 1
   PositionY 34
   Width     6
@@ -701,7 +702,7 @@ Letter 118 # 'v'
   OffsetY   -2
   XAdvance  7
 
-Letter 119 # 'w'
+Letter 'w'
   PositionX 9
   PositionY 34
   Width     9
@@ -709,7 +710,7 @@ Letter 119 # 'w'
   OffsetY   -2
   XAdvance  10
 
-Letter 120 # 'x'
+Letter 'x'
   PositionX 20
   PositionY 34
   Width     6
@@ -717,7 +718,7 @@ Letter 120 # 'x'
   OffsetY   -2
   XAdvance  7
 
-Letter 121 # 'y'
+Letter 'y'
   PositionX 28
   PositionY 34
   Width     6
@@ -725,7 +726,7 @@ Letter 121 # 'y'
   OffsetY   -2
   XAdvance  7
 
-Letter 122 # 'z'
+Letter 'z'
   PositionX 36
   PositionY 34
   Width     5
@@ -733,7 +734,7 @@ Letter 122 # 'z'
   OffsetY   -2
   XAdvance  6
 
-Letter 123 # '{'
+Letter '{'
   PositionX 43
   PositionY 34
   Width     4
@@ -741,7 +742,7 @@ Letter 123 # '{'
   OffsetY   -1
   XAdvance  5
 
-Letter 124 # '|'
+Letter '|'
   PositionX 49
   PositionY 34
   Width     2
@@ -749,7 +750,7 @@ Letter 124 # '|'
   OffsetY   -1
   XAdvance  3
 
-Letter 125 # '}'
+Letter '}'
   PositionX 53
   PositionY 34
   Width     3
@@ -757,7 +758,7 @@ Letter 125 # '}'
   OffsetY   -1
   XAdvance  4
 
-Letter 126 # '~'
+Letter '~'
   PositionX 58
   PositionY 34
   Width     5
@@ -765,7 +766,7 @@ Letter 126 # '~'
   OffsetY   -1
   XAdvance  6
 
-Letter 192 # '¿'
+Letter '–ê'
   PositionX 195
   PositionY 34
   Width     9
@@ -773,7 +774,7 @@ Letter 192 # '¿'
   OffsetY   -1
   XAdvance  10
 
-Letter 193 # '¡'
+Letter '–ë'
   PositionX 206
   PositionY 34
   Width     7
@@ -781,7 +782,7 @@ Letter 193 # '¡'
   OffsetY   -1
   XAdvance  8
 
-Letter 194 # '¬'
+Letter '–í'
   PositionX 215
   PositionY 34
   Width     7
@@ -789,7 +790,7 @@ Letter 194 # '¬'
   OffsetY   -1
   XAdvance  8
 
-Letter 195 # '√'
+Letter '–ì'
   PositionX 224
   PositionY 34
   Width     6
@@ -797,7 +798,7 @@ Letter 195 # '√'
   OffsetY   -1
   XAdvance  7
 
-Letter 196 # 'ƒ'
+Letter '–î'
   PositionX 232
   PositionY 34
   Width     9
@@ -805,7 +806,7 @@ Letter 196 # 'ƒ'
   OffsetY   -1
   XAdvance  10
 
-Letter 197 # '≈'
+Letter '–ï'
   PositionX 243
   PositionY 34
   Width     7
@@ -813,7 +814,7 @@ Letter 197 # '≈'
   OffsetY   -1
   XAdvance  8
 
-Letter 198 # '∆'
+Letter '–ñ'
   PositionX 1
   PositionY 45
   Width     11
@@ -821,7 +822,7 @@ Letter 198 # '∆'
   OffsetY   -1
   XAdvance  12
 
-Letter 199 # '«'
+Letter '–ó'
   PositionX 14
   PositionY 45
   Width     7
@@ -829,7 +830,7 @@ Letter 199 # '«'
   OffsetY   -1
   XAdvance  8
 
-Letter 200 # '»'
+Letter '–ò'
   PositionX 23
   PositionY 45
   Width     8
@@ -837,14 +838,14 @@ Letter 200 # '»'
   OffsetY   -1
   XAdvance  9
 
-Letter 201 # '…'
+Letter '–ô'
   PositionX 33
   PositionY 45
   Width     8
   Height    9
   XAdvance  9
 
-Letter 202 # ' '
+Letter '–ö'
   PositionX 43
   PositionY 45
   Width     8
@@ -852,7 +853,7 @@ Letter 202 # ' '
   OffsetY   -1
   XAdvance  9
 
-Letter 203 # 'À'
+Letter '–õ'
   PositionX 53
   PositionY 45
   Width     7
@@ -860,7 +861,7 @@ Letter 203 # 'À'
   OffsetY   -1
   XAdvance  8
 
-Letter 204 # 'Ã'
+Letter '–ú'
   PositionX 62
   PositionY 45
   Width     9
@@ -868,7 +869,7 @@ Letter 204 # 'Ã'
   OffsetY   -1
   XAdvance  10
 
-Letter 205 # 'Õ'
+Letter '–ù'
   PositionX 73
   PositionY 45
   Width     8
@@ -876,7 +877,7 @@ Letter 205 # 'Õ'
   OffsetY   -1
   XAdvance  9
 
-Letter 206 # 'Œ'
+Letter '–û'
   PositionX 83
   PositionY 45
   Width     8
@@ -884,7 +885,7 @@ Letter 206 # 'Œ'
   OffsetY   -1
   XAdvance  9
 
-Letter 207 # 'œ'
+Letter '–ü'
   PositionX 93
   PositionY 45
   Width     8
@@ -892,7 +893,7 @@ Letter 207 # 'œ'
   OffsetY   -1
   XAdvance  9
 
-Letter 208 # '–'
+Letter '–†'
   PositionX 103
   PositionY 45
   Width     8
@@ -900,7 +901,7 @@ Letter 208 # '–'
   OffsetY   -1
   XAdvance  9
 
-Letter 209 # '—'
+Letter '–°'
   PositionX 113
   PositionY 45
   Width     7
@@ -908,7 +909,7 @@ Letter 209 # '—'
   OffsetY   -1
   XAdvance  8
 
-Letter 210 # '“'
+Letter '–¢'
   PositionX 122
   PositionY 45
   Width     7
@@ -916,7 +917,7 @@ Letter 210 # '“'
   OffsetY   -1
   XAdvance  8
 
-Letter 211 # '”'
+Letter '–£'
   PositionX 131
   PositionY 45
   Width     8
@@ -924,7 +925,7 @@ Letter 211 # '”'
   OffsetY   -1
   XAdvance  9
 
-Letter 212 # '‘'
+Letter '–§'
   PositionX 141
   PositionY 45
   Width     11
@@ -932,7 +933,7 @@ Letter 212 # '‘'
   OffsetY   -1
   XAdvance  12
 
-Letter 213 # '’'
+Letter '–•'
   PositionX 154
   PositionY 45
   Width     8
@@ -940,7 +941,7 @@ Letter 213 # '’'
   OffsetY   -1
   XAdvance  9
 
-Letter 214 # '÷'
+Letter '–¶'
   PositionX 164
   PositionY 45
   Width     9
@@ -948,7 +949,7 @@ Letter 214 # '÷'
   OffsetY   -1
   XAdvance  10
 
-Letter 215 # '◊'
+Letter '–ß'
   PositionX 175
   PositionY 45
   Width     8
@@ -956,7 +957,7 @@ Letter 215 # '◊'
   OffsetY   -1
   XAdvance  9
 
-Letter 216 # 'ÿ'
+Letter '–®'
   PositionX 185
   PositionY 45
   Width     8
@@ -964,7 +965,7 @@ Letter 216 # 'ÿ'
   OffsetY   -1
   XAdvance  9
 
-Letter 217 # 'Ÿ'
+Letter '–©'
   PositionX 195
   PositionY 45
   Width     12
@@ -972,7 +973,7 @@ Letter 217 # 'Ÿ'
   OffsetY   -1
   XAdvance  13
 
-Letter 218 # '⁄'
+Letter '–™'
   PositionX 209
   PositionY 45
   Width     7
@@ -980,7 +981,7 @@ Letter 218 # '⁄'
   OffsetY   -1
   XAdvance  8
 
-Letter 219 # '€'
+Letter '–´'
   PositionX 218
   PositionY 45
   Width     9
@@ -988,7 +989,7 @@ Letter 219 # '€'
   OffsetY   -1
   XAdvance  10
 
-Letter 220 # '‹'
+Letter '–¨'
   PositionX 229
   PositionY 45
   Width     6
@@ -996,7 +997,7 @@ Letter 220 # '‹'
   OffsetY   -1
   XAdvance  7
 
-Letter 221 # '›'
+Letter '–≠'
   PositionX 237
   PositionY 45
   Width     7
@@ -1004,7 +1005,7 @@ Letter 221 # '›'
   OffsetY   -1
   XAdvance  8
 
-Letter 222 # 'ﬁ'
+Letter '–Æ'
   PositionX 1
   PositionY 56
   Width     11
@@ -1012,7 +1013,7 @@ Letter 222 # 'ﬁ'
   OffsetY   -1
   XAdvance  12
 
-Letter 223 # 'ﬂ'
+Letter '–Ø'
   PositionX 14
   PositionY 56
   Width     8
@@ -1020,7 +1021,7 @@ Letter 223 # 'ﬂ'
   OffsetY   -1
   XAdvance  9
 
-Letter 224 # '‡'
+Letter '–∞'
   PositionX 24
   PositionY 56
   Width     5
@@ -1028,14 +1029,14 @@ Letter 224 # '‡'
   OffsetY   -2
   XAdvance  6
 
-Letter 225 # '·'
+Letter '–±'
   PositionX 31
   PositionY 56
   Width     5
   Height    9
   XAdvance  6
 
-Letter 226 # '‚'
+Letter '–≤'
   PositionX 38
   PositionY 56
   Width     5
@@ -1043,7 +1044,7 @@ Letter 226 # '‚'
   OffsetY   -2
   XAdvance  6
 
-Letter 227 # '„'
+Letter '–≥'
   PositionX 45
   PositionY 56
   Width     5
@@ -1051,7 +1052,7 @@ Letter 227 # '„'
   OffsetY   -2
   XAdvance  6
 
-Letter 228 # '‰'
+Letter '–¥'
   PositionX 52
   PositionY 56
   Width     6
@@ -1059,7 +1060,7 @@ Letter 228 # '‰'
   OffsetY   -2
   XAdvance  7
 
-Letter 229 # 'Â'
+Letter '–µ'
   PositionX 60
   PositionY 56
   Width     5
@@ -1067,7 +1068,7 @@ Letter 229 # 'Â'
   OffsetY   -2
   XAdvance  6
 
-Letter 230 # 'Ê'
+Letter '–∂'
   PositionX 67
   PositionY 56
   Width     8
@@ -1075,7 +1076,7 @@ Letter 230 # 'Ê'
   OffsetY   -2
   XAdvance  9
 
-Letter 231 # 'Á'
+Letter '–∑'
   PositionX 77
   PositionY 56
   Width     7
@@ -1083,7 +1084,7 @@ Letter 231 # 'Á'
   OffsetY   -2
   XAdvance  8
 
-Letter 232 # 'Ë'
+Letter '–∏'
   PositionX 86
   PositionY 56
   Width     5
@@ -1091,7 +1092,7 @@ Letter 232 # 'Ë'
   OffsetY   -2
   XAdvance  6
 
-Letter 233 # 'È'
+Letter '–π'
   PositionX 93
   PositionY 56
   Width     5
@@ -1099,7 +1100,7 @@ Letter 233 # 'È'
   OffsetY   -1
   XAdvance  6
 
-Letter 234 # 'Í'
+Letter '–∫'
   PositionX 100
   PositionY 56
   Width     5
@@ -1107,7 +1108,7 @@ Letter 234 # 'Í'
   OffsetY   -2
   XAdvance  6
 
-Letter 235 # 'Î'
+Letter '–ª'
   PositionX 107
   PositionY 56
   Width     5
@@ -1115,7 +1116,7 @@ Letter 235 # 'Î'
   OffsetY   -2
   XAdvance  6
 
-Letter 236 # 'Ï'
+Letter '–º'
   PositionX 114
   PositionY 56
   Width     7
@@ -1123,7 +1124,7 @@ Letter 236 # 'Ï'
   OffsetY   -2
   XAdvance  8
 
-Letter 237 # 'Ì'
+Letter '–Ω'
   PositionX 123
   PositionY 56
   Width     6
@@ -1131,7 +1132,7 @@ Letter 237 # 'Ì'
   OffsetY   -2
   XAdvance  7
 
-Letter 238 # 'Ó'
+Letter '–æ'
   PositionX 131
   PositionY 56
   Width     5
@@ -1139,7 +1140,7 @@ Letter 238 # 'Ó'
   OffsetY   -2
   XAdvance  6
 
-Letter 239 # 'Ô'
+Letter '–ø'
   PositionX 138
   PositionY 56
   Width     5
@@ -1147,7 +1148,7 @@ Letter 239 # 'Ô'
   OffsetY   -2
   XAdvance  6
 
-Letter 240 # ''
+Letter '—Ä'
   PositionX 145
   PositionY 56
   Width     5
@@ -1155,7 +1156,7 @@ Letter 240 # ''
   OffsetY   -2
   XAdvance  6
 
-Letter 241 # 'Ò'
+Letter '—Å'
   PositionX 152
   PositionY 56
   Width     5
@@ -1163,7 +1164,7 @@ Letter 241 # 'Ò'
   OffsetY   -2
   XAdvance  6
 
-Letter 242 # 'Ú'
+Letter '—Ç'
   PositionX 159
   PositionY 56
   Width     9
@@ -1171,7 +1172,7 @@ Letter 242 # 'Ú'
   OffsetY   -2
   XAdvance  10
 
-Letter 243 # 'Û'
+Letter '—É'
   PositionX 170
   PositionY 56
   Width     5
@@ -1179,7 +1180,7 @@ Letter 243 # 'Û'
   OffsetY   -2
   XAdvance  6
 
-Letter 244 # 'Ù'
+Letter '—Ñ'
   PositionX 177
   PositionY 56
   Width     9
@@ -1187,7 +1188,7 @@ Letter 244 # 'Ù'
   OffsetY   -2
   XAdvance  10
 
-Letter 245 # 'ı'
+Letter '—Ö'
   PositionX 188
   PositionY 56
   Width     6
@@ -1195,7 +1196,7 @@ Letter 245 # 'ı'
   OffsetY   -2
   XAdvance  7
 
-Letter 246 # 'ˆ'
+Letter '—Ü'
   PositionX 196
   PositionY 56
   Width     6
@@ -1203,7 +1204,7 @@ Letter 246 # 'ˆ'
   OffsetY   -2
   XAdvance  7
 
-Letter 247 # '˜'
+Letter '—á'
   PositionX 204
   PositionY 56
   Width     5
@@ -1211,7 +1212,7 @@ Letter 247 # '˜'
   OffsetY   -2
   XAdvance  6
 
-Letter 248 # '¯'
+Letter '—à'
   PositionX 211
   PositionY 56
   Width     9
@@ -1219,7 +1220,7 @@ Letter 248 # '¯'
   OffsetY   -2
   XAdvance  10
 
-Letter 249 # '˘'
+Letter '—â'
   PositionX 222
   PositionY 56
   Width     9
@@ -1227,7 +1228,7 @@ Letter 249 # '˘'
   OffsetY   -2
   XAdvance  10
 
-Letter 250 # '˙'
+Letter '—ä'
   PositionX 233
   PositionY 56
   Width     6
@@ -1235,7 +1236,7 @@ Letter 250 # '˙'
   OffsetY   -2
   XAdvance  7
 
-Letter 251 # '˚'
+Letter '—ã'
   PositionX 241
   PositionY 56
   Width     6
@@ -1243,7 +1244,7 @@ Letter 251 # '˚'
   OffsetY   -2
   XAdvance  7
 
-Letter 252 # '¸'
+Letter '—å'
   PositionX 249
   PositionY 56
   Width     5
@@ -1251,7 +1252,7 @@ Letter 252 # '¸'
   OffsetY   -2
   XAdvance  6
 
-Letter 253 # '˝'
+Letter '—ç'
   PositionX 1
   PositionY 67
   Width     5
@@ -1259,7 +1260,7 @@ Letter 253 # '˝'
   OffsetY   -2
   XAdvance  6
 
-Letter 254 # '˛'
+Letter '—é'
   PositionX 8
   PositionY 67
   Width     7
@@ -1267,7 +1268,7 @@ Letter 254 # '˛'
   OffsetY   -2
   XAdvance  8
 
-Letter 255 # 'ˇ'
+Letter '—è'
   PositionX 17
   PositionY 67
   Width     6

@@ -16,19 +16,11 @@
 GUIScreen@[] AllScreens;
 GUIScreen@[] ActiveScreens;
 bool[] KeyPressed;
-KeybData@[] KbData;
 IGUIScreenOpt@ LastScreenOpt=null;
 IGUIElementOpt@ LastElementOpt=null;
 IGUIElementTextOpt@[] screenTexts;
 int ClientMainScreenGamePosX;
 int ClientMainScreenGamePosY;
-
-class KeybData
-{
-	KeybData(int8 r, int8 rs, int8 e, int8 es){Char.resize(4); Char[0]=r; Char[1]=rs; Char[2]=e; Char[3]=es;}
-	uint8[] Char; // Russian, Rissian Shift, English, English Shift
-}
-
 
 class GUIElement : IGUIElementOpt
 {
@@ -130,10 +122,10 @@ class GUIElement : IGUIElementOpt
 		if(@MouseMoveCallback!=null) MouseMoveCallback.OnMouseMove(x, y);
 	}
 
-	bool KeyPress(uint8 key)
-	{
-		return false;
-	}
+	bool KeyPress( uint8 key, string& keyText )
+    {
+        return false;
+    }
 
 	void InputLost()
 	{
@@ -1096,7 +1088,7 @@ class GUIElementEditBox : GUIElement, IGUIElementEditBoxOpt
 		return false;
 	}
 
-	bool KeyPress(uint8 key)
+	bool KeyPress(uint8 key, string& keyText)
 	{
 		uint8 letter=0;
 		
@@ -1109,12 +1101,12 @@ class GUIElementEditBox : GUIElement, IGUIElementEditBoxOpt
 		}
 
 		bool result=false;
-		if(key!=DIK_RETURN) ProcessKey(key,text,letter);
+		if(key!=DIK_RETURN) ProcessKey(key, keyText, text);
 
-		if(text.length()>inputMaxLen) 
+		if(text.length() > inputMaxLen) 
 		{
-			text.resize(inputMaxLen);
-			visibleText.resize(inputMaxLen);
+			text.rawResize(inputMaxLen);
+			visibleText.rawResize(inputMaxLen);
 		}
 		
 		if(password)
@@ -1122,11 +1114,11 @@ class GUIElementEditBox : GUIElement, IGUIElementEditBoxOpt
 			if(firstTime) 
 			{
 				firstTime = false;
-				visibleText.resize(0); // To delate start password Text
+				visibleText.rawResize(0); // To delate start password Text
 			}
-			if(key==DIK_BACK)
+			if(key == DIK_BACK)
 			{
-				if(visibleText.length()>0) visibleText.resize(visibleText.length()-1);
+				if(visibleText.length()>0) visibleText.rawResize(visibleText.length() - 1);
 			}
 			else 
 			{
@@ -1138,7 +1130,7 @@ class GUIElementEditBox : GUIElement, IGUIElementEditBoxOpt
 		else 
 			visibleText=text;
 		
-		if(@KeyPressCallback != null) return KeyPressCallback.OnKeyPress(key,letter);
+		if(@KeyPressCallback != null) return KeyPressCallback.OnKeyPress(key, keyText);
 
 		return false;
 	}
@@ -2106,17 +2098,17 @@ class GUIScreen : IGUIScreenOpt
 		for(uint i=0,j=Elements.length();i<j;i++) Elements[i].MouseMove(x,y);
 	}
 
-	bool KeyPress(uint8 key)
+	bool KeyPress( uint8 key, string& keyText )
 	{
 		IGUIElementOpt@ e;
 		
-		if(@KeyPressCallback != null && !KeyPressCallback.OnKeyPress(key))
+		if(@KeyPressCallback != null && !KeyPressCallback.OnKeyPress(key, keyText))
 			return false;
 
 		for(uint i=0,j=Elements.length();i<j;i++)
 		{
 			@e=Elements[i];
-			if(e.IsFocused()) return e.KeyPress(key);
+			if(e.IsFocused()) return e.KeyPress(key, keyText);
 		}
 		return false;
 	}
@@ -2468,76 +2460,6 @@ void GUI_Init()
 	CreateScreen(CLIENT_SCREEN_TOWN_VIEW,null);
 	CreateScreen(CLIENT_SCREEN_SAVE_LOAD,null);
 	for(uint i=0,j=AllScreens.length();i<j;i++) AllScreens[i].IsHardcoded=true;
-
-	// Keyboard init
-	KbData.resize(0x100);
-	@KbData[DIK_1]=				KeybData('1','!','1','!');
-	@KbData[DIK_2]=				KeybData('2','"','2','@');
-	@KbData[DIK_3]=				KeybData('3','#','3','#');
-	@KbData[DIK_4]=				KeybData('4','$','4','$');
-	@KbData[DIK_5]=				KeybData('5','%','5','%');
-	@KbData[DIK_6]=				KeybData('6','^','6','^');
-	@KbData[DIK_7]=				KeybData('7','&','7','&');
-	@KbData[DIK_8]=				KeybData('8','*','8','*');
-	@KbData[DIK_9]=				KeybData('9','(','9','(');
-	@KbData[DIK_0]=				KeybData('0',')','0',')');
-	@KbData[DIK_MINUS]=			KeybData('-','_','-','_');
-	@KbData[DIK_EQUALS]=		KeybData('=','+','=','+');
-	@KbData[DIK_Q]=				KeybData('q','Q','q','Q');
-	@KbData[DIK_W]=				KeybData('w','W','w','W');
-	@KbData[DIK_E]=				KeybData('e','E','e','E');
-	@KbData[DIK_R]=				KeybData('r','R','r','R');
-	@KbData[DIK_T]=				KeybData('t','T','t','T');
-	@KbData[DIK_Y]=				KeybData('y','Y','y','Y');
-	@KbData[DIK_U]=				KeybData('u','U','u','U');
-	@KbData[DIK_I]=				KeybData('i','I','i','I');
-	@KbData[DIK_O]=				KeybData('o','O','o','O');
-	@KbData[DIK_P]=				KeybData('p','P','p','P');
-	@KbData[DIK_LBRACKET]=		KeybData('[','{','[','{');
-	@KbData[DIK_RBRACKET]=		KeybData(']','}',']','}');
-	@KbData[DIK_A]=				KeybData('a','A','a','A');
-	@KbData[DIK_S]=				KeybData('s','S','s','S');
-	@KbData[DIK_D]=				KeybData('d','D','d','D');
-	@KbData[DIK_F]=				KeybData('f','F','f','F');
-	@KbData[DIK_G]=				KeybData('g','G','g','G');
-	@KbData[DIK_H]=				KeybData('h','H','h','H');
-	@KbData[DIK_J]=				KeybData('j','J','j','J');
-	@KbData[DIK_K]=				KeybData('k','K','k','K');
-	@KbData[DIK_L]=				KeybData('l','L','l','L');
-	@KbData[DIK_SEMICOLON]=		KeybData(';',':',';',':');
-	@KbData[DIK_APOSTROPHE]=	KeybData('ý','Ý', 39, 39); // 39 == '
-	@KbData[DIK_Z]=				KeybData('z','Z','z','Z');
-	@KbData[DIK_X]=				KeybData('x','X','x','X');
-	@KbData[DIK_C]=				KeybData('c','C','c','C');
-	@KbData[DIK_V]=				KeybData('v','V','v','V');
-	@KbData[DIK_B]=				KeybData('b','B','b','B');
-	@KbData[DIK_N]=				KeybData('n','N','n','N');
-	@KbData[DIK_M]=				KeybData('m','M','m','M');
-	@KbData[DIK_COMMA]=			KeybData(',','<',',','<');
-	@KbData[DIK_PERIOD]=		KeybData('.','>','.','>');
-	@KbData[DIK_SLASH]=			KeybData('/','?','/','?');
-	@KbData[DIK_MULTIPLY]=		KeybData('*','*','*','*');
-	@KbData[DIK_SPACE]=			KeybData(' ',' ',' ',' ');
-	@KbData[DIK_GRAVE]=			KeybData('`','~','`','~');
-	@KbData[DIK_NUMPAD1]=		KeybData('1','1','1','1');
-	@KbData[DIK_NUMPAD2]=		KeybData('2','2','2','2');
-	@KbData[DIK_NUMPAD3]=		KeybData('3','3','3','3');
-	@KbData[DIK_NUMPAD4]=		KeybData('4','4','4','4');
-	@KbData[DIK_NUMPAD5]=		KeybData('5','5','5','5');
-	@KbData[DIK_NUMPAD6]=		KeybData('6','6','6','6');
-	@KbData[DIK_NUMPAD7]=		KeybData('7','7','7','7');
-	@KbData[DIK_NUMPAD8]=		KeybData('8','8','8','8');
-	@KbData[DIK_NUMPAD9]=		KeybData('9','9','9','9');
-	@KbData[DIK_NUMPAD0]=		KeybData('0','0','0','0');
-	@KbData[DIK_SUBTRACT]=		KeybData('-','-','-','-');
-	@KbData[DIK_ADD]=			KeybData('+','+','+','+');
-	@KbData[DIK_DECIMAL]=		KeybData('.','.','.','.');
-	@KbData[DIK_NUMPADEQUALS]=	KeybData('=','=','=','=');
-	@KbData[DIK_NUMPADCOMMA]=	KeybData(',',',',',',',');
-	@KbData[DIK_DIVIDE]=		KeybData('/','/','/','/');
-	@KbData[DIK_RETURN]=		KeybData('\n','\n','\n','\n');
-	@KbData[DIK_NUMPADENTER]=	KeybData('\n','\n','\n','\n');
-	@KbData[DIK_TAB]=			KeybData('\t','\t','\t','\t');
 }
 
 int GUI_GetActiveMainScreen()
@@ -2728,16 +2650,16 @@ void GUI_MouseMove(int x, int y)
 	if(len!=0) ActiveScreens[len-1].MouseMove(x,y);
 }
 
-bool GUI_KeyDown(uint8 key)
+bool GUI_KeyDown(uint8 key, string& keyText)
 {
 	if(KeyPressed.length()!=0) KeyPressed[key]=true;
 	uint len=ActiveScreens.length();
-	if(len!=0) return ActiveScreens[len-1].KeyPress(key);
+	if(len!=0) return ActiveScreens[len-1].KeyPress(key, keyText);
 	
 	return false;
 }
 
-bool GUI_KeyUp(uint8 key)
+bool GUI_KeyUp(uint8 key, string& keyText)
 {
 	if(KeyPressed.length()!=0) KeyPressed[key]=false;
 	return false;
@@ -2809,27 +2731,21 @@ GUIScreen@ GetActiveScreen(int screenIndex)
 	return null;
 }
 
-bool ProcessKey(uint8 key, string& text, uint8& letter)
+bool ProcessKey(uint8 key, string& keyText, string& text)
 {
-	if(KeyPressed.length()==0) return false;
+	if( key == DIK_BACK )
+    {
+        if( text.length() > 0 )
+            text[ -1 ] = "";
+        return true;
+    }
 
-	if(key==DIK_BACK)
-	{
-		if(text.length()>0) text.resize(text.length()-1);
-		return true;
-	}
-
-	KeybData@ k=KbData[key];
-	if(not (k is null))
-	{
-		bool shiftDown=(KeyPressed[DIK_LSHIFT] || KeyPressed[DIK_RSHIFT]);
-		uint len=text.length();
-		text.resize(text.length()+1);
-		text[len]=k.Char[GetKeybLang()*2+(shiftDown?1:0)];
-		letter=text[len];
-		return true;
-	}
-	return false;
+    if( keyText != "" )
+    {
+        text += keyText;
+        return true;
+    }
+    return false;
 }
 
 void DeleteGUIElement(int screenIndex, uint elementIndex)

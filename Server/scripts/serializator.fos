@@ -254,11 +254,11 @@ class Serializator
 
     Serializator@ Set( const string& value )
     {
-        uint len = value.length();
+        uint len = value.rawLength();
         if( CurPos + len + 1 > BufSize )
             GrowBuffer( CurPos + len + 1 - BufSize + DEFAULT_GROW );
         for( uint i = 0; i < len; i++ )
-            Array[ CurPos++ ] = value[ i ];
+            Array[ CurPos++ ] = value.rawGet( i );
         Array[ CurPos++ ] = 0;
         if( CurPos > DataSize )
             DataSize = CurPos;
@@ -554,9 +554,9 @@ class Serializator
                 break;
             }
         }
-        str.resize( len );
+        str.rawResize( len );
         for( uint i = 0; i < len; i++ )
-            str[ i ] = Array[ CurPos++ ];
+            str.rawSet( i, Array[ CurPos++ ] );
         CurPos++;         // Skip zero
         return this;
     }

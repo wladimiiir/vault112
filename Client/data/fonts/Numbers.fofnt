@@ -1,383 +1,384 @@
+Version  2
 Image    Numbers.png
 YAdvance 0
 
-Letter 32 # ' '
+Letter ' '
   PositionX 1
   PositionY 1
   XAdvance  9
 
-Letter 48 # '0'
+Letter '0'
   PositionX 1
   PositionY 1
   Width     9
   Height    17
   XAdvance  9
 
-Letter 49 # '1'
+Letter '1'
   PositionX 12
   PositionY 1
   Width     9
   Height    17
   XAdvance  9
 
-Letter 50 # '2'
+Letter '2'
   PositionX 23
   PositionY 1
   Width     9
   Height    17
   XAdvance  9
 
-Letter 51 # '3'
+Letter '3'
   PositionX 34
   PositionY 1
   Width     9
   Height    17
   XAdvance  9
 
-Letter 52 # '4'
+Letter '4'
   PositionX 45
   PositionY 1
   Width     9
   Height    17
   XAdvance  9
 
-Letter 53 # '5'
+Letter '5'
   PositionX 56
   PositionY 1
   Width     9
   Height    17
   XAdvance  9
 
-Letter 54 # '6'
+Letter '6'
   PositionX 67
   PositionY 1
   Width     9
   Height    17
   XAdvance  9
 
-Letter 55 # '7'
+Letter '7'
   PositionX 78
   PositionY 1
   Width     9
   Height    17
   XAdvance  9
 
-Letter 56 # '8'
+Letter '8'
   PositionX 89
   PositionY 1
   Width     9
   Height    17
   XAdvance  9
 
-Letter 57 # '9'
+Letter '9'
   PositionX 100
   PositionY 1
   Width     9
   Height    17
   XAdvance  9
 
-Letter 58 # ':'
+Letter ':'
   PositionX 111
   PositionY 1
   Width     9
   Height    17
   XAdvance  9
 
-Letter 59 # ';'
+Letter ';'
   PositionX 122
   PositionY 1
   Width     9
   Height    17
   XAdvance  9
 
-Letter 60 # '<'
+Letter '<'
   PositionX 133
   PositionY 1
   Width     6
   Height    17
   XAdvance  6
 
-Letter 61 # '='
+Letter '='
   PositionX 141
   PositionY 1
   Width     6
   Height    17
   XAdvance  6
 
-Letter 64 # '@'
+Letter '@'
   PositionX 149
   PositionY 1
   Width     9
   Height    17
   XAdvance  9
 
-Letter 65 # 'A'
+Letter 'A'
   PositionX 160
   PositionY 1
   Width     9
   Height    17
   XAdvance  9
 
-Letter 66 # 'B'
+Letter 'B'
   PositionX 171
   PositionY 1
   Width     9
   Height    17
   XAdvance  9
 
-Letter 67 # 'C'
+Letter 'C'
   PositionX 182
   PositionY 1
   Width     9
   Height    17
   XAdvance  9
 
-Letter 68 # 'D'
+Letter 'D'
   PositionX 193
   PositionY 1
   Width     9
   Height    17
   XAdvance  9
 
-Letter 69 # 'E'
+Letter 'E'
   PositionX 204
   PositionY 1
   Width     9
   Height    17
   XAdvance  9
 
-Letter 70 # 'F'
+Letter 'F'
   PositionX 215
   PositionY 1
   Width     9
   Height    17
   XAdvance  9
 
-Letter 71 # 'G'
+Letter 'G'
   PositionX 226
   PositionY 1
   Width     9
   Height    17
   XAdvance  9
 
-Letter 72 # 'H'
+Letter 'H'
   PositionX 237
   PositionY 1
   Width     9
   Height    17
   XAdvance  9
 
-Letter 73 # 'I'
+Letter 'I'
   PositionX 1
   PositionY 20
   Width     9
   Height    17
   XAdvance  9
 
-Letter 74 # 'J'
+Letter 'J'
   PositionX 12
   PositionY 20
   Width     9
   Height    17
   XAdvance  9
 
-Letter 75 # 'K'
+Letter 'K'
   PositionX 23
   PositionY 20
   Width     9
   Height    17
   XAdvance  9
 
-Letter 76 # 'L'
+Letter 'L'
   PositionX 34
   PositionY 20
   Width     6
   Height    17
   XAdvance  6
 
-Letter 77 # 'M'
+Letter 'M'
   PositionX 42
   PositionY 20
   Width     6
   Height    17
   XAdvance  6
 
-Letter 80 # 'P'
+Letter 'P'
   PositionX 50
   PositionY 20
   Width     9
   Height    17
   XAdvance  9
 
-Letter 81 # 'Q'
+Letter 'Q'
   PositionX 61
   PositionY 20
   Width     9
   Height    17
   XAdvance  9
 
-Letter 82 # 'R'
+Letter 'R'
   PositionX 72
   PositionY 20
   Width     9
   Height    17
   XAdvance  9
 
-Letter 83 # 'S'
+Letter 'S'
   PositionX 83
   PositionY 20
   Width     9
   Height    17
   XAdvance  9
 
-Letter 84 # 'T'
+Letter 'T'
   PositionX 94
   PositionY 20
   Width     9
   Height    17
   XAdvance  9
 
-Letter 85 # 'U'
+Letter 'U'
   PositionX 105
   PositionY 20
   Width     9
   Height    17
   XAdvance  9
 
-Letter 86 # 'V'
+Letter 'V'
   PositionX 116
   PositionY 20
   Width     9
   Height    17
   XAdvance  9
 
-Letter 87 # 'W'
+Letter 'W'
   PositionX 127
   PositionY 20
   Width     9
   Height    17
   XAdvance  9
 
-Letter 88 # 'X'
+Letter 'X'
   PositionX 138
   PositionY 20
   Width     9
   Height    17
   XAdvance  9
 
-Letter 89 # 'Y'
+Letter 'Y'
   PositionX 149
   PositionY 20
   Width     9
   Height    17
   XAdvance  9
 
-Letter 90 # 'Z'
+Letter 'Z'
   PositionX 160
   PositionY 20
   Width     9
   Height    17
   XAdvance  9
 
-Letter 91 # '['
+Letter '['
   PositionX 171
   PositionY 20
   Width     9
   Height    17
   XAdvance  9
 
-Letter 92 # '\'
+Letter '\'
   PositionX 182
   PositionY 20
   Width     6
   Height    17
   XAdvance  6
 
-Letter 93 # ']'
+Letter ']'
   PositionX 190
   PositionY 20
   Width     6
   Height    17
   XAdvance  6
 
-Letter 96 # '`'
+Letter '`'
   PositionX 198
   PositionY 20
   Width     29
   Height    14
   XAdvance  29
 
-Letter 97 # 'a'
+Letter 'a'
   PositionX 1
   PositionY 39
   Width     29
   Height    14
   XAdvance  29
 
-Letter 98 # 'b'
+Letter 'b'
   PositionX 32
   PositionY 39
   Width     29
   Height    14
   XAdvance  29
 
-Letter 99 # 'c'
+Letter 'c'
   PositionX 63
   PositionY 39
   Width     29
   Height    14
   XAdvance  29
 
-Letter 100 # 'd'
+Letter 'd'
   PositionX 94
   PositionY 39
   Width     29
   Height    14
   XAdvance  29
 
-Letter 101 # 'e'
+Letter 'e'
   PositionX 125
   PositionY 39
   Width     29
   Height    14
   XAdvance  29
 
-Letter 102 # 'f'
+Letter 'f'
   PositionX 156
   PositionY 39
   Width     29
   Height    14
   XAdvance  29
 
-Letter 103 # 'g'
+Letter 'g'
   PositionX 187
   PositionY 39
   Width     29
   Height    14
   XAdvance  29
 
-Letter 104 # 'h'
+Letter 'h'
   PositionX 218
   PositionY 39
   Width     29
   Height    14
   XAdvance  29
 
-Letter 105 # 'i'
+Letter 'i'
   PositionX 1
   PositionY 58
   Width     29
   Height    14
   XAdvance  29
 
-Letter 106 # 'j'
+Letter 'j'
   PositionX 32
   PositionY 58
   Width     29
   Height    14
   XAdvance  29
 
-Letter 107 # 'k'
+Letter 'k'
   PositionX 63
   PositionY 58
   Width     29

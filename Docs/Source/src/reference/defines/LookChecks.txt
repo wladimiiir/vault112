@@ -52,4 +52,15 @@
  */
 #define LOOK_CHECK_SCRIPT           (0x10)
 
+/** \~russian Использовать для проверки видимости скриптовую функцию #check_trap_look.
+ *
+ * При использовании данного флага все остальные флаги игнорируются.
+ *
+ ** \~english Use #check_trap_look function in @b main.fos for look checks.
+ *
+ * All other defines are ignored when this flag is set.
+ *
+ */
+#define LOOK_CHECK_ITEM_SCRIPT      (0x20)
+
 /*@}*/

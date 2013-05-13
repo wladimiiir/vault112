@@ -53,7 +53,7 @@ class TestScreen : IGUIScreenCallbackShow, IGUIScreenCallbackHide, IGUIScreenCal
         @InputBoxOpt = GUI_GetElementOptions();
     }
 
-    void OnKeyPress( uint8 key, uint8 letter )
+    void OnKeyPress( uint8 key, string& keyText )
     {
         string letter_ = " ";
         letter_[ 0 ] = ( letter != 0 ? letter : '?' );

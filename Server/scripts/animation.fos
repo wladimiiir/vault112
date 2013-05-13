@@ -21,35 +21,40 @@ string@ ProcessTactics( uint crType, uint anim1, uint anim2, uint& pass, uint& f
     string  animName;
 
     // Some specific types
-    bool isTurret = false;
-    bool isVehicle = false;
-    bool isMutantFreak = false;
-    bool isBrain = false;
+    bool    isTurret = false;
+    bool    isVehicle = false;
+    bool    isMutantFreak = false;
+    bool    isBrain = false;
 
-    switch( crTypeName[ 0 ] )
+    string@ firstLetter = crTypeName[ 0 ];
+    if( firstLetter == "C" ) // Characters
     {
-    case 'C':     // Characters
         animName = "sprites/characters/";
         isMutantFreak = ( crTypeName == "CMutantFreak" );
         isBrain = ( crTypeName == "CBrain" );
-        break;
-    case 'A':     // Animals
+    }
+    else if( firstLetter == "A" )     // Animals
+    {
         animName = "sprites/critters/";
-        break;
-    case 'R':     // Robots
+    }
+    else if( firstLetter == "R" )     // Robots
+    {
         animName = "sprites/robots/";
-        break;
-    case 'T':     // Turrets
+    }
+    else if( firstLetter == "T" )     // Turrets
+    {
         animName = "sprites/robots/RobotTurrets/";
         isTurret = true;
-        break;
-    case 'V':     // Vehicles
+    }
+    else if( firstLetter == "V" )     // Vehicles
+    {
         if( crTypeName == "VTankTurret" )
             crTypeName = "VTank Turret";
         animName = "sprites/vehicles/";
         isVehicle = true;
-        break;
-    default:
+    }
+    else
+    {
         return null;
     }
     animName += substring( crTypeName, 1, crTypeName.length() - 1 );
@@ -442,19 +447,19 @@ string@ ProcessArcanum( uint crType, uint anim1, uint anim2, uint& pass, uint& f
     string  animName;
 
     // Critter
-    if( crTypeName[ 0 ] == 'C' )
+    if( crTypeName[ 0 ] == "C" )
     {
         animName += "art/critter/";
         animName += substring( crTypeName, 1, 3 ) + "/" + substring( crTypeName, 1, 5 );
     }
     // Monster
-    else if( crTypeName[ 0 ] == 'M' )
+    else if( crTypeName[ 0 ] == "M" )
     {
         animName += "art/monster/";
         animName += substring( crTypeName, 1, 3 ) + "/" + substring( crTypeName, 1, 5 );
     }
     // Unique NPC
-    else     // 'U'
+    else     // "U"
     {
         animName += "art/unique_npc/";
         animName += substring( crTypeName, 1, 5 ) + "/" + substring( crTypeName, 1, 5 );
@@ -692,7 +697,7 @@ string@ ProcessArcanum( uint crType, uint anim1, uint anim2, uint& pass, uint& f
     if( anim1 != ANIM1_UNARMED && anim2 == ANIM2_IDLE )
         flags |= ANIM_FLAG_FIRST_FRAME;
     if( anim1 == ANIM1_UNARMED && changeAtoB )
-        animName[ animName.length() - 2 ] = 'b';
+        animName[ animName.length() - 2 ] = "b";
 
 // a - standing
 // b - walking
@@ -1399,33 +1404,33 @@ void PlayAnimSound( uint crType, int gender, uint anim1, uint anim2 )
         // Make name
         const string abc = "_abcdefghijklmnopqrstuvwxyz0123456789";
         string       sound = crTypeSound;
-        sound.resize( sound.length() + 1 );
+        sound += " ";
         sound[ sound.length() - 1 ] = abc[ fAnim1 ];
-        sound.resize( sound.length() + 1 );
+        sound += " ";
         sound[ sound.length() - 1 ] = abc[ fAnim2 ];
         sound += ".acm";
 
-        // Convert 'ha' to 'hm' / 'hf'
-        if( sound[ 0 ] == 'h' && sound[ 1 ] == 'a' )
-            sound[ 1 ] = ( isFemale ? 'f' : 'm' );
+        // Convert "ha" to "hm" / "hf"
+        if( sound[ 0 ] == "h" && sound[ 1 ] == "a" )
+            sound[ 1 ] = ( isFemale ? "f" : "m" );
 
         // Try play
         if( PlaySound( sound ) )
             return;
 
         // Find substitutes for humans
-        if( sound[ 0 ] == 'h' )
+        if( sound[ 0 ] == "h" )
         {
             // Try find by mask (hmxxxxab)
             for( uint i = 2, j = crTypeSound.length(); i < j; i++ )
-                sound[ i ] = 'x';
+                sound[ i ] = "x";
             if( PlaySound( sound ) )
                 return;
 
-            // Convert 'hf' to 'hm'
-            if( sound[ 1 ] == 'f' )
+            // Convert "hf" to "hm"
+            if( sound[ 1 ] == "f" )
             {
-                sound[ 1 ] = 'm';
+                sound[ 1 ] = "m";
                 if( PlaySound( sound ) )
                     return;
             }
@@ -1434,16 +1439,16 @@ void PlayAnimSound( uint crType, int gender, uint anim1, uint anim2 )
     else
     {
         uint sexPos = crTypeSound.length() - 1;
-        if( crTypeSound[ sexPos ] == 'U' )
-            crTypeSound[ sexPos ] = ( isFemale ? 'F' : 'M' );
+        if( crTypeSound[ sexPos ] == "U" )
+            crTypeSound[ sexPos ] = ( isFemale ? "F" : "M" );
 
         for( uint pass = 0; pass < 4; pass++ )
         {
             if( pass == 2 )
             {
-                if( crTypeSound[ sexPos ] == 'I' )
+                if( crTypeSound[ sexPos ] == "I" )
                     break;
-                crTypeSound[ sexPos ] = 'U';
+                crTypeSound[ sexPos ] = "U";
             }
 
             string sound = crTypeSound + "_";
@@ -1773,11 +1778,13 @@ void PlayAnimSound( uint crType, int gender, uint anim1, uint anim2 )
             if( PlaySound( sound + ".wav" ) )
                 return;
 
-            // Try erase 'Front' / 'Back'
+            // Try erase "Front" / "Back"
             uint len = 0;
             int  pos = findLast( sound, "Front" );
             if( pos != -1 )
+            {
                 len = 5;
+            }
             else
             {
                 pos = findLast( sound, "Back" );
@@ -1786,7 +1793,8 @@ void PlayAnimSound( uint crType, int gender, uint anim1, uint anim2 )
                 else
                     continue;
             }
-            sound.resize( sound.length() - len );
+            for( ; len > 0; len-- )
+                sound[ -1 ] = "";
 
             if( PlaySound( sound + ".wav" ) )
                 return;

@@ -259,4 +259,13 @@
 
 #define ST_SCALE_FACTOR             (116) // Used in engine
 
+/** \~russian Максимальное количество одновременно запущенных диалогов.
+ *
+ * ST_MAX_TALKERS < 0 - диалог не может быть начат;
+ * ST_MAX_TALKERS == 0 - значение берется из глобальной переменной __NpcMaxTalkers;
+ * ST_MAX_TALKERS > 0 - берется данное значение.
+ * @see    __NpcMaxTalkers
+ */
+#define ST_MAX_TALKERS              (119) // Used in engine
+
 /*@}*/

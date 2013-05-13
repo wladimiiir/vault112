@@ -1,9 +1,9 @@
 // Author: cvet
 #include "_macros.fos"
+# include "_msgstr.fos"
 
 #ifdef __CLIENT
 # include "_client_defines.fos"
-# include "_msgstr.fos"
 
 import void SetChosenTabLevelUp( bool enable )  from "chosen_tabs";
 import int  GUI_GetActiveScreen() from "client_gui";
@@ -354,6 +354,46 @@ void NpcProcessLevel( Critter& npc ) // Export
     }
 }
 #endif
+
+uint CheckPlayerName( const string& name )
+{
+    // Length
+    if( name.length() < __MinNameLength || name.length() > __MaxNameLength )
+        return STR_NET_LOGINPASS_WRONG;
+
+    // Valid letters
+    string allLetters = __ValidNameLettersCommon + __ValidNameLettersCulture1 + __ValidNameLettersCulture2;
+    for( uint i = 0, j = name.length(); i < j; i++ )
+        if( findFirst( allLetters, name[ i ] ) == -1 )
+            return STR_NET_PASS_WRONG_CHARS;
+
+    // Spaces
+    if( name[ 0 ] == " " || name[ -1 ] == " " )
+        return STR_NET_BEGIN_END_SPACES;
+    for( int i = 0, j = name.length() - 1; i < j; i++ )
+        if( name[ i ] == " " && name[ i + 1 ] == " " )
+            return STR_NET_TWO_SPACE;
+
+    // Different cultures
+    uint letters1 = 0;
+    uint letters2 = 0;
+    for( int i = 0, j = name.length() - 1; i < j; i++ )
+    {
+        if( findFirst( __ValidNameLettersCulture1, name[ i ] ) != -1 )
+            letters1++;
+        else if( findFirst( __ValidNameLettersCulture2, name[ i ] ) != -1 )
+            letters2++;
+    }
+    if( letters1 > 0 && letters2 > 0 )
+        return STR_NET_DIFFERENT_LANG;
+
+    // Too many common symbols
+    if( ( letters1 + letters2 ) * 100 / name.length() < 70 )
+        return STR_NET_MANY_SYMBOLS;
+
+    // All fine, return zero
+    return 0;
+}
 
 /**
 * Unsafe scripts functions
