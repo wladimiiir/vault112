@@ -2,6 +2,7 @@
 #define _ENTIRES_H_
 
 #define ENTIRE_DEFAULT			( 0 )
+#define ENTIRE_SEE_THROUGH		( 11 )
 #define ENTIRE_RESOURCE_ROCK	( 70 )
 #define ENTIRE_RESOURCE_FLINT	( 71 )
 #define ENTIRE_PLAYER_START		( 240 )

@@ -6,6 +6,7 @@
 #include "_animation.fos"
 #include "teams_table.fos"
 #include "utils_for_array.fos"
+#include "entire.fos"
 #include "linetracer_h.fos"
 
 // Imports
@@ -1430,7 +1431,24 @@ class WallTraceContext : ITraceContext
 {
 	bool Exec( Map& map, uint16 hx, uint16 hy ) override
 	{
-		return !map.IsHexRaked( hx, hy );
+		if(map.IsHexRaked( hx, hy ))
+			return false;
+		
+		Scenery@[] sceneries;
+		map.GetSceneries(hx, hy, sceneries);
+		
+		for (uint i = 0; i < sceneries.length(); i++)
+		{
+			ProtoItem@ proto = GetProtoItem(sceneries[i].ProtoId);
+			if(!valid(proto))
+				continue;
+				
+			if(FLAG(proto.Flags, ITEM_LIGHT_THRU))
+				return false;
+		}
+				
+		//cannot see through
+		return true;
 	}
 }
 
