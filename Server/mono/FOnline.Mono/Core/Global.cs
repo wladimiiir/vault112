@@ -22,12 +22,14 @@ namespace FOnline
             ItemManager = new ItemManager();
             Math = new Math();
             AnyData = new AnyData();
+			CritterActionManager = new CritterActionManager();
         }
         # region Critter manager
         public static ICritterManager CritterManager { get; set; }
         public static Critter GetCritter(uint id)
         {
-            return CritterManager.GetCritter(id);
+			var critter = CritterManager.GetCritter (id);
+            return critter;
         }
 		public static void DeleteNpc(Critter cr)
 		{
@@ -585,6 +587,13 @@ namespace FOnline
         {
             Misc.EraseTextListener(say_type, first_str, parameter);
         }
+		#endregion
+		#region CritterActionManager
+		public static ICritterActionManager CritterActionManager { get; set; }
+		public static void StartCritterAction(Critter critter, ICritterAction action)
+		{
+			CritterActionManager.Start(critter, action);
+		}
 		#endregion
         [MethodImpl(MethodImplOptions.InternalCall)]
         extern static void Global_GC();
