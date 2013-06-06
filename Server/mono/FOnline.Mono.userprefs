@@ -1,22 +1,40 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="FOnline.Mono\Program.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="FOnline.Mono\CritterAction\CritterAction.cs">
     <Files>
-      <File FileName="FOnline.Mono\Program.cs" Line="9" Column="24" />
+      <File FileName="FOnline.Mono\Program.cs" Line="20" Column="4" />
       <File FileName="FOnline.Mono\Den\DenBus.cs" Line="18" Column="40" />
       <File FileName="FOnline.Mono\Items\Lock.cs" Line="20" Column="30" />
-      <File FileName="FOnline.Mono\Critter.cs" Line="1" Column="1" />
+      <File FileName="FOnline.Mono\Critter.cs" Line="8" Column="33" />
+      <File FileName="FOnline.Mono\CritterAction\CritterAction.cs" Line="45" Column="59" />
+      <File FileName="FOnline.Mono\CritterAction\Say.cs" Line="3" Column="33" />
+      <File FileName="FOnline.Mono\CritterAction\ICritterActionManager.cs" Line="8" Column="43" />
+      <File FileName="FOnline.Mono\Core\Critter.NativeMethods.cs" Line="10" Column="6" />
+      <File FileName="FOnline.Mono\CritterAction\Wait.cs" Line="28" Column="22" />
+      <File FileName="FOnline.Mono\Core\Critter.Events.cs" Line="242" Column="10" />
+      <File FileName="FOnline.Mono\CritterAction\Patrol.cs" Line="82" Column="31" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="FOnline.Mono" expanded="True">
-            <Node name="CritterAction" selected="True" />
+            <Node name="Core" expanded="True" />
+            <Node name="CritterAction" expanded="True">
+              <Node name="CritterAction.cs" selected="True" />
+            </Node>
           </Node>
         </State>
       </Pad>
       <Pad Id="ClassPad">
-        <State expanded="True" selected="True" />
+        <State expanded="True">
+          <Node name="FOnline.Mono" expanded="True">
+            <Node name="FOnline" expanded="True">
+              <Node name="FOnline.Critter" expanded="True">
+                <Node name="Finish" selected="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>

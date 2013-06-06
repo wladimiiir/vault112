@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.CompilerServices;
+using FOnline.CritterActions;
 
 namespace FOnline
 {
@@ -525,6 +526,11 @@ namespace FOnline
         {
             return (T)Randomizer.Random(min, max);
         }
+
+		public static bool HasChance (float chance)
+		{
+			return Randomizer.HasChance(chance);
+		}
         #endregion
 
         #region Math

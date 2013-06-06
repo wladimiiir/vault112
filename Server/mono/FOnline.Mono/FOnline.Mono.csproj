@@ -141,6 +141,10 @@
     <Compile Include="ItemPids.cs" />
     <Compile Include="CritterAction\CritterAction.cs" />
     <Compile Include="CritterAction\ICritterActionManager.cs" />
+    <Compile Include="CritterAction\Say.cs" />
+    <Compile Include="CritterAction\Patrol.cs" />
+    <Compile Include="CritterAction\PlaneIndetifiers.cs" />
+    <Compile Include="CritterAction\Wait.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
@@ -170,5 +174,6 @@
   <ItemGroup />
   <ItemGroup>
     <Folder Include="CritterAction\" />
+    <Folder Include="Wrappers\" />
   </ItemGroup>
 </Project>

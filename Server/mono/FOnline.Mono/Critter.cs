@@ -5,8 +5,10 @@ using System.Text;
 
 namespace FOnline
 {
+	// Custom (project specific) properties
     public partial class Critter
     {
+		// some test
 		public virtual Data Stat { get; private set; }
         public virtual Data Skill { get; private set; }
         public virtual Data TagSkill { get; private set; }
