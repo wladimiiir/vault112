@@ -1808,285 +1808,65 @@
 {10000024}{}{Do you wish to encounter: @lex player@ group.}
 
 # Encounters
-{10030000}{}{A Den caravan}
-{10030010}{}{A Den caravan attacking a Vault City caravan}
-{10030020}{}{A Den caravan fending off highwaymen}
-{10030030}{}{A herd of coyotes}
-{10030040}{}{A New Reno caravan fending off robbers}
-{10030050}{}{A Rave party}
-{10030060}{}{A Redding caravan fending off highwaymen}
-{10030070}{}{A Unity patrol}
-{10030080}{}{A Unity patrol fighting some rogues}
-{10030090}{}{A Unity patrol fighting some wolves}
-{10030100}{}{A Vault City caravan}
-{10030110}{}{A band of highwaymen}
-{10030120}{}{A band of marauders}
-{10030130}{}{A band of mercenaries}
-{10030140}{}{A band of nomads}
-{10030150}{}{A band of outcasts}
-{10030160}{}{A band of raiders}
-{10030170}{}{A band of raiders leading some wolves}
-{10030180}{}{A band of robbers}
-{10030190}{}{A band of robbers ambushing a group of highwaymen}
-{10030200}{}{A band of robbers and highwaymen}
-{10030210}{}{A band of robbers contesting a group of highwaymen}
-{10030220}{}{A band of rogues}
-{10030230}{}{A band of rogues and some wolves}
-{10030240}{}{A band of ruffians led by a Morton Brother}
-{10030250}{}{A band of slavers}
-{10030260}{}{A band of slavers and some dogs}
-{10030270}{}{A band of slavers fending off some golden geckos}
-{10030280}{}{A band of trappers trying to catch some golden geckos}
-{10030290}{}{A batch of fire geckos}
-{10030300}{}{A bunch of crazies}
-{10030310}{}{A bunch of mutated pig rats}
-{10030320}{}{A caravan}
-{10030330}{}{A caravan ambushed by highwaymen}
-{10030340}{}{A caravan ambushed by robbers}
-{10030350}{}{A caravan attacked by wild dogs}
-{10030360}{}{A caravan fending off wanamingos}
-{10030370}{}{A caravan fending off deathclaws}
-{10030380}{}{A caravan fending off fire geckos}
-{10030390}{}{A caravan fending off marauders}
-{10030400}{}{A caravan fending off mercenaries}
-{10030410}{}{A caravan fending off radscorpions}
-{10030420}{}{A caravan fending off remnants of the Master's army}
-{10030430}{}{A caravan fending off some deathclaws}
-{10030440}{}{A caravan fending off some raiders}
-{10030450}{}{A caravan fending off wolves}
-{10030460}{}{A crashed shuttle}
-{10030470}{}{A detachment of NCR Rangers}
-{10030480}{}{A detachment of the Master's armies}
-{10030490}{}{A deteachment of the Master's armies}
-{10030500}{}{A family of golden geckos}
-{10030510}{}{A family of molerats}
-{10030520}{}{A family of radscorpions}
-{10030530}{}{A family of radscorpions attacking a merchant party}
-{10030540}{}{A forest of spore plants}
-{10030550}{}{A gang}
-{10030560}{}{A giant stone head}
-{10030570}{}{A group of Molerats}
-{10030580}{}{A group of ants}
-{10030590}{}{A group of cannibals}
-{10030600}{}{A group of geckos}
-{10030610}{}{A group of giant rats}
-{10030620}{}{A group of golden geckos battling some radscorpions}
-{10030630}{}{A group of highwaymen}
-{10030640}{}{A group of holy people}
-{10030650}{}{A group of holy people staving off a war party}
-{10030660}{}{A group of homeless people}
-{10030670}{}{A group of mole rats}
-{10030680}{}{A group of molerats}
-{10030690}{}{A group of nomads}
-{10030700}{}{A group of pig rats}
-{10030710}{}{A group of radscorpions}
-{10030720}{}{A group of rats}
-{10030730}{}{A group of scorpions}
-{10030740}{}{A group of silver geckos}
-{10030750}{}{A group of slavers and slaves}
-{10030760}{}{A group of slavers and slaves fending off some robbers}
-{10030770}{}{A group of slavers attempting to enslave some people}
-{10030780}{}{A group of spore plants}
-{10030790}{}{A group of spore plants and some silver geckos}
-{10030800}{}{A group of trappers}
-{10030810}{}{A group of trappers subduing some geckos}
-{10030820}{}{A herd of brahmin}
-{10030830}{}{A herd of deathclaws}
-{10030840}{}{A hermit}
-{10030850}{}{A hermit and some dogs fighting mutated molerats}
-{10030860}{}{A hermit fending off some mutated pig rats}
-{10030870}{}{A hermit fending off some wild dogs}
-{10030880}{}{A hermit with some dogs fighting mutated molerats}
-{10030890}{}{A hunting party}
-{10030900}{}{A hunting party fighting cannibals}
-{10030910}{}{A hunting party fighting some scorpions}
-{10030920}{}{A large group of radscorpions}
-{10030930}{}{A large infestation of spore plants}
-{10030940}{}{A large pack of wanamingos}
-{10030950}{}{A large pack of golden geckos}
-{10030960}{}{A lone surviving dog}
-{10030970}{}{A man guarding a bridge}
-{10030980}{}{A merchant and some guards}
-{10030990}{}{A merchant party}
-{10031000}{}{A merchant party ambushed by robbers}
-{10031010}{}{A merchant party attacked by highwaymen}
-{10031020}{}{A merchant party fending off some highwaymen}
-{10031030}{}{A merchant party fending off some molerats and pig rats}
-{10031040}{}{A merchant party fending off some radscorpions}
-{10031050}{}{A merchant party fending off some robbers}
-{10031060}{}{A merchant with some guards}
-{10031070}{}{A pack of deathclaws}
-{10031080}{}{A pack of centaurs}
-{10031090}{}{A pack of deathclaws}
-{10031100}{}{A pack of fire geckos}
-{10031110}{}{A pack of geckos}
-{10031120}{}{A pack of golden geckos}
-{10031130}{}{A pack of golden geckos and a family of radscorpions}
-{10031140}{}{A pack of mutated molerats}
-{10031150}{}{A pack of mutated rats}
-{10031160}{}{A pack of black radscorpions}
-{10031170}{}{A pack of radscorpions and some molerats}
-{10031180}{}{A pack of wild dogs}
-{10031190}{}{A pack of wild dogs amongst some spore plants}
-{10031200}{}{A pack of wolves}
-{10031210}{}{A pack of wolves and some geckos}
-{10031220}{}{A pack of wolves and some molerats}
-{10031230}{}{A pack of wolves fighting some raiders}
-{10031240}{}{A rabid dog}
-{10031250}{}{A patrol unit}
-{10031260}{}{A patrol unit and dogs subduing slavers}
-{10031270}{}{A patrol unit battling some golden geckos}
-{10031280}{}{A patrol unit fending off wild dogs}
-{10031290}{}{A patrol unit fighting some slavers}
-{10031300}{}{A press gang}
-{10031310}{}{A slew of wanamingos}
-{10031320}{}{A slew of scavengers}
-{10031330}{}{A small group of ants}
-{10031340}{}{A small group of pig rats}
-{10031350}{}{A small group of radscorpions}
-{10031360}{}{A swarm of floaters}
-{10031370}{}{A swarm of mantis}
-{10031380}{}{A swarm of mantis fighting wild brahmin}
-{10031390}{}{A swarm of mantis infesting some spore plants}
-{10031400}{}{A swarm of mantis massacring a trading band}
-{10031410}{}{A tin woodsman}
-{10031420}{}{A trader and guards}
-{10031430}{}{A trader and guards fighting golden geckos}
-{10031440}{}{A traveler}
-{10031450}{}{A traveller}
-{10031460}{}{A war party}
-{10031470}{}{An Enclave Patrol}
-{10031480}{}{An Enclave patrol}
-{10031490}{}{A horde of floaters and centaurs}
-{10031500}{}{Giant rats}
-{10031510}{}{Hubologists}
-{10031520}{}{Hubologists fending off a press gang}
-{10031530}{}{Hubologists fighting mercenaries}
-{10031540}{}{Isle с несколькими осами-переростками}
-{10031550}{}{Isle с осиным гнездом}
-{10031560}{}{Isleок с гнездом мантисов}
-{10031570}{}{Isleок, кишаший крысами}
-{10031580}{}{King Arthur's Knights}
-{10031590}{}{King Arthur's Knights fighting a rat}
-{10031600}{}{Remnants of the Master's armies}
-{10031610}{}{Remnants of the Master's army}
-{10031620}{}{Remnants of the Master's army fighting mutated molerats}
-{10031630}{}{Some Rangers fending off a squad of the Master's armies}
-{10031640}{}{Some Rangers fighting some marauders}
-{10031650}{}{Some wanamingos}
-{10031660}{}{Some wanamingos and deathclaws}
-{10031670}{}{Some bandits}
-{10031680}{}{Some bandits ambushing some homeless people}
-{10031690}{}{Some bandits ambushing some trappers}
-{10031700}{}{Some bandits attacked by some golden geckos}
-{10031710}{}{Some bandits attacking a merchant party}
-{10031720}{}{Some bandits attacking some farmers}
-{10031730}{}{Some bootleggers}
-{10031740}{}{Some bootleggers fighting some wolves}
-{10031750}{}{Some bounty hunters}
-{10031760}{}{Some brahmin fending off some mantis}
-{10031770}{}{Some cannibals}
-{10031780}{}{Some cannibals battling some wilders}
-{10031790}{}{A group of claim jumpers}
-{10031800}{}{Huge deathclaw}
-{10031810}{}{Some farmers}
-{10031820}{}{Some farmers defending against some geckos}
-{10031830}{}{Some farmers fending off marauders}
-{10031840}{}{Some farmers fending off parts of the Master's armies}
-{10031850}{}{Some farmers fending off some golden geckos}
-{10031860}{}{Some farmers fending off some scorpions}
-{10031870}{}{Some farmers rooting out an infestation of pig rats}
-{10031880}{}{Some fire geckos}
-{10031890}{}{Some fishermen}
-{10031900}{}{Some fishermen fending off some cannibals}
-{10031910}{}{Some geckos}
-{10031920}{}{Some geckos and some molerats}
-{10031930}{}{Some geckos and some radscorpions}
-{10031940}{}{Some geckos and some wolves}
-{10031950}{}{Some geckos attacking some outcasts}
-{10031960}{}{Some geckos fighting some crazies}
-{10031970}{}{Some geckos fighting some wilders}
-{10031980}{}{Some geckos hiding in some spore plants}
-{10031990}{}{Some ghoul crazies}
-{10032000}{}{Some ghoul scavengers}
-{10032010}{}{Some ghoul scavengers fending off some crazies}
-{10032020}{}{Some golden geckos}
-{10032030}{}{Some golden geckos and mantis}
-{10032040}{}{Some golden geckos and some radscorpions}
-{10032050}{}{Some golden geckos hiding amongst a large number of spore plants}
-{10032060}{}{Some highwaymen}
-{10032070}{}{Some highwaymen and robbers}
-{10032080}{}{Some highwaymen attacked by some spore plants}
-{10032090}{}{Some highwaymen attacking some homeless people}
-{10032100}{}{Some highwaymen fighting some robbers}
-{10032110}{}{Some highwaymen tracking with wild dogs}
-{10032120}{}{Some homeless people}
-{10032130}{}{Some homeless people butchering some farmers}
-{10032140}{}{Some homesteaders fending off some wolves}
-{10032150}{}{Some homesteaders fighting some claim jumpers}
-{10032160}{}{Some manti}
-{10032170}{}{Some mantis attacking some farmers}
-{10032180}{}{Some mantis attacking some molerats}
-{10032190}{}{Some mobsters}
-{10032200}{}{Some mobsters fighting a gang}
-{10032210}{}{Some mobsters fighting some yakuza}
-{10032220}{}{Some molerats}
-{10032230}{}{Some molerats fighting some radscorpions}
-{10032240}{}{Some moonshiners}
-{10032250}{}{Some moonshiners and farmers}
-{10032260}{}{Some moonshiners attacked by some highwaymen}
-{10032270}{}{Some moonshiners battling some farmers}
-{10032280}{}{Some mutated molerats}
-{10032290}{}{Some mutated molerats and some radscorpions}
-{10032300}{}{Some mutated molerats fighting some geckos}
-{10032310}{}{Some mutated molerats fighting some mutated pig rats}
-{10032320}{}{Some mutated molerats fighting some spore plants}
-{10032330}{}{Some mutated pig rats}
-{10032340}{}{Some mutated pig rats fighting some wild dogs}
-{10032350}{}{Some mutated rats infesting some ghoul scavengers}
-{10032360}{}{Some outcasts}
-{10032370}{}{Some prospectors}
-{10032380}{}{Some prospectors fighting some claim jumpers}
-{10032390}{}{Some mutated radscorpions}
-{10032400}{}{Some radscorpions and some wolves}
-{10032410}{}{Some radscorpions attacking a hermit}
-{10032420}{}{Some radscorpions attacking some wilders}
-{10032430}{}{Some radscorpions butchering some wild brahmin}
-{10032440}{}{Some radscorpions feasting on mantis}
-{10032450}{}{Some radscorpions fighting some cannibals}
-{10032460}{}{Some radscorpions hiding amongst spore plants}
-{10032470}{}{Some radscorpions hiding in some spore plants}
-{10032480}{}{Some radscorpions raiding a Rave party}
-{10032490}{}{Some robbers}
-{10032500}{}{Some robbers ambushing a caravan}
-{10032510}{}{Some robbers fending off some wild dogs}
-{10032520}{}{Some robbers fighting some scorpions}
-{10032530}{}{Some robbers searching with wild dogs}
-{10032540}{}{Some scavengers battling a bunch of crazies}
-{10032550}{}{Some scorpions}
-{10032560}{}{Some scorpions attacking some molerats and pig rats}
-{10032570}{}{Some scorpions fighting some golden geckos}
-{10032580}{}{Some scorpions hiding in the spore plants}
-{10032590}{}{Some slavers and slaves fending off some golden geckos}
-{10032600}{}{Some spore plants}
-{10032610}{}{Some spore plants and some wolves}
-{10032620}{}{Some trappers}
-{10032630}{}{Some trappers and a merchant party fending off bandits}
-{10032640}{}{Some trappers attacking some pig rats}
-{10032650}{}{Some trappers battling some golden geckos}
-{10032660}{}{Some trappers fending off some bandits}
-{10032670}{}{Some trappers fighting some geckos}
-{10032680}{}{Some trappers fighting some molerats and pig rats}
-{10032690}{}{Some trappers fighting some scorpions}
-{10032700}{}{Some trappers trying to catch radscorpions}
-{10032710}{}{Some wild brahmin}
-{10032720}{}{Some wilders}
-{10032730}{}{Some wolves}
-{10032740}{}{Some yakuza}
-{10032750}{}{The Cafe of Broken Dreams}
-{10032760}{}{The Mad scientist's lab}
-{10032770}{}{The Unwashed Villagers hunting a spammer}
-{10032780}{}{The church of Brock and Xander}
-{10032790}{}{The remains of a whale}
-{10032800}{}{Toxic waste dump}
-{10032810}{}{Wasteland Children shelter}
+{10030000}{}{Raiders' camp}
+{10030010}{}{Some feral ghouls}
+{10030020}{}{Some aggresive giant rats}
+{10030030}{}{Some pasive giant rats}
+{10030040}{}{Few super mutants with their centaur minions}
+{10030050}{}{Super mutant's camp}
+{10030060}{}{Super mutants and nightkins}
+{10030070}{}{Gang of young fiends}
+{10030080}{}{Gang of young raiders}
+{10030090}{}{Gang of tough fiends}
+{10030100}{}{Gang of tough raiders}
+{10030110}{}{Squad of Brotherhood outcasts}
+{10030120}{}{Patrol scouts from Vault 112}
+{10030130}{}{Pack of golden geckos}
+{10030140}{}{Pack of silver geckos}
+{10030150}{}{Pack of male geckos fighting over their females}
+{10030160}{}{Group of hunters hunting geckos}
+{10030170}{}{Community of salvagers}
+{10030180}{}{Some salvagers looking for some junk}
+{10030190}{}{Some nasty Wanamingos}
+{10030200}{}{Gang of robbers, that have you surrounded}
+{10030210}{}{Slavers trying to enslave some wastelanders}
+{10030220}{}{Capital rangers squad}
+{10030230}{}{Capital rangers fighting pack of feral ghouls}
+{10030240}{}{Capital rangers cleaning raiders camp}
+{10030250}{}{Capital rangers cleaning road from deathclaws}
+{10030260}{}{Radscorpions` cave}
+{10030270}{}{Cave with some molerats and pigrats}
+{10030280}{}{Pack of wolves}
+{10030290}{}{Pack of dogs}
+{10030300}{}{Group of deathclaws}
+{10030310}{}{Group of deathclaws tearing up some wastelanders}
+{10030320}{}{Alpha deathclaw with some young deathclaws}
+{10030330}{}{Some wild brahmins}
+{10030340}{}{Few brahmins}
+{10030350}{}{Gang of dwarfs}
+{10030360}{}{Wastelanders ambushed by some robbers}
+{10030370}{}{Crazy bluesuits}
+{10030380}{}{Super mutants fighting raiders}
+{10030390}{}{Pack of passive geckos}
+{10030400}{}{Gang of fiends fighting gang of raiders over their area}
+{10030410}{}{Some radscorpions}
+{10030420}{}{Some radscorpions, giant rats and ants}
+{10030430}{}{Some nasty insect}
+{10030440}{}{Manti figthing with radscorpions}
+{10030450}{}{Hunters hunting geckos}
+{10030460}{}{Hunters on their ambushed by raiders}
+{10030470}{}{Some rangers}
+{10030480}{}{Rangers cleaning a camp of raiders}
+{10030490}{}{Rangers in a fight with Brotherhood outcasts}
+{10030500}{}{Brotherhood outcasts on their supermutant hunt}
+{10030510}{}{Small farm being attacked by some insect}
+{10030520}{}{Small farm being robbed by fiends}
+{10030530}{}{Fiends having some misunderstanings between each other}
+{10030540}{}{Large field of feral spore plants}
+{10030550}{}{Raiders' camp being attacked by group of fiends}
+{10030560}{}{Big group of molerats}
+{10030570}{}{Big group of blind molerats}
+{10030580}{}{Raiders molesting a child after killing its parents}
+{10030590}{}{Small farm with farmers}
+{10030600}{}{Trader with his caravan}
+

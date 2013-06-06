@@ -1379,23 +1379,25 @@ void ParseEncounterObject( CEncounterObject@ obj, Map@ map, uint16 posX, uint16 
             return;
 
         int[] items;
-        if( obj.Childs.length() > 0 )
+        uint[] slotsTaken;
+        for( uint i = 0, j = obj.Childs.length(); i < j; i++ )
         {
-            for( uint i = 0, j = obj.Childs.length(); i < j; i++ )
-            {
-                CEncounterObject@ child = obj.Childs[ i ];
-                if( !CheckChecks( child.Checks, crittersGrouop ) )
-					continue;
+			CEncounterObject@ child = obj.Childs[ i ];
+			if( !CheckChecks( child.Checks, crittersGrouop ) )
+				continue;
+				
+			//if there is something in the slot other than 
+			//~ if(child.InvSlot != SLOT_INV && Present(child.InvSlot, slotsTaken))
+				//~ continue;
 					
-                uint              count = Random( child.Minimum, child.Maximum );
-                if( count > 0 )
-                {
-                    items.insertLast( child.Pid );
-                    items.insertLast( count );
-                    items.insertLast( child.InvSlot );
-                }
-            }
-        }
+			uint count = Random( child.Minimum, child.Maximum );
+			if( count > 0 )
+			{
+				items.insertLast( child.Pid );
+				items.insertLast( count );
+				items.insertLast( child.InvSlot );
+			}
+		}
 
         int[] params = { ENCOUNTER_CRITTER, 1, ST_DIALOG_ID, obj.DialogId, ST_AI_ID, obj.AiId, ST_NPC_ROLE, obj.NpcRoleId, ST_BAG_ID, obj.BagId, ST_TEAM_ID, teamId, ST_REPLICATION_TIME, -1 };
         Critter@ npc = map.AddNpc( obj.Pid, posX, posY, reversDir, params, items, null );

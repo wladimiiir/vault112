@@ -8,12 +8,288 @@ CEncounterGroup@ group;
 group.Position = POSITION_NONE;
 group.Distance = 15;
 group.Spacing = 1;
-group.AddCritter( NPC_PID_Rat ).AI( AIPACKET_GENERAL_ANIMALS ).Role( ROLE_ENCOUNTER_ANIMAL_WEAK ).Ratio( 100 ).Script( "encounter_npc@_NpcRoleInit" );
+group.AddCritter( NPC_PID_RegularRat ).AI( AIPACKET_GENERAL_ANIMALS ).Role( ROLE_ENCOUNTER_ANIMAL_WEAK ).Ratio( 100 ).Script( "encounter_npc@_NpcRoleInit" );
 
 CEncounterTable@ table;
 
-@table = @EncounterTables[ TABLE_06_09 ];
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 );
+@table = @EncounterTables[ TABLE_00_00 ];
+table.AddLocationPid( LOCATION_CavernEncounter0 );
+table.AddLocationPid( LOCATION_CavernEncounter1 );
+table.AddLocationPid( LOCATION_CavernEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter1 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter3 );
+table.AddLocationPid( LOCATION_MountainEncounter4 );
+
+
+@table = @EncounterTables[ TABLE_00_01 ];
+table.AddLocationPid( LOCATION_CavernEncounter0 );
+table.AddLocationPid( LOCATION_CavernEncounter1 );
+table.AddLocationPid( LOCATION_CavernEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter1 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter3 );
+table.AddLocationPid( LOCATION_MountainEncounter4 );
+
+
+@table = @EncounterTables[ TABLE_00_02 ];
+table.AddLocationPid( LOCATION_CavernEncounter0 );
+table.AddLocationPid( LOCATION_CavernEncounter1 );
+table.AddLocationPid( LOCATION_CavernEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter1 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter3 );
+table.AddLocationPid( LOCATION_MountainEncounter4 );
+
+
+@table = @EncounterTables[ TABLE_00_03 ];
+table.AddLocationPid( LOCATION_CavernEncounter0 );
+table.AddLocationPid( LOCATION_CavernEncounter1 );
+table.AddLocationPid( LOCATION_CavernEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter1 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter3 );
+table.AddLocationPid( LOCATION_MountainEncounter4 );
+
+
+@table = @EncounterTables[ TABLE_00_04 ];
+table.AddLocationPid( LOCATION_CavernEncounter0 );
+table.AddLocationPid( LOCATION_CavernEncounter1 );
+table.AddLocationPid( LOCATION_CavernEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter1 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter3 );
+table.AddLocationPid( LOCATION_MountainEncounter4 );
+
+
+@table = @EncounterTables[ TABLE_00_05 ];
+table.AddLocationPid( LOCATION_CavernEncounter3 );
+table.AddLocationPid( LOCATION_CavernEncounter4 );
+table.AddLocationPid( LOCATION_CavernEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter6 );
+table.AddLocationPid( LOCATION_MountainEncounter7 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+
+
+@table = @EncounterTables[ TABLE_00_06 ];
+table.AddLocationPid( LOCATION_CavernEncounter3 );
+table.AddLocationPid( LOCATION_CavernEncounter4 );
+table.AddLocationPid( LOCATION_CavernEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter6 );
+table.AddLocationPid( LOCATION_MountainEncounter7 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+
+
+@table = @EncounterTables[ TABLE_00_07 ];
+table.AddLocationPid( LOCATION_CavernEncounter3 );
+table.AddLocationPid( LOCATION_CavernEncounter4 );
+table.AddLocationPid( LOCATION_CavernEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter6 );
+table.AddLocationPid( LOCATION_MountainEncounter7 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+
+
+@table = @EncounterTables[ TABLE_00_08 ];
+table.AddLocationPid( LOCATION_CavernEncounter3 );
+table.AddLocationPid( LOCATION_CavernEncounter4 );
+table.AddLocationPid( LOCATION_CavernEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter6 );
+table.AddLocationPid( LOCATION_MountainEncounter7 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+
+
+@table = @EncounterTables[ TABLE_00_09 ];
+table.AddLocationPid( LOCATION_CavernEncounter3 );
+table.AddLocationPid( LOCATION_CavernEncounter4 );
+table.AddLocationPid( LOCATION_CavernEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter6 );
+table.AddLocationPid( LOCATION_MountainEncounter7 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+
+
+@table = @EncounterTables[ TABLE_00_10 ];
+table.AddLocationPid( LOCATION_CavernEncounter3 );
+table.AddLocationPid( LOCATION_CavernEncounter4 );
+table.AddLocationPid( LOCATION_CavernEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter6 );
+table.AddLocationPid( LOCATION_MountainEncounter7 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+
+
+@table = @EncounterTables[ TABLE_00_11 ];
+table.AddLocationPid( LOCATION_CavernEncounter3 );
+table.AddLocationPid( LOCATION_CavernEncounter4 );
+table.AddLocationPid( LOCATION_CavernEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter6 );
+table.AddLocationPid( LOCATION_MountainEncounter7 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+
+
+@table = @EncounterTables[ TABLE_00_12 ];
+table.AddLocationPid( LOCATION_CavernEncounter3 );
+table.AddLocationPid( LOCATION_CavernEncounter4 );
+table.AddLocationPid( LOCATION_CavernEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter6 );
+table.AddLocationPid( LOCATION_MountainEncounter7 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+
+
+@table = @EncounterTables[ TABLE_00_13 ];
+table.AddLocationPid( LOCATION_CavernEncounter3 );
+table.AddLocationPid( LOCATION_CavernEncounter4 );
+table.AddLocationPid( LOCATION_CavernEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter6 );
+table.AddLocationPid( LOCATION_MountainEncounter7 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+
+
+@table = @EncounterTables[ TABLE_01_00 ];
+table.AddLocationPid( LOCATION_CavernEncounter3 );
+table.AddLocationPid( LOCATION_CavernEncounter4 );
+table.AddLocationPid( LOCATION_CavernEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter6 );
+table.AddLocationPid( LOCATION_MountainEncounter7 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+
+
+@table = @EncounterTables[ TABLE_01_01 ];
+table.AddLocationPid( LOCATION_CavernEncounter3 );
+table.AddLocationPid( LOCATION_CavernEncounter4 );
+table.AddLocationPid( LOCATION_CavernEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter6 );
+table.AddLocationPid( LOCATION_MountainEncounter7 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+
+
+@table = @EncounterTables[ TABLE_01_02 ];
+table.AddLocationPid( LOCATION_CavernEncounter3 );
+table.AddLocationPid( LOCATION_CavernEncounter4 );
+table.AddLocationPid( LOCATION_CavernEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter6 );
+table.AddLocationPid( LOCATION_MountainEncounter7 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+
+
+@table = @EncounterTables[ TABLE_01_03 ];
+table.AddLocationPid( LOCATION_CavernEncounter3 );
+table.AddLocationPid( LOCATION_CavernEncounter4 );
+table.AddLocationPid( LOCATION_CavernEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter6 );
+table.AddLocationPid( LOCATION_MountainEncounter7 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+
+
+@table = @EncounterTables[ TABLE_01_04 ];
+table.AddLocationPid( LOCATION_CavernEncounter3 );
+table.AddLocationPid( LOCATION_CavernEncounter4 );
+table.AddLocationPid( LOCATION_CavernEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter5 );
+table.AddLocationPid( LOCATION_MountainEncounter6 );
+table.AddLocationPid( LOCATION_MountainEncounter7 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+
+
+@table = @EncounterTables[ TABLE_01_05 ];
+table.AddLocationPid( LOCATION_CavernEncounter0 );
+table.AddLocationPid( LOCATION_CavernEncounter1 );
+table.AddLocationPid( LOCATION_CavernEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter1 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter3 );
+table.AddLocationPid( LOCATION_MountainEncounter4 );
+
+
+@table = @EncounterTables[ TABLE_01_06 ];
+table.AddLocationPid( LOCATION_CavernEncounter0 );
+table.AddLocationPid( LOCATION_CavernEncounter1 );
+table.AddLocationPid( LOCATION_CavernEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter1 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter3 );
+table.AddLocationPid( LOCATION_MountainEncounter4 );
+
+
+@table = @EncounterTables[ TABLE_01_07 ];
+table.AddLocationPid( LOCATION_CavernEncounter0 );
+table.AddLocationPid( LOCATION_CavernEncounter1 );
+table.AddLocationPid( LOCATION_CavernEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter1 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter3 );
+table.AddLocationPid( LOCATION_MountainEncounter4 );
+
+
+@table = @EncounterTables[ TABLE_01_08 ];
+table.AddLocationPid( LOCATION_CavernEncounter0 );
+table.AddLocationPid( LOCATION_CavernEncounter1 );
+table.AddLocationPid( LOCATION_CavernEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter1 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter3 );
+table.AddLocationPid( LOCATION_MountainEncounter4 );
+
+
+@table = @EncounterTables[ TABLE_01_09 ];
+table.AddLocationPid( LOCATION_CavernEncounter0 );
+table.AddLocationPid( LOCATION_CavernEncounter1 );
+table.AddLocationPid( LOCATION_CavernEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter1 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter3 );
+table.AddLocationPid( LOCATION_MountainEncounter4 );
+
+
+@table = @EncounterTables[ TABLE_01_10 ];
+table.AddLocationPid( LOCATION_CavernEncounter0 );
+table.AddLocationPid( LOCATION_CavernEncounter1 );
+table.AddLocationPid( LOCATION_CavernEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter1 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter3 );
+table.AddLocationPid( LOCATION_MountainEncounter4 );
+
+
+@table = @EncounterTables[ TABLE_01_11 ];
+table.AddLocationPid( LOCATION_CavernEncounter0 );
+table.AddLocationPid( LOCATION_CavernEncounter1 );
+table.AddLocationPid( LOCATION_CavernEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter1 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter3 );
+table.AddLocationPid( LOCATION_MountainEncounter4 );
+
+
+@table = @EncounterTables[ TABLE_01_12 ];
+table.AddLocationPid( LOCATION_CavernEncounter0 );
+table.AddLocationPid( LOCATION_CavernEncounter1 );
+table.AddLocationPid( LOCATION_CavernEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter1 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter3 );
+table.AddLocationPid( LOCATION_MountainEncounter4 );
+
+
+@table = @EncounterTables[ TABLE_01_13 ];
+table.AddLocationPid( LOCATION_CavernEncounter0 );
+table.AddLocationPid( LOCATION_CavernEncounter1 );
+table.AddLocationPid( LOCATION_CavernEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter1 );
+table.AddLocationPid( LOCATION_MountainEncounter2 );
+table.AddLocationPid( LOCATION_MountainEncounter3 );
+table.AddLocationPid( LOCATION_MountainEncounter4 );
 
 
 @table = @EncounterTables[ TABLE_07_09 ];
@@ -25,7 +301,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_11_07 ];
@@ -37,7 +312,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_11_08 ];
@@ -49,7 +323,7 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
+table.AddEncounter( 10, 10030020 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_12_07 ];
@@ -61,7 +335,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_12_08 ];
@@ -73,7 +346,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_13_07 ];
@@ -85,7 +357,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_13_08 ];
@@ -97,7 +368,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_15_07 ];
@@ -109,7 +379,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_16_00 ];
@@ -121,7 +390,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_16_01 ];
@@ -133,7 +401,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_16_06 ];
@@ -145,7 +412,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_16_07 ];
@@ -157,7 +423,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_17_00 ];
@@ -169,7 +434,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_17_01 ];
@@ -181,7 +445,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_17_05 ];
@@ -193,7 +456,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_17_06 ];
@@ -205,7 +467,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_17_07 ];
@@ -217,7 +478,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_18_05 ];
@@ -229,7 +489,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_18_06 ];
@@ -241,7 +500,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_18_07 ];
@@ -253,7 +511,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_19_05 ];
@@ -265,7 +522,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_20_05 ];
@@ -277,7 +533,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_20_06 ];
@@ -289,7 +544,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_21_07 ];
@@ -301,7 +555,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_21_08 ];
@@ -313,7 +566,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_23_10 ];
@@ -325,7 +577,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_24_10 ];
@@ -337,7 +588,6 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030720 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 SetZone( 0, 0, TABLE_00_00, 0, TERRAIN_Mountain, CHANCE_Common, CHANCE_Common, CHANCE_Common );
 SetZone( 1, 0, TABLE_01_00, 0, TERRAIN_Mountain, CHANCE_Common, CHANCE_Common, CHANCE_Common );
