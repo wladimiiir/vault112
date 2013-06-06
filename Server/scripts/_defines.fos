@@ -1488,6 +1488,11 @@
 #  pragma bindfunc "void TestFunc(string&) -> fonline_test_client.dll TestFunc"
 # endif
 
+//loading Critter action DSL
+# ifdef __SERVER
+#  pragma bindfunc "void InitCritterActionDSL() -> cam.dll InitLibrary"
+# endif
+
 #endif // SKIP_PRAGMAS
 
 #endif // __DEFINES__

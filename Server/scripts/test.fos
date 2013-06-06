@@ -17,7 +17,7 @@ void test( Critter& cr, int p0, int p1, int p2 )
 
 void test1( Critter& cr, int p0, int p1, int p2 )
 {
-    cr.Say( SAY_NORM, "русские буквы јЅ¬гƒееейЄЄЄЄ!" );
+    cr.Say( SAY_NORM, "fsdfsdfsfsdf" );
 }
 
 class Example
@@ -903,9 +903,9 @@ uint e_HostileMove( uint[] @ values )
             switch( Random( 0, 50 ) )
             {
             case 0:
-                say = "ћалые страдани€ вывод€т нас из себ€, великие же - возвращают нас самим себе.";
+                say = "0";
                 break;
-            case 1:
+            /*case 1:
                 say = "ћинутное удовольствие часто бывает причиной долгих страданий. ";
                 break;
             case 2:
@@ -1040,6 +1040,7 @@ uint e_HostileMove( uint[] @ values )
             case 45:
                 say = "’очешь быть счастливым Ц выучись сперва страдать.";
                 break;
+            */
             default:
                 break;
             }
@@ -1979,4 +1980,225 @@ void SetMikeWall( Critter& cr, int, int, int)
 	cr.AddItem(PID_223_FMJ, 300);
 	cr.AddItem(PID_HN_NEEDLER_CARTRIDGE, 500);
 	cr.AddItem(PID_5MM_JHP, 1000);
+}
+
+# ifdef __SERVER
+#  pragma bindfunc "void StartCritterAction(Critter&, IAction&) -> cam.dll Start"
+# endif
+
+void TestCritterAction( Critter& cr, int, int, int)
+{
+	Map@ map = cr.GetMap();
+	if(!valid(map))
+		return;
+		
+	Critter@ npc = map.AddNpc(NPC_PID_Brahmin, cr.HexX + 2, cr.HexY + 2, 0, null, null, null);
+	if(!valid(npc))
+		return;
+		
+	npc.SetEvent(CRITTER_EVENT_IDLE, "cam.dll@Idle");
+		
+	IAction@ action = TestAction();
+	StartCritterAction(npc, action);
+}
+
+class TestAction : IAction
+{
+	IAction@ SuperAction;
+	IAction@[] SubActions;
+	IAction@ AndAction;
+
+	ICondition@[] Conditions;
+	ICondition@[] NegativeConditions;
+
+	float Chance;
+	
+	private bool Running;
+	private bool Listening;
+	private bool BlockingSubActions;
+	
+	private int CurrentActionIndex;
+	
+	TestAction()
+	{
+		Running = false;
+		Listening = false; 
+		BlockingSubActions = false;
+		Chance = 101;
+	}
+	
+	IAction@ GetSuperAction() { return @SuperAction; }
+	void SetSuperAction(IAction@ action) { @SuperAction = @action; }
+		
+	IAction@ AddSubAction(IAction@ action)
+	{
+		action.SetSuperAction(this);
+		SubActions.insertLast(action);
+		return @this;
+	}
+	IAction@[] GetSubActions() { return SubActions; }
+	
+	void CollectListeningActions(any& collection)
+	{
+		Log("Collecting actions");
+		//~ if(IsListening())
+			//~ collection.insertLast(this);
+		//~ if(!IsRunning())
+			//~ return;
+			//~ 
+		//~ for (uint i = 0; i < SubActions.length(); i++)
+			//~ SubActions[i].CollectListeningActions(collection);
+	}
+	
+	IAction@ WithChance(float chance)
+	{
+		Chance = chance;
+		return @this;
+	}
+	
+	IAction@ And(IAction@ andAction)
+	{
+		@AndAction = andAction;
+		return @this;
+	}
+	
+	IAction@ If(ICondition@ condition)
+	{
+		Conditions.insertLast(condition);
+		return @this;
+	}
+	
+	IAction@ IfNot(ICondition@ condition)
+	{
+		NegativeConditions.insertLast(condition);
+		return @this;
+	}
+	
+	bool IsRunning() { return Running; }
+	void SetRunning(bool running) { Running = running; }
+	
+	bool IsListening() { return Listening; }
+	void SetListening(bool listening) { Listening = listening; }
+	
+	void BlockSubActions() { BlockingSubActions = true; }
+	void UnblockSubActions() { BlockingSubActions = false; }
+	
+	bool Start(Critter& critter) final
+	{
+		if(!HAS_CHANCE(Chance))
+		{
+			Info("No chance for action: "+GetInfo()+", chance="+Chance);
+			StartNextSuperAction(critter);
+			return false;
+		}
+		
+		Info("Action starting: " + GetInfo());
+		CurrentActionIndex = -1;
+		SetRunning(true);
+		Perform(critter);
+		return true;
+	}
+	
+	void Perform(Critter& critter) { Finish(critter); /*do your action stuff in overriden function*/}
+	
+	void Finish(Critter& critter) final
+	{
+		Info("Action finishing: " + GetInfo());
+		StartNextAction(critter);
+	}
+	
+	void StartNextAction(Critter& critter)
+	{
+		if(!BlockingSubActions && StartNextSubAction(critter))
+			return;
+		
+		StartNextSuperAction(critter);
+	}
+	
+	bool StartNextSubAction(Critter& critter)
+	{
+		CurrentActionIndex++;
+		Info("Trying to start sub action with index: " + CurrentActionIndex+", "+SubActions.length());
+		if(CurrentActionIndex >= int(SubActions.length()))
+			return false;
+		
+		Info("Starting next sub action: " + SubActions[CurrentActionIndex].GetInfo());
+		SubActions[CurrentActionIndex].Start(critter);
+		return true;
+	}
+	
+	void StartNextSuperAction(Critter& critter)
+	{
+		SetRunning(false);
+		if(valid(SuperAction))
+		{
+			Info("Sending to super action: "+SuperAction.GetInfo());
+			SuperAction.StartNextAction(critter);
+		}
+	}
+	
+	void Cancel(Critter& critter)
+	{
+		SetRunning(false);
+		for (uint i = 0; i < SubActions.length(); i++)
+		{
+			SubActions[i].Cancel(critter);
+		}
+	}
+	
+	void PerformAndAction(Critter& critter, Critter@ otherCritter, Item@ item) final
+	{
+		if(!valid(AndAction) || !AndAction.Check(critter, otherCritter, item))
+			return;
+			
+		AndAction.Start(critter);
+	}
+	
+	bool Check(Critter& critter, Critter@ otherCritter, Item@ item) final
+	{
+		for (uint i = 0; i < Conditions.length(); i++)
+			if(!Conditions[i].Check(critter, otherCritter, item))
+				return false;
+
+		for (uint i = 0; i < NegativeConditions.length(); i++)
+			if(NegativeConditions[i].Check(critter, otherCritter, item))
+				return false;
+		
+		return true;
+	} 
+
+	string GetInfo() {return "DefaultAction";}
+	
+	//event section
+	void Idle(Critter& critter) 
+	{
+		Log("Idle action invoked: Well done!");
+	}
+	void ShowCritterEvent(Critter& critter, Critter& showCritter) {}
+	void HideCritterEvent(Critter& critter, Critter& hideCritter) {}
+	bool Attack(Critter& critter, Critter& target) {return false;}
+	bool AttackedEvent(Critter& critter, Critter& attacker) {return false;}
+	void DeadEvent(Critter& critter, Critter@ killer) {}
+	void MessageEvent(Critter& critter, Critter& messenger, int message, int value) {}
+	void SeeSomeoneAttackEvent(Critter& critter, Critter& attacker, Critter& attacked) {}
+	void SeeSomeoneDeadEvent(Critter& critter, Critter& killed, Critter@ killer) {}
+	void SeeSomeoneAttackedEvent(Critter& critter, Critter& attacked, Critter& attacker) {}
+	void SeeSomeoneStealingEvent(Critter& critter, Critter& victim, Critter& thief, bool success, Item& item, uint count) {}
+	void SeeSomeoneUseSkill(Critter& critter, Critter& skillCritter, int skill, Critter@ onCritter, Item@ onItem, Scenery@ onScenery) {}
+	int PlaneBeginEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem) {return PLANE_RUN_GLOBAL;}
+	int PlaneRunEvent(Critter& critter, NpcPlane& plane, int reason, uint& result0, uint& result1, uint& result2) {return PLANE_RUN_GLOBAL;}
+	int PlaneEndEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem) {return PLANE_RUN_GLOBAL;}
+}
+
+class TestCondition : ICondition
+{
+	bool Check(Critter& critter, Critter@ someCritter, Item@ someItem) override
+	{
+		return true;
+	}
+}
+
+void Info(string info)
+{
+	Log(info);
 }
