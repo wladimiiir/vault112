@@ -24,40 +24,51 @@ class ActionManager
 	
 	void Start(Critter& critter, Action& action)
 	{
-		InitCritterEvents(critter);
+		InitCritterEvents("_", critter);
 		_SetQueuedAction(critter, @action);
 	}
 	
 	void StartImmediately(Critter& critter, Action& action)
 	{
-		InitCritterEvents(critter);
+		InitCritterEvents("_", critter);
 		_SetRunningAction(critter, @action);
 		action.Start(critter);
 	}
 	
-	private void InitCritterEvents(Critter& critter)
+	//~ void Start(Critter& critter, Action& action)
+	//~ {
+		//~ InitCritterEvents("cam.dll@", critter);
+		//~ StartCritterAction(critter, action, false);
+	//~ }
+	//~ 
+	//~ void StartImmediately(Critter& critter, Action& action)
+	//~ {
+		//~ InitCritterEvents("cam.dll@", critter);
+		//~ StartCritterAction(critter, action, true);
+	//~ }
+	
+	private void InitCritterEvents(string eventPrefix, Critter& critter)
 	{
-		critter.SetEvent(CRITTER_EVENT_ATTACK, "_Attack");
-		critter.SetEvent(CRITTER_EVENT_ATTACKED, "_Attacked");
-		critter.SetEvent(CRITTER_EVENT_DEAD, "_Dead");
-		critter.SetEvent(CRITTER_EVENT_FINISH, "_Finish");
-		critter.SetEvent(CRITTER_EVENT_SHOW_CRITTER, "_ShowCritter");
-		critter.SetEvent(CRITTER_EVENT_HIDE_CRITTER, "_HideCritter");
-		critter.SetEvent(CRITTER_EVENT_IDLE, "_Idle");
-		critter.SetEvent(CRITTER_EVENT_MESSAGE, "_Message");
-		critter.SetEvent(CRITTER_EVENT_RESPAWN, "_Respawn");
-		critter.SetEvent(CRITTER_EVENT_SMTH_ATTACK, "_SeeSomeoneAttack");
-		critter.SetEvent(CRITTER_EVENT_SMTH_ATTACKED, "_SeeSomeoneAttacked");
-		critter.SetEvent(CRITTER_EVENT_SMTH_DEAD, "_SeeSomeoneDead");
-		//critter.SetEvent(CRITTER_EVENT_SMTH_DROP_ITEM, "_SeeSomeoneDropItem");
-		//critter.SetEvent(CRITTER_EVENT_SMTH_MOVE_ITEM, "_SeeSomeoneMoveItem");
-		critter.SetEvent(CRITTER_EVENT_SMTH_STEALING, "_SeeSomeoneStealing");
-		//critter.SetEvent(CRITTER_EVENT_SMTH_USE_ITEM, "_SeeSomeoneUseItem");
-		critter.SetEvent(CRITTER_EVENT_SMTH_USE_SKILL, "_SeeSomeoneUseSkill");
-		critter.SetEvent(CRITTER_EVENT_PLANE_BEGIN, "_PlaneBegin");
-		critter.SetEvent(CRITTER_EVENT_PLANE_RUN, "_PlaneRun");
-		critter.SetEvent(CRITTER_EVENT_PLANE_END, "_PlaneEnd");
-		
+		critter.SetEvent(CRITTER_EVENT_ATTACK, eventPrefix + "Attack");
+		critter.SetEvent(CRITTER_EVENT_ATTACKED, eventPrefix + "Attacked");
+		critter.SetEvent(CRITTER_EVENT_DEAD, eventPrefix + "Dead");
+		critter.SetEvent(CRITTER_EVENT_FINISH, eventPrefix + "Finish");
+		critter.SetEvent(CRITTER_EVENT_SHOW_CRITTER, eventPrefix + "ShowCritter");
+		critter.SetEvent(CRITTER_EVENT_HIDE_CRITTER, eventPrefix + "HideCritter");
+		critter.SetEvent(CRITTER_EVENT_IDLE, eventPrefix + "Idle");
+		critter.SetEvent(CRITTER_EVENT_MESSAGE, eventPrefix + "Message");
+		critter.SetEvent(CRITTER_EVENT_RESPAWN, eventPrefix + "Respawn");
+		critter.SetEvent(CRITTER_EVENT_SMTH_ATTACK, eventPrefix + "SeeSomeoneAttack");
+		critter.SetEvent(CRITTER_EVENT_SMTH_ATTACKED, eventPrefix + "SeeSomeoneAttacked");
+		critter.SetEvent(CRITTER_EVENT_SMTH_DEAD, eventPrefix + "SeeSomeoneDead");
+		//critter.SetEvent(CRITTER_EVENT_SMTH_DROP_ITEM, eventPrefix + "SeeSomeoneDropItem");
+		//critter.SetEvent(CRITTER_EVENT_SMTH_MOVE_ITEM, eventPrefix + "SeeSomeoneMoveItem");
+		critter.SetEvent(CRITTER_EVENT_SMTH_STEALING, eventPrefix + "SeeSomeoneStealing");
+		//critter.SetEvent(CRITTER_EVENT_SMTH_USE_ITEM, eventPrefix + "SeeSomeoneUseItem");
+		critter.SetEvent(CRITTER_EVENT_SMTH_USE_SKILL, eventPrefix + "SeeSomeoneUseSkill");
+		critter.SetEvent(CRITTER_EVENT_PLANE_BEGIN, eventPrefix + "PlaneBegin");
+		critter.SetEvent(CRITTER_EVENT_PLANE_RUN, eventPrefix + "PlaneRun");
+		critter.SetEvent(CRITTER_EVENT_PLANE_END, eventPrefix + "PlaneEnd");
 	}
 	
 	Action@[] GetListeningActions(Critter& critter)
@@ -258,7 +269,7 @@ class ActionManager
 			return;
 		Action@[] actions = GetListeningActions(critter);
 		for (uint i = 0; i < actions.length(); i++)
-			actions[i].SeeSomeoneUseSkill(critter, skillCritter, skill, onCritter, onItem, onScenery);
+			actions[i].SeeSomeoneUseSkillEvent(critter, skillCritter, skill, onCritter, onItem, onScenery);
 	}
 	
 	int PlaneBegin(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem)
@@ -336,7 +347,7 @@ class ActionManager
 	}
 }
 
-interface Action
+/*interface Action
 {
 	Action@ GetSuperAction();
 	void SetSuperAction(Action@ action);
@@ -373,11 +384,11 @@ interface Action
 	void SeeSomeoneDeadEvent(Critter& critter, Critter& killed, Critter@ killer);
 	void SeeSomeoneAttackedEvent(Critter& critter, Critter& attacked, Critter& attacker);
 	void SeeSomeoneStealingEvent(Critter& critter, Critter& victim, Critter& thief, bool success, Item& item, uint count);
-	void SeeSomeoneUseSkill(Critter& critter, Critter& skillCritter, int skill, Critter@ onCritter, Item@ onItem, Scenery@ onScenery);
+	void SeeSomeoneUseSkillEvent(Critter& critter, Critter& skillCritter, int skill, Critter@ onCritter, Item@ onItem, Scenery@ onScenery);
 	int PlaneBeginEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem);
 	int PlaneRunEvent(Critter& critter, NpcPlane& plane, int reason, uint& result0, uint& result1, uint& result2);
 	int PlaneEndEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem);
-}
+}*/
 
 class DefaultAction : Action
 {
@@ -557,7 +568,7 @@ class DefaultAction : Action
 	void SeeSomeoneDeadEvent(Critter& critter, Critter& killed, Critter@ killer) {}
 	void SeeSomeoneAttackedEvent(Critter& critter, Critter& attacked, Critter& attacker) {}
 	void SeeSomeoneStealingEvent(Critter& critter, Critter& victim, Critter& thief, bool success, Item& item, uint count) {}
-	void SeeSomeoneUseSkill(Critter& critter, Critter& skillCritter, int skill, Critter@ onCritter, Item@ onItem, Scenery@ onScenery) {}
+	void SeeSomeoneUseSkillEvent(Critter& critter, Critter& skillCritter, int skill, Critter@ onCritter, Item@ onItem, Scenery@ onScenery) {}
 	int PlaneBeginEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem) {return PLANE_RUN_GLOBAL;}
 	int PlaneRunEvent(Critter& critter, NpcPlane& plane, int reason, uint& result0, uint& result1, uint& result2) {return PLANE_RUN_GLOBAL;}
 	int PlaneEndEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem) {return PLANE_RUN_GLOBAL;}
@@ -995,10 +1006,10 @@ string@ GetName(Critter& critter, Critter@ otherCritter)
 	return "" + otherCritter.Name;
 }
 
-interface Condition
+/*interface Condition
 {
 	bool Check(Critter& critter, Critter@ otherCritter, Item@ item);
-}
+}*/
 
 void Info(string& message)
 {

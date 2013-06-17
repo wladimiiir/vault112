@@ -1388,7 +1388,7 @@ class CancelSneaking : CrittersHolderAction
 		Start(critter);
 	}
 	
-	void SeeSomeoneUseSkill(Critter& critter, Critter& skillCritter, int skill, Critter@ onCritter, Item@ onItem, Scenery@ onScenery) override
+	void SeeSomeoneUseSkillEvent(Critter& critter, Critter& skillCritter, int skill, Critter@ onCritter, Item@ onItem, Scenery@ onScenery) override
 	{
 		ClearCritters();
 		if(skill != SK_SNEAK || !HAS_CHANCE(Chance))

@@ -235,7 +235,7 @@ class WhenProtectedFromSkill : CrittersHolderAction
 		SetListening(true);
 	}
 	
-	void SeeSomeoneUseSkill(Critter& critter, Critter& skillCritter, int skill, Critter@ onCritter, Item@ onItem, Scenery@ onScenery) override
+	void SeeSomeoneUseSkillEvent(Critter& critter, Critter& skillCritter, int skill, Critter@ onCritter, Item@ onItem, Scenery@ onScenery) override
 	{
 		if(!IsProtectedFromSkill(skillCritter, skill, onCritter, onItem, onScenery) || IsRunning())
 			return;

@@ -204,7 +204,7 @@ class WhenAttacked : WhenAbstractAction
 
 class WhenSomeoneLoots : WhenAbstractAction
 {
-	void SeeSomeoneUseSkill(Critter& critter, Critter& skillCritter, int skill, Critter@ onCritter, Item@ onItem, Scenery@ onScenery) override
+	void SeeSomeoneUseSkillEvent(Critter& critter, Critter& skillCritter, int skill, Critter@ onCritter, Item@ onItem, Scenery@ onScenery) override
 	{
 		if(IsRunning() || !Check(critter, onCritter, null) || (skill != SKILL_LOOT_CRITTER && skill != SK_STEAL))
 			return;

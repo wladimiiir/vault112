@@ -1982,10 +1982,6 @@ void SetMikeWall( Critter& cr, int, int, int)
 	cr.AddItem(PID_5MM_JHP, 1000);
 }
 
-# ifdef __SERVER
-#  pragma bindfunc "void StartCritterAction(Critter&, IAction&) -> cam.dll Start"
-# endif
-
 void TestCritterAction( Critter& cr, int, int, int)
 {
 	Map@ map = cr.GetMap();
@@ -1998,18 +1994,18 @@ void TestCritterAction( Critter& cr, int, int, int)
 		
 	npc.SetEvent(CRITTER_EVENT_IDLE, "cam.dll@Idle");
 		
-	IAction@ action = TestAction();
-	StartCritterAction(npc, action);
+	Action@ action = TestAction();
+	StartCritterAction(npc, action, false);
 }
 
-class TestAction : IAction
+class TestAction : Action
 {
-	IAction@ SuperAction;
-	IAction@[] SubActions;
-	IAction@ AndAction;
+	Action@ SuperAction;
+	Action@[] SubActions;
+	Action@ AndAction;
 
-	ICondition@[] Conditions;
-	ICondition@[] NegativeConditions;
+	Condition@[] Conditions;
+	Condition@[] NegativeConditions;
 
 	float Chance;
 	
@@ -2027,48 +2023,48 @@ class TestAction : IAction
 		Chance = 101;
 	}
 	
-	IAction@ GetSuperAction() { return @SuperAction; }
-	void SetSuperAction(IAction@ action) { @SuperAction = @action; }
+	Action@ GetSuperAction() { return @SuperAction; }
+	void SetSuperAction(Action@ action) { @SuperAction = @action; }
 		
-	IAction@ AddSubAction(IAction@ action)
+	Action@ AddSubAction(Action@ action)
 	{
 		action.SetSuperAction(this);
 		SubActions.insertLast(action);
 		return @this;
 	}
-	IAction@[] GetSubActions() { return SubActions; }
+	Action@[] GetSubActions() { return SubActions; }
 	
-	void CollectListeningActions(any& collection)
+	void CollectListeningActions(array<Action@>& collection)
 	{
-		Log("Collecting actions");
-		//~ if(IsListening())
-			//~ collection.insertLast(this);
-		//~ if(!IsRunning())
-			//~ return;
-			//~ 
-		//~ for (uint i = 0; i < SubActions.length(); i++)
-			//~ SubActions[i].CollectListeningActions(collection);
+		Log("Collecting actions in AS");
+		if(IsListening())
+			collection.insertLast(this);
+		if(!IsRunning())
+			return;
+			
+		for (uint i = 0; i < SubActions.length(); i++)
+			SubActions[i].CollectListeningActions(collection);
 	}
 	
-	IAction@ WithChance(float chance)
+	Action@ WithChance(float chance)
 	{
 		Chance = chance;
 		return @this;
 	}
 	
-	IAction@ And(IAction@ andAction)
+	Action@ And(Action@ andAction)
 	{
 		@AndAction = andAction;
 		return @this;
 	}
 	
-	IAction@ If(ICondition@ condition)
+	Action@ If(Condition@ condition)
 	{
 		Conditions.insertLast(condition);
 		return @this;
 	}
 	
-	IAction@ IfNot(ICondition@ condition)
+	Action@ IfNot(Condition@ condition)
 	{
 		NegativeConditions.insertLast(condition);
 		return @this;
@@ -2085,6 +2081,7 @@ class TestAction : IAction
 	
 	bool Start(Critter& critter) final
 	{
+		Log("Start of action: " + GetInfo());
 		if(!HAS_CHANCE(Chance))
 		{
 			Info("No chance for action: "+GetInfo()+", chance="+Chance);
@@ -2092,7 +2089,7 @@ class TestAction : IAction
 			return false;
 		}
 		
-		Info("Action starting: " + GetInfo());
+		Log("Action starting: " + GetInfo());
 		CurrentActionIndex = -1;
 		SetRunning(true);
 		Perform(critter);
@@ -2103,7 +2100,7 @@ class TestAction : IAction
 	
 	void Finish(Critter& critter) final
 	{
-		Info("Action finishing: " + GetInfo());
+		Log("Action finishing: " + GetInfo());
 		StartNextAction(critter);
 	}
 	
@@ -2170,13 +2167,13 @@ class TestAction : IAction
 	string GetInfo() {return "DefaultAction";}
 	
 	//event section
-	void Idle(Critter& critter) 
+	void IdleEvent(Critter& critter) 
 	{
 		Log("Idle action invoked: Well done!");
 	}
 	void ShowCritterEvent(Critter& critter, Critter& showCritter) {}
 	void HideCritterEvent(Critter& critter, Critter& hideCritter) {}
-	bool Attack(Critter& critter, Critter& target) {return false;}
+	bool AttackEvent(Critter& critter, Critter& target) {return false;}
 	bool AttackedEvent(Critter& critter, Critter& attacker) {return false;}
 	void DeadEvent(Critter& critter, Critter@ killer) {}
 	void MessageEvent(Critter& critter, Critter& messenger, int message, int value) {}
@@ -2184,13 +2181,13 @@ class TestAction : IAction
 	void SeeSomeoneDeadEvent(Critter& critter, Critter& killed, Critter@ killer) {}
 	void SeeSomeoneAttackedEvent(Critter& critter, Critter& attacked, Critter& attacker) {}
 	void SeeSomeoneStealingEvent(Critter& critter, Critter& victim, Critter& thief, bool success, Item& item, uint count) {}
-	void SeeSomeoneUseSkill(Critter& critter, Critter& skillCritter, int skill, Critter@ onCritter, Item@ onItem, Scenery@ onScenery) {}
+	void SeeSomeoneUseSkillEvent(Critter& critter, Critter& skillCritter, int skill, Critter@ onCritter, Item@ onItem, Scenery@ onScenery) {}
 	int PlaneBeginEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem) {return PLANE_RUN_GLOBAL;}
 	int PlaneRunEvent(Critter& critter, NpcPlane& plane, int reason, uint& result0, uint& result1, uint& result2) {return PLANE_RUN_GLOBAL;}
 	int PlaneEndEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem) {return PLANE_RUN_GLOBAL;}
 }
 
-class TestCondition : ICondition
+class TestCondition : Condition
 {
 	bool Check(Critter& critter, Critter@ someCritter, Item@ someItem) override
 	{
