@@ -262,7 +262,6 @@ class DefaultBattle : Battle
 	#define BATTLE_RESPAWN_WAIT		(REAL_SECOND(3))
 	#define BATTLE_MAX_TEAM_KILLS	(3)
 	
-	private BattleListener@[] Listeners;
 	private uint Creator;
 	private uint16 CombatMode;
 	private int Duration;
@@ -273,6 +272,9 @@ class DefaultBattle : Battle
 	private uint StartTime;
 	private uint EndTime;
 	private uint EndTimeEventId;
+	private BattleEvent@ EventStarted;
+	private BattleEvent@ EventFinished;
+	private BattleEvent@ EventCancelled;
 	
 	DefaultBattle(uint creator, uint16 combatMode)
 	{
@@ -287,9 +289,19 @@ class DefaultBattle : Battle
 		EndTimeEventId = 0;
 	}
 	
-	void AddBattleListener(BattleListener& listener)
+	void SetEventStarted(BattleEvent@ event) override
 	{
-		Listeners.insertLast(listener);
+		@EventStarted = event;
+	}
+	
+	void SetEventFinished(BattleEvent@ event) override
+	{
+		@EventFinished = event;
+	}
+	
+	void SetEventCancelled(BattleEvent@ event) override
+	{
+		@EventCancelled = event;
 	}
 	
 	uint GetTeamScore(Team& team)
@@ -412,9 +424,32 @@ class DefaultBattle : Battle
 			EndTime = 0;
 		}
 		
-		for (uint i = 0; i < Listeners.length(); i++)
-			Listeners[i].BattleStarted(this);
+		if(valid(EventStarted))
+		{
+			Critter@[] players = GetPlayers();
+			for (uint i = 0; i < players.length(); i++)
+				EventStarted.ProcessEvent(this, players[i]);
+		}
+		
 		RefreshClients();
+	}
+	
+	private Critter@[] GetPlayers()
+	{
+		Critter@[] players;
+
+		for (uint i = 0; i < Teams.length(); i++)
+		{
+			Player@[] teamPlayers = Teams[i].GetPlayers();
+			for (uint i = 0; i < teamPlayers.length(); i++)
+			{
+				Critter@ teamPlayer = teamPlayers[i].GetCritter();
+				if(valid(teamPlayer))
+					players.insertLast(teamPlayer);
+			}
+		}
+		
+		return players;
 	}
 	
 	Map@ GetMap()
@@ -433,8 +468,14 @@ class DefaultBattle : Battle
 		EndTime = __FullSecond;
 		for (uint i = 0; i < Teams.length(); i++)
 			Teams[i].End();
-		for (uint i = 0; i < Listeners.length(); i++)
-			Listeners[i].BattleFinished(this);
+			
+		if(valid(EventFinished))
+		{
+			Critter@[] players = GetPlayers();
+			for (uint i = 0; i < players.length(); i++)
+				EventFinished.ProcessEvent(this, players[i]);
+		}
+		
 		RefreshClients();
 		DeleteBattle(creator);
 		if(LocationId != 0)
@@ -497,8 +538,7 @@ class DefaultBattle : Battle
 			critter.ParamBase[BATTLEGROUND] = BATTLEGROUND_NONE;
 			critter.ParamBase[PVP_TEAM] = 0;
 		}
-		for (uint i = 0; i < Listeners.length(); i++)
-			Listeners[i].BattleCancelled(this);
+		
 		RefreshClients();
 	}
 	

@@ -15,7 +15,9 @@
 #ifdef __SERVER
 shared interface Battle
 {
-	void AddBattleListener(BattleListener& listener);
+	void SetEventStarted(BattleEvent@ event);
+	void SetEventFinished(BattleEvent@ event);
+	void SetEventCancelled(BattleEvent@ event);
 	
 	//uint GetTeamScore(Team& team);
 	void SetCost(uint cost);
@@ -45,10 +47,8 @@ shared interface Battle
 	void Respawn(Critter& critter);
 }
 
-shared interface BattleListener
+shared interface BattleEvent
 {
-	void BattleStarted(Battle& battle);
-	void BattleFinished(Battle& battle);
-	void BattleCancelled(Battle& battle);
+	void ProcessEvent(Battle& battle, Critter& critter);
 }
 #endif

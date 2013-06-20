@@ -56,7 +56,7 @@ bool _VRAdministratorBarter(Critter& npc, Critter& player, bool attach, uint bar
 	if(attach)
 	{
 		//adding items to admin
-		UpdateItems(npc);
+		UpdateItems(npc); 
 		
 		//holding current real world items
 		Item@[] items;
@@ -79,12 +79,13 @@ bool _VRAdministratorBarter(Critter& npc, Critter& player, bool attach, uint bar
 		
 		for (uint i = 0; i < items.length(); i++)
 		{
+			Item@ item = items[i];
 			//setting current digital credit
-			if(items[i].GetProtoId() == PID_DIGITAL_CREDIT)
+			if(item.GetProtoId() == PID_DIGITAL_CREDIT)
 			{
-				player.ParamBase[DIGITAL_CREDIT] = items[i].GetCount();
+				player.ParamBase[DIGITAL_CREDIT] = item.GetCount();
 				items.removeAt(i);
-				DeleteItem(items[i]);
+				DeleteItem(item);
 				break;
 			}
 		}
@@ -271,7 +272,56 @@ class VRSimulation
 		if(IsSpawnAvailable() && valid(battle.GetMap()))
 			SpawnNpcs(Spawn, battle.GetMap());
 			
+		battle.SetEventStarted(SimulationStarted());
+		battle.SetEventFinished(SimulationFinished());
+			
 		battle.Join(_Critter);
 	}
 }
 
+class SimulationStarted : BattleEvent
+{
+void ProcessEvent(Battle& battle, Critter& critter)
+{
+	Item@ hiddenContainer = FindHiddenContainer(critter.GetMap());
+	
+	if(!valid(hiddenContainer))
+		return;
+		
+	ItemHolderWrapper itemHolder(hiddenContainer);
+	
+	//holding current real world items
+	Item@[] items;
+	critter.GetItems(SLOT_INV, items);
+	itemHolder.PutItems(REAL_WORLD_ITEMS_PREFIX + critter.Id, items);
+	
+	//getting his virtual reality items
+	items = itemHolder.PopItems(VIRTUAL_REALITY_ITEMS_PREFIX + critter.Id);
+	MoveItems(items, critter);
+}
+}
+
+class SimulationFinished : BattleEvent
+{
+void ProcessEvent(Battle& battle, Critter& critter)
+{
+	Item@ hiddenContainer = FindHiddenContainer(critter.GetMap());
+	//getting VR items
+	Item@[] items;
+	critter.GetItems(SLOT_INV, items);
+	
+	if(!valid(hiddenContainer))
+	{
+		Log("Error occured while trying to save VR items. Deleting them all to prevent exploit.");
+		DeleteItems(items);
+		return;
+	}
+		
+	ItemHolderWrapper itemHolder(hiddenContainer);
+	
+	//switching VR items with real world items
+	itemHolder.PutItems(VIRTUAL_REALITY_ITEMS_PREFIX + critter.Id, items);
+	items = itemHolder.PopItems(REAL_WORLD_ITEMS_PREFIX + critter.Id);
+	MoveItems(items, critter);
+}
+}
