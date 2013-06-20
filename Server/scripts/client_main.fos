@@ -142,6 +142,9 @@ void RefreshOnHeadText()
 
 string GetHpText(CritterCl& critter, bool awareness)
 {
+	if(critter.IsDead())
+		return "|" + COLOR_GRAY + " " + GetMsgStr(TEXTMSG_GAME, STR_CRIT_LOOK_STATE(0));
+	
 	uint color;
 	string hpText;
 	int hpPercentage = critter.Stat[ST_CURRENT_HP] * 100 / critter.Stat[ST_MAX_LIFE];
