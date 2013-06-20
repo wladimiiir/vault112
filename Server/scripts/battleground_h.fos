@@ -15,11 +15,13 @@
 #ifdef __SERVER
 shared interface Battle
 {
+	void SetEventWillStart(BattleEvent@ event);
 	void SetEventStarted(BattleEvent@ event);
 	void SetEventFinished(BattleEvent@ event);
 	void SetEventCancelled(BattleEvent@ event);
 	
 	//uint GetTeamScore(Team& team);
+	void SetRespawnCount(int respawnCount);
 	void SetCost(uint cost);
 	void SetDuration(uint duration);
 	void SetLocation(uint location);

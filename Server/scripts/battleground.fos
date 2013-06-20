@@ -272,9 +272,10 @@ class DefaultBattle : Battle
 	private uint StartTime;
 	private uint EndTime;
 	private uint EndTimeEventId;
-	private BattleEvent@ EventStarted;
-	private BattleEvent@ EventFinished;
-	private BattleEvent@ EventCancelled;
+	BattleEvent@ EventWillStart;
+	BattleEvent@ EventStarted;
+	BattleEvent@ EventFinished;
+	BattleEvent@ EventCancelled;
 	
 	DefaultBattle(uint creator, uint16 combatMode)
 	{
@@ -287,6 +288,11 @@ class DefaultBattle : Battle
 		StartTime = 0;
 		EndTime = 0;
 		EndTimeEventId = 0;
+	}
+	
+	void SetEventWillStart(BattleEvent@ event) override
+	{
+		@EventWillStart = event;
 	}
 	
 	void SetEventStarted(BattleEvent@ event) override
@@ -302,6 +308,11 @@ class DefaultBattle : Battle
 	void SetEventCancelled(BattleEvent@ event) override
 	{
 		@EventCancelled = event;
+	}
+	
+	void SetRespawnCount(int respawnCount)
+	{
+		RespawnCount = respawnCount;
 	}
 	
 	uint GetTeamScore(Team& team)
@@ -410,6 +421,9 @@ class DefaultBattle : Battle
 		if(CombatMode == COMBAT_MODE_TURN_BASED)
 			map.SetTurnBasedAvailability(true);
 		
+		if(valid(EventWillStart))
+			FireBattleEvent(EventWillStart);
+		
 		for (uint i = 0; i < Teams.length(); i++)
 			Teams[i].Start(map);
 			
@@ -425,13 +439,16 @@ class DefaultBattle : Battle
 		}
 		
 		if(valid(EventStarted))
-		{
-			Critter@[] players = GetPlayers();
-			for (uint i = 0; i < players.length(); i++)
-				EventStarted.ProcessEvent(this, players[i]);
-		}
+			FireBattleEvent(EventStarted);
 		
 		RefreshClients();
+	}
+	
+	private void FireBattleEvent(BattleEvent& event)
+	{
+		Critter@[] players = GetPlayers();
+		for (uint i = 0; i < players.length(); i++)
+			event.ProcessEvent(this, players[i]);
 	}
 	
 	private Critter@[] GetPlayers()
@@ -470,11 +487,7 @@ class DefaultBattle : Battle
 			Teams[i].End();
 			
 		if(valid(EventFinished))
-		{
-			Critter@[] players = GetPlayers();
-			for (uint i = 0; i < players.length(); i++)
-				EventFinished.ProcessEvent(this, players[i]);
-		}
+			FireBattleEvent(EventFinished);
 		
 		RefreshClients();
 		DeleteBattle(creator);
@@ -522,6 +535,9 @@ class DefaultBattle : Battle
 			for (uint i = 0; i < Teams.length(); i++)
 				Teams[i].Cancel();
 			
+			if(valid(EventCancelled))
+				FireBattleEvent(EventCancelled);
+			
 			DeleteBattle(critter);
 		}
 		else
@@ -537,6 +553,8 @@ class DefaultBattle : Battle
 			
 			critter.ParamBase[BATTLEGROUND] = BATTLEGROUND_NONE;
 			critter.ParamBase[PVP_TEAM] = 0;
+			if(valid(EventCancelled))
+				EventCancelled.ProcessEvent(this, critter);
 		}
 		
 		RefreshClients();
@@ -834,7 +852,10 @@ class Team
 	void Start(Map& map)
 	{
 		for (uint i = 0; i < Players.length(); i++)
+		{
+			
 			Players[i].Start(map, Index, Index + 1);
+		}
 	}
 	
 	void End()

@@ -1506,7 +1506,6 @@ class Attack : CrittersHolderAction
 		for (uint i = 0; i < GetCritters().length(); i++)
 		{
 			TargetIds.insertLast(GetCritters()[i].Id);
-			Log("Setting min HP to: "+AI_MIN_HP(critter.Stat[ST_AI_ID]));
 			AddAttackPlane(critter, 0, GetCritters()[i], AI_MIN_HP(critter.Stat[ST_AI_ID]), true); 
 		}
 	}

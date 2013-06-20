@@ -267,61 +267,71 @@ class VRSimulation
 		}
 
 		battle.SetLocation(LocationPid);
+		battle.SetRespawnCount(0);
 		if(IsDurationAvailable())
 			battle.SetDuration(Duration);
 		if(IsSpawnAvailable() && valid(battle.GetMap()))
 			SpawnNpcs(Spawn, battle.GetMap());
 			
-		battle.SetEventStarted(SimulationStarted());
+		battle.SetEventWillStart(SimulationStarted());
 		battle.SetEventFinished(SimulationFinished());
+		battle.SetEventCancelled(SimulationFinished());
 			
 		battle.Join(_Critter);
 	}
 }
 
+array<uint> InSimulation;
+
 class SimulationStarted : BattleEvent
 {
-void ProcessEvent(Battle& battle, Critter& critter)
-{
-	Item@ hiddenContainer = FindHiddenContainer(critter.GetMap());
-	
-	if(!valid(hiddenContainer))
-		return;
+	void ProcessEvent(Battle& battle, Critter& critter)
+	{
+		Item@ hiddenContainer = FindHiddenContainer(critter.GetMap());
 		
-	ItemHolderWrapper itemHolder(hiddenContainer);
-	
-	//holding current real world items
-	Item@[] items;
-	critter.GetItems(SLOT_INV, items);
-	itemHolder.PutItems(REAL_WORLD_ITEMS_PREFIX + critter.Id, items);
-	
-	//getting his virtual reality items
-	items = itemHolder.PopItems(VIRTUAL_REALITY_ITEMS_PREFIX + critter.Id);
-	MoveItems(items, critter);
-}
+		if(!valid(hiddenContainer))
+			return;
+			
+		ItemHolderWrapper itemHolder(hiddenContainer);
+		
+		//holding current real world items
+		Item@[] items;
+		critter.GetItems(-1, items);
+		itemHolder.PutItems(REAL_WORLD_ITEMS_PREFIX + critter.Id, items);
+		
+		//getting his virtual reality items
+		items = itemHolder.PopItems(VIRTUAL_REALITY_ITEMS_PREFIX + critter.Id);
+		MoveItems(items, critter);
+		
+		InSimulation.insertLast(critter.Id);
+	}
 }
 
 class SimulationFinished : BattleEvent
 {
-void ProcessEvent(Battle& battle, Critter& critter)
-{
-	Item@ hiddenContainer = FindHiddenContainer(critter.GetMap());
-	//getting VR items
-	Item@[] items;
-	critter.GetItems(SLOT_INV, items);
-	
-	if(!valid(hiddenContainer))
+	void ProcessEvent(Battle& battle, Critter& critter)
 	{
-		Log("Error occured while trying to save VR items. Deleting them all to prevent exploit.");
-		DeleteItems(items);
-		return;
-	}
+		if(InSimulation.find(critter.Id) < 0)
+			return; //not in simulation
 		
-	ItemHolderWrapper itemHolder(hiddenContainer);
-	
-	//switching VR items with real world items
-	itemHolder.PutItems(VIRTUAL_REALITY_ITEMS_PREFIX + critter.Id, items);
-	items = itemHolder.PopItems(REAL_WORLD_ITEMS_PREFIX + critter.Id);
-	MoveItems(items, critter);
-}
+		Item@ hiddenContainer = FindHiddenContainer(critter.GetMap());
+		//getting VR items
+		Item@[] items;
+		critter.GetItems(-1, items);
+		
+		if(!valid(hiddenContainer))
+		{
+			Log("Error occured while trying to save VR items. Deleting them all to prevent exploit.");
+			DeleteItems(items);
+			return;
+		}
+			
+		ItemHolderWrapper itemHolder(hiddenContainer);
+		
+		//switching VR items with real world items
+		itemHolder.PutItems(VIRTUAL_REALITY_ITEMS_PREFIX + critter.Id, items);
+		items = itemHolder.PopItems(REAL_WORLD_ITEMS_PREFIX + critter.Id);
+		MoveItems(items, critter);
+		InSimulation.removeAt(InSimulation.find(critter.Id));
+	}
 }
