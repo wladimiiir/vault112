@@ -9,6 +9,13 @@
 #include "critter_action_events.fos"
 #include "utils_for_array.fos"
 
+#define	CRITTER_ACTION_MANAGER_MODE_ANGELSCRIPT		(1)
+#define	CRITTER_ACTION_MANAGER_MODE_DLL				(2)
+
+
+#define	MODE										(CRITTER_ACTION_MANAGER_MODE_ANGELSCRIPT)	//using angelscript implementation of critter action manager
+//#define	MODE										(CRITTER_ACTION_MANAGER_MODE_DLL)			//using C++ implementation of critter action manager
+
 ActionManager actionManager;
 class ActionManager
 {
@@ -24,28 +31,34 @@ class ActionManager
 	
 	void Start(Critter& critter, Action& action)
 	{
-		InitCritterEvents("_", critter);
-		_SetQueuedAction(critter, @action);
+		switch(MODE)
+		{
+			case CRITTER_ACTION_MANAGER_MODE_ANGELSCRIPT:
+				InitCritterEvents("_", critter);
+				_SetQueuedAction(critter, @action);
+				break;
+			case CRITTER_ACTION_MANAGER_MODE_DLL:
+				InitCritterEvents("cam.dll@", critter);
+				StartCritterAction(critter, action, false);
+				break;
+		}
 	}
 	
 	void StartImmediately(Critter& critter, Action& action)
 	{
-		InitCritterEvents("_", critter);
-		_SetRunningAction(critter, @action);
-		action.Start(critter);
+		switch(MODE)
+		{
+			case CRITTER_ACTION_MANAGER_MODE_ANGELSCRIPT:
+				InitCritterEvents("_", critter);
+				_SetRunningAction(critter, @action);
+				action.Start(critter);
+				break;
+			case CRITTER_ACTION_MANAGER_MODE_DLL:
+				InitCritterEvents("cam.dll@", critter);
+				StartCritterAction(critter, action, true);
+				break;
+		}
 	}
-	
-	//~ void Start(Critter& critter, Action& action)
-	//~ {
-		//~ InitCritterEvents("cam.dll@", critter);
-		//~ StartCritterAction(critter, action, false);
-	//~ }
-	//~ 
-	//~ void StartImmediately(Critter& critter, Action& action)
-	//~ {
-		//~ InitCritterEvents("cam.dll@", critter);
-		//~ StartCritterAction(critter, action, true);
-	//~ }
 	
 	private void InitCritterEvents(string eventPrefix, Critter& critter)
 	{
@@ -347,29 +360,20 @@ class ActionManager
 	}
 }
 
-/*interface Action
+/*shared interface Action
 {
 	Action@ GetSuperAction();
 	void SetSuperAction(Action@ action);
 	Action@ AddSubAction(Action@ action);
-	Action@[] GetSubActions();
-	void CollectListeningActions(Action@[]& collection);
 	Action@ And(Action@ andAction);
 	Action@ If(Condition@ condition);
 	Action@ IfNot(Condition@ condition);
-	void PerformAndAction(Critter& critter, Critter@ otherCritter, Item@ item);
 	bool Check(Critter& critter, Critter@ otherCritter, Item@ item);
 	
-	bool IsRunning();
-	void SetRunning(bool running);
-	bool IsListening();
-	void SetListening(bool listening);
-	
 	bool Start(Critter& critter);
-	void Perform(Critter& critter);
-	void Finish(Critter& critter);
 	void Cancel(Critter& critter);
 	void StartNextAction(Critter& critter);
+	void CollectListeningActions(Action@[]& collection);
 	
 	string GetInfo();
 	
@@ -1006,7 +1010,7 @@ string@ GetName(Critter& critter, Critter@ otherCritter)
 	return "" + otherCritter.Name;
 }
 
-/*interface Condition
+/*shared interface Condition
 {
 	bool Check(Critter& critter, Critter@ otherCritter, Item@ item);
 }*/

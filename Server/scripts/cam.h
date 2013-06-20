@@ -3,6 +3,28 @@
 #ifndef __CRITTER_ACTION_MANAGER__
 #define __CRITTER_ACTION_MANAGER__
 
+std::vector<asIScriptContext *> pool;
+asIScriptContext *GetContextFromPool()
+{
+  // Get a context from the pool, or create a new
+  asIScriptContext *ctx = 0;
+  if( pool.size() )
+  {
+    ctx = *pool.rbegin();
+    pool.pop_back();
+  }
+  else
+    ctx = ASEngine->CreateContext();
+  return ctx;
+}
+void ReturnContextToPool(asIScriptContext *ctx)
+{
+  pool.push_back(ctx);
+  
+  // Unprepare the context to free non-reusable resources
+  ctx->Unprepare();
+}
+
 class IAction
 {
 	public:
@@ -34,10 +56,22 @@ class IAction
 class ScriptActionWrapper : public IAction
 {
 	private:
+		map<asIScriptObject*, ScriptActionWrapper*> wrapperMap;
+		map<char*, asIScriptFunction*> functionMap;
+	
 		asIScriptContext* PrepareContext(char* methodName)
 		{
-			asIScriptContext* ctx = ASEngine->CreateContext();
-			asIScriptFunction* func = scriptAction->GetObjectType()->GetMethodByName(methodName);
+			asIScriptContext* ctx = GetContextFromPool();
+		
+			//~ ctx->PushState();
+			
+			asIScriptFunction* func = functionMap[methodName];
+			
+			if(func == NULL)
+			{
+				func = scriptAction->GetObjectType()->GetMethodByName(methodName);
+				functionMap[methodName] = func;
+			}
 			
 			if(func == NULL)
 			{
@@ -67,6 +101,11 @@ class ScriptActionWrapper : public IAction
 			
 			return true;
 		}
+		
+		void Finish(asIScriptContext* context)
+		{
+			ReturnContextToPool(context);
+		}
 	
 	protected:
 		asIScriptObject* scriptAction;
@@ -86,7 +125,7 @@ class ScriptActionWrapper : public IAction
 				
 			Execute(ctx);
 			ScriptString* result = (ScriptString*) ctx->GetReturnObject();
-			ctx->Release();
+			Finish(ctx);
 			
 			return result->c_str();
 		}
@@ -107,16 +146,21 @@ class ScriptActionWrapper : public IAction
 			//~ Log("Collected %d listening actions from AS\n", actionArray.GetSize());
 			
 			vector<IAction*> actions(actionArray.GetSize());
-			for(int i = 0; i < actionArray.GetSize(); i++) 
+			for(uint i = 0; i < actionArray.GetSize(); i++)
 			{
 				asIScriptObject** obj = static_cast<asIScriptObject**>(actionArray.At(i));
 				//~ Log("Found listening action: %s\n", (*obj)->GetObjectType()->GetName());
-				ScriptActionWrapper* wrapper = new ScriptActionWrapper(*obj);
+				ScriptActionWrapper* wrapper = wrapperMap[*obj];
+				if(wrapper == NULL)
+				{
+					wrapper = new ScriptActionWrapper(*obj);
+					wrapperMap[*obj] = wrapper;
+				}
 				//~ Log("GetInfo of listening action: %s\n", wrapper->GetInfo());
 				actions[i] = wrapper;
 			}
 			//~ actionArray.Release();
-			ctx->Release();
+			Finish(ctx);
 			
 			return actions;
 		}
@@ -131,9 +175,9 @@ class ScriptActionWrapper : public IAction
 			ctx->SetArgObject(0, critter);
 			Execute(ctx);
 			
-			bool result = ctx->GetReturnByte();
-			ctx->Release();
-			return result;
+			asBYTE result = ctx->GetReturnByte();
+			Finish(ctx);
+			return result != 0;
 		}
 		
 		void Cancel(Critter* critter)
@@ -145,7 +189,7 @@ class ScriptActionWrapper : public IAction
 				
 			ctx->SetArgObject(0, critter);
 			Execute(ctx);
-			ctx->Release();
+			Finish(ctx);
 		} 
 		
 		void IdleEvent(Critter* critter)
@@ -156,7 +200,7 @@ class ScriptActionWrapper : public IAction
 				
 			ctx->SetArgObject(0, critter);
 			Execute(ctx);
-			ctx->Release();
+			Finish(ctx);
 		}
 		
 		void ShowCritterEvent(Critter* critter, Critter* showCritter)
@@ -168,7 +212,7 @@ class ScriptActionWrapper : public IAction
 			ctx->SetArgObject(0, critter);
 			ctx->SetArgObject(1, showCritter);
 			Execute(ctx);
-			ctx->Release();
+			Finish(ctx);
 		}
 		
 		void HideCritterEvent(Critter* critter, Critter* hideCritter)
@@ -180,7 +224,7 @@ class ScriptActionWrapper : public IAction
 			ctx->SetArgObject(0, critter);
 			ctx->SetArgObject(1, hideCritter);
 			Execute(ctx);
-			ctx->Release();
+			Finish(ctx);
 		}
 		
 		bool AttackEvent(Critter* critter, Critter* target)
@@ -194,9 +238,9 @@ class ScriptActionWrapper : public IAction
 			ctx->SetArgObject(1, target);
 			Execute(ctx);
 			
-			bool result = ctx->GetReturnByte();
-			ctx->Release();
-			return result;
+			asBYTE result = ctx->GetReturnByte();
+			Finish(ctx);
+			return result != 0;
 		}
 		
 		bool AttackedEvent(Critter* critter, Critter* attacker)
@@ -210,9 +254,9 @@ class ScriptActionWrapper : public IAction
 			ctx->SetArgObject(1, attacker);
 			Execute(ctx);
 			
-			bool result = ctx->GetReturnByte();
-			ctx->Release();
-			return result;
+			asBYTE result = ctx->GetReturnByte();
+			Finish(ctx);
+			return result != 0;
 		}
 		
 		void DeadEvent(Critter* critter, Critter* killer)
@@ -224,7 +268,7 @@ class ScriptActionWrapper : public IAction
 			ctx->SetArgObject(0, critter);
 			ctx->SetArgObject(1, killer);
 			Execute(ctx);
-			ctx->Release();
+			Finish(ctx);
 		}
 		
 		void MessageEvent(Critter* critter, Critter* messenger, int message, int value)
@@ -238,7 +282,7 @@ class ScriptActionWrapper : public IAction
 			ctx->SetArgDWord(2, message);
 			ctx->SetArgDWord(3, value);
 			Execute(ctx);
-			ctx->Release();
+			Finish(ctx);
 		}
 		
 		void SeeSomeoneAttackEvent(Critter* critter, Critter* attacker, Critter* attacked)
@@ -251,7 +295,7 @@ class ScriptActionWrapper : public IAction
 			ctx->SetArgObject(1, attacker);
 			ctx->SetArgObject(2, attacked);
 			Execute(ctx);
-			ctx->Release();
+			Finish(ctx);
 		}
 		
 		void SeeSomeoneDeadEvent(Critter* critter, Critter* killed, Critter* killer)
@@ -264,7 +308,7 @@ class ScriptActionWrapper : public IAction
 			ctx->SetArgObject(1, killed);
 			ctx->SetArgObject(2, killer);
 			Execute(ctx);
-			ctx->Release();
+			Finish(ctx);
 		}
 		
 		void SeeSomeoneAttackedEvent(Critter* critter, Critter* attacked, Critter* attacker)
@@ -277,7 +321,7 @@ class ScriptActionWrapper : public IAction
 			ctx->SetArgObject(1, attacked);
 			ctx->SetArgObject(2, attacker);
 			Execute(ctx);
-			ctx->Release();
+			Finish(ctx);
 		}
 		
 		void SeeSomeoneStealingEvent(Critter* critter, Critter* victim, Critter* thief, bool success, Item* item, uint count)
@@ -293,7 +337,7 @@ class ScriptActionWrapper : public IAction
 			ctx->SetArgObject(4, item);
 			ctx->SetArgDWord(5, count);
 			Execute(ctx);
-			ctx->Release();
+			Finish(ctx);
 		}
 		
 		void SeeSomeoneUseSkillEvent(Critter* critter, Critter* skillCritter, int skill, Critter* onCritter, Item* onItem, MapObject* onScenery)
@@ -309,7 +353,7 @@ class ScriptActionWrapper : public IAction
 			ctx->SetArgObject(4, onItem);
 			ctx->SetArgObject(5, onScenery);
 			Execute(ctx);
-			ctx->Release();
+			Finish(ctx);
 		}
 		
 		int PlaneBeginEvent(Critter* critter, NpcPlane* plane, int reason, Critter* someCr, Item* someItem)
@@ -327,7 +371,7 @@ class ScriptActionWrapper : public IAction
 			Execute(ctx);
 			
 			int result = ctx->GetReturnDWord();
-			ctx->Release();
+			Finish(ctx);
 			return result;
 		}
 		
@@ -347,7 +391,7 @@ class ScriptActionWrapper : public IAction
 			Execute(ctx);
 			
 			int result = ctx->GetReturnDWord();
-			ctx->Release();
+			Finish(ctx);
 			return result;
 		}
 		
@@ -366,7 +410,7 @@ class ScriptActionWrapper : public IAction
 			Execute(ctx);
 			
 			int result = ctx->GetReturnDWord();
-			ctx->Release();
+			Finish(ctx);
 			return result;
 		}
 };

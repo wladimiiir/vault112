@@ -28,6 +28,7 @@ FONLINE_DLL_ENTRY( isCompiler )
 	ASEngine->RegisterInterfaceMethod("Action", "bool Start(Critter& critter)");
 	ASEngine->RegisterInterfaceMethod("Action", "void Cancel(Critter& critter)");
 	ASEngine->RegisterInterfaceMethod("Action", "string GetInfo()");
+	
 	ASEngine->RegisterInterfaceMethod("Action", "void IdleEvent(Critter& critter)");
 	ASEngine->RegisterInterfaceMethod("Action", "void ShowCritterEvent(Critter& critter, Critter& showCritter)");
 	ASEngine->RegisterInterfaceMethod("Action", "void HideCritterEvent(Critter& critter, Critter& hideCritter)");
@@ -141,7 +142,7 @@ EXPORT void Idle(Critter* critter)
 	manager.StartQueuedAction(critter);
 	vector<IAction*> listeningActions = manager.GetListeningActions(critter);
 	
-	for(int i = 0; i < listeningActions.size(); i++)
+	for(uint i = 0; i < listeningActions.size(); i++)
 		listeningActions[i]->IdleEvent(critter);
 }
 
@@ -150,7 +151,7 @@ EXPORT bool Attack(Critter* critter, Critter* target)
 	vector<IAction*> listeningActions = manager.GetListeningActions(critter);
 		
 	bool result = false;
-	for(int i = 0; i != listeningActions.size(); i++)
+	for(uint i = 0; i < listeningActions.size(); i++)
 		result |= listeningActions[i]->AttackEvent(critter, target);
 		
 	return result;
@@ -161,7 +162,7 @@ EXPORT bool Attacked(Critter* critter, Critter* attacker)
 	vector<IAction*> listeningActions = manager.GetListeningActions(critter);
 	
 	bool result = false;
-	for(int i = 0; i != listeningActions.size(); i++)
+	for(uint i = 0; i < listeningActions.size(); i++)
 		result |= listeningActions[i]->AttackedEvent(critter, attacker);
 		
 	return result;
@@ -171,7 +172,7 @@ EXPORT void Dead(Critter* critter, Critter* killer)
 {
 	vector<IAction*> listeningActions = manager.GetListeningActions(critter);
 	
-	for(int i = 0; i != listeningActions.size(); i++)
+	for(uint i = 0; i < listeningActions.size(); i++)
 		listeningActions[i]->DeadEvent(critter, killer);
 }
 
@@ -188,7 +189,7 @@ EXPORT int PlaneBegin(Critter* critter, NpcPlane* plane, int reason, Critter* so
 	vector<IAction*> listeningActions = manager.GetListeningActions(critter);
 		
 	int result = PLANE_RUN_GLOBAL;
-	for(int i = 0; i != listeningActions.size(); i++) {
+	for(uint i = 0; i < listeningActions.size(); i++) {
 		int actionResult = listeningActions[i]->PlaneBeginEvent(critter, plane, reason, someCr, someItem);
 		if(actionResult != PLANE_RUN_GLOBAL)
 			result = actionResult;
@@ -201,7 +202,7 @@ EXPORT int PlaneRun(Critter* critter, NpcPlane* plane, int reason, uint& result0
 	vector<IAction*> listeningActions = manager.GetListeningActions(critter);
 		
 	int result = PLANE_RUN_GLOBAL;
-	for(int i = 0; i != listeningActions.size(); i++) {
+	for(uint i = 0; i < listeningActions.size(); i++) {
 		int actionResult = listeningActions[i]->PlaneRunEvent(critter, plane, reason, result0, result1, result2);
 		if(actionResult != PLANE_RUN_GLOBAL)
 			result = actionResult;
@@ -214,7 +215,7 @@ EXPORT int PlaneEnd(Critter* critter, NpcPlane* plane, int reason, Critter* some
 	vector<IAction*> listeningActions = manager.GetListeningActions(critter);
 		
 	int result = PLANE_RUN_GLOBAL;
-	for(int i = 0; i != listeningActions.size(); i++) {
+	for(uint i = 0; i < listeningActions.size(); i++) {
 		int actionResult = listeningActions[i]->PlaneEndEvent(critter, plane, reason, someCr, someItem);
 		if(actionResult != PLANE_RUN_GLOBAL)
 			result = actionResult;
@@ -226,7 +227,7 @@ EXPORT void SeeSomeoneAttack(Critter* critter, Critter* attacker, Critter* attac
 {
 	vector<IAction*> listeningActions = manager.GetListeningActions(critter);
 	
-	for(int i = 0; i != listeningActions.size(); i++)
+	for(uint i = 0; i < listeningActions.size(); i++)
 		listeningActions[i]->SeeSomeoneAttackEvent(critter, attacker, attacked);
 }
 
@@ -234,7 +235,7 @@ EXPORT void SeeSomeoneDead(Critter* critter, Critter* killed, Critter* killer)
 {
 	vector<IAction*> listeningActions = manager.GetListeningActions(critter);
 	
-	for(int i = 0; i != listeningActions.size(); i++)
+	for(uint i = 0; i < listeningActions.size(); i++)
 		listeningActions[i]->SeeSomeoneDeadEvent(critter, killed, killer);
 }
 
@@ -242,7 +243,7 @@ EXPORT void SeeSomeoneAttacked(Critter* critter, Critter* attacked, Critter* att
 {
 	vector<IAction*> listeningActions = manager.GetListeningActions(critter);
 	
-	for(int i = 0; i != listeningActions.size(); i++)
+	for(uint i = 0; i < listeningActions.size(); i++)
 		listeningActions[i]->SeeSomeoneAttackedEvent(critter, attacked, attacker);
 }
 
@@ -250,7 +251,7 @@ EXPORT void SeeSomeoneStealing(Critter* critter, Critter* victim, Critter* thief
 {
 	vector<IAction*> listeningActions = manager.GetListeningActions(critter);
 	
-	for(int i = 0; i != listeningActions.size(); i++)
+	for(uint i = 0; i < listeningActions.size(); i++)
 		listeningActions[i]->SeeSomeoneStealingEvent(critter, victim, thief, success, item, count);
 }
 
@@ -258,7 +259,7 @@ EXPORT void ShowCritter(Critter* critter, Critter* showCritter)
 {
 	vector<IAction*> listeningActions = manager.GetListeningActions(critter);
 	
-	for(int i = 0; i != listeningActions.size(); i++)
+	for(uint i = 0; i < listeningActions.size(); i++)
 		listeningActions[i]->ShowCritterEvent(critter, showCritter);
 }
 
@@ -266,7 +267,7 @@ EXPORT void HideCritter(Critter* critter, Critter* hideCritter)
 {
 	vector<IAction*> listeningActions = manager.GetListeningActions(critter);
 	
-	for(int i = 0; i != listeningActions.size(); i++)
+	for(uint i = 0; i < listeningActions.size(); i++)
 		listeningActions[i]->HideCritterEvent(critter, hideCritter);
 }
 
@@ -274,7 +275,7 @@ EXPORT void Message(Critter* critter, Critter* messenger, int message, int value
 {
 	vector<IAction*> listeningActions = manager.GetListeningActions(critter);
 	
-	for(int i = 0; i != listeningActions.size(); i++)
+	for(uint i = 0; i < listeningActions.size(); i++)
 		listeningActions[i]->MessageEvent(critter, messenger, message, value);
 }
 
@@ -287,7 +288,7 @@ EXPORT void SeeSomeoneUseSkill(Critter* critter, Critter* skillCritter, int skil
 {
 	vector<IAction*> listeningActions = manager.GetListeningActions(critter);
 	
-	for(int i = 0; i != listeningActions.size(); i++)
+	for(uint i = 0; i < listeningActions.size(); i++)
 		listeningActions[i]->SeeSomeoneUseSkillEvent(critter, skillCritter, skill, onCritter, onItem, onScenery);
 }
 
