@@ -83,13 +83,10 @@ void RefreshMouseOverText()
 		}
 		
 		MouseOverText += "|"+color + " " + critter.Name;
-		if(critter.IsDead())
-			MouseOverText += "\n|" + COLOR_GRAY + " " + GetMsgStr(TEXTMSG_GAME, STR_CRIT_LOOK_STATE(0));
-		else 
-		{
-			MouseOverText += "\n" + GetHpText(critter, awareness);
-		}
 	}
+	if(!ShowHealthInfo)
+		MouseOverText += "\n" + GetHpText(critter, awareness);
+	
 	if(awareness)
 	{
 		ItemCl@ armor = critter.GetItem(0, SLOT_ARMOR);
@@ -326,15 +323,13 @@ void render_iface( uint layer )
 				}
 			}
 		}
-    }
-	else if( layer == 2 )
-	{
+		
 		if(valid(MouseOverText))
 		{
 			string@[] lines = split(MouseOverText, "\n");
 			DrawText(MouseOverText, __MouseX + 10, __MouseY - 10 * lines.length(), 200, lines.length() * 10, COLOR_WHITE, FONT_FALLOUT, FT_BORDERED);
 		}
-	}
+    }
 	/*else if( layer == 1 )
 	{
 		CritterCl@ chosen = GetChosen();
