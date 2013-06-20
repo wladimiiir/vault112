@@ -1,0 +1,63 @@
+License Agreement for the program "FOnline".
+
+Before using, please read the terms of this license agreement. Any use of the program is full and unconditional acceptance by you of its terms.
+If you do not accept the license agreement in full, you are not eligible to use the program for any purpose.
+
+1. License
+
+This License Agreement ("License") is between you, the user ("User") and Tsvetinskim Anton Ivanovich (cvet@tut.by) being the holder of the exclusive rights in the Software ("Copyright"). The license sets out the conditions of use by the User of the computer program "FOnline" ("Program"). The program includes the following components:
+- Server (FOnlineServer.exe);
+- Customer (FOnline.exe);
+- Mapper (Mapper.exe);
+- Editor dialog (DialogEditor.exe);
+- Object Editor (ObjectEditor.exe);
+- Compiler scripts (ASCompiler.exe);
+- Editor craft (MrFixit.exe);
+- Configurator (FOConfig.exe);
+- Updater (Updater.exe, UpdaterServer.exe);
+- Content is authored by the Copyright Holder.
+Any other software, content, or other materials which are not part of the Program, but comes along with it are the property of their authors, and this license does not apply to them.
+
+1.1. Copying the program and installing it on your personal computer, the user expresses its full and unconditional agreement with all conditions of this License.
+
+1.2. Use of the Software is permitted only under the terms of this License. If the user does not accept the terms of this License in full, you may not use the Program for any purpose. Use of the Software in violation (failure) of any of the conditions of this License is prohibited.
+
+1.3. Use of the Program under this License for personal non-commercial purposes is free. Use of the Software on the terms and in the manner provided for in this License is not only possible on the basis of a separate agreement with the copyright holder a fee, adjustable copyright holder.
+
+1.4. Owner may provide the User with a translation of this License with the Russian into other languages, but in the event of a conflict between the terms of this License in Russian and its translation, validity has only Russian-language version of this License.
+
+2. Rights to the Program
+
+The exclusive right of the Software belongs to the copyright holder.
+
+3. User Rights
+
+3.1. Program
+
+Legal owner grants the User a non-exclusive non-transferable right (Single license) use the Software in the following ways:
+
+3.1.1. Apply the program for its intended functionality, in order to make that copy and install it on a personal (s), computer (s) of the User. User shall be entitled to install the Software on an unlimited number of computers.
+
+3.1.2. Reproduce and distribute the Program for non-commercial purposes (free of charge).
+
+3.2. The program must be used under the name: "FOnline". User may not modify the name of the program, modify and / or delete a copyright notice or other indication to the original.
+
+4. Limitations
+
+4.1. Except for use in the amounts and in the manner expressly provided under this License, or the law of the Russian Federation, the User may not modify, decompile, disassemble, decrypt, and perform other actions with the object code of a program aimed at obtaining information on the implementation of the algorithms used in the program, as well as exercise (permit to carry) other use of the Software, without the express written consent of the Franchisor.
+
+4.2. User has no right to reproduce and distribute the Software for commercial purposes (for a fee), including in the collections of software without written permission.
+
+5. Terms of Licenses for
+
+5.1. The program is provided "as is" (as is). Holder does not provide any warranty as to the error-free and smooth operation of the Program, the Program Compliance specific goals and expectations, and makes no other warranty not expressly stated in this License.
+
+5.2. To the maximum extent permitted by applicable law, the right holder is not liable for any direct or indirect consequences of any use of or inability to use the Software and / or damage to users and / or third parties as a result of any use or non-use of the Program , including possible errors or failures in the program.
+
+6. Updates / versions of the Program
+
+6.1. This License applies to all subsequent updates / new versions of the program. By agreeing to install the update / new version of the Software, the User accepts the terms of this License to the appropriate updates / new versions of the program, if the upgrade / installation of a new version of the Software not accompanied by other license agreement.
+
+7. Changes in the conditions of this License
+
+7.1. This license agreement may be changed unilaterally by Franchisor. User notification of the changes in the conditions of this License shall be published on the page: "http://fonline.ru/license.html". These changes in the conditions of the license agreement shall enter into force on the date of publication, unless otherwise specified in the relevant publication.
