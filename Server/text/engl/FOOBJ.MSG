@@ -105,8 +105,8 @@
 {4900}{}{Antidote}
 {4901}{}{A bottle containing a home-brewed antidote for poison. A milky liquid with floating pieces of radscorpion flesh.}
 {5000}{}{Steel}
-{5001}{}{A piece of steel.
-{5001}{}{Dynamite}
+{5001}{}{A piece of steel.}
+{5100}{}{Dynamite}
 {5101}{}{A high explosive, consisting of nitroglycerin mixed with the absorbent substance kiselguhr. Includes a timer.}
 {5200}{}{Geiger Counter}
 {5201}{}{A Wattz Electronics C-Radz model Geiger Counter. Detects the presence and strength of radiation fields.}
@@ -900,8 +900,8 @@
 {44601}{}{A set of plans for building Vertibirds.}
 {44700}{}{Bishop's Holodisk}
 {44701}{}{This holodisk contains incriminating information on Bishop's secret deal with NCR. Apparently, Bishop hired mercenaries to attack Vault City in the hopes that Vault City would turn to NCR for military aid. This holodisk is audio only and has no text data. Vault City might be interested in this.}
-{44800}{}{Account Book}
-{44801}{}{This account book lists a series of monthly payments made to the mercenary band from the Bishop Family in New Reno. The payments depend heavily on how much "pressure" the mercenaries put on Vault City. Vault City might be interested in this.}
+{44800}{}{Digital credit}
+{44801}{}{Digital credit used in trading for virtual reality stuff.}
 {44900}{}{Unused}
 {44901}{}{Unused}
 {45000}{}{Torn Paper 1}
