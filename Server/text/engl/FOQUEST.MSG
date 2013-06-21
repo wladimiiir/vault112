@@ -31,12 +31,35 @@ DONE: All
 #	ID * 1000 + 101 - Quest tab name.
 #	ID * 1000 + 102 - Overall quest description.
 
-# 105
-# Vault 112 overseer
-{105001}{}{Overseer, Dr.Braun, would like to see. I wonder what he wants from me.}
+# 102
+# Vault 112 Dr.Braun
+{102001}{}{Overseer, Dr.Braun, would like to see. I wonder what he wants from me.}
+{102002}{}{Dr.Braun, might have some job for me. Maybe I could try that later.}
+{102003}{}{Dr.Braun wants me to bring him some module from Gyro.}
+{102004}{}{I have got the module from Gyro. Now back to Dr.Braun.}
+{102005}{}{Dr.Braun might have some other job for me later.}
 
-{105101}{}{Vault 112}
-{105102}{}{Dr.Braun}
+{102101}{}{Vault 112}
+{102102}{}{Dr.Braun}
+
+# 103
+# Vault 112 RX Tesla Module
+{103001}{}{Dr.Braun wants me to bring him some module from Gyro.}
+{103002}{}{I have got the module from Gyro. Now back to Dr.Braun.}
+{103003}{}{The module has been successfully delivered.}
+
+{103101}{}{Vault 112}
+{103102}{}{RX Tesla Module}
+
+# 104
+# Vault 112 VR authorization
+{104001}{}{You are now authorized to use Virtual Reality facility.}
+{104002}{}{Due to your actions, you have lost the access to VR facility.}
+
+# 105
+# Vault 112 Medical care
+{105001}{}{You can now use medical care free of use.}
+{105002}{}{Due to your actions, you have lost free medical care.}
 
 # 106
 # Vault 112 stuff keeper

@@ -7,8 +7,9 @@ lang=engl
 [dialog]
 &
 1 1000 None 1 #
-2 1010 D _var p vr_administrator = 0 #
-3 1020 D _var p vr_administrator ! 0 @
+11 1010 D _var p v112_vr_authorization ! 1 #
+2 1020 D _var p vr_administrator = 0 #
+3 1030 D _var p vr_administrator ! 0 @
 2 2000 None 0 #
 4 2010 R _var p vr_administrator = 1 #
 0 2020 @
@@ -25,7 +26,8 @@ lang=engl
 7 5020 #
 0 5030 #
 8 5040 #
-9 5050 @
+9 5050 #
+10 5060 @
 6 6000 None 0 #
 5 6010 #
 0 6020 @
@@ -37,15 +39,28 @@ lang=engl
 0 8020 @
 9 9000 None 0 #
 5 9010 #
-0 9020 &
+0 9020 @
+10 10000 None 0 #
+0 10010 #
+5 10020 @
+11 11000 None 0 #
+12 11010 #
+0 11020 @
+12 12000 None 0 #
+0 12010 #
+12 12020 D _item p PID_BOTTLE_CAPS } 1000 D _param p SK_BARTER } 60 R _item p PID_BOTTLE_CAPS - 1000 R _var p v112_vr_authorization = 1 R _param p ST_EXPERIENCE + 500 @
+13 13000 None 0 #
+4 13010 R _var p vr_administrator = 1 #
+0 13020 &
 
 [engl]
 {100}{}{Administrator}
 {200}{}{Administrator}
 {210}{}{Administrator for Tranquility Simulation Program. He keeps track of everything that happens in simulations.}
 {1000}{}{Predialogue installations}
-{1010}{}{first time}
-{1020}{}{already know}
+{1010}{}{not authorized}
+{1020}{}{first time}
+{1030}{}{already know}
 {2000}{}{Hi, you are our newest guinea pig, heh? Just kidding, everything is well tested and completelly safe, so you don' t have to worry. As you are new, let me tell you some basic information.}
 {2010}{}{[listen]}
 {2020}{}{[walk away]}
@@ -63,6 +78,7 @@ lang=engl
 {5030}{}{No further questions, actually. [leave]}
 {5040}{}{What happens when I die in simulation?}
 {5050}{}{What about drugs? Can I use them in simulation?}
+{5060}{}{Where can I get more digital credit?}
 {6000}{}{Ah, that's a good one. All the stuff you gain in the simulation will stay in the system, meaning that you can use them in your next simulation.}
 {6010}{}{Let me ask you something else.}
 {6020}{}{Thanks. That would be all. [leave]}
@@ -75,4 +91,16 @@ lang=engl
 {9000}{}{It is very interesting with the drugs. In our research we have found out that using the drug in real world affects the Virtual Reality perception, but what is more interesting is, that when you use drugs in simulation, the effect will last even if you go out of it. It looks like a brain cannot differentiate between the simulation and real world and it is producing the chemicals by itself.}
 {9010}{}{Let me ask you something else.}
 {9020}{}{Thanks. That would be all. [leave]}
+{10000}{}{You could try to talk to Chuck about the credit, who is located at the vault entrance in cave. Or maybe Dr.Braun has some job to earn some credit.}
+{10010}{}{OK, I will do that. That is all, thanks. [leave]}
+{10020}{}{OK, I will do that. I have some more questions.}
+{11000}{}{I am sorry, but you are not authorized to use the facility.}
+{11010}{}{How do I get authorized?}
+{11020}{}{Oh, nevermind then. [leave]}
+{12000}{}{Go talk to Dr.Braun. He is the only person who can authorize you.}
+{12010}{}{Thanks, I go to do that right away. [leave]}
+{12020}{}{I am sure we can think of some other solution. [you show him bag of 1000 caps] What do you say?}
+{13000}{}{Uh...[he looks a bit nervous, but he takes the caps]...well, let me double-check it here...oh, yeah...my bad, you are authorized. I am sorry about it, I don't know how could I miss that. OK, so let me tell you some basic information.}
+{13010}{}{[listen]}
+{13020}{}{I need to go, now. [leave]}
 

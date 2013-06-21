@@ -9,10 +9,11 @@ lang=engl
 1 1000 None 1 #
 2 1010 @
 2 2000 None 0 #
-3 2010 D _var p v112_overseer = 1 #
+3 2010 D _var p v112_drbraun = 1 #
 4 2020 #
 0 2030 #
-8 2040 D _var p v112_overseer = 2 R _var p v112_drbraun = 3 R _var p v112_rx_module = 1 R _script map_junkyard@r_RevealLocation 0  @
+8 2040 D _var p v112_drbraun = 2 R _var p v112_drbraun = 3 R _var p v112_rx_module = 1 R _script map_junkyard@r_RevealLocation 0  #
+16 2050 D _var p v112_rx_module = 2 D _var p v112_drbraun = 4 D _item p PID_RX_TESLA_MODULE > 0 R _var p v112_rx_module = 3 R _item p PID_RX_TESLA_MODULE - 1 R _script dialog@r_ShowQuestMessage 1 103 R _var p v112_drbraun = 5 R _param p ST_EXPERIENCE + 1000 @
 3 3000 None 0 #
 5 3010 #
 5 3020 #
@@ -33,7 +34,7 @@ lang=engl
 8 7010 R _var p v112_drbraun = 3 R _var p v112_rx_module = 1 R _script map_junkyard@r_RevealLocation 0  #
 0 7020 R _var p v112_drbraun = 2 @
 8 8000 None 0 #
-0 8010 R _script dialog@r_ShowQuestMessage 1 105 #
+0 8010 R _script dialog@r_ShowQuestMessage 1 102 #
 0 8020 @
 9 9000 None 0 #
 11 9010 #
@@ -44,7 +45,8 @@ lang=engl
 12 11010 @
 12 12000 None 0 #
 13 12010 D _var p v112_vr_authorization = 1 #
-14 12020 D _var p v112_vr_authorization ! 1 @
+14 12020 D _var p v112_vr_authorization ! 1 D _var p v112_rx_module = 0 #
+18 12030 D _var p v112_vr_authorization ! 1 D _var p v112_rx_module > 0 @
 13 13000 None 0 #
 4 13010 #
 0 13020 @
@@ -53,7 +55,16 @@ lang=engl
 5 14020 @
 15 15000 None 0 #
 4 15010 #
-0 15020 &
+0 15020 @
+16 16000 None 0 #
+17 16010 R _var p v112_vr_authorization = 1 R _param p DIGITAL_CREDIT + 2000 #
+17 16020 R _var p v112_free_medical_care = 1 #
+17 16030 R _item p PID_BOTTLE_CAPS + 1000 #
+17 16040 @
+17 17000 None 0 @
+18 18000 None 0 #
+0 18010 #
+4 18020 &
 
 [engl]
 {100}{}{Dr. Stanislaus Braun}
@@ -66,6 +77,7 @@ lang=engl
 {2020}{}{I just want to ask you some questions, only the man of your brain can answer.@@I have some questions, may I?}
 {2030}{}{Oh, nevermind then. [leave]}
 {2040}{}{OK, I have changed my mind, I will get that thingy for you.}
+{2050}{}{I have got the RX thingy you wanted. [you hand him the module]}
 {3000}{}{Ah, yes, you are the one found dead near our cave entrance. Well, not dead, but let's say, you were lucky, that you have been found.}
 {3010}{}{Uhm, yes.}
 {3020}{}{Thanks to your scouts for that.}
@@ -98,6 +110,7 @@ lang=engl
 {12000}{}{And what is really fantastic about this, is that everything what you live inside the device will be permanently recorded to your brain as the experience that you really have lived through. Well, except of physical harm like injuries and death, because it is completelly safe in this manner.}
 {12010}{}{Wow, that sounds really cool. Can I try it?}
 {12020}{}{Wow, that sounds really cool. Can I try it?}
+{12030}{}{Wow, that sounds really cool. Can I try it?}
 {13000}{}{Sure you can, I've told you, that you've gained the access to Tranquility Lane program.}
 {13010}{}{Yes, I forgot about that. Can I ask you something else?}
 {13020}{}{Oh, yes, I almost forgot. See you later. [leave]}
@@ -107,4 +120,13 @@ lang=engl
 {15000}{}{I am doctor Stanislaus Braun, overseer of this facility, scientist, inventor...and probably the greatest mind of all the history.}
 {15010}{}{Fair enough. Let me ask you something else.}
 {15020}{}{Yeah, I am sure you are. See ya. [leave]}
+{16000}{}{That is very great. [takes a look on RX Tesla Module] Yes, yes, exactly what I need. Now, as a man of my word I promised you some benefits. So would you like access to Virtual Reality facility, free medical care or some 1000 caps?}
+{16010}{}{I would like the access to VR facility.}
+{16020}{}{Medical care would be usefull, I guess. I will take that.}
+{16030}{}{I would need some caps, right now.}
+{16040}{}{I don't want anything. I did it just for fun.}
+{17000}{}{Done and done. There you go.}
+{18000}{}{Well, currently I do not have any job for you for the exchange, but I bet there will be some later, so...come back later.}
+{18010}{}{I will be back later, then. [leave]}
+{18020}{}{Let me ask you something else.}
 

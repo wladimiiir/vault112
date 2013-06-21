@@ -14,6 +14,7 @@ import void InitTrader(Critter& npc) from "trader";
 */
 void InitGyro(Critter& critter, bool firstTime)
 {
+	critter.StatBase[ST_DIALOG_ID] = DIALOG_gyro;
 	InitTrader(critter);
 }
 

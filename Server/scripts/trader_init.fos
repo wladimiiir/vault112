@@ -9,9 +9,7 @@ Trader@ GetTrader(Critter& npc)
 	if(!valid(Traders))
 		InitTraders();
 	
-	uint traderId = npc.Stat[ST_DIALOG_ID];
-	//~ if(traderId == DIALOG_all_trader || traderId == DIALOG_all_doctor)
-		traderId = npc.GetProtoId(); //using Proto as id comparator
+	uint traderId = npc.GetProtoId(); //using Proto as id comparator
 	
 	for (uint i = 0; i < Traders.length(); i++)
 		if(Traders[i].GetTraderId() == traderId)

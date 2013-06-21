@@ -9,44 +9,63 @@ lang=engl
 1 1000 None 1 #
 2 1010 @
 2 2000 None 0 #
-3 2010 D _var p v112_rx_module = 1 D _var p v112_drbraun = 3 R _item p PID_ROENTGEN_RUM + 1 R _var p v112_rx_module + 1 R _var p v112_overseer + 1 #
+3 2010 D _var p v112_rx_module = 1 D _var p v112_drbraun = 3 R _item p PID_RX_TESLA_MODULE + 1 R _var p v112_drbraun = 4 R _var p v112_rx_module = 2 R _param p ST_EXPERIENCE + 500 #
 0 2020 #
 65506 2030 D _var p gyro > 0 #
-5 2040 D _var p gyro = 0 R _var p gyro = 1 #
-2 2050 D _var p gyro > 0 @
+6 2040 D _var p gyro = 0 R _var p gyro = 1 #
+11 2050 D _var p gyro > 0 #
+6 2060 D _var p gyro = 1 #
+12 2070 D _var p gyro = 2 @
 3 3000 None 0 #
 4 3010 D _item p PID_BOTTLE_CAPS } 200 R _item p PID_BOTTLE_CAPS - 200 #
-4 3020 D _item p PID_JAIL_KEY } 10 R _item p PID_JAIL_KEY - 10 #
+4 3020 D _item p PID_JUNK } 10 R _item p PID_JUNK - 10 #
 5 3030 #
 65507 3040 #
 4 3050 D _item p PID_METAL_TRASH } 10 R _item p PID_METAL_TRASH - 10 @
 4 4000 None 0 #
-0 4010 #
-0 4020 #
-0 4030 @
+0 4010 R _script dialog@r_ShowQuestMessage 1 103 #
+0 4020 R _script dialog@r_ShowQuestMessage 1 103 #
+0 4030 R _script dialog@r_ShowQuestMessage 1 103 @
 5 5000 None 0 #
-0 5010 #
-0 5020 #
+0 5010 R _script dialog@r_ShowQuestMessage 1 103 #
+0 5020 R _script dialog@r_ShowQuestMessage 1 103 #
 65507 5030 @
 6 6000 None 0 #
-6 6010 #
+7 6010 #
 0 6020 #
 0 6030 @
 7 7000 None 0 #
-0 7010 @
-8 8000 None 0 &
+8 7010 #
+0 7020 @
+8 8000 None 0 #
+9 8010 #
+9 8020 #
+9 8030 @
+9 9000 None 0 #
+10 9010 R _var p gyro = 2 #
+0 9020 @
+10 10000 None 0 #
+0 10010 #
+0 10020 #
+0 10030 @
+11 11000 None 0 @
+12 12000 None 0 &
 
 [engl]
-{100}{}{none}
+{100}{}{Gyro}
+{200}{}{Gyro, the manager of the Junkyard.}
+{210}{}{Ghouly looking short guy. He has very inteligent look and looks like always thinking about something.}
 {1000}{}{Predialogue installations}
 {1010}{}{-}
 {2000}{}{Howdy there. What can Gyro do ya for?@@Hello stranger. How can old Gyro help ya?}
 {2010}{}{Hi. Overseer Braun sends me for something...uh...you should know what.}
 {2020}{}{Sorry, nothing. [leave]}
 {2030}{}{Can I see what you have? [barter]}
-{2040}{}{Hi. What's this place and what's your place in it?}
+{2040}{}{Hi. What's this place and what's your place in this place, heh?}
 {2050}{}{Do you need me to help you out with something?}
-{3000}{}{Ah, very well, my friend. I got exactly what he needs - RX module [he picks it up to the air like a trophy and looks at it like it was something sacred]...here [he gives it to you]. And I understand you've got something in return for me.}
+{2060}{}{What is this place, again?}
+{2070}{}{So, do you have any news for me about the...invention?}
+{3000}{}{Ah, very well, my friend. I got exactly what he needs - RX Tesla Module...[he picks it up to the air like a trophy and looks at it like it was something sacred]...here [he gives it to you]. And I understand you've got something in return for me.}
 {3010}{}{Uh, yes, here I have 200 caps here.}
 {3020}{}{Uh, yes, here I have 10 junks here.}
 {3030}{}{What?! I wasn't given anything. I was just said you should have the whatever module for Dr.Braun.}
@@ -58,13 +77,26 @@ lang=engl
 {4030}{}{You are strange, you know. [leave]}
 {5000}{}{Chill out, there, my friend. I was only fooling ya. I had to try, ya know.}
 {5010}{}{Hah, very good one [but you don't really think so]. See ya. [leave]}
-{5020}{}{Hah, very good one [but you don't really think so]. See ya. [leave]}
+{5020}{}{Hah, very good one [and you really think so]. See ya. [leave]}
 {5030}{}{You cheeky bastard. You are not fooling me again. [attack]}
-{6000}{}{This is Junkyard, my friend...and I am manager here. I collect every trash that might be usefull in some way, ya know. Like metal parts, junk, electronic parts and other stuff that you can find throughout the Wasteland, ya know.}
+{6000}{}{This is Junkyard, my friend...and I am manager here. I collect every trash that might be usefull in some way, ya know. Like metal parts, junk, electronic parts and other stuff that you can find throughout the Capital Wasteland, ya know.}
 {6010}{}{And what do you do with that?}
 {6020}{}{That's pretty awesome. But I have to go. [leave]}
 {6030}{}{That's pretty lame and I have to go. [leave]}
 {7000}{}{Very good question, my friend. I exchange it for something that might be usefull for my inventions, ya know. Sometimes there is some reaaaally usefull thing that I need to finish some of my gear upgrades or I just know someone else might need it, ya know.}
 {7010}{}{Hm, very interesting. And what inventions and upgrades are we talking about here?}
+{7020}{}{Nah, nothing for me. [leave]}
 {8000}{}{Hahaha, various stuff like weapon upgrades and also other equipment upgrades, ya know. Just show me your weapon or gear and I will let ya know what can be done...[looks at your PipBoy]...let me see that PipBoy of yours.}
+{8010}{}{[you show him your PipBoy]}
+{8020}{}{What!? No way.}
+{8030}{}{And why? I need it.}
+{9000}{}{Eh, don't be scared of me, you see? [he looks at your PipBoy] I think I might be able to tweak that for ya, you know. Like integrated radio or wait [he looks like he got an idea], I know, I could actually...oh, yeah, yeah [he mumbles something].}
+{9010}{}{So?}
+{9020}{}{You are strange, I better leave you. [leave]}
+{10000}{}{Oh, sorry my pal. I just got a perfect idea, but I need some more time to make some drawing and see what I need to make that. If you come back later, I will tell ya what I mean.}
+{10010}{}{OK then, I will be back later. [leave]}
+{10020}{}{Cool. See you later. [leave]}
+{10030}{}{I don't think I will be back any time soon, ya weirdo. [leave]}
+{11000}{}{No, nothing now. Thank ya though.}
+{12000}{}{Nah, not yet, try later.}
 

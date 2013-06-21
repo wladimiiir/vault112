@@ -25,7 +25,7 @@
 #define LVAR_v112_drbraun                            (102)
 #define LVAR_v112_rx_module                          (103)
 #define LVAR_v112_vr_authorization                   (104)
-#define LVAR_v112_overseer                           (105)
+#define LVAR_v112_free_medical_care                  (105)
 #define LVAR_v112_stuff_keeper                       (106)
 #define LVAR_gyro                                    (107)
 #define LVAR_vr_administrator                        (108)
@@ -152,7 +152,7 @@ $	104	1	v112_vr_authorization	0	0	0	4
 
 **********
 
-$	105	1	v112_overseer	0	0	4	1
+$	105	1	v112_free_medical_care	0	0	1	0
 **********
 
 **********

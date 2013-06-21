@@ -44,9 +44,9 @@ lang=engl
 13 12020 R _var p v112_claire = 2 #
 0 12030 R _var p v112_claire = 2 @
 13 13000 None 0 #
-0 13010 R _var p v112_overseer = 1 R _script dialog@r_ShowQuestMessage 1 105 #
-0 13020 R _var p v112_overseer = 1 R _script dialog@r_ShowQuestMessage 1 105 #
-0 13030 R _var p v112_overseer = 1 R _script dialog@r_ShowQuestMessage 1 105 @
+0 13010 R _var p v112_drbraun = 1 R _script dialog@r_ShowQuestMessage 1 102 #
+0 13020 R _var p v112_drbraun = 1 R _script dialog@r_ShowQuestMessage 1 102 #
+0 13030 R _var p v112_drbraun = 1 R _script dialog@r_ShowQuestMessage 1 102 @
 14 14000 None 0 @
 15 15000 None 0 #
 9 15010 #
