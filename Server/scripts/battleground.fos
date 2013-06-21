@@ -236,11 +236,27 @@ void InitMap(Map& map, bool)
 
 void PlayerKilled(Map& map, Critter& killed, Critter@ killer)
 {
+	uint[] values = {killed.Id, valid(killer) ? killer.Id : 0};
+	CreateTimeEvent(__FullSecond + REAL_SECOND(3), "e_DelayedPlayerKilledEvent", values, true);
+}
+
+uint e_DelayedPlayerKilledEvent(uint[]@ values)
+{
+	Critter@ killed = GetCritter(values[0]);
+	if(!valid(killed))
+		return 0;
+		
+	Critter@ killer;
+	if(values[1] != 0)
+		@killer = GetCritter(values[1]);
+		
 	Battle@ battle = GetBattle(killed);
 	if(!valid(battle))
-		return;
+		return 0;
 	
 	battle.PlayerKilled(killed, killer);
+	
+	return 0;
 }
 
 void _TurnBasedProcess(Map& map, Critter& critter, bool beginTurn)
@@ -315,7 +331,7 @@ class DefaultBattle : Battle
 		RespawnCount = respawnCount;
 	}
 	
-	uint GetTeamScore(Team& team)
+	int GetTeamScore(Team& team)
 	{
 		int totalKills = 0;
 		for (uint i = 0; i < team.GetPlayers().length(); i++)
@@ -764,6 +780,11 @@ class Hunt : DefaultBattle
 		super(creator.Id, combatMode);
 		AddTeam(creator.Name);
 	}
+	
+	int GetTeamScore(Team& team) override
+	{
+		return -1;
+	}
 }
 
 class Team
@@ -853,7 +874,6 @@ class Team
 	{
 		for (uint i = 0; i < Players.length(); i++)
 		{
-			
 			Players[i].Start(map, Index, Index + 1);
 		}
 	}

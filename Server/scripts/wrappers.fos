@@ -247,4 +247,38 @@ class VirtualRealityInfo
 	}
 }
 
+class StatsManager
+{
+	#define	_GetKey # (key) ("Stats_" + key +"_" + _Critter.Id)
+	
+	private Critter@ _Critter;
+	
+	StatsManager(Critter& critter)
+	{
+		@_Critter = critter;
+	}
+	
+	/**
+	* Loads critter stats for specified key
+	* Returns true if there are stats under specified key, false otherwise
+	*/
+	private bool LoadStats(string key)
+	{
+		Serializator serializator;
+		if(!serializator.Load(_GetKey(key)))
+			return false;
+			
+		//TODO: what to load (save)
+		return true;
+	}
+	
+	/**
+	* Saves current critter stats for specified key
+	*/
+	private void SaveStats(string key)
+	{
+		//TODO: what to save
+	}
+}
+
 #endif //__WRAPPERS__

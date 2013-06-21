@@ -15,8 +15,8 @@ IGUIElementTextOpt@ CountdownUI;
 uint StartTime = 0;
 IGUIElementTextOpt@ BattleTimeUI;
 IGUIElementTextOpt@ TurnBasedRoundsUI;
-uint EndTime = 0;
-uint TurnBasedRounds = 0;
+int EndTime = -1;
+int TurnBasedRounds = -1;
 
 IGUIElementTextOpt@[] TeamNameUIs;
 IGUIElementTextOpt@[] TeamScoreUIs;
@@ -74,7 +74,7 @@ void Refresh(uint infoType, string@ teams, int[]@ values)
 		case BATTLEGROUND_STARTED:
 			if(infoType == INFO_TYPE_TEAM_SCORE)
 				for (uint i = 0; i < TeamScoreUIs.length(); i++)
-					TeamScoreUIs[i].setText("" + values[i]);
+					TeamScoreUIs[i].setText(values[i] == -1 ? "" : ("" + values[i]));
 			else if(infoType == INFO_TYPE_TURN_BASED)
 				TurnBasedRounds = values[0];
 
@@ -222,7 +222,7 @@ void InitCountdownScreen(int startTime)
 
 void InitBattleScreen(int endTime, string teams)
 {
-	EndTime = uint(endTime);
+	EndTime = endTime;
 	if(!valid(BattleTimeUI))
 	{
 		@BattleTimeUI = GUI_AddText(CLIENT_MAIN_SCREEN_GAME)
@@ -300,13 +300,13 @@ void RefreshBattleInfo()
 		}
 	}
 	
-	if(valid(BattleTimeUI) && EndTime != 0)
+	if(valid(BattleTimeUI) && EndTime > 0)
 	{
 		if(StartTime != 0 && __FullSecond > StartTime)
 		{
-			if(__FullSecond > EndTime + REAL_SECOND(2))
+			if(__FullSecond > uint(EndTime) + REAL_SECOND(2))
 				BattleTimeUI.setText("");
-			else if(__FullSecond > EndTime)
+			else if(__FullSecond > uint(EndTime))
 				BattleTimeUI.setText("00:00");
 			else
 				BattleTimeUI.setText(GetTimeString((EndTime - __FullSecond) / __TimeMultiplier));
@@ -316,11 +316,13 @@ void RefreshBattleInfo()
 			BattleTimeUI.setText("");
 		}
 	}
-	if(valid(TurnBasedRoundsUI) && EndTime == 0)
+	if(valid(TurnBasedRoundsUI) && EndTime == -1)
 	{
 		if(StartTime != 0 && __FullSecond > StartTime)
 			if(TurnBasedRounds == 1)
 				TurnBasedRoundsUI.setText("Last round");
+			else if(TurnBasedRounds < 1)
+				TurnBasedRoundsUI.setText("");
 			else
 				TurnBasedRoundsUI.setText("Rounds left: " + TurnBasedRounds);
 		else

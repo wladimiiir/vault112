@@ -44,6 +44,10 @@ bool _VRAdministratorBarter(Critter& npc, Critter& player, bool attach, uint bar
 {
 	#define	REAL_WORLD_ITEMS_PREFIX				("RW_")
 	#define	VIRTUAL_REALITY_ITEMS_PREFIX		("VR_")
+	#define	HAND1_PREFIX						("HAND1_")
+	#define	HAND2_PREFIX						("HAND2_")
+	#define	ARMOR_PREFIX						("ARMOR_")
+	#define	INV_PREFIX							("INV_")
 	
 	Item@ hiddenContainer = FindHiddenContainer(npc.GetMap());
 	ItemHolderWrapper itemHolder;
@@ -294,10 +298,22 @@ class SimulationStarted : BattleEvent
 			
 		ItemHolderWrapper itemHolder(hiddenContainer);
 		
-		//holding current real world items
 		Item@[] items;
-		critter.GetItems(-1, items);
-		itemHolder.PutItems(REAL_WORLD_ITEMS_PREFIX + critter.Id, items);
+		//holding current real world items
+		critter.GetItems(SLOT_HAND1, items);
+		itemHolder.PutItems(REAL_WORLD_ITEMS_PREFIX + HAND1_PREFIX + critter.Id, items);
+
+		items.resize(0);
+		critter.GetItems(SLOT_HAND2, items);
+		itemHolder.PutItems(REAL_WORLD_ITEMS_PREFIX + HAND2_PREFIX + critter.Id, items);
+
+		items.resize(0);
+		critter.GetItems(SLOT_ARMOR, items);
+		itemHolder.PutItems(REAL_WORLD_ITEMS_PREFIX + ARMOR_PREFIX + critter.Id, items);
+		
+		items.resize(0);
+		critter.GetItems(SLOT_INV, items);
+		itemHolder.PutItems(REAL_WORLD_ITEMS_PREFIX + INV_PREFIX + critter.Id, items);
 		
 		//getting his virtual reality items
 		items = itemHolder.PopItems(VIRTUAL_REALITY_ITEMS_PREFIX + critter.Id);
@@ -317,10 +333,9 @@ class SimulationFinished : BattleEvent
 		Item@ hiddenContainer = FindHiddenContainer(critter.GetMap());
 		//getting VR items
 		Item@[] items;
-		critter.GetItems(-1, items);
-		
 		if(!valid(hiddenContainer))
 		{
+			critter.GetItems(-1, items);
 			Log("Error occured while trying to save VR items. Deleting them all to prevent exploit.");
 			DeleteItems(items);
 			return;
@@ -329,9 +344,34 @@ class SimulationFinished : BattleEvent
 		ItemHolderWrapper itemHolder(hiddenContainer);
 		
 		//switching VR items with real world items
+		critter.GetItems(-1, items);
 		itemHolder.PutItems(VIRTUAL_REALITY_ITEMS_PREFIX + critter.Id, items);
-		items = itemHolder.PopItems(REAL_WORLD_ITEMS_PREFIX + critter.Id);
+		
+		//getting RW items
+		items = itemHolder.PopItems(REAL_WORLD_ITEMS_PREFIX + HAND1_PREFIX + critter.Id);
+		if(!items.isEmpty())
+		{
+			MoveItems(items, critter);
+			_CritMoveItem(critter, items[0], SLOT_HAND1);
+		}
+			
+		items = itemHolder.PopItems(REAL_WORLD_ITEMS_PREFIX + HAND2_PREFIX + critter.Id);
+		if(!items.isEmpty())
+		{
+			MoveItems(items, critter);
+			_CritMoveItem(critter, items[0], SLOT_HAND2);
+		}
+			
+		items = itemHolder.PopItems(REAL_WORLD_ITEMS_PREFIX + ARMOR_PREFIX + critter.Id);
+		if(!items.isEmpty())
+		{
+			MoveItems(items, critter);
+			_CritMoveItem(critter, items[0], SLOT_ARMOR);
+		}
+			
+		items = itemHolder.PopItems(REAL_WORLD_ITEMS_PREFIX + INV_PREFIX + critter.Id);
 		MoveItems(items, critter);
+		
 		InSimulation.removeAt(InSimulation.find(critter.Id));
 	}
 }
