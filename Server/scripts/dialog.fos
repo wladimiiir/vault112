@@ -1083,3 +1083,35 @@ bool d_HasWeapon(Critter& player, Critter@ npc)
 	return player.GetItemsByType(ITEM_TYPE_WEAPON, null) > 0;
 }
 
+#define JUNK_TO_CREDIT_CONVERSION	(20)
+void dlg_InitJunkPrice(Critter& player, Critter@ npc, string@ lexems)
+{
+	if(!IS_DIALOG_GENERATED(lexems))
+		return;
+		
+	Item@ junk = player.GetItem(PID_JUNK, -1);
+	if(!valid(junk))
+		return;
+		
+	lexems += "$junk_to_credit" + (junk.GetCount() * JUNK_TO_CREDIT_CONVERSION);
+}
+
+void r_SellJunkForCredit(Critter& player, Critter@ npc, int amount)
+{
+	Item@ junk = player.GetItem(PID_JUNK, -1);
+	if(!valid(junk))
+		return;
+	
+	if(amount == 0) //everything
+		amount = junk.GetCount();
+	else
+		amount = MIN(junk.GetCount(), uint(amount));
+	
+	if(junk.GetCount() == uint(amount))
+		DeleteItem(junk);
+	else
+		junk.SetCount(junk.GetCount() - amount);
+		
+	player.ParamBase[DIGITAL_CREDIT] += amount * JUNK_TO_CREDIT_CONVERSION;
+}
+

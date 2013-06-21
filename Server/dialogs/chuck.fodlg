@@ -8,7 +8,30 @@ lang=engl
 &
 1 1000 None 1 #
 2 1010 @
-2 2000 None 0 &
+2 2000 None 0 #
+3 2010 D _var p chuck = 0 #
+8 2020 D _var p chuck > 0 #
+0 2030 @
+3 3000 None 0 #
+4 3010 @
+4 4000 None 0 #
+5 4010 R _var p chuck = 1 @
+5 5000 None 0 #
+6 5010 #
+8 5020 @
+6 6000 None 0 #
+0 6010 D _var p v112_vr_authorization = 1 #
+7 6020 D _var p v112_vr_authorization ! 1 #
+8 6030 @
+7 7000 None 0 #
+0 7010 #
+8 7020 @
+8 8000 dialog@dlg_InitJunkPrice 1 #
+8 8010 D _item p PID_JUNK } 1 R _script dialog@r_SellJunkForCredit 1 1 #
+8 8020 D _item p PID_JUNK } 5 R _script dialog@r_SellJunkForCredit 1 5 #
+8 8030 D _item p PID_JUNK } 10 R _script dialog@r_SellJunkForCredit 1 10 #
+8 8040 D _item p PID_JUNK } 1 R _script dialog@r_SellJunkForCredit 1 0 #
+0 8050 &
 
 [engl]
 {100}{}{Chuck}
@@ -17,4 +40,27 @@ lang=engl
 {1000}{}{Predialogue installations}
 {1010}{}{-}
 {2000}{}{Hello outsider. Do you need anything?}
+{2010}{}{I am just interested what are you doing here?}
+{2020}{}{I would like to sell some junk.}
+{2030}{}{No, nothing, just passing by. [leave]}
+{3000}{}{Ah, yeah. Let me introduce myself, my name is Chuck and what I do here is, that I take care of logistic for this vault. That means trading stuff someone else wants for stuff we need.}
+{3010}{}{Where do you do your trades?}
+{4000}{}{We travel East mostly. There are farmers there with food and also ore refinery that provides us with energy matierial. And we usually give them junk you can found in city ruins almost everywhere around and information.}
+{4010}{}{So, you need junk, right? If I get you some, what can I get for exchange.}
+{5000}{}{At the moment, only Digital Credit can be provided for junk, as we are low on food or cash. We are paying 20 credits for 1 junk, which is very fair price, I think.}
+{5010}{}{And what is this Digital Credit good for?}
+{5020}{}{Good, can I sell you some junk, now?}
+{6000}{}{Oh, you don't know? You can use it for our Virtual reality simulation program. So much fun, I have to say...and you don't have to worry about your safety as it's only a simulation, hehe.}
+{6010}{}{Oh, yeah, sure I already have access to use the facility. See ya. [leave]}
+{6020}{}{Oh, interesting, can anyone use it?}
+{6030}{}{Oh, yeah, sure I already have access to use the facility. Can I sell you some junk?}
+{7000}{}{No, only authorized users. But you should really talk about it with our overseer, Dr.Braun. He is the one giving out the authorizations.}
+{7010}{}{Thanks, I will see him now. [leave]}
+{7020}{}{I would like to sell you some junk.}
+{8000}{}{OK, let's see how much you have.}
+{8010}{}{I want to sell 1. [20 DC]}
+{8020}{}{I want to sell 5. [100 DC]}
+{8030}{}{I want to sell 10. [200 DC]}
+{8040}{}{I want to sell everything I got. [@lex junk_to_credit@ DC]}
+{8050}{}{I actually have nothing. [leave]}
 
