@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Class-Path: scala-library.jar scala-swing.jar jgoodies-looks-2.5.2.jar
+  jgoodies-common-1.4.0.jar
+Main-Class: fonline2.trader.Editor
+

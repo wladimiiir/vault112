@@ -1,0 +1,74 @@
+[comment]
+
+
+[data]
+lang=engl
+
+[dialog]
+&
+1 1000 None 1 #
+2 1010 D _param p KARMA_SLAVER = 0 @
+2 2000 None 0 #
+4 2010 D _var p q_melsaks_revenge = 5 D _var p name_mem_npc_player = 0 #
+7 2020 D _var p name_mem_npc_player = 1 D or D _var p q_melsaks_revenge = 6 #
+12 2030 D _item p PID_BOTTLE_CAPS } 5000 D _var p q_melsaks_revenge = 7 R _item p PID_BOTTLE_CAPS - 5000 R _var p q_melsaks_revenge = 8 R _param p ST_EXPERIENCE + 1000 R _script q_melsaks_revenge@r_CreateSlaverCamp 0  #
+0 2040 @
+4 3000 None 0 #
+5 3010 #
+65507 3020 @
+5 4000 None 0 #
+6 4010 @
+6 5000 None 0 #
+7 5010 @
+7 6000 None 0 #
+65507 6010 R _var p name_mem_npc_player = 1 #
+8 6020 D _var p q_melsaks_revenge < 6 R _var p q_melsaks_revenge = 6 #
+9 6030 D _item p PID_BOTTLE_CAPS } 200 R _var p q_melsaks_revenge = 7 #
+0 6040 D _var p q_melsaks_revenge = 6 @
+8 7000 None 0 #
+0 7010 #
+65507 7020 @
+9 8000 None 0 #
+10 8010 #
+11 8020 #
+12 8030 D _item p PID_BOTTLE_CAPS } 5000 R _item p PID_BOTTLE_CAPS - 5000 R _var p q_melsaks_revenge = 8 R _param p ST_EXPERIENCE + 1000 R _script q_melsaks_revenge@r_CreateSlaverCamp 0  @
+10 9000 None 0 @
+11 10000 None 0 @
+12 11000 None 0 #
+0 11010 R _script dialog@r_ShowQuestMessage 1 9002 &
+
+[engl]
+{100}{}{Metzger}
+{200}{}{Metzger, leader of slavers in Den.}
+{210}{}{Tough looking bald guy. You look at him and you know that he is the boss here.}
+{1000}{}{Predialogue installations}
+{1010}{}{-}
+{2000}{}{What do you want?@@Yeah?@@Need something?@@Be quick!}
+{2010}{}{I was told you have got someone I am interested in.}
+{2020}{}{I want to speak to about the tribal woman from Klamath.}
+{2030}{}{I've got your caps [you hand him the caps].}
+{2040}{}{Wrong door, I guess.}
+{3000}{}{And who would that be?}
+{3010}{}{I am looking for a tribal woman. You captured her few days ago in Klamath.}
+{3020}{}{Actually, your dead body. [attack]}
+{4000}{}{Oh, yeah [he smiles and nods a little]. That pretty bitch. She is quite a warrior...killed one of my men [he frowns]. If I didn't see potential in her she would be dead.}
+{4010}{}{Well, I would like to speak to her.}
+{5000}{}{No. [he looks away] Now, go!}
+{5010}{}{What do you mean 'no'?}
+{6000}{}{Don't try my patience and fuck off, will you? [he looks at you the way, that if a look could kill, you would be dead now]}
+{6010}{}{No, no, no. You are not looking at me that way. [attack]}
+{6020}{}{I just would like to talk to her, that's all.}
+{6030}{}{What about some motivation for you. [you show him bag of caps]}
+{6040}{}{[leave]}
+{7000}{}{You can't talk to her because she is no here. Now, leave or be shot.}
+{7010}{}{Allrighty, boss.}
+{7020}{}{Then, die! [attack]}
+{8000}{}{If you give me 5000 caps then maybe you can talk to her.}
+{8010}{}{5000?! That's too much for me.}
+{8020}{}{5000? That won't be a problem.}
+{8030}{}{Here. [you hand him the caps]}
+{9000}{}{Then fuck off and don't waste my time.}
+{10000}{}{Then come back when you got the caps and don't waste my time here.}
+{11000}{}{Hm, maybe I have underestimated you. Where did you get so many caps? Ah, fuck it. I don't care. Give me that [takes the caps and starts counting]. Yeah, that bitch is in near camp west from here [he points the location in your PipBoy]. I will let my guards know about you.}
+{11010}{}{Well, thanks.}
+
