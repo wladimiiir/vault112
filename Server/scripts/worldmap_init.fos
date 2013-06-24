@@ -151,6 +151,7 @@ table.AddLocationPid( LOCATION_MountainEncounter6 );
 table.AddLocationPid( LOCATION_MountainEncounter7 );
 table.AddLocationPid( LOCATION_MountainEncounter2 );
 
+
 @table = @EncounterTables[ TABLE_00_14 ];
 table.AddLocationPid( LOCATION_DesertEncounter1 );
 table.AddLocationPid( LOCATION_DesertEncounter2 );
@@ -162,6 +163,7 @@ table.AddLocationPid( LOCATION_DesertEncounter7 );
 table.AddLocationPid( LOCATION_DesertEncounter8 );
 table.AddLocationPid( LOCATION_DesertEncounter9 );
 
+
 @table = @EncounterTables[ TABLE_00_15 ];
 table.AddLocationPid( LOCATION_DesertEncounter1 );
 table.AddLocationPid( LOCATION_DesertEncounter2 );
@@ -172,6 +174,7 @@ table.AddLocationPid( LOCATION_DesertEncounter6 );
 table.AddLocationPid( LOCATION_DesertEncounter7 );
 table.AddLocationPid( LOCATION_DesertEncounter8 );
 table.AddLocationPid( LOCATION_DesertEncounter9 );
+
 
 @table = @EncounterTables[ TABLE_01_00 ];
 table.AddLocationPid( LOCATION_CavernEncounter3 );
@@ -312,6 +315,7 @@ table.AddLocationPid( LOCATION_MountainEncounter2 );
 table.AddLocationPid( LOCATION_MountainEncounter3 );
 table.AddLocationPid( LOCATION_MountainEncounter4 );
 
+
 @table = @EncounterTables[ TABLE_01_14 ];
 table.AddLocationPid( LOCATION_DesertEncounter1 );
 table.AddLocationPid( LOCATION_DesertEncounter2 );
@@ -322,6 +326,7 @@ table.AddLocationPid( LOCATION_DesertEncounter6 );
 table.AddLocationPid( LOCATION_DesertEncounter7 );
 table.AddLocationPid( LOCATION_DesertEncounter8 );
 table.AddLocationPid( LOCATION_DesertEncounter9 );
+
 
 @table = @EncounterTables[ TABLE_02_14 ];
 table.AddLocationPid( LOCATION_DesertEncounter1 );
@@ -334,6 +339,7 @@ table.AddLocationPid( LOCATION_DesertEncounter7 );
 table.AddLocationPid( LOCATION_DesertEncounter8 );
 table.AddLocationPid( LOCATION_DesertEncounter9 );
 
+
 @table = @EncounterTables[ TABLE_02_15 ];
 table.AddLocationPid( LOCATION_DesertEncounter1 );
 table.AddLocationPid( LOCATION_DesertEncounter2 );
@@ -344,6 +350,7 @@ table.AddLocationPid( LOCATION_DesertEncounter6 );
 table.AddLocationPid( LOCATION_DesertEncounter7 );
 table.AddLocationPid( LOCATION_DesertEncounter8 );
 table.AddLocationPid( LOCATION_DesertEncounter9 );
+
 
 @table = @EncounterTables[ TABLE_03_14 ];
 table.AddLocationPid( LOCATION_DesertEncounter1 );
@@ -356,6 +363,7 @@ table.AddLocationPid( LOCATION_DesertEncounter7 );
 table.AddLocationPid( LOCATION_DesertEncounter8 );
 table.AddLocationPid( LOCATION_DesertEncounter9 );
 
+
 @table = @EncounterTables[ TABLE_03_15 ];
 table.AddLocationPid( LOCATION_DesertEncounter1 );
 table.AddLocationPid( LOCATION_DesertEncounter2 );
@@ -367,368 +375,6 @@ table.AddLocationPid( LOCATION_DesertEncounter7 );
 table.AddLocationPid( LOCATION_DesertEncounter8 );
 table.AddLocationPid( LOCATION_DesertEncounter9 );
 
-@table = @EncounterTables[ TABLE_04_14 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_04_15 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_05_14 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_05_15 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_06_14 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_06_15 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_07_14 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_07_15 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_08_14 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_08_15 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_09_14 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_09_15 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_10_14 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_10_15 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_11_14 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_11_15 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_12_14 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_12_15 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_13_14 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_13_15 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_14_14 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_14_15 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_15_14 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_15_15 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_16_14 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_16_15 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_17_14 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_17_15 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_18_14 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_18_15 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_19_14 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_19_15 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
-
-@table = @EncounterTables[ TABLE_04_11 ];
-table.AddLocationPid( LOCATION_DesertEncounter1 );
-table.AddLocationPid( LOCATION_DesertEncounter2 );
-table.AddLocationPid( LOCATION_DesertEncounter3 );
-table.AddLocationPid( LOCATION_DesertEncounter4 );
-table.AddLocationPid( LOCATION_DesertEncounter5 );
-table.AddLocationPid( LOCATION_DesertEncounter6 );
-table.AddLocationPid( LOCATION_DesertEncounter7 );
-table.AddLocationPid( LOCATION_DesertEncounter8 );
-table.AddLocationPid( LOCATION_DesertEncounter9 );
 
 @table = @EncounterTables[ TABLE_04_10 ];
 table.AddLocationPid( LOCATION_DesertEncounter1 );
@@ -741,6 +387,43 @@ table.AddLocationPid( LOCATION_DesertEncounter7 );
 table.AddLocationPid( LOCATION_DesertEncounter8 );
 table.AddLocationPid( LOCATION_DesertEncounter9 );
 
+
+@table = @EncounterTables[ TABLE_04_11 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_04_14 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_04_15 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
 @table = @EncounterTables[ TABLE_05_08 ];
 table.AddLocationPid( LOCATION_DesertEncounter1 );
 table.AddLocationPid( LOCATION_DesertEncounter2 );
@@ -751,6 +434,7 @@ table.AddLocationPid( LOCATION_DesertEncounter6 );
 table.AddLocationPid( LOCATION_DesertEncounter7 );
 table.AddLocationPid( LOCATION_DesertEncounter8 );
 table.AddLocationPid( LOCATION_DesertEncounter9 );
+
 
 @table = @EncounterTables[ TABLE_05_09 ];
 table.AddLocationPid( LOCATION_DesertEncounter1 );
@@ -763,7 +447,56 @@ table.AddLocationPid( LOCATION_DesertEncounter7 );
 table.AddLocationPid( LOCATION_DesertEncounter8 );
 table.AddLocationPid( LOCATION_DesertEncounter9 );
 
+
+@table = @EncounterTables[ TABLE_05_14 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_05_15 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
 @table = @EncounterTables[ TABLE_06_09 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_06_14 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_06_15 ];
 table.AddLocationPid( LOCATION_DesertEncounter1 );
 table.AddLocationPid( LOCATION_DesertEncounter2 );
 table.AddLocationPid( LOCATION_DesertEncounter3 );
@@ -784,6 +517,138 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
+
+
+@table = @EncounterTables[ TABLE_07_13 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_07_14 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_07_15 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_08_13 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_08_14 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_08_15 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_09_13 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_09_14 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_09_15 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_10_14 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_10_15 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
 
 
 @table = @EncounterTables[ TABLE_11_07 ];
@@ -809,6 +674,42 @@ table.AddLocationPid( LOCATION_CityEncounter8 );
 table.AddEncounter( 10, 10030020 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
+@table = @EncounterTables[ TABLE_11_13 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_11_14 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_11_15 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
 @table = @EncounterTables[ TABLE_12_07 ];
 table.AddLocationPid( LOCATION_CityEncounter1 );
 table.AddLocationPid( LOCATION_CityEncounter2 );
@@ -829,6 +730,30 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
+
+
+@table = @EncounterTables[ TABLE_12_14 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_12_15 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
 
 
 @table = @EncounterTables[ TABLE_13_07 ];
@@ -853,6 +778,54 @@ table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
 
 
+@table = @EncounterTables[ TABLE_13_14 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_13_15 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_14_14 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_14_15 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
 @table = @EncounterTables[ TABLE_15_07 ];
 table.AddLocationPid( LOCATION_CityEncounter1 );
 table.AddLocationPid( LOCATION_CityEncounter2 );
@@ -862,6 +835,30 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
+
+
+@table = @EncounterTables[ TABLE_15_14 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_15_15 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
 
 
 @table = @EncounterTables[ TABLE_16_00 ];
@@ -906,6 +903,30 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
+
+
+@table = @EncounterTables[ TABLE_16_14 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_16_15 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
 
 
 @table = @EncounterTables[ TABLE_17_00 ];
@@ -963,6 +984,30 @@ table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
 
 
+@table = @EncounterTables[ TABLE_17_14 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_17_15 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
 @table = @EncounterTables[ TABLE_18_05 ];
 table.AddLocationPid( LOCATION_CityEncounter1 );
 table.AddLocationPid( LOCATION_CityEncounter2 );
@@ -996,6 +1041,30 @@ table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
 
 
+@table = @EncounterTables[ TABLE_18_14 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_18_15 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
 @table = @EncounterTables[ TABLE_19_05 ];
 table.AddLocationPid( LOCATION_CityEncounter1 );
 table.AddLocationPid( LOCATION_CityEncounter2 );
@@ -1005,6 +1074,30 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
+
+
+@table = @EncounterTables[ TABLE_19_14 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_19_15 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
 
 
 @table = @EncounterTables[ TABLE_20_05 ];
@@ -1029,6 +1122,18 @@ table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
 
 
+@table = @EncounterTables[ TABLE_21_06 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
 @table = @EncounterTables[ TABLE_21_07 ];
 table.AddLocationPid( LOCATION_CityEncounter1 );
 table.AddLocationPid( LOCATION_CityEncounter2 );
@@ -1051,6 +1156,150 @@ table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
 
 
+@table = @EncounterTables[ TABLE_21_15 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_22_06 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_22_07 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_22_08 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_22_14 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_22_15 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_23_04 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_23_05 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_23_06 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_23_07 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_23_08 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_23_09 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
 @table = @EncounterTables[ TABLE_23_10 ];
 table.AddLocationPid( LOCATION_CityEncounter1 );
 table.AddLocationPid( LOCATION_CityEncounter2 );
@@ -1062,6 +1311,114 @@ table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
 
 
+@table = @EncounterTables[ TABLE_23_13 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_23_14 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_23_15 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_24_04 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_24_05 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_24_06 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_24_07 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_24_08 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_24_09 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
 @table = @EncounterTables[ TABLE_24_10 ];
 table.AddLocationPid( LOCATION_CityEncounter1 );
 table.AddLocationPid( LOCATION_CityEncounter2 );
@@ -1071,6 +1428,474 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
+
+
+@table = @EncounterTables[ TABLE_24_15 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_25_04 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_25_05 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_25_06 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_25_07 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_25_08 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_25_09 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_25_12 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_25_13 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_25_14 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_25_15 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_26_00 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_26_02 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_26_03 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_26_04 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_26_05 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_26_06 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_26_07 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_26_08 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_26_11 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_26_12 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_26_13 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_26_14 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_26_15 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_27_00 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_27_01 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_27_02 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_27_03 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_27_04 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_27_05 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_27_06 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_27_07 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_27_08 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_27_10 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_27_11 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_27_12 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_27_13 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_27_14 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
+
+
+@table = @EncounterTables[ TABLE_27_15 ];
+table.AddLocationPid( LOCATION_DesertEncounter1 );
+table.AddLocationPid( LOCATION_DesertEncounter2 );
+table.AddLocationPid( LOCATION_DesertEncounter3 );
+table.AddLocationPid( LOCATION_DesertEncounter4 );
+table.AddLocationPid( LOCATION_DesertEncounter5 );
+table.AddLocationPid( LOCATION_DesertEncounter6 );
+table.AddLocationPid( LOCATION_DesertEncounter7 );
+table.AddLocationPid( LOCATION_DesertEncounter8 );
+table.AddLocationPid( LOCATION_DesertEncounter9 );
 
 SetZone( 0, 0, TABLE_00_00, 0, TERRAIN_Mountain, CHANCE_Common, CHANCE_Common, CHANCE_Common );
 SetZone( 1, 0, TABLE_01_00, 0, TERRAIN_Mountain, CHANCE_Common, CHANCE_Common, CHANCE_Common );
