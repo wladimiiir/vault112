@@ -1,6 +1,7 @@
 /**
 * Author: wladimiiir
 */
+#include "_macros.fos"
 
 class LootItem {
 	uint16 ProtoId; //protoId of item
@@ -29,7 +30,21 @@ class LootItem {
 }
 
 class LootDefinition {
-	LootItem@[] LootItems;
+	private uint DeteriorationFrom;
+	private uint DeteriorationTo;
+	private LootItem@[] LootItems;
+	
+	LootDefinition()
+	{
+		DeteriorationFrom = 0;
+		DeteriorationTo = 0;
+	}
+	
+	LootDefinition(uint deteriorationFrom, uint deteriorationTo)
+	{
+		DeteriorationFrom = deteriorationFrom;
+		DeteriorationTo = deteriorationTo;
+	}
 	
 	LootDefinition@ AddItem(uint16 itemPid, float chance, uint16 minCount, uint16 maxCount)
 	{
@@ -51,7 +66,23 @@ class LootDefinition {
 			if(lootItem.IsChosen())
 			{
 				//Log("Adding item with proto "+lootItem.ProtoId+" to loot.");
-				critter.AddItem(lootItem.ProtoId, lootItem.GetCount());
+				Item@ item = critter.AddItem(lootItem.ProtoId, lootItem.GetCount());
+				if(valid(item) && DeteriorationTo != 0 && item.IsDeteriorable())
+					item.Deterioration = Random(DeteriorationFrom, DeteriorationTo);
+			}
+		}
+	}
+	
+	void AddItems(Item& container)
+	{
+		for (uint i = 0; i < LootItems.length(); i++)
+		{
+			LootItem@ lootItem = LootItems[i];
+			if(lootItem.IsChosen())
+			{
+				Item@ item = container.AddItem(lootItem.ProtoId, lootItem.GetCount(), 0);
+				if(valid(item) && DeteriorationTo != 0 && item.IsDeteriorable())
+					item.Deterioration = Random(DeteriorationFrom, DeteriorationTo);
 			}
 		}
 	}

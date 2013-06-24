@@ -4,9 +4,34 @@
 #include "_macros.fos"
 #include "_itempid.fos"
 #include "_msgstr.fos"
+#include "entire.fos"
+#include "grave_loot_init.fos"
 
 import void SwitchState( Item& locker ) from "lockers";
 
+//import void AddGraves(Map& map) from "grave";
+void AddGraves(Map& map)
+{
+	if(!HAS_CHANCE(10))
+		return;
+		
+	Entire[] entires;
+	ParseEntires(map, entires, ENTIRE_GRAVE_PLACE);
+	if(entires.isEmpty())
+		return;
+		
+	uint graveCount = Random(1, MIN(2, entires.length()));
+	for (uint i = 0; i < graveCount; i++)
+	{
+		uint index = Random(0, entires.length() - 1);
+		Item@ grave = map.AddItem(entires[index].HexX, entires[index].HexY, 
+			Random(PID_GRAVESITE_1, PID_GRAVESITE_4), 1);
+		if(!valid(grave))
+			return;
+		grave.SetScript("grave@_GraveInit");
+		entires.removeAt(index);
+	}
+}
 
 void _GraveInit( Item& grave, bool firstTime )
 {

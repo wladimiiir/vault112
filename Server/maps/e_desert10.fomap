@@ -1,9 +1,9 @@
 [Header]
-Version              2
+Version              4
 MaxHexX              146
 MaxHexY              146
-WorkHexX             85
-WorkHexY             110
+WorkHexX             101
+WorkHexY             94
 ScriptModule         -
 ScriptFunc           -
 NoLogOut             0
@@ -6998,7 +6998,8 @@ MapX                 60
 MapY                 39
 Dir                  2
 Critter_Cond         3
-Critter_CondExt      3
+Critter_Anim1        0
+Critter_Anim2        102
 Critter_ParamIndex0  ST_DIALOG_ID
 Critter_ParamValue0  0
 Critter_ParamIndex1  ST_AI_ID
@@ -9136,7 +9137,8 @@ ProtoId              116
 MapX                 64
 MapY                 73
 Critter_Cond         3
-Critter_CondExt      8
+Critter_Anim1        0
+Critter_Anim2        102
 Critter_ParamIndex0  ST_DIALOG_ID
 Critter_ParamValue0  0
 Critter_ParamIndex1  ST_AI_ID
@@ -9255,7 +9257,8 @@ ProtoId              116
 MapX                 64
 MapY                 74
 Critter_Cond         3
-Critter_CondExt      1
+Critter_Anim1        0
+Critter_Anim2        102
 Critter_ParamIndex0  ST_DIALOG_ID
 Critter_ParamValue0  0
 Critter_ParamIndex1  ST_AI_ID
@@ -9281,7 +9284,8 @@ ProtoId              116
 MapX                 65
 MapY                 74
 Critter_Cond         3
-Critter_CondExt      6
+Critter_Anim1        0
+Critter_Anim2        102
 Critter_ParamIndex0  ST_DIALOG_ID
 Critter_ParamValue0  0
 Critter_ParamIndex1  ST_AI_ID
@@ -9355,7 +9359,8 @@ ProtoId              116
 MapX                 64
 MapY                 75
 Critter_Cond         3
-Critter_CondExt      1
+Critter_Anim1        0
+Critter_Anim2        102
 Critter_ParamIndex0  ST_DIALOG_ID
 Critter_ParamValue0  0
 Critter_ParamIndex1  ST_AI_ID
@@ -24199,5 +24204,29 @@ MapObjType           2
 ProtoId              2344
 MapX                 80
 MapY                 110
+
+MapObjType           2
+ProtoId              3853
+MapX                 14
+MapY                 44
+Scenery_ToEntire     72
+
+MapObjType           2
+ProtoId              3853
+MapX                 84
+MapY                 30
+Scenery_ToEntire     72
+
+MapObjType           2
+ProtoId              3853
+MapX                 107
+MapY                 100
+Scenery_ToEntire     72
+
+MapObjType           2
+ProtoId              3853
+MapX                 116
+MapY                 86
+Scenery_ToEntire     72
 
 

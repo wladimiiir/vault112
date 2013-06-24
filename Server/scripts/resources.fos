@@ -14,13 +14,11 @@ uint16[] SpecialJunk = {
 							PID_CATS_PAW, PID_TECHNICAL_MANUAL, PID_CHEMISTRY_MANUAL, PID_CATS_PAW_ISSUE_5, PID_HUBOLOGIST_BOOK
 						};
 
-void AddResource(uint mapId)
+//import void AddResources(uint mapId) from "resources";
+void AddResources(Map& map)
 {
 	uint16 hexX = 0;
 	uint16 hexY = 0;
-	Map@ map = GetMap(mapId);
-	if (!valid(map))
-		return;
 	Location @ location = map.GetLocation();
 	if (!valid(location))
 		return;

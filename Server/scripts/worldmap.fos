@@ -4,6 +4,8 @@
 
 import bool AddAttackPlane( Critter& npc, uint priority, Critter& target ) from "npc_planes";
 import void GenerateCavernEncounter( Map@ map, Critter@[] @ critters ) from "cave_mobs";
+import void AddGraves(Map& map) from "grave";
+import void AddResources(uint mapId) from "resources";
 
 #define ZONE_COUNT_X                       ( 25 )
 #define ZONE_COUNT_Y                       ( 30 )
@@ -1485,17 +1487,18 @@ Map@ GenerateEncounter( CFoundedEncounter@ fe, Critter@[] @ critters )
     {
         isEncounter = 1;
     }
-    // Генерация итемов на всех картах энкаунтера
+    
     for( uint i = 0, l = location.GetMapCount(); i < l; i++ )
     {
-        Map@ m = location.GetMapByIndex( i );
-        if( valid( m ) )
-        {
-            if( i > 0 )
-            {
-                GenerateCavernEncounter( m, critters );
-            }
-        }
+        Map@ map = location.GetMapByIndex( i );
+        if(!valid(map))
+			continue;
+			
+		AddResources(map);
+		AddGraves(map);
+		
+		if(i > 0)
+			GenerateCavernEncounter( map, critters );
     }
 
     Map@ map = location.GetMapByIndex( 0 );
