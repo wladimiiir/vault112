@@ -452,9 +452,15 @@ bool key_down( uint8 key, string& keyText )
 			
 	if(CtrlDown && key == DIK_G)
 		ShowGroundPickUpScreen();
-		
-	if(key == DIK_R)
+	
+	if(CtrlDown && key == DIK_R)
+	{
+		__AlwaysRun = !__AlwaysRun;
+		Message("Always run: " + (__AlwaysRun ? "on" : "off"));
+	}
+	else if(key == DIK_R)
 		Reload();
+		
 
     return GUI_KeyDown( key, keyText );
 }
