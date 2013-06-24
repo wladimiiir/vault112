@@ -14,8 +14,8 @@ uint16[] SpecialJunk = {
 							PID_CATS_PAW, PID_TECHNICAL_MANUAL, PID_CHEMISTRY_MANUAL, PID_CATS_PAW_ISSUE_5, PID_HUBOLOGIST_BOOK
 						};
 
-//import void AddResources(uint mapId) from "resources";
-void AddResources(Map& map)
+//import void AddResources(Map& map, Critter@[]@ players) from "resources";
+void AddResources(Map& map, Critter@[]@ players)
 {
 	uint16 hexX = 0;
 	uint16 hexY = 0;

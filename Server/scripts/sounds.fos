@@ -7,7 +7,7 @@
 #ifdef __SERVER
 #define SOUND_RADIUS	(40)
 
-//export
+//import void PlayOpenLockerSound(Item& locker) from "sounds";
 void PlayOpenLockerSound(Item& locker)
 {
 	ProtoItem@ proto = GetProtoItem(locker.GetProtoId());
@@ -35,7 +35,7 @@ void PlayOpenLockerSound(Item& locker)
 	}
 }
 
-//export
+//import void PlayCloseLockerSound(Item& locker) from "sounds";
 void PlayCloseLockerSound(Item& locker)
 {
 	ProtoItem@ proto = GetProtoItem(locker.GetProtoId());
@@ -63,7 +63,7 @@ void PlayCloseLockerSound(Item& locker)
 	}
 }
 
-//export
+//import void PlayLockedLockerSound(Item& locker) from "sounds";
 void PlayLockedLockerSound(Item& locker)
 {
 	ProtoItem@ proto = GetProtoItem(locker.GetProtoId());
@@ -119,7 +119,7 @@ void PlayUnlockedLockerSound(Item& locker)
 	}
 }
 
-//export
+//import void PlayAttackSound(Critter@ soundSource) from "sounds";
 void PlayAttackSound(Critter@ soundSource)
 {
 	uint8 mode;

@@ -3,6 +3,8 @@
 */
 #include "_macros.fos"
 
+import void SetDeterioration( Item& item, int deteriorationProcent ) from "repair";
+
 class LootItem {
 	uint16 ProtoId; //protoId of item
 	float Chance; //chance for item (in %)
@@ -68,7 +70,7 @@ class LootDefinition {
 				//Log("Adding item with proto "+lootItem.ProtoId+" to loot.");
 				Item@ item = critter.AddItem(lootItem.ProtoId, lootItem.GetCount());
 				if(valid(item) && DeteriorationTo != 0 && item.IsDeteriorable())
-					item.Deterioration = Random(DeteriorationFrom, DeteriorationTo);
+					SetDeterioration(item, Random(DeteriorationFrom, DeteriorationTo));
 			}
 		}
 	}
@@ -82,7 +84,7 @@ class LootDefinition {
 			{
 				Item@ item = container.AddItem(lootItem.ProtoId, lootItem.GetCount(), 0);
 				if(valid(item) && DeteriorationTo != 0 && item.IsDeteriorable())
-					item.Deterioration = Random(DeteriorationFrom, DeteriorationTo);
+					SetDeterioration(item, Random(DeteriorationFrom, DeteriorationTo));
 			}
 		}
 	}

@@ -6,7 +6,7 @@
 
 LootDefinition@[] GraveLoot =
 {
-	LootDefinition(20, 50)
+	LootDefinition(50, 70)
 		.AddItem(PID_10MM_SMG, 100, 1, 1)
 		.AddItem(PID_10MM_AP, 100, 40, 60)
 		.AddItem(PID_LEATHER_ARMOR_MK_II, 100, 1, 1),
@@ -15,12 +15,12 @@ LootDefinition@[] GraveLoot =
 		.AddItem(PID_FIRST_AID_BOOK, 20, 1, 1)
 		.AddItem(PID_PURPLE_ROBE, 15, 1, 1)
 		.AddItem(PID_PK12_GAUSS_PISTOL, 5, 1, 1),
-	LootDefinition(20, 50)
+	LootDefinition(50, 80)
 		.AddItem(PID_SUPER_STIMPAK, 80, 1, 3)
 		.AddItem(PID_ROCKET_LAUNCHER, 80, 1, 1)
 		.AddItem(PID_ROCKET_AP, 80, 1, 10)
 		.AddItem(PID_METAL_ARMOR_MK_II, 80, 1, 1),
-	LootDefinition(20, 50)
+	LootDefinition(40, 70)
 		.AddItem(PID_STIMPAK, 80, 1, 3)
 		.AddItem(PID_BUFFOUT, 80, 1, 1)
 		.AddItem(PID_PSYCHO, 80, 1, 1)
@@ -28,20 +28,20 @@ LootDefinition@[] GraveLoot =
 		.AddItem(PID_MICRO_FUSION_CELL, 60, 30, 60)
 		.AddItem(PID_GUNS_AND_BULLETS, 5, 1, 1)
 		.AddItem(PID_TESLA_ARMOR, 30, 1, 1),
-	LootDefinition(20, 50)
+	LootDefinition(60, 70)
 		.AddItem(PID_GUNS_AND_BULLETS, 10, 1, 3)
 		.AddItem(PID_FIRST_AID_BOOK, 10, 1, 1)
 		.AddItem(PID_14MM_PISTOL, 80, 1, 1)
 		.AddItem(PID_14MM_AP, 90, 20, 40)
 		.AddItem(PID_14MM_AP, 90, 20, 40)
 		.AddItem(PID_COMBAT_ARMOR, 40, 1, 1),
-	LootDefinition(20, 50)
+	LootDefinition(30, 60)
 		.AddItem(PID_STIMPAK, 100, 1, 3)
 		.AddItem(PID_DEANS_ELECTRONICS, 20, 1, 1)
 		.AddItem(PID_BROTHERHOOD_COMBAT_ARMOR, 40, 1, 1)
 		.AddItem(PID_LEATHER_ARMOR, 60, 1, 1)
 		.AddItem(PID_M72_GAUSS_RIFLE, 5, 1, 1),
-	LootDefinition(20, 50)
+	LootDefinition(40, 50)
 		.AddItem(PID_PSYCHO, 60, 1, 3)
 		.AddItem(PID_SCOUT_HANDBOOK, 20, 1, 1)
 		.AddItem(PID_CURED_LEATHER_ARMOR, 60, 1, 1)
@@ -49,28 +49,28 @@ LootDefinition@[] GraveLoot =
 		.AddItem(PID_223_FMJ, 60, 1, 1)
 		.AddItem(PID_2MM_EC_AMMO, 20, 30, 60)
 		.AddItem(PID_HK_G11E, 5, 1, 1),
-	LootDefinition(20, 50)
+	LootDefinition(50, 80)
 		.AddItem(PID_BUFFOUT, 50, 1, 3)
 		.AddItem(PID_GUNS_AND_BULLETS, 20, 1, 1)
 		.AddItem(PID_HK_G11E, 60, 1, 1)
 		.AddItem(PID_4_7MM_CASELESS, 60, 30, 50)
 		.AddItem(PID_LEATHER_ARMOR, 60, 1, 1)
 		.AddItem(PID_CHITIN_ARMOR, 5, 1, 1),
-	LootDefinition(20, 50)
+	LootDefinition(50, 80)
 		.AddItem(PID_JET, 40, 1, 3)
 		.AddItem(PID_CATS_PAW_ISSUE_5, 20, 1, 1)
 		.AddItem(PID_YK32_PULSE_PISTOL, 60, 1, 1)
 		.AddItem(PID_LEATHER_ARMOR_MK_II, 60, 1, 1)
 		.AddItem(PID_SMALL_ENERGY_CELL, 60, 30, 40)
 		.AddItem(PID_POWERED_ARMOR, 5, 1, 1),
-	LootDefinition(20, 50)
+	LootDefinition(50, 60)
 		.AddItem(PID_STIMPAK, 50, 1, 3)
 		.AddItem(PID_FIRST_AID_BOOK, 20, 1, 1)
 		.AddItem(PID_SMALL_ENERGY_CELL, 60, 10, 40)
 		.AddItem(PID_MAGNETO_LASER_PISTOL, 60, 1, 1)
 		.AddItem(PID_METAL_ARMOR_MK_II, 60, 1, 1)
 		.AddItem(PID_HARDENED_POWER_ARMOR, 5, 1, 1),
-	LootDefinition(20, 50)
+	LootDefinition(40, 70)
 		.AddItem(PID_NUKA_COLA, 30, 1, 3)
 		.AddItem(PID_CATS_PAW_ISSUE_5, 20, 1, 1)
 		.AddItem(PID_MINIGUN, 60, 1, 1)
@@ -78,7 +78,7 @@ LootDefinition@[] GraveLoot =
 		.AddItem(PID_5MM_AP, 60, 50, 80)
 		.AddItem(PID_BLACK_ROBE, 40, 1, 1)
 		.AddItem(PID_ADVANCED_POWER_ARMOR, 5, 1, 1),
-	LootDefinition(20, 50)
+	LootDefinition(30, 80)
 		.AddItem(PID_SUPER_STIMPAK, 80, 1, 3)
 		.AddItem(PID_GUNS_AND_BULLETS, 20, 1, 1)
 		.AddItem(PID_MEGA_POWER_FIST, 30, 1, 1)

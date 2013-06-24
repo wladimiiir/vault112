@@ -4,8 +4,8 @@
 
 import bool AddAttackPlane( Critter& npc, uint priority, Critter& target ) from "npc_planes";
 import void GenerateCavernEncounter( Map@ map, Critter@[] @ critters ) from "cave_mobs";
-import void AddGraves(Map& map) from "grave";
-import void AddResources(uint mapId) from "resources";
+import void AddGraves(Map& map, Critter@[]@ players) from "grave";
+import void AddResources(Map& map, Critter@[]@ players) from "resources";
 
 #define ZONE_COUNT_X                       ( 25 )
 #define ZONE_COUNT_Y                       ( 30 )
@@ -1494,8 +1494,8 @@ Map@ GenerateEncounter( CFoundedEncounter@ fe, Critter@[] @ critters )
         if(!valid(map))
 			continue;
 			
-		AddResources(map);
-		AddGraves(map);
+		AddResources(map, critters);
+		AddGraves(map, critters);
 		
 		if(i > 0)
 			GenerateCavernEncounter( map, critters );

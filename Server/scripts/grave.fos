@@ -7,12 +7,13 @@
 #include "entire.fos"
 #include "grave_loot_init.fos"
 
-import void SwitchState( Item& locker ) from "lockers";
+import void PlayOpenLockerSound(Item& locker) from "sounds";
 
-//import void AddGraves(Map& map) from "grave";
-void AddGraves(Map& map)
+
+//import void AddGraves(Map& map, Critter@[]@ players) from "grave";
+void AddGraves(Map& map, Critter@[]@ players)
 {
-	if(!HAS_CHANCE(10))
+	if(!HAS_CHANCE(10 + GetMaxLuck(players) * 3))
 		return;
 		
 	Entire[] entires;
@@ -25,12 +26,33 @@ void AddGraves(Map& map)
 	{
 		uint index = Random(0, entires.length() - 1);
 		Item@ grave = map.AddItem(entires[index].HexX, entires[index].HexY, 
-			Random(PID_GRAVESITE_1, PID_GRAVESITE_4), 1);
+			Random(PID_LF_GRAVESITE_1, PID_LF_GRAVESITE_3), 1);
 		if(!valid(grave))
 			return;
+			
+		InitGraveContent(grave);
 		grave.SetScript("grave@_GraveInit");
 		entires.removeAt(index);
 	}
+}
+
+int GetMaxLuck(Critter@[]@ players)
+{
+	int maxLuck = 1;
+	if(!valid(players))
+		return maxLuck;
+	
+	for (uint i = 0; i < players.length(); i++)
+		if(valid(players[i]) && maxLuck < players[i].Stat[ST_LUCK])
+			maxLuck = players[i].Stat[ST_LUCK];
+	
+	return maxLuck;
+}
+
+void InitGraveContent(Item& grave)
+{
+	LootDefinition@ content = GraveLoot[Random(0, GraveLoot.length() - 1)];
+	content.AddItems(grave);
 }
 
 void _GraveInit( Item& grave, bool firstTime )
@@ -56,17 +78,19 @@ bool _GraveUseOnMe( Item& grave, Critter& cr, Item@ usedItem )
 {
     if( valid( usedItem ) && usedItem.GetProtoId() == PID_SHOVEL )
     {
-        SwitchState( grave );
-        if( FLAG( grave.LockerCondition, LOCKER_ISOPEN ) )
-        {
-            cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_GRAVE_UNCOVERED );
+		if(_LockerIsOpen(grave))
+		{
+			grave.LockerClose();
+			cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_GRAVE_COVERED );
+		}
+		else
+		{
+			grave.LockerOpen();
+			PlayOpenLockerSound(grave);
+			cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_GRAVE_UNCOVERED );
             cr.StatBase[ ST_KARMA ] -= 5;
             cr.KarmaBase[ KARMA_GRAVE_DIGGER ] = 1;
-        }
-        else
-        {
-            cr.SayMsg( SAY_NETMSG, TEXTMSG_GAME, STR_GRAVE_COVERED );
-        }
+		}
         return true;
     }
     return false;

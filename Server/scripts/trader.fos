@@ -9,8 +9,6 @@
 #include "trader_init.fos"
 #include "utils_for_array.fos"
 
-import void SetDeterioration( Item& item, int deteriorationProcent ) from "repair";
-
 #define TRADER_ID_JunktownTrader		     ( 60 ) //TODO: trader ids
 #define TRADER_ID_JunktownDoctor		     ( 88 )
 
