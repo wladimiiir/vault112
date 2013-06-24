@@ -178,6 +178,29 @@ string GetHpText(CritterCl& critter, bool awareness)
 	return "|" + color + " " + hpText;
 }
 
+void CheckDirection()
+{
+	CritterCl@ chosen = GetChosen();
+	if(!valid(chosen) || GetCurrentCursor() != CURSOR_USE_WEAPON)
+		return;
+		
+	uint16 hexX = 0, hexY = 0;
+	if(!GetMonitorHex(__MouseX, __MouseY, hexX, hexY))
+		return;
+	
+	uint8 dir = GetDirection(chosen.HexX, chosen.HexY, hexX, hexY);
+	if(chosen.Dir != dir)
+	{
+		bool clockWise = true;
+		if(((chosen.Dir != 5 || dir != 0) && chosen.Dir > dir) || (chosen.Dir == 0 && dir ==5))
+			clockWise = false;
+			
+		uint[] ChangeDir = { CHOSEN_DIR, clockWise ? 0 : 1, 0, 0, 0, 0, 0 };
+		SetChosenActions(ChangeDir);
+		RefreshMap(false, false, false);
+	}
+}
+
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 // Call on client loaded or new client_main.fos script received.
 bool start()
@@ -259,6 +282,8 @@ uint loop()
 	RefreshMouseOverText();
 	RefreshOnHeadText();
 	RefreshBattleground();
+	CheckDirection();
+	
     return 100;
 }
 
