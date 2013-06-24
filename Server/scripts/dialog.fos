@@ -1108,7 +1108,7 @@ void r_SellJunkForCredit(Critter& player, Critter@ npc, int amount)
 		amount = MIN(junk.GetCount(), uint(amount));
 	
 	if(junk.GetCount() == uint(amount))
-		DeleteItem(junk);
+		player.DeleteItem(PID_JUNK, amount);
 	else
 		junk.SetCount(junk.GetCount() - amount);
 		
