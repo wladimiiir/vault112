@@ -13,20 +13,22 @@ lang=engl
 2 2000 None 1 #
 3 2010 #
 4 2020 #
-2 2030 @
+0 2030 @
 3 3000 virtual_reality@dlg_InitSimulation 1 #
 0 3010 R _script virtual_reality@r_StartSimulation 0  #
 5 3020 #
-6 3030 #
-7 3040 #
-8 3050 D _script virtual_reality@d_DurationAvailable 0  #
-9 3060 D _script virtual_reality@d_SpawnAvailable 0  #
-2 3070 @
+12 3030 D _script d_IsCustomLocation 0  #
+6 3040 D _script d_IsNotCustomLocation 0  #
+7 3050 #
+8 3060 D _script virtual_reality@d_DurationAvailable 0  #
+9 3070 D _script virtual_reality@d_SpawnAvailable 0  #
+2 3080 @
 4 4000 None 0 @
 5 5000 None 1 #
 3 5010 R _script virtual_reality@r_SetType 1 1 #
 3 5020 R _script virtual_reality@r_SetType 1 2 #
-3 5030 @
+3 5030 R _script virtual_reality@r_SetType 1 3 #
+3 5040 @
 6 6000 None 1 #
 3 6010 R _script virtual_reality@r_SetLocation 1 300 #
 3 6020 R _script virtual_reality@r_SetLocation 1 301 #
@@ -51,7 +53,19 @@ lang=engl
 10 10000 None 0 #
 0 10010 @
 11 11000 None 0 #
-0 11010 &
+0 11010 @
+12 12000 None 1 #
+3 12010 D _script d_HasCustomLocations 1 1 R _script virtual_reality@r_SetCustomLocation 1 0 #
+3 12020 D _script d_HasCustomLocations 1 2 R _script virtual_reality@r_SetCustomLocation 1 1 #
+3 12030 D _script d_HasCustomLocations 1 3 R _script virtual_reality@r_SetCustomLocation 1 2 #
+3 12040 D _script d_HasCustomLocations 1 4 R _script virtual_reality@r_SetCustomLocation 1 3 #
+3 12050 D _script d_HasCustomLocations 1 5 R _script virtual_reality@r_SetCustomLocation 1 4 #
+3 12060 D _script d_HasCustomLocations 1 6 R _script virtual_reality@r_SetCustomLocation 1 5 #
+3 12070 D _script d_HasCustomLocations 1 7 R _script virtual_reality@r_SetCustomLocation 1 6 #
+3 12080 D _script d_HasCustomLocations 1 8 R _script virtual_reality@r_SetCustomLocation 1 7 #
+3 12090 D _script d_HasCustomLocations 1 9 R _script virtual_reality@r_SetCustomLocation 1 8 #
+3 12100 D _script d_HasCustomLocations 1 10 R _script virtual_reality@r_SetCustomLocation 1 9 #
+3 12110 D _script d_HasCustomLocations 1 11 R _script virtual_reality@r_SetCustomLocation 1 10 &
 
 [engl]
 {100}{}{none}
@@ -73,15 +87,17 @@ Hostiles: @lex spawn@
 {3010}{}{Start simulation}
 {3020}{}{Change type}
 {3030}{}{Change location}
-{3040}{}{Change combat mode}
-{3050}{}{Change duration}
-{3060}{}{Change hostiles}
-{3070}{}{Cancel}
+{3040}{}{Change location}
+{3050}{}{Change combat mode}
+{3060}{}{Change duration}
+{3070}{}{Change hostiles}
+{3080}{}{Cancel}
 {4000}{}{List of initialized simulations:}
 {5000}{}{Choose type:}
 {5010}{}{Hunt}
 {5020}{}{Team deathmatch}
-{5030}{}{Back}
+{5030}{}{Custom location}
+{5040}{}{Back}
 {6000}{}{Choose location:}
 {6010}{}{Green forest labyrinth}
 {6020}{}{Green forest lane}
@@ -107,4 +123,16 @@ Hostiles: @lex spawn@
 {10010}{}{[leave]}
 {11000}{}{For your own safety, you have to be in perfect health to use the simulation. Please, see doctor Claire on first floor.}
 {11010}{}{[leave]}
+{12000}{}{Choose location:}
+{12010}{}{@lex customLocation0@}
+{12020}{}{@lex customLocation1@}
+{12030}{}{@lex customLocation2@}
+{12040}{}{@lex customLocation3@}
+{12050}{}{@lex customLocation4@}
+{12060}{}{@lex customLocation5@}
+{12070}{}{@lex customLocation6@}
+{12080}{}{@lex customLocation7@}
+{12090}{}{@lex customLocation8@}
+{12100}{}{@lex customLocation9@}
+{12110}{}{@lex customLocation10@}
 

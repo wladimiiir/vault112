@@ -4,6 +4,7 @@
 
 #include "_macros.fos"
 #include "battleground_dialog.fos"
+#include "battleground_battles.fos"
 #include "battleground_h.fos"
 #include "admin_h.fos"
 
@@ -174,26 +175,6 @@ void SetBattleground(Critter& cr, int critterId, int battleground, int)
 /**
 * Export functions
 */
-//import Battle@ AddHunt(Critter& creator, uint combatMode) from "battleground";
-Battle@ AddHunt(Critter& creator, uint combatMode)
-{
-	DeleteBattle(creator);
-	
-	Hunt hunt(creator, combatMode);
-	Battles.insertLast(hunt);
-	return hunt;
-}
-
-//import Battle@ AddTeamDeathmatch(Critter& creator, uint combatMode) from "battleground";
-Battle@ AddTeamDeathmatch(Critter& creator, uint combatMode)
-{
-	DeleteBattle(creator);
-	
-	TeamDeathmatch teamDeathmatch(creator, combatMode);
-	Battles.insertLast(teamDeathmatch);
-	return teamDeathmatch;
-}
-
 //import void CancelBattle(Critter& player) from "battleground";
 void CancelBattle(Critter& player)
 {
@@ -269,7 +250,7 @@ void _TurnBasedProcess(Map& map, Critter& critter, bool beginTurn)
 }
 
 /**
-* Classes
+* Entities
 */
 class DefaultBattle : Battle
 {
@@ -758,33 +739,6 @@ uint e_EndBattle(uint[]@ values)
 	battle.End(creator);
 	
 	return 0;
-}
-
-/**
-* Entities
-*/
-class TeamDeathmatch : DefaultBattle
-{
-	TeamDeathmatch(Critter& creator, uint16 combatMode)
-	{
-		super(creator.Id, combatMode);
-		AddTeam();
-		AddTeam();
-	}
-}
-
-class Hunt : DefaultBattle
-{
-	Hunt(Critter& creator, uint combatMode)
-	{
-		super(creator.Id, combatMode);
-		AddTeam(creator.Name);
-	}
-	
-	int GetTeamScore(Team& team) override
-	{
-		return -1;
-	}
 }
 
 class Team

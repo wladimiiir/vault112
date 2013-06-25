@@ -1,0 +1,41 @@
+/**
+* Author: wladimiiir
+*/
+
+#include "_maps.fos"
+
+VRCustomLocation@[] CustomLocations = 
+{
+	VRCustomLocation("BingoBar", LOCATION_BingoBar, "Bingo bar")
+};
+
+VRCustomLocation@ FindCustomLocation(string id)
+{
+	for (uint i = 0; i < CustomLocations.length(); i++)
+		if(CustomLocations[i].Id == id)
+			return CustomLocations[i];
+			
+	return null;
+}
+
+class VRCustomLocation
+{
+	string Id;
+	uint LocationPid;
+	string Name;
+	bool MultiLocation;
+	
+	VRCustomLocation(string id, uint locationPid, string name)
+	{
+		Id = id;
+		LocationPid = locationPid;
+		Name = name;
+		MultiLocation = false;
+	}
+	
+	VRCustomLocation@ SetAsMultiLocation()
+	{
+		MultiLocation = true;
+		return @this;
+	}
+}

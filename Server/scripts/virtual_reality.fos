@@ -5,17 +5,21 @@
 #include "_macros.fos"
 #include "serializator.fos"
 #include "npc_spawn_h.fos"
-#include "virtual_reality_dialog.fos"
 #include "wrappers.fos"
 #include "battleground_h.fos"
+#include "vr_custom_locations.fos"
 
 #define	SIMULATION_TYPE_HUNT				( 0 )
 #define	SIMULATION_TYPE_TEAM_DEATHMATCH		( 1 )
+#define	SIMULATION_TYPE_CUSTOM_LOCATION		( 2 )
+
+#include "virtual_reality_dialog.fos"
 
 import Item@ FindHiddenContainer(Map& map) from "stdlib";
 import bool UpdateItems(Critter& npc) from "trader";
 import Battle@ AddHunt(Critter& creator, uint combatMode) from "battleground";
 import Battle@ AddTeamDeathmatch(Critter& creator, uint combatMode) from "battleground";
+import Battle@ AddCustomLocation(Critter& creator, uint combatMode, string name, bool multiLocation) from "battleground";
 
 /**
 * Init functions
@@ -117,6 +121,7 @@ class VRSimulation
 	private uint Duration;
 	private uint CombatMode;
 	private uint Spawn;
+	private VRCustomLocation@ CustomLocation;
 	
 	VRSimulation(Critter& critter)
 	{
@@ -126,6 +131,7 @@ class VRSimulation
 		Duration = 0;
 		CombatMode = COMBAT_MODE_TURN_BASED;
 		Spawn = NPC_SPAWN_VR_GECKOS;
+		@CustomLocation = CustomLocations.isEmpty() ? null : CustomLocations[0];
 		Load();
 	}
 	
@@ -140,6 +146,11 @@ class VRSimulation
 		serializator.Get(Duration);
 		serializator.Get(CombatMode);
 		serializator.Get(Spawn);
+		
+		string customLocationId;
+		serializator.Get(customLocationId);
+		if(valid(customLocationId))
+			@CustomLocation = FindCustomLocation(customLocationId);
 	}
 	
 	private void Save()
@@ -150,6 +161,7 @@ class VRSimulation
 		serializator.Set(Duration);
 		serializator.Set(CombatMode);
 		serializator.Set(Spawn);
+		serializator.Set(valid(CustomLocation) ? CustomLocation.Id : "");
 		serializator.Save(_GetKey);
 	}
 	
@@ -163,6 +175,11 @@ class VRSimulation
 	{
 		LocationPid = locationPid;
 		Save();
+	}
+	
+	void SetCustomLocation(VRCustomLocation@ location)
+	{
+		@CustomLocation = location;
 	}
 	
 	void SetDuration(uint duration)
@@ -185,12 +202,22 @@ class VRSimulation
 	
 	bool IsDurationAvailable()
 	{
-		return Type == SIMULATION_TYPE_TEAM_DEATHMATCH;
+		switch(Type)
+		{
+			case SIMULATION_TYPE_TEAM_DEATHMATCH:
+				return true;
+		}
+		return false;
 	}
 	
 	bool IsSpawnAvailable()
 	{
-		return Type == SIMULATION_TYPE_HUNT;
+		switch(Type)
+		{
+			case SIMULATION_TYPE_HUNT:
+				return true;
+		}
+		return false;
 	}
 	
 	string GetTypeInfo()
@@ -201,12 +228,22 @@ class VRSimulation
 				return "Hunt";
 			case SIMULATION_TYPE_TEAM_DEATHMATCH:
 				return "Team deathmatch";
+			case SIMULATION_TYPE_CUSTOM_LOCATION:
+				return "Custom location";
 		}
 		return "NA";
 	}
 	
 	string GetLocationInfo()
 	{
+		if(Type == SIMULATION_TYPE_CUSTOM_LOCATION)
+		{
+			if(!valid(CustomLocation))
+				return "Not found";
+			else
+				return CustomLocation.Name;
+				
+		}
 		switch(LocationPid)
 		{
 			case LOCATION_GreenForest1:
@@ -251,16 +288,32 @@ class VRSimulation
 		return "Unknown: " + Spawn;
 	}
 		
+	uint GetType()
+	{
+		return Type;
+	}
+		
 	void Start()
 	{
 		Battle@ battle;
+		uint locationPid;
+		int respawnCount;
 		switch(Type)
 		{
 			case SIMULATION_TYPE_HUNT:
 				@battle = AddHunt(_Critter, CombatMode);
+				locationPid = LocationPid;
+				respawnCount = 0;
 				break;
 			case SIMULATION_TYPE_TEAM_DEATHMATCH:
 				@battle = AddTeamDeathmatch(_Critter, CombatMode);
+				locationPid = LocationPid;
+				respawnCount = -1;
+				break;
+			case SIMULATION_TYPE_CUSTOM_LOCATION:
+				@battle = AddCustomLocation(_Critter, CombatMode, CustomLocation.Name, CustomLocation.MultiLocation);
+				locationPid = CustomLocation.LocationPid;
+				respawnCount = -1;
 				break;
 		}
 		
@@ -270,8 +323,8 @@ class VRSimulation
 			return;
 		}
 
-		battle.SetLocation(LocationPid);
-		battle.SetRespawnCount(0);
+		battle.SetLocation(locationPid);
+		battle.SetRespawnCount(respawnCount);
 		if(IsDurationAvailable())
 			battle.SetDuration(Duration);
 		if(IsSpawnAvailable() && valid(battle.GetMap()))

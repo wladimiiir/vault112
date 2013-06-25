@@ -1,0 +1,96 @@
+/**
+* Author: wladimiiir
+*/
+
+/**
+* Export scripts
+*/
+//import Battle@ AddHunt(Critter& creator, uint combatMode) from "battleground";
+Battle@ AddHunt(Critter& creator, uint combatMode)
+{
+	DeleteBattle(creator);
+	
+	Hunt hunt(creator, combatMode);
+	Battles.insertLast(hunt);
+	return hunt;
+}
+
+//import Battle@ AddTeamDeathmatch(Critter& creator, uint combatMode) from "battleground";
+Battle@ AddTeamDeathmatch(Critter& creator, uint combatMode)
+{
+	DeleteBattle(creator);
+	
+	TeamDeathmatch teamDeathmatch(creator, combatMode);
+	Battles.insertLast(teamDeathmatch);
+	return teamDeathmatch;
+}
+
+//import Battle@ AddCustomLocation(Critter& creator, uint combatMode, string name, bool multiLocation) from "battleground";
+Battle@ AddCustomLocation(Critter& creator, uint combatMode, string name, bool multiLocation)
+{
+	DeleteBattle(creator);
+	
+	CustomLocation customLocation(creator, combatMode, name, multiLocation);
+	Battles.insertLast(customLocation);
+	return customLocation;
+}
+
+
+/**
+* Entities
+*/
+class TeamDeathmatch : DefaultBattle
+{
+	TeamDeathmatch(Critter& creator, uint16 combatMode)
+	{
+		super(creator.Id, combatMode);
+		AddTeam();
+		AddTeam();
+	}
+}
+
+class Hunt : DefaultBattle
+{
+	Hunt(Critter& creator, uint combatMode)
+	{
+		super(creator.Id, combatMode);
+		AddTeam(creator.Name);
+	}
+	
+	int GetTeamScore(Team& team) override
+	{
+		return -1;
+	}
+}
+
+class CustomLocation : DefaultBattle
+{
+	private bool MultiLocation; //if true, location will always be created, false means reusing existing location
+	
+	CustomLocation(Critter& creator, uint combatMode, string name)
+	{
+		super(creator.Id, combatMode);
+		MultiLocation = false;
+		AddTeam(name);
+	}
+	
+	CustomLocation(Critter& creator, uint combatMode, string name, bool multiLocation)
+	{
+		super(creator.Id, combatMode);
+		MultiLocation = multiLocation;
+		AddTeam(name);
+	}
+	
+	void SetLocation(uint locationPid) override
+	{
+		Location@ location = MultiLocation ? null : GetLocationByPid(locationPid, 0);
+		
+		if(!valid(location))
+		{
+			DefaultBattle::SetLocation(locationPid);
+			return;
+		}
+		
+		LocationId = location.Id;
+	}
+}

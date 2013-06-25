@@ -28,6 +28,17 @@ bool d_SpawnAvailable(Critter& player, Critter@ npc)
 	return simulation.IsSpawnAvailable();
 }
 
+bool d_IsCustomLocation(Critter& player, Critter@)
+{
+	VRSimulation simulation(player);
+	return simulation.GetType() == SIMULATION_TYPE_CUSTOM_LOCATION;
+}
+
+bool d_IsNotCustomLocation(Critter& player, Critter@ npc)
+{
+	return !d_IsCustomLocation(player, npc);
+}
+
 void r_SetType(Critter& player, Critter@ npc, int simulationType)
 {
 	VRSimulation simulation(player);
