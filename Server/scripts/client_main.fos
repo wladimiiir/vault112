@@ -178,7 +178,10 @@ string GetHpText(CritterCl& critter, bool awareness)
 	return "|" + color + " " + hpText;
 }
 
-void CheckDirection()
+/**
+* Updates direction of Chosen based on where Aim cursor is pointing to.
+*/
+void UpdateDirection()
 {
 	CritterCl@ chosen = GetChosen();
 	if(!valid(chosen) || GetCurrentCursor() != CURSOR_USE_WEAPON)
@@ -197,7 +200,6 @@ void CheckDirection()
 			
 		uint[] ChangeDir = { CHOSEN_DIR, clockWise ? 0 : 1, 0, 0, 0, 0, 0 };
 		SetChosenActions(ChangeDir);
-		RefreshMap(false, false, false);
 	}
 }
 
@@ -282,7 +284,7 @@ uint loop()
 	RefreshMouseOverText();
 	RefreshOnHeadText();
 	RefreshBattleground();
-	CheckDirection();
+	UpdateDirection();
 	
     return 100;
 }
