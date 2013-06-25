@@ -18,6 +18,46 @@ VRCustomLocation@ FindCustomLocation(string id)
 	return null;
 }
 
+/**
+* Dialog functions
+*/
+bool d_IsCustomLocation(Critter& player, Critter@)
+{
+	VRSimulation simulation(player);
+	return simulation.GetType() == SIMULATION_TYPE_CUSTOM_LOCATION;
+}
+
+bool d_IsNotCustomLocation(Critter& player, Critter@ npc)
+{
+	return !d_IsCustomLocation(player, npc);
+}
+
+bool d_HasCustomLocations(Critter& player, Critter@ npc, int minSize)
+{
+	return CustomLocations.length() >= uint(minSize);
+}
+
+void dlg_InitCustomLocations(Critter& player, Critter@ npc, string@ lexems)
+{
+	if(!IS_DIALOG_GENERATED(lexems))
+		return;
+		
+	for (uint i = 0; i < CustomLocations.length(); i++)
+		lexems += "$customLocation" + i + CustomLocations[i].Name;
+}
+
+void r_SetCustomLocation(Critter& player, Critter@ npc, int index)
+{
+	if(uint(index) >= CustomLocations.length() || index < 0)
+		return;
+	
+	VRSimulation simulation(player);
+	simulation.SetCustomLocation(CustomLocations[index]);
+}
+
+/**
+* Entity
+*/
 class VRCustomLocation
 {
 	string Id;

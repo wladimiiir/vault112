@@ -17,17 +17,17 @@ lang=engl
 3 3000 virtual_reality@dlg_InitSimulation 1 #
 0 3010 R _script virtual_reality@r_StartSimulation 0  #
 5 3020 #
-12 3030 D _script d_IsCustomLocation 0  #
-6 3040 D _script d_IsNotCustomLocation 0  #
+12 3030 D _script virtual_reality@d_IsCustomLocation 0  #
+6 3040 D _script virtual_reality@d_IsNotCustomLocation 0  #
 7 3050 #
 8 3060 D _script virtual_reality@d_DurationAvailable 0  #
 9 3070 D _script virtual_reality@d_SpawnAvailable 0  #
 2 3080 @
 4 4000 None 0 @
 5 5000 None 1 #
-3 5010 R _script virtual_reality@r_SetType 1 1 #
-3 5020 R _script virtual_reality@r_SetType 1 2 #
-3 5030 R _script virtual_reality@r_SetType 1 3 #
+3 5010 R _script virtual_reality@r_SetType 1 0 #
+3 5020 R _script virtual_reality@r_SetType 1 1 #
+3 5030 R _script virtual_reality@r_SetType 1 2 #
 3 5040 @
 6 6000 None 1 #
 3 6010 R _script virtual_reality@r_SetLocation 1 300 #
@@ -54,18 +54,18 @@ lang=engl
 0 10010 @
 11 11000 None 0 #
 0 11010 @
-12 12000 None 1 #
-3 12010 D _script d_HasCustomLocations 1 1 R _script virtual_reality@r_SetCustomLocation 1 0 #
-3 12020 D _script d_HasCustomLocations 1 2 R _script virtual_reality@r_SetCustomLocation 1 1 #
-3 12030 D _script d_HasCustomLocations 1 3 R _script virtual_reality@r_SetCustomLocation 1 2 #
-3 12040 D _script d_HasCustomLocations 1 4 R _script virtual_reality@r_SetCustomLocation 1 3 #
-3 12050 D _script d_HasCustomLocations 1 5 R _script virtual_reality@r_SetCustomLocation 1 4 #
-3 12060 D _script d_HasCustomLocations 1 6 R _script virtual_reality@r_SetCustomLocation 1 5 #
-3 12070 D _script d_HasCustomLocations 1 7 R _script virtual_reality@r_SetCustomLocation 1 6 #
-3 12080 D _script d_HasCustomLocations 1 8 R _script virtual_reality@r_SetCustomLocation 1 7 #
-3 12090 D _script d_HasCustomLocations 1 9 R _script virtual_reality@r_SetCustomLocation 1 8 #
-3 12100 D _script d_HasCustomLocations 1 10 R _script virtual_reality@r_SetCustomLocation 1 9 #
-3 12110 D _script d_HasCustomLocations 1 11 R _script virtual_reality@r_SetCustomLocation 1 10 &
+12 12000 virtual_reality@dlg_InitCustomLocations 1 #
+3 12010 D _script virtual_reality@d_HasCustomLocations 1 1 R _script virtual_reality@r_SetCustomLocation 1 0 #
+3 12020 D _script virtual_reality@d_HasCustomLocations 1 2 R _script virtual_reality@r_SetCustomLocation 1 1 #
+3 12030 D _script virtual_reality@d_HasCustomLocations 1 3 R _script virtual_reality@r_SetCustomLocation 1 2 #
+3 12040 D _script virtual_reality@d_HasCustomLocations 1 4 R _script virtual_reality@r_SetCustomLocation 1 3 #
+3 12050 D _script virtual_reality@d_HasCustomLocations 1 5 R _script virtual_reality@r_SetCustomLocation 1 4 #
+3 12060 D _script virtual_reality@d_HasCustomLocations 1 6 R _script virtual_reality@r_SetCustomLocation 1 5 #
+3 12070 D _script virtual_reality@d_HasCustomLocations 1 7 R _script virtual_reality@r_SetCustomLocation 1 6 #
+3 12080 D _script virtual_reality@d_HasCustomLocations 1 8 R _script virtual_reality@r_SetCustomLocation 1 7 #
+3 12090 D _script virtual_reality@d_HasCustomLocations 1 9 R _script virtual_reality@r_SetCustomLocation 1 8 #
+3 12100 D _script virtual_reality@d_HasCustomLocations 1 10 R _script virtual_reality@r_SetCustomLocation 1 9 #
+3 12110 D _script virtual_reality@d_HasCustomLocations 1 11 R _script virtual_reality@r_SetCustomLocation 1 10 &
 
 [engl]
 {100}{}{none}

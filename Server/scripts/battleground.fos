@@ -7,6 +7,7 @@
 #include "battleground_battles.fos"
 #include "battleground_h.fos"
 #include "admin_h.fos"
+#include "entire.fos"
 
 const string[] TEAMS = {"Team Alpha", "Team Beta", "Team Gamma", "Team Delta"};
 
@@ -208,6 +209,20 @@ void TurnBasedEnd(Map& map)
 /**
 * Init functions
 */
+void InitExitDoor(Item& door, bool)
+{
+	door.SetEvent(ITEM_EVENT_SKILL, "OpenExitDoor");
+}
+
+bool OpenExitDoor(Item& door, Critter& player, int skill)
+{
+	if(skill != SKILL_PICK_ON_GROUND)
+		return false;
+		
+	CancelBattle(player);
+	return true;
+}
+
 void InitMap(Map& map, bool)
 {
 	map.SetEvent(MAP_EVENT_CRITTER_DEAD, "PlayerKilled");
@@ -312,6 +327,11 @@ class DefaultBattle : Battle
 		RespawnCount = respawnCount;
 	}
 	
+	uint GetStartDelay()
+	{
+		return REAL_SECOND(5);
+	}
+	
 	int GetTeamScore(Team& team)
 	{
 		int totalKills = 0;
@@ -372,9 +392,25 @@ class DefaultBattle : Battle
 		Map@[] maps;
 		loc.GetMaps(maps);
 		for (uint i = 0; i < maps.length(); i++)
+		{
 			maps[i].SetScript("InitMap");
+			AddExitDoors(maps[i]);
+		}
 		
 		loc.AutoGarbage = false;
+	}
+	
+	private void AddExitDoors(Map& map)
+	{
+		Entire[] entires;
+		ParseEntires(map, entires, ENTIRE_EXIT_DOOR);
+		
+		for (uint i = 0; i < entires.length(); i++)
+		{
+			Item@ door = map.AddItem(entires[i].HexX, entires[i].HexY, PID_WOODEN_DOOR, 1);
+			if(valid(door))
+				door.SetScript("InitExitDoor");
+		}
 	}
 	
 	bool CanJoin()
@@ -424,7 +460,7 @@ class DefaultBattle : Battle
 		for (uint i = 0; i < Teams.length(); i++)
 			Teams[i].Start(map);
 			
-		StartTime = __FullSecond + REAL_SECOND(10);
+		StartTime = __FullSecond + GetStartDelay();
 		if(CombatMode == COMBAT_MODE_REAL_TIME && Duration != -1)
 		{
 			EndTime = StartTime + Duration;
@@ -850,8 +886,16 @@ class Team
 	void Cancel()
 	{
 		for (uint i = 0; i < Players.length(); i++)
-			if(valid(Players[i].GetCritter()))
-				Players[i].GetCritter().ParamBase[BATTLEGROUND] = BATTLEGROUND_NONE;
+		{
+			Critter@ player = Players[i].GetCritter();
+			if(!valid(player))
+				continue;
+				
+			if(player.Param[BATTLEGROUND] == BATTLEGROUND_STARTED)
+				Players[i].End();
+			else
+				player.ParamBase[BATTLEGROUND] = BATTLEGROUND_NONE;
+		}
 	}
 }
 

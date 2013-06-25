@@ -81,6 +81,11 @@ class CustomLocation : DefaultBattle
 		AddTeam(name);
 	}
 	
+	uint GetStartDelay() override
+	{
+		return 0;
+	}
+	
 	void SetLocation(uint locationPid) override
 	{
 		Location@ location = MultiLocation ? null : GetLocationByPid(locationPid, 0);

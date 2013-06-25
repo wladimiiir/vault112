@@ -7,13 +7,13 @@
 #include "npc_spawn_h.fos"
 #include "wrappers.fos"
 #include "battleground_h.fos"
-#include "vr_custom_locations.fos"
+#include "virtual_reality_dialog.fos"
 
 #define	SIMULATION_TYPE_HUNT				( 0 )
 #define	SIMULATION_TYPE_TEAM_DEATHMATCH		( 1 )
 #define	SIMULATION_TYPE_CUSTOM_LOCATION		( 2 )
 
-#include "virtual_reality_dialog.fos"
+#include "vr_custom_locations.fos"
 
 import Item@ FindHiddenContainer(Map& map) from "stdlib";
 import bool UpdateItems(Critter& npc) from "trader";
@@ -128,7 +128,7 @@ class VRSimulation
 		@_Critter = critter;
 		Type = SIMULATION_TYPE_HUNT;
 		LocationPid = LOCATION_GreenForest2;
-		Duration = 0;
+		Duration = 10;
 		CombatMode = COMBAT_MODE_TURN_BASED;
 		Spawn = NPC_SPAWN_VR_GECKOS;
 		@CustomLocation = CustomLocations.isEmpty() ? null : CustomLocations[0];
@@ -276,6 +276,9 @@ class VRSimulation
 	
 	string GetSpawnInfo()
 	{
+		if(!IsSpawnAvailable())
+			return "NA";
+			
 		switch(Spawn)
 		{
 			case 0:
