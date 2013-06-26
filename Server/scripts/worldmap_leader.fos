@@ -1,0 +1,317 @@
+/**
+* Author: wladimiiir
+*/
+#include "_macros.fos"
+#include "_npc_pids.fos"
+#include "serializator.fos"
+
+import void FindEncounter(Critter@[]& group, Item@ car, uint x, uint y, uint& encounterDescriptor, bool& waitForAnswer, bool empty) from "worldmap";
+import void InviteToEncounter(Critter@[]& group, Item@ car, uint encounterDescriptor, int combatMode, uint& mapId, uint16& hexX, uint16& hexY, uint8& dir) from "worldmap";
+
+/**
+* Entities
+*/
+funcdef void FinishRouteAction(Critter& leader, Critter@[] playerGroup);
+
+dictionary WorldmapLeaderMap;
+
+class WorldmapLeader
+{
+	private uint NpcPid;
+	private uint BagId;
+	private uint[] RouteXs;
+	private uint[] RouteYs;
+	private uint8 CombatMode;
+	private FinishRouteAction@ _FinishRouteAction;
+	
+	WorldmapLeader(uint npcPid)
+	{
+		NpcPid = npcPid;
+		BagId = 0;
+		CombatMode = COMBAT_MODE_TURN_BASED;
+	}
+	
+	WorldmapLeader@ AddRoutePoint(uint routeX, uint routeY)
+	{
+		RouteXs.insertLast(routeX);
+		RouteYs.insertLast(routeY);
+		return @this;
+	}
+	
+	WorldmapLeader@ SetBag(uint bagId)
+	{
+		BagId = bagId;
+		return @this;
+	}
+	
+	WorldmapLeader@ SetCombatMode(uint8 mode)
+	{
+		CombatMode = mode;
+		return @this;
+	}
+	
+	WorldmapLeader@ SetFinishRouteAction(FinishRouteAction@ action)
+	{
+		@_FinishRouteAction = action;
+		return @this;
+	}
+	
+	WorldmapRoute@ CreateRoute(Critter& leader)
+	{
+		WorldmapRoute route(leader);
+		for (uint i = 0; i < RouteXs.length(); i++)
+			route.AddRoutePoint(RouteXs[i], RouteYs[i]);
+			
+		return route;
+	}
+	
+	void RunFinishRouteAction(Critter& leader)
+	{
+		if(!valid(_FinishRouteAction))
+			return;
+		
+		_FinishRouteAction(leader, leader.GetGlobalGroup());
+	}
+	
+	void Start(Map& startMap, Critter@[] playerGroup)
+	{
+		if(playerGroup.isEmpty())
+			return;
+		
+		Critter@ leader = startMap.AddNpc(NpcPid, playerGroup[0].HexX, playerGroup[0].HexY, 0, null, null, "InitWorldmapLeader");
+		if(!valid(leader))
+			return;
+		
+		if(BagId != 0)
+			leader.StatBase[ST_BAG_ID] = BagId;
+		leader.ModeBase[MODE_DEFAULT_COMBAT] = CombatMode;
+		
+		Critter@[] globalGroup = {leader};
+		for (uint i = 0; i < playerGroup.length(); i++)
+			globalGroup.insertLast(playerGroup[i]);
+			
+		WorldmapLeaderMap.set("" + leader.Id, @this);
+		CreateRoute(leader);
+		leader.TransitToGlobal(globalGroup);
+	}
+}
+
+class WorldmapRoute
+{
+	#define _GetKey	("WorldmapRoute_" + Leader.Id)
+	
+	private Critter@ Leader;
+	private uint[] RouteXs;
+	private uint[] RouteYs;
+	private uint CurrentRoutePointIndex;
+	
+	WorldmapRoute(Critter& leader)
+	{
+		@Leader = leader;
+		CurrentRoutePointIndex = 0;
+		Load();
+	}
+	
+	private void Load()
+	{
+		Serializator serializator;
+		if(!serializator.Load(_GetKey))
+			return;
+		
+		uint size = 0;
+		serializator.Get(size);
+		for (uint i = 0; i < size; i++) 
+		{
+			uint routeX = 0;
+			uint routeY = 0;
+			serializator.Get(routeX);
+			serializator.Get(routeY);
+			RouteXs.insertLast(routeX);
+			RouteYs.insertLast(routeY);
+		}
+		serializator.Get(CurrentRoutePointIndex);
+	}
+	
+	private void Save()
+	{
+		Serializator serializator;
+		
+		serializator.Set(RouteXs.length());
+		for (uint i = 0; i < RouteXs.length(); i++)
+		{
+			serializator.Set(RouteXs[i]);
+			serializator.Set(RouteYs[i]);
+		}
+		serializator.Set(CurrentRoutePointIndex);
+		serializator.Save(_GetKey);
+	}
+	
+	private WorldmapLeader@ GetWorldmapLeader()
+	{
+		WorldmapLeader@ leader;
+		WorldmapLeaderMap.get("" + Leader.Id, @leader);
+		return leader;
+	}
+	
+	void AddRoutePoint(uint routeX, uint routeY)
+	{
+		RouteXs.insertLast(routeX);
+		RouteYs.insertLast(routeY);
+		Save();
+	}
+	
+	bool HasEnded()
+	{
+		return CurrentRoutePointIndex >= RouteXs.length();
+	}
+	
+	bool SetNextRoutePoint(float x, float y, float& toX, float& toY)
+	{
+		if(HasEnded())
+			return false;
+		
+		if(float(RouteXs[CurrentRoutePointIndex]) == x 
+			&& float(RouteYs[CurrentRoutePointIndex]) == y)
+		{
+			//go to next point
+			CurrentRoutePointIndex++;
+			Save();
+		}
+			
+		if(CurrentRoutePointIndex >= RouteXs.length())
+			return false;
+		
+		toX = float(RouteXs[CurrentRoutePointIndex]);
+		toY = float(RouteYs[CurrentRoutePointIndex]);
+		
+		return true;
+	}
+	
+	void Finish()
+	{
+		WorldmapLeader@ wmLeader = GetWorldmapLeader();
+		if(valid(wmLeader))
+		{
+			wmLeader.RunFinishRouteAction(Leader);
+		}
+		EraseAnyData(_GetKey);
+	}
+}
+
+/**
+* Init functions and events
+*/
+void InitWorldmapLeader(Critter& leader, bool)
+{
+	leader.StatBase[ST_CHARISMA] = 10;
+	
+	leader.SetEvent(CRITTER_EVENT_GLOBAL_PROCESS, "_LeaderOnGlobal");
+	leader.SetEvent(CRITTER_EVENT_GLOBAL_INVITE, "_LeaderOnInvite");
+    leader.SetEvent(CRITTER_EVENT_DEAD, "_LeaderOnDead");
+    leader.SetEvent(CRITTER_EVENT_SMTH_DEAD, "_LeaderOnSeeSmthDead");
+    leader.SetEvent(CRITTER_EVENT_SMTH_USE_SKILL, "_LeaderOnSmthUseSkill");
+    leader.SetEvent(CRITTER_EVENT_PLANE_END, "_LeaderOnPlaneEnd");
+}
+
+bool _LeaderOnGlobal(Critter& leader, int type, Item@ car, float& x, float& y, float& toX, float& toY, float& speed, uint& encounterDescriptor, bool& waitForAnswer)
+{
+	WorldmapRoute route(leader);
+	Critter@[]@ group = leader.GetGlobalGroup();
+	
+	if(type == GLOBAL_PROCESS_MOVE || type == GLOBAL_PROCESS_STOPPED)
+        if(!IsPlayerInGroup(group))
+        {
+            route.Finish();
+            return true;
+        }
+	
+	if(encounterDescriptor != 0)
+        return false;
+        
+    if(!route.SetNextRoutePoint(x, y, toX, toY))
+    {
+		route.Finish();
+		return true;
+	}
+	
+	if(type != GLOBAL_PROCESS_MOVE)
+	{
+		if(route.HasEnded())
+			route.Finish();
+		
+		speed = GLOBAL_MAP_BASE_SPEED * 10;
+		
+		return true;
+	}
+	
+	waitForAnswer = false;
+	return false;
+}	
+
+bool _LeaderOnInvite(Critter& leader, Item@ car, uint encounterDescriptor, int combatMode, uint& mapId, uint16& hexX, uint16& hexY, uint8& dir)
+{
+	return false;
+}
+
+int _LeaderOnPlaneEnd(Critter& cr, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem)
+{
+	return PLANE_RUN_GLOBAL;
+}
+
+void _LeaderOnDead(Critter& leader, Critter@ killer)
+{
+	
+}
+
+void _LeaderOnSeeSmthDead(Critter& leader, Critter& fromCrit, Critter@ killer)
+{
+	
+}
+
+void _LeaderOnSmthUseSkill(Critter& leader, Critter& fromCr, int skill, Critter@ onCritter, Item@ onItem, Scenery@ onScenery)
+{
+	
+}
+
+bool IsPlayerInGroup(Critter@[]& group)
+{
+    for(uint i = 0; i < group.length(); i++)
+        if(group[i].IsPlayer())
+            return true;
+            
+    return false;
+}
+
+void Test(Critter& critter, int, int, int)
+{
+	WorldmapLeader@ leader = WorldmapLeader(NPC_PID_Claire)
+		.AddRoutePoint(228, 910)
+		.SetFinishRouteAction(FinishRouteTest);
+		
+	Critter@[] players = {critter};
+	leader.Start(critter.GetMap(), players);
+}
+
+void FinishRouteTest(Critter& leader, Critter@[] playerGroup)
+{
+	uint encounterDescriptor = 0;
+	bool waitForAnswer = false;
+
+	FindEncounter(playerGroup, null, leader.WorldX, leader.WorldY, encounterDescriptor, waitForAnswer, true);
+	if(encounterDescriptor != 0)
+	{
+		uint mapId = 0;
+		uint16 hexX = 0, hexY = 0;
+		uint8 dir = 0;
+		
+		InviteToEncounter(playerGroup, null, encounterDescriptor, leader.Mode[MODE_DEFAULT_COMBAT], mapId, hexX, hexY, dir);
+		
+		Map@ map = GetMap(mapId);
+		if(!valid(map))
+			return;
+			
+		for (uint i = 0; i < playerGroup.length(); i++)
+			playerGroup[i].TransitToMap(mapId, hexX, hexY, dir);
+	}
+}
+
