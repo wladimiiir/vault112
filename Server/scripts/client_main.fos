@@ -284,7 +284,9 @@ uint loop()
 	RefreshMouseOverText();
 	RefreshOnHeadText();
 	RefreshBattleground();
-	UpdateDirection();
+	
+	// it actually behaves very stupidly :D
+	// UpdateDirection();
 	
     return 100;
 }
