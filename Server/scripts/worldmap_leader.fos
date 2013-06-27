@@ -22,6 +22,7 @@ class WorldmapLeader
 	private uint[] RouteXs;
 	private uint[] RouteYs;
 	private uint8 CombatMode;
+	private uint[] MapItemPids;
 	private WorldmapLeaderAction@ EncountingEnemyAction;
 	private WorldmapLeaderAction@ ReadyToGoAction;
 	private WorldmapLeaderAction@ FinishAction;
@@ -50,6 +51,12 @@ class WorldmapLeader
 	WorldmapLeader@ SetCombatMode(uint8 mode)
 	{
 		CombatMode = mode;
+		return @this;
+	}
+	
+	WorldmapLeader@ AddMapItem(uint mapItemPid)
+	{
+		MapItemPids.insertLast(mapItemPid);
 		return @this;
 	}
 	
@@ -120,6 +127,25 @@ class WorldmapLeader
 		CancelAction(leader, leader.GetGlobalGroup());
 	}
 	
+	Item@[] AddMapItems(Map& map, Critter& leader)
+	{
+		Item@[] items;
+		uint16 hexX = leader.HexX;
+		uint16 hexY = leader.HexY;
+		map.MoveHexByDir(hexX, hexY, (leader.Dir + 3) % 6, 5);
+		
+		for (uint i = 0; i < MapItemPids.length(); i++)
+		{
+			Item@ item = map.AddItem(hexX, hexY, MapItemPids[i], 1);
+			if(valid(item))
+			{
+				items.insertLast(item);
+				map.MoveHexByDir(hexX, hexY, (leader.Dir + Random(2, 4)) % 6, Random(4, 6));
+			}
+		}
+		return items;
+	}
+	
 	void Start(Map& startMap, Critter@[] playerGroup)
 	{
 		if(playerGroup.isEmpty())
@@ -151,6 +177,7 @@ class WorldmapRoute
 	
 	private Critter@ Leader;
 	private Critter@[] Followers;
+	private Item@[] MapItems;
 	private uint[] RouteXs;
 	private uint[] RouteYs;
 	private uint CurrentRoutePointIndex;
@@ -191,6 +218,16 @@ class WorldmapRoute
 			RouteXs.insertLast(routeX);
 			RouteYs.insertLast(routeY);
 		}
+		
+		serializator.Get(size);
+		for (uint i = 0; i < size; i++) 
+		{
+			uint itemId = 0;
+			serializator.Get(itemId);
+			Item@ item = GetItem(itemId);
+			if(valid(item))
+				MapItems.insertLast(item);
+		}
 		serializator.Get(State);
 		serializator.Get(CurrentRoutePointIndex);
 	}
@@ -209,6 +246,11 @@ class WorldmapRoute
 			serializator.Set(RouteXs[i]);
 			serializator.Set(RouteYs[i]);
 		}
+		
+		serializator.Set(MapItems.length());
+		for (uint i = 0; i < MapItems.length(); i++)
+			serializator.Set(MapItems[i].Id);
+			
 		serializator.Set(State);
 		serializator.Set(CurrentRoutePointIndex);
 		serializator.Save(_GetKey);
@@ -260,6 +302,14 @@ class WorldmapRoute
 			globalGroup.insertLast(Followers[i]);
 			
 		Leader.TransitToGlobal(Followers);
+		
+		if(!MapItems.isEmpty())
+		{
+			for (uint i = 0; i < MapItems.length(); i++)
+				DeleteItem(MapItems[i]);
+			MapItems.resize(0);
+			Save();
+		}
 	}
 	
 	bool SetNextRoutePoint(float x, float y, float& toX, float& toY)
@@ -300,6 +350,25 @@ class WorldmapRoute
 		WorldmapLeader@ wmLeader = GetWorldmapLeader();
 		if(valid(wmLeader))
 			wmLeader.RunReadyToGoAction(Leader);
+	}
+	
+	void InviteToMap(Map& map, uint16 hexX, uint16 hexY, uint8 dir)
+	{
+		Leader.TransitToMap(map.Id, hexX, hexY, dir);
+		for (uint i = 0; i < Followers.length(); i++)
+			Followers[i].TransitToMap(map.Id, hexX, hexY, dir);
+			
+		WorldmapLeader@ wmLeader = GetWorldmapLeader();
+		if(valid(wmLeader))
+		{
+			Item@[] mapItems = wmLeader.AddMapItems(map, Leader);
+			if(!mapItems.isEmpty())
+			{
+				for (uint i = 0; i < mapItems.length(); i++)
+					MapItems.insertLast(mapItems[i]);
+				Save();
+			}
+		}
 	}
 	
 	void Finish()
@@ -378,7 +447,20 @@ bool _LeaderOnGlobal(Critter& leader, int type, Item@ car, float& x, float& y, f
 
 bool _LeaderOnInvite(Critter& leader, Item@ car, uint encounterDescriptor, int combatMode, uint& mapId, uint16& hexX, uint16& hexY, uint8& dir)
 {
-	return false;
+	WorldmapRoute route(leader);
+	if(route.HasEnded())
+		return false;
+	
+	Critter@[]@ group = leader.GetGlobalGroup();
+    InviteToEncounter(group, null, encounterDescriptor, combatMode, mapId, hexX, hexY, dir);
+    
+    Map@ map = GetMap(mapId);
+    if(!valid(map))
+		return true;
+		
+	route.InviteToMap(map, hexX, hexY, dir);
+	
+	return true;
 }
 
 int _LeaderOnPlaneBegin(Critter& leader, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem)
@@ -448,6 +530,8 @@ void Test(Critter& critter, int, int, int)
 		.AddRoutePoint(758, 569)
 		.AddRoutePoint(704, 521)
 		.AddRoutePoint(758, 569)
+		.AddMapItem(PID_WAGON_RED)
+		.AddMapItem(PID_WAGON_GREY)
 		.SetReadyToGoAction(ScheduleToGlobal)
 		.SetEncountingEnemyAction(EnemyFound)
 		.SetCancelAction(DeleteLeader)
@@ -457,7 +541,7 @@ void Test(Critter& critter, int, int, int)
 	leader.Start(critter.GetMap(), players);
 }
 
-#define	CTE_GO_TO_GLOBAL			(564616)
+#define	CTE_GO_TO_GLOBAL							(564616)
 
 void ScheduleToGlobal(Critter& leader, Critter@[]@ playerGroup)
 {
