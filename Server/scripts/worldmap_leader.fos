@@ -279,6 +279,21 @@ class WorldmapRoute
 			Save();
 	}
 	
+	bool IsFollower(Critter& follower)
+	{
+		return Followers.find(follower) >= 0;
+	}
+	
+	void RemoveFollower(Critter& follower)
+	{
+		uint index = Followers.find(follower);
+		if(index >= 0)
+		{
+			Followers.removeAt(index);
+			Save();
+		}
+	}
+	
 	private void SetState(uint8 routeState)
 	{
 		State = routeState;
@@ -298,8 +313,21 @@ class WorldmapRoute
 	void GoToGlobal()
 	{
 		Critter@[] globalGroup = {Leader};
+		bool removed = false;
 		for (uint i = 0; i < Followers.length(); i++)
+		{
+			if(!valid(Followers[i].GetMap()) || Followers[i].GetMap().Id != Leader.GetMap().Id)
+			{
+				//not on same map
+				Followers.removeAt(i);
+				i--;
+				removed = true;
+				continue;
+			}
 			globalGroup.insertLast(Followers[i]);
+		}
+		if(removed)
+			Save();
 			
 		Leader.TransitToGlobal(Followers);
 		
@@ -354,9 +382,12 @@ class WorldmapRoute
 	
 	void InviteToMap(Map& map, uint16 hexX, uint16 hexY, uint8 dir)
 	{
-		Leader.TransitToMap(map.Id, hexX, hexY, dir);
-		for (uint i = 0; i < Followers.length(); i++)
-			Followers[i].TransitToMap(map.Id, hexX, hexY, dir);
+		Critter@[] group = Leader.GetGlobalGroup();
+		
+		for (uint i = 0; i < group.length(); i++)
+			group[i].TransitToMap(map.Id, hexX, hexY, dir);
+
+		Leader.SetHomePos(hexX, hexY, dir);
 			
 		WorldmapLeader@ wmLeader = GetWorldmapLeader();
 		if(valid(wmLeader))
@@ -403,9 +434,8 @@ void InitWorldmapLeader(Critter& leader, bool)
 	
 	leader.SetEvent(CRITTER_EVENT_GLOBAL_PROCESS, "_LeaderOnGlobal");
 	leader.SetEvent(CRITTER_EVENT_GLOBAL_INVITE, "_LeaderOnInvite");
+    leader.SetEvent(CRITTER_EVENT_ATTACKED, "_LeaderOnAttacked");
     leader.SetEvent(CRITTER_EVENT_DEAD, "_LeaderOnDead");
-    leader.SetEvent(CRITTER_EVENT_SMTH_DEAD, "_LeaderOnSeeSmthDead");
-    leader.SetEvent(CRITTER_EVENT_SMTH_USE_SKILL, "_LeaderOnSmthUseSkill");
     leader.SetEvent(CRITTER_EVENT_PLANE_BEGIN, "_LeaderOnPlaneBegin");
     leader.SetEvent(CRITTER_EVENT_PLANE_END, "_LeaderOnPlaneEnd");
 }
@@ -418,7 +448,7 @@ bool _LeaderOnGlobal(Critter& leader, int type, Item@ car, float& x, float& y, f
 	if(type == GLOBAL_PROCESS_MOVE || type == GLOBAL_PROCESS_STOPPED)
         if(!IsPlayerInGroup(group))
         {
-            route.Finish();
+            route.Cancel();
             return true;
         }
 	
@@ -477,7 +507,7 @@ int _LeaderOnPlaneBegin(Critter& leader, NpcPlane& plane, int reason, Critter@ s
 
 int _LeaderOnPlaneEnd(Critter& leader, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem)
 {
-	if(leader.GetPlanes(AI_PLANE_ATTACK, null) == 0)
+	if(plane.Type == AI_PLANE_ATTACK && HasNoEnemies(leader))
 	{
 		WorldmapRoute route(leader);
 		if(!route.HasEnded())
@@ -487,6 +517,28 @@ int _LeaderOnPlaneEnd(Critter& leader, NpcPlane& plane, int reason, Critter@ som
 	return PLANE_RUN_GLOBAL;
 }
 
+bool HasNoEnemies(Critter& npc)
+{
+	if(npc.GetPlanes(AI_PLANE_ATTACK, null) > 0)
+		return false;
+	
+	Map@ map = npc.GetMap();
+	if(!valid(map))
+		return true;
+		
+	Critter@[] critters;
+	map.GetCritters(0, FIND_LIFE_AND_KO, critters);
+	
+	for (uint i = 0; i < critters.length(); i++)
+		if(npc.CheckEnemyInStack(critters[i].Id))
+		{
+			Log("Found enemy critter: " + critters[i].Id);
+			return false;
+		}
+			
+	return true;
+}
+
 void _LeaderOnDead(Critter& leader, Critter@ killer)
 {
 	WorldmapRoute route(leader);
@@ -494,14 +546,16 @@ void _LeaderOnDead(Critter& leader, Critter@ killer)
 		route.Cancel();
 }
 
-void _LeaderOnSeeSmthDead(Critter& leader, Critter& fromCrit, Critter@ killer)
+bool _LeaderOnAttacked(Critter& leader, Critter& attacker)
 {
+	WorldmapRoute route(leader);
+	if(route.IsFollower(attacker))
+	{
+		leader.Say(SAY_NORM_ON_HEAD, "What do you think you are doing?");
+		route.RemoveFollower(attacker);
+	}
 	
-}
-
-void _LeaderOnSmthUseSkill(Critter& leader, Critter& fromCr, int skill, Critter@ onCritter, Item@ onItem, Scenery@ onScenery)
-{
-	
+	return false;
 }
 
 bool IsPlayerInGroup(Critter@[]& group)
@@ -546,6 +600,7 @@ void Test(Critter& critter, int, int, int)
 void ScheduleToGlobal(Critter& leader, Critter@[]@ playerGroup)
 {
 	leader.Say(SAY_NORM, "We are leaving in a few. Get ready");
+	leader.EraseTimeEvents(CTE_GO_TO_GLOBAL);
 	leader.AddTimeEvent("cte_ToGlobal", 10, CTE_GO_TO_GLOBAL);
 }
 
