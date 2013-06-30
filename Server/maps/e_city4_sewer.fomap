@@ -4,8 +4,8 @@ MaxHexX              150
 MaxHexY              150
 WorkHexX             81
 WorkHexY             16
-ScriptModule         mob
-ScriptFunc           _MobsMapInit
+ScriptModule         -
+ScriptFunc           -
 NoLogOut             0
 Time                 0
 DayTime              300  600  1140 1380
