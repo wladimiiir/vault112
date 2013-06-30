@@ -80,14 +80,14 @@ namespace FOnline.AngelScript
                 }
                 else
                 {
-                    Global.Log("Unable to fetch method '{0}'. Maybe it's overloaded?", binder.Name);
+                    ScriptEngine.Log("Unable to fetch method '{0}'. Maybe it's overloaded?", binder.Name);
                     result = null;
                     return false;
                 }
 			} 
 			catch(Exception ex)
 			{
-				Global.Log ("Exception caught while calling into AngelScript runtime: {0}.", ex.Message);
+				ScriptEngine.Log ("Exception caught while calling into AngelScript runtime: {0}.", ex.Message);
 				result = null;
 				return false;
 			}
@@ -168,13 +168,13 @@ namespace FOnline.AngelScript
 					result = ScriptEngine.GetVariable(thisptr + field.Offset, field.TypeId, field.Instance);
                     return true;
                 }
-				Global.Log ("Unable to get member '{0}' from object of type '{1}'.", binder.Name, objectType.Name);
+				ScriptEngine.Log ("Unable to get member '{0}' from object of type '{1}'.", binder.Name, objectType.Name);
 				result = null;
 				return false;
 			}
 			catch(Exception ex)
 			{
-				Global.Log ("Exception caught while getting object member: {0}.", ex.Message);
+				ScriptEngine.Log ("Exception caught while getting object member: {0}.", ex.Message);
 				result = null;
 				return false;
 			}
@@ -202,12 +202,12 @@ namespace FOnline.AngelScript
                     ScriptEngine.SetVariable(thisptr + field.Offset, field.TypeId, value);
                     return true;
                 }
-                Global.Log("Unable to set member '{0}' on object of type '{1}'.", binder.Name, objectType.Name);
+                ScriptEngine.Log("Unable to set member '{0}' on object of type '{1}'.", binder.Name, objectType.Name);
                 return false;
 			}
 			catch(Exception ex)
 			{
-				Global.Log ("Exception caught while getting object member: {0}.", ex.Message);
+				ScriptEngine.Log ("Exception caught while getting object member: {0}.", ex.Message);
 				return false;
 			}
 		}
@@ -227,7 +227,7 @@ namespace FOnline.AngelScript
 			}
 			catch(Exception ex)
 			{
-				Global.Log("Exception caught while indexing object: {0}.", ex.Message);
+				ScriptEngine.Log("Exception caught while indexing object: {0}.", ex.Message);
 				result = null;
 				return true;
 			}

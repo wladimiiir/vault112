@@ -75,7 +75,7 @@ namespace FOnline.AngelScript
 			}
 			catch(Exception ex)
 			{
-				Global.Log ("Exception caught while fetching '{0}' variable of module '{1}': {2}.", binder.Name, Name, ex.Message);
+				ScriptEngine.Log ("Exception caught while fetching '{0}' variable of module '{1}': {2}.", binder.Name, Name, ex.Message);
 				result = null;
 				return false;
 			}
@@ -91,7 +91,7 @@ namespace FOnline.AngelScript
 					var ptr = GetAddressOfGlobalVar(idx);
 					if(ptr == IntPtr.Zero)
 					{
-						Global.Log ("Global variable does not exist.");
+						ScriptEngine.Log ("Global variable does not exist.");
 						return false;
 					}
 					int tid;
@@ -104,7 +104,7 @@ namespace FOnline.AngelScript
 			}
 			catch(Exception ex)
 			{
-				Global.Log ("Exception caught while fetching '{0}' variable of module '{1}': {2}.", Name, binder.Name, ex.Message);		
+				ScriptEngine.Log ("Exception caught while fetching '{0}' variable of module '{1}': {2}.", Name, binder.Name, ex.Message);		
 				return false;
 			}
 		}
@@ -138,14 +138,14 @@ namespace FOnline.AngelScript
                 }
                 else
                 {
-                    Global.Log("Unable to fetch global function: '{0}' from module '{1}'. Maybe it's overloaded?", Name);
+                    ScriptEngine.Log("Unable to fetch global function: '{0}' from module '{1}'. Maybe it's overloaded?", Name);
                     result = null;
                     return false;
                 }
 			} 
 			catch(Exception ex)
 			{
-				Global.Log ("Exception caught while calling into AngelScript runtime: {0}.", ex.Message);
+				ScriptEngine.Log ("Exception caught while calling into AngelScript runtime: {0}.", ex.Message);
 				result = null;
 				return false;
 			}
