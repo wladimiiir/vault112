@@ -1,45 +1,22 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="FOnline.Mono\CritterAction\CritterAction.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|Mixed Platforms" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="FOnline.Server/Program.cs">
     <Files>
-      <File FileName="FOnline.Mono\Program.cs" Line="20" Column="4" />
-      <File FileName="FOnline.Mono\Den\DenBus.cs" Line="18" Column="40" />
-      <File FileName="FOnline.Mono\Items\Lock.cs" Line="20" Column="30" />
-      <File FileName="FOnline.Mono\Critter.cs" Line="8" Column="33" />
-      <File FileName="FOnline.Mono\CritterAction\CritterAction.cs" Line="45" Column="59" />
-      <File FileName="FOnline.Mono\CritterAction\Say.cs" Line="3" Column="33" />
-      <File FileName="FOnline.Mono\CritterAction\ICritterActionManager.cs" Line="8" Column="43" />
-      <File FileName="FOnline.Mono\Core\Critter.NativeMethods.cs" Line="10" Column="6" />
-      <File FileName="FOnline.Mono\CritterAction\Wait.cs" Line="28" Column="22" />
-      <File FileName="FOnline.Mono\Core\Critter.Events.cs" Line="242" Column="10" />
-      <File FileName="FOnline.Mono\CritterAction\Patrol.cs" Line="82" Column="31" />
+      <File FileName="FOnline.Server/BehaviorTrees/Core/BehaviorBuilder.cs" Line="4" Column="21" />
+      <File FileName="FOnline.Server/Common.cs" Line="1" Column="1" />
+      <File FileName="FOnline.Server/BehaviorTrees/Core/Blackboard.cs" Line="1" Column="1" />
+      <File FileName="FOnline.Server/BehaviorTrees/Core/Sequence.cs" Line="13" Column="39" />
+      <File FileName="FOnline.Server/BehaviorTrees/Core/TaskState.cs" Line="1" Column="1" />
+      <File FileName="FOnline.Server/BehaviorTrees/Core/Task.cs" Line="1" Column="1" />
+      <File FileName="FOnline.Server/BehaviorTrees/Core/Selector.cs" Line="14" Column="4" />
+      <File FileName="FOnline.Server/Program.cs" Line="22" Column="40" />
     </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State expanded="True">
-          <Node name="FOnline.Mono" expanded="True">
-            <Node name="Core" expanded="True" />
-            <Node name="CritterAction" expanded="True">
-              <Node name="CritterAction.cs" selected="True" />
-            </Node>
-          </Node>
-        </State>
-      </Pad>
-      <Pad Id="ClassPad">
-        <State expanded="True">
-          <Node name="FOnline.Mono" expanded="True">
-            <Node name="FOnline" expanded="True">
-              <Node name="FOnline.Critter" expanded="True">
-                <Node name="Finish" selected="True" />
-              </Node>
-            </Node>
-          </Node>
-        </State>
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.FOnline.Server>
+    <MonoDevelop.Ide.CustomExecutionModes />
+  </MonoDevelop.Ide.ItemProperties.FOnline.Server>
 </Properties>

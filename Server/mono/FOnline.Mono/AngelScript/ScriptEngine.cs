@@ -167,5 +167,14 @@ namespace FOnline.AngelScript
                     throw new InvalidOperationException("Cannot handle type with id: " + tid);
 			}
 		}
+        static ILogging logger = new Logging();
+        public static void Log(string msg)
+        {
+            logger.Log(msg);
+        }
+        public static void Log(string msg, params object[] args)
+        {
+            logger.Log(msg, args);
+        }
     }
 }
