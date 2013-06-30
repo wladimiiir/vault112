@@ -1446,6 +1446,11 @@
 {101112}{}{145}
 {101113}{}{350}
 
+#Junkyard, pid 3, 103000
+{103000}{}{Junkyard}
+{103005}{}{Place full of junk and old stuff. Local manager seems to be an inovative genius and very handy ghoul.}
+{103030}{}{art\intrface\wm_junkyard.png}
+
 # Desert encounter 1, pid 101, base 201000
 {201000}{}{Desert}
 {201005}{}{Ordinary desert.}
