@@ -7,9 +7,9 @@ import void GenerateCavernEncounter( Map@ map, Critter@[] @ critters ) from "cav
 import void AddGraves(Map& map, Critter@[]@ players) from "grave";
 import void AddResources(Map& map, Critter@[]@ players) from "resources";
 
-#define ZONE_COUNT_X                       ( 25 )
-#define ZONE_COUNT_Y                       ( 30 )
-#define ZONE_LENGTH                        ( 60 )
+#define ZONE_COUNT_X                       ( 28 )
+#define ZONE_COUNT_Y                       ( 16 )
+#define ZONE_LENGTH                        ( 65 )
 
 #define STR_VIEW                           ( 10000010 )   // {10000010}{}{Вы наткнулись на @lex who@.}
 #define STR_VIEW_WITH_PLAYER               ( 10000011 )   // {10000011}{}{Вы наткнулись на @lex who@ и @lex player@.}
