@@ -15,7 +15,7 @@ namespace FOnline.BT
 
 		public override TaskState Execute ()
 		{
-			GetBlackboard().Critter.Say(how, text);
+			GetBlackboard ().Critter.Say (how, text);
 			return TaskState.Success;
 		}
 	}

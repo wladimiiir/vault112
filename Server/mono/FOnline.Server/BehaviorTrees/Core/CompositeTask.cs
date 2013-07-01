@@ -5,7 +5,7 @@ namespace FOnline.BT
 {
 	public abstract class CompositeTask : Task
 	{
-		protected IList<Task> SubTasks;
+		protected IList<Task> SubTasks = new List<Task> ();
 
 		public CompositeTask ()
 		{
@@ -14,19 +14,16 @@ namespace FOnline.BT
 		public override TaskState GetState ()
 		{
 			var state = TaskState.Ready;
-			foreach (var task in SubTasks) {
-				switch (task.GetState ()) {
-				case TaskState.Running:
-					return TaskState.Running;
-				case TaskState.Success:
-					state = TaskState.Success;
-					break;
-				case TaskState.Failed:
-					return TaskState.Failed;
-				default:
-					break;
-				}
-			}
+//			foreach (var task in SubTasks) {
+//				switch (task.GetState ()) {
+//				case TaskState.Running:
+//					return TaskState.Running;
+//				case TaskState.Failed:
+//					return TaskState.Failed;
+//				default:
+//					break;
+//				}
+//			}
 			return state;
 		}
 

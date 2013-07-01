@@ -22,8 +22,7 @@ namespace FOnline.BT
 		{
 			TaskState state = base.GetState ();
 			if (state == TaskState.Running) {
-				if(Global.FullSecond >= waitUntil)
-				{
+				if (Global.FullSecond >= waitUntil) {
 					state = TaskState.Success;
 					State = TaskState.Ready;
 				}
@@ -33,7 +32,7 @@ namespace FOnline.BT
 
 		public override TaskState Execute ()
 		{
-			waitUntil = (uint) (Global.FullSecond + Global.Random((int) waitTimeFrom, (int) waitTimeTo));
+			waitUntil = (uint)(Global.FullSecond + Global.Random ((int)waitTimeFrom, (int)waitTimeTo));
 			State = waitUntil > Global.FullSecond ? TaskState.Running : TaskState.Success;
 			return state;
 		}

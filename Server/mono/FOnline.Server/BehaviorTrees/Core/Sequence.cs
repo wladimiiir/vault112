@@ -16,9 +16,7 @@ namespace FOnline.BT
 				return TaskState.Failed;
 			var currentTask = SubTasks [currentTaskIndex];
 			
-			ProcessByState(currentTask, currentTask.GetState());
-			
-			return TaskState.Failed;
+			return ProcessByState (currentTask, currentTask.GetState ());
 		}
 		
 		private TaskState ProcessByState (Task processedTask, TaskState state)
@@ -50,10 +48,10 @@ namespace FOnline.BT
 		
 		private TaskState ExecuteSubTask (Task subTask)
 		{
-			var state = subTask.Execute();
-			if(state == TaskState.Ready)
+			var state = subTask.Execute ();
+			if (state == TaskState.Ready)
 				return TaskState.Success; //maybe failed as this is unexpected
-			return ProcessByState(subTask, state);
+			return ProcessByState (subTask, state);
 		}
 	}
 }

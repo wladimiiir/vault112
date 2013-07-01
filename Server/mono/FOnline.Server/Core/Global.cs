@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.CompilerServices;
+using FOnline.BT;
 
 namespace FOnline
 {
@@ -22,6 +23,7 @@ namespace FOnline
             ItemManager = new ItemManager();
             Math = new Math();
             AnyData = new AnyData();
+			BTController = new Controller();
         }
         # region Critter manager
         public static ICritterManager CritterManager { get; set; }
@@ -586,6 +588,14 @@ namespace FOnline
             Misc.EraseTextListener(say_type, first_str, parameter);
         }
 		#endregion
+		#region Behavior Tree API
+		public static Controller BTController { get; set; }
+		public static void RegisterBehaviorTask(Task task)
+		{
+			BTController.RegisterTask(task);
+		}
+		#endregion
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         extern static void Global_GC();
         public static void CollectScriptGarbage()

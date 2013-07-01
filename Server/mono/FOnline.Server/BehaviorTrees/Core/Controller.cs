@@ -28,6 +28,7 @@ namespace FOnline.BT
 
 		public void RegisterTask(Task task)
 		{
+			Global.Log("Registering task...");
 			tasks.Add(task);
 		}
 
