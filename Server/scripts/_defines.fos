@@ -1489,9 +1489,10 @@
 # endif
 
 //loading Critter action DSL
-# ifdef __SERVER
+//Disabling for now until it gets to usable state
+/*# ifdef __SERVER
 #  pragma bindfunc "void InitCritterActionDSL() -> cam.dll InitLibrary"
-# endif
+# endif*/
 
 #endif // SKIP_PRAGMAS
 

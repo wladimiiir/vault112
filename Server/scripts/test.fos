@@ -1982,7 +1982,7 @@ void SetMikeWall( Critter& cr, int, int, int)
 	cr.AddItem(PID_5MM_JHP, 1000);
 }
 
-void TestCritterAction( Critter& cr, int, int, int)
+/*void TestCritterAction( Critter& cr, int, int, int)
 {
 	Map@ map = cr.GetMap();
 	if(!valid(map))
@@ -2096,7 +2096,7 @@ class TestAction : Action
 		return true;
 	}
 	
-	void Perform(Critter& critter) { Finish(critter); /*do your action stuff in overriden function*/}
+	void Perform(Critter& critter) { Finish(critter);}
 	
 	void Finish(Critter& critter) final
 	{
@@ -2198,4 +2198,4 @@ class TestCondition : Condition
 void Info(string info)
 {
 	Log(info);
-}
+}*/

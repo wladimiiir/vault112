@@ -38,8 +38,9 @@ class ActionManager
 				_SetQueuedAction(critter, @action);
 				break;
 			case CRITTER_ACTION_MANAGER_MODE_DLL:
-				InitCritterEvents("cam.dll@", critter);
-				StartCritterAction(critter, action, false);
+				//disabling for now
+				//InitCritterEvents("cam.dll@", critter);
+				//StartCritterAction(critter, action, false);
 				break;
 		}
 	}
@@ -54,8 +55,9 @@ class ActionManager
 				action.Start(critter);
 				break;
 			case CRITTER_ACTION_MANAGER_MODE_DLL:
-				InitCritterEvents("cam.dll@", critter);
-				StartCritterAction(critter, action, true);
+				//disabling for now
+				//InitCritterEvents("cam.dll@", critter);
+				//StartCritterAction(critter, action, true);
 				break;
 		}
 	}
@@ -360,7 +362,7 @@ class ActionManager
 	}
 }
 
-/*shared interface Action
+shared interface Action
 {
 	Action@ GetSuperAction();
 	void SetSuperAction(Action@ action);
@@ -392,7 +394,7 @@ class ActionManager
 	int PlaneBeginEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem);
 	int PlaneRunEvent(Critter& critter, NpcPlane& plane, int reason, uint& result0, uint& result1, uint& result2);
 	int PlaneEndEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem);
-}*/
+}
 
 class DefaultAction : Action
 {
@@ -1010,10 +1012,10 @@ string@ GetName(Critter& critter, Critter@ otherCritter)
 	return "" + otherCritter.Name;
 }
 
-/*shared interface Condition
+shared interface Condition
 {
 	bool Check(Critter& critter, Critter@ otherCritter, Item@ item);
-}*/
+}
 
 void Info(string& message)
 {
