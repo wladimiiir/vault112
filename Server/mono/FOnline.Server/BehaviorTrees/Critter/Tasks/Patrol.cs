@@ -6,7 +6,7 @@ namespace FOnline.BT
 	{
 		private int entireNumber;
 		private bool run;
-		private int currentIdentifier = -1;
+		private uint currentIdentifier = 0;
 
 		public Patrol (int entireNumber, bool run = false)
 		{
@@ -17,9 +17,9 @@ namespace FOnline.BT
 		public override TaskState GetState ()
 		{
 			if (state == TaskState.Running) {
-				if (currentIdentifier == -1 
-					|| GetCritter ().GetPlanes (CritterDefines.PlaneIdentifier.Patrol, currentIdentifier, null) == 0) {
-					currentIdentifier = -1;
+				if (currentIdentifier == 0 
+					|| GetCritter ().GetPlanes ((int)CritterDefines.PlaneIdentifier.Patrol, currentIdentifier, null) == 0) {
+					currentIdentifier = 0;
 					State = TaskState.Ready;
 					return TaskState.Success;
 				}
@@ -29,24 +29,27 @@ namespace FOnline.BT
 
 		public override TaskState Execute ()
 		{
-			short hexX = GetCritter ().HexX;
-			short hexY = GetCritter ().HexY;
+			ushort hexX = GetCritter ().HexX;
+			ushort hexY = GetCritter ().HexY;
 
 			if (!FindPatrolHex (ref hexX, ref hexY))
 				return TaskState.Failed;
 
 			var dir = Global.GetDirection (GetCritter ().HexX, GetCritter ().HexY, hexX, hexY);
-			currentIdentifier = GetBlackboard ().GenerateUID ();
-			NpcPlanes.AddWalkPlane (PlaneType.Walk, CritterDefines.PlaneIdentifier.Patrol, currentIdentifier, dir, run, 0);
+			currentIdentifier = GetBlackboard ().GenerateUID ("Patrol");
+			NpcPlanes.AddWalkPlane (GetCritter (), (uint)PlaneType.Walk, (int)CritterDefines.PlaneIdentifier.Patrol, currentIdentifier, hexX, hexY, dir, run, 0);
+			GetCritter ().SetHomePos (hexX, hexY, dir);
+			State = TaskState.Running;
 
 			return TaskState.Running;
 		}
 
-		private bool FindPatrolHex (ref short hexX, ref short hexY)
+		private bool FindPatrolHex (ref ushort hexX, ref ushort hexY)
 		{
 			var map = GetCritter ().GetMap ();
-			if (map == null)
+			if (map == null) {
 				return false;
+			}
 
 			UIntArray entires = new UIntArray ();
 			UInt16Array hexXs = new UInt16Array ();
@@ -57,7 +60,7 @@ namespace FOnline.BT
 				return false;
 
 			for (int i = 0; i < 10; i++) {
-				var index = Global.Random (0, entireCount - 1);
+				var index = Global.Random (0, (int)entireCount - 1);
 				if (hexX != hexXs [index] && hexY != hexYs [index]) {
 					hexX = hexXs [index];
 					hexY = hexYs [index];

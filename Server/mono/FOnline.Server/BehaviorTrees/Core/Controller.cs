@@ -6,38 +6,41 @@ namespace FOnline.BT
 {
 	public class Controller
 	{
-		private IList<Task> tasks = new List<Task>();
+		private IList<Task> tasks = new List<Task> ();
 		private Timer executeTimer;
 
 		public Controller ()
 		{
 		}
 
-		public void Start()
+		public void Start ()
 		{
-			executeTimer = new Timer(Execute, null, 0, 100);
+			executeTimer = new Timer (Execute, null, 0, 300);
 		}
 
 		public void Stop ()
 		{
 			if (executeTimer != null) {
-				executeTimer.Dispose();
+				executeTimer.Dispose ();
 				executeTimer = null;
 			}
 		}
 
-		public void RegisterTask(Task task)
+		public void RegisterTask (Task task)
 		{
-			Global.Log("Registering task...");
-			tasks.Add(task);
+			tasks.Add (task);
 		}
 
 		void Execute (Object state)
 		{
 			foreach (var task in tasks) {
-				if(task.GetState() == TaskState.Running)
+				if (task.GetState () == TaskState.Running)
 					continue;
-				task.Execute();
+				try {
+					task.Execute ();
+				} catch (Exception ex) {
+					Global.Log ("Exception occured: " + ex.Message + "\n" + ex.ToString ());
+				}
 			}
 		}
 	}

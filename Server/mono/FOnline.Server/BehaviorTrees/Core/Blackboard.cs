@@ -19,10 +19,11 @@ namespace FOnline.BT
 		{
 			lock (Lock) {
 				if (uids.ContainsKey (key)) {
-					uids.Add (key, 1);
+					uids[key] = uids [key] + 1;
 				} else {
-					uids.Add (key, uids [key] + 1);
+					uids.Add (key, 1);
 				}
+				Global.Log ("Returning uid: "+ uids[key]);
 				return uids [key];
 			}
 		}
