@@ -1,47 +1,16 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|Mixed Platforms" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="FOnline.Server\BehaviorTrees\Critter\Tasks\ChangeDirection.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="FOnline.Server/Program.cs">
     <Files>
-      <File FileName="FOnline.Server\BehaviorTrees\Core\BehaviorBuilder.cs" Line="30" Column="73" />
-      <File FileName="FOnline.Server\Common.cs" Line="95" Column="9" />
-      <File FileName="FOnline.Server\BehaviorTrees\Core\Blackboard.cs" Line="1" Column="1" />
-      <File FileName="FOnline.Server\BehaviorTrees\Core\Sequence.cs" Line="13" Column="39" />
-      <File FileName="FOnline.Server\BehaviorTrees\Core\TaskState.cs" Line="1" Column="1" />
-      <File FileName="FOnline.Server\BehaviorTrees\Core\Task.cs" Line="20" Column="3" />
-      <File FileName="FOnline.Server\BehaviorTrees\Core\Selector.cs" Line="14" Column="4" />
-      <File FileName="FOnline.Server\Program.cs" Line="36" Column="33" />
-      <File FileName="FOnline.Server\BehaviorTrees\Core\Controller.cs" Line="41" Column="5" />
-      <File FileName="FOnline.Server\Roles\Roles.cs" Line="10" Column="4" />
-      <File FileName="FOnline.Server\Core\Global.cs" Line="18" Column="43" />
-      <File FileName="FOnline.Server\BehaviorTrees\Critter\CritterBehaviorBuilder.cs" Line="6" Column="87" />
-      <File FileName="FOnline.Server\BehaviorTrees\Critter\CritterTask.cs" Line="14" Column="89" />
-      <File FileName="FOnline.Server\BehaviorTrees\Core\CompositeTask.cs" Line="22" Column="32" />
-      <File FileName="FOnline.Server\BehaviorTrees\Critter\Tasks\Say.cs" Line="15" Column="3" />
-      <File FileName="FOnline.Server\BehaviorTrees\Critter\Tasks\Wait.cs" Line="15" Column="4" />
-      <File FileName="FOnline.Server\BehaviorTrees\Critter\Tasks\ChangeDirection.cs" Line="54" Column="22" />
-      <File FileName="FOnline.Server\Core\Map.NativeMethods.cs" Line="507" Column="9" />
+      <File FileName="FOnline.Server/BehaviorTrees/Core/BehaviorBuilder.cs" Line="4" Column="21" />
+      <File FileName="FOnline.Server/Common.cs" Line="1" Column="1" />
+      <File FileName="FOnline.Server/BehaviorTrees/Core/Blackboard.cs" Line="1" Column="1" />
+      <File FileName="FOnline.Server/BehaviorTrees/Core/Sequence.cs" Line="5" Column="39" />
+      <File FileName="FOnline.Server/BehaviorTrees/Core/TaskState.cs" Line="1" Column="1" />
+      <File FileName="FOnline.Server/BehaviorTrees/Core/Task.cs" Line="1" Column="1" />
+      <File FileName="FOnline.Server/BehaviorTrees/Core/Selector.cs" Line="14" Column="4" />
+      <File FileName="FOnline.Server/Program.cs" Line="21" Column="4" />
     </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State expanded="True">
-          <Node name="FOnline.Server" expanded="True">
-            <Node name="BehaviorTrees" expanded="True">
-              <Node name="Core" expanded="True" />
-              <Node name="Critter" expanded="True">
-                <Node name="Tasks" expanded="True">
-                  <Node name="ChangeDirection.cs" selected="True" />
-                </Node>
-              </Node>
-            </Node>
-            <Node name="Core" expanded="True" />
-            <Node name="Roles" expanded="True" />
-          </Node>
-        </State>
-      </Pad>
-      <Pad Id="ClassPad">
-        <State expanded="True" selected="True" />
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

@@ -128,6 +128,11 @@
     <Compile Include="BehaviorTrees\Map\MapBlackboard.cs" />
     <Compile Include="BehaviorTrees\Map\MapTask.cs" />
     <Compile Include="BehaviorTrees\Utils\EntityContainer.cs" />
+    <Compile Include="BehaviorTrees\Critter\Tasks\ChangeDirection.cs" />
+    <Compile Include="BehaviorTrees\Critter\Tasks\Patrol.cs" />
+    <Compile Include="BehaviorTrees\Critter\Tasks\Defines.cs" />
+    <Compile Include="Roles\Roles.cs" />
+    <Compile Include="BehaviorTrees\Critter\Tasks\Composites\LookAround.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="readme.txt" />
@@ -159,6 +164,8 @@
   -->
   <ItemGroup>
     <Folder Include="BehaviorTrees\" />
+    <Folder Include="Roles\" />
+    <Folder Include="BehaviorTrees\Critter\Tasks\Composites\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FOnline.Mono\FOnline.Mono.csproj">

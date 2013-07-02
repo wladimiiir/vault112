@@ -32,6 +32,11 @@ namespace FOnline.BT
 			SubTasks.Add (task);
 			return this;
 		}
+
+		public IList<Task> GetTasks ()
+		{
+			return SubTasks;
+		}
 	}
 }
 

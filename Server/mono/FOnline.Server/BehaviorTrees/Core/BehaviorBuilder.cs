@@ -29,6 +29,17 @@ namespace FOnline.BT
 		{
 			return compositeQueue.Count == 0 ? mainTask : compositeQueue.Peek ();
 		}
+
+		public BuilderType Do (CompositeTask compositeTask)
+		{
+			foreach (var task in compositeTask.GetTasks()) {
+				var leafTask = task as LeafTask<BlackboardType>;
+				if (leafTask != null)
+					leafTask.Blackboard = this.blackboard;
+			}
+			GetCurrentTask().AddTask(compositeTask);
+			return (BuilderType)this;
+		}
 		
 		public BuilderType Do (TaskType task)
 		{
