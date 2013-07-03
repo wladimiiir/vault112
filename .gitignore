@@ -1,14 +1,19 @@
-*.fomapb
-*.fosb
-*.fosp
+/Server/maps/*.fomapb
+/Server/scripts/*.fosb
+/Server/scripts/*.fosp
+/Server/scripts/geany_run_script.sh
 /Client/data/CrashDump*
-/Server/save/*
+/Client/FOnline.cfg
+/Client/FOnline.log
+/Server/save/**
+/Tools/Fonline Critter Proto Editor v0.54.0/CritterProtoEditor.ini
 /Tools/Fonline Critter Proto Editor v0.54.0/BackupServerFiles/*
 /Tools/ObjectEditor/listview.bin
 /Tools/ObjectEditor/ObjectEditor.log
 /Tools/ObjectEditor/ObjectEditor.user.cfg
 /Tools/ObjectEditor/Template.lang
-/Client/data/cache/*default.cache
+/Tools/EncounterEditor/settings.ini
+/Client/data/cache/**
 /Tools/TiledMapper/TiledMapper.cfg
 /Tools/TraderEditor/settings.ini
 /Client/data/sound/music/*
