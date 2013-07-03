@@ -87,6 +87,10 @@ namespace FOnline
         {
             return ElapsedTime + seconds;
         }
+		public static uint RealMillisecond(uint ms)
+		{
+			return Global.TimeMultiplier * ms / 1000;
+		}
 		public static uint RealSecond(uint seconds)
 		{
 			return Global.TimeMultiplier * seconds;
