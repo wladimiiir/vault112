@@ -52,7 +52,6 @@ namespace FOnline.BT
 					return TaskState.Failed;
 
 				GetCritter ().MoveToDir (newDirection);
-				Global.Log ("Moving to dir");
 			}
 
 			SetHomePos ();

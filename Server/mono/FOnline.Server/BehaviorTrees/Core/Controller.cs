@@ -7,28 +7,28 @@ namespace FOnline.BT
 	public class Controller
 	{
 		private IList<Task> tasks = new List<Task> ();
-		private Timer executeTimer;
-
-		public Controller ()
-		{
-		}
+		private static bool running = false;
 
 		public void Start ()
 		{
-			executeTimer = new Timer (Execute, null, 0, 300);
+			running = true;
+			Global.CreateTimeEvent (Global.FullSecond + Time.RealSecond (1), ExecuteTasks, false);
 		}
 
 		public void Stop ()
 		{
-			if (executeTimer != null) {
-				executeTimer.Dispose ();
-				executeTimer = null;
-			}
+			running = false;
 		}
 
 		public void RegisterTask (Task task)
 		{
 			tasks.Add (task);
+		}
+
+		public static uint ExecuteTasks(IntPtr ptr)
+		{
+			Global.BTController.Execute (null);
+			return running ? Time.RealMillisecond (200) : 0;
 		}
 
 		void Execute (Object state)

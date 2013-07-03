@@ -9,7 +9,7 @@ namespace FOnline.BT
 		private EntityContainer<Item> itemContainer = new EntityContainer<Item> ();
 		private EntityContainer<Location> locationContainer = new EntityContainer<Location> ();
 		private Dictionary<string, uint> uids = new Dictionary<string, uint> ();
-		private readonly object Lock = new object ();
+		//private readonly object Lock = new object ();
 
 		public Blackboard ()
 		{
@@ -17,15 +17,15 @@ namespace FOnline.BT
 
 		public uint GenerateUID (string key)
 		{
-			lock (Lock) {
+			//locking not needed for now as we have only one-thread
+			//lock (Lock) {
 				if (uids.ContainsKey (key)) {
 					uids[key] = uids [key] + 1;
 				} else {
 					uids.Add (key, 1);
 				}
-				Global.Log ("Returning uid: "+ uids[key]);
 				return uids [key];
-			}
+			//}
 		}
 
 		public void AddCritters (string key, params Critter[] critters)
