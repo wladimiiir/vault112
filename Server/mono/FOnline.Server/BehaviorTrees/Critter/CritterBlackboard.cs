@@ -2,11 +2,17 @@ using System;
 
 namespace FOnline.BT
 {
+	public static class BlackboardKeys
+	{
+		public const string Attackers = "Attackers";
+		public const string Killers = "Killers";
+
+		public const string ToAttack = "ToAttack";
+	}
+
 	public class CritterBlackboard : Blackboard
 	{
 		private Critter critter;
-		private Critter attacker;
-		private Critter killer;
 
 		public CritterBlackboard (Critter critter)
 		{
@@ -17,10 +23,11 @@ namespace FOnline.BT
 		private void InitEvents (FOnline.Critter critter)
 		{
 			critter.Attacked += (sender, e) => {
-				attacker = e.Attacker;
+				AddCritters (BlackboardKeys.Attackers, e.Attacker);
 			};
 			critter.Dead += (sender, e) => {
-				killer = e.Killer;
+				if (e.Killer != null)
+					AddCritters (BlackboardKeys.Killers, e.Killer);
 			};
 		}
 
@@ -29,24 +36,11 @@ namespace FOnline.BT
 				return this.critter;
 			}
 		}
+	}
 
-		public Critter Attacker {
-			get {
-				return this.attacker;
-			}
-			set {
-				attacker = value;
-			}
-		}
+	public static class Message
+	{
 
-		public Critter Killer {
-			get {
-				return this.killer;
-			}
-			set {
-				killer = value;
-			}
-		}
 	}
 }
 

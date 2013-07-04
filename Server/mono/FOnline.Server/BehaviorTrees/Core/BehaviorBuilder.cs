@@ -30,6 +30,14 @@ namespace FOnline.BT
 			return compositeQueue.Count == 0 ? mainTask : compositeQueue.Peek ();
 		}
 
+		public BuilderType When (Condition<BlackboardType> condition)
+		{
+			//start sequence with condition as first task
+			DoSequence ();
+			GetCurrentTask ().AddTask (condition);
+			return (BuilderType)this;
+		}
+
 		public BuilderType Do (CompositeTask compositeTask)
 		{
 			foreach (var task in compositeTask.GetTasks()) {
@@ -37,7 +45,7 @@ namespace FOnline.BT
 				if (leafTask != null)
 					leafTask.Blackboard = this.blackboard;
 			}
-			GetCurrentTask().AddTask(compositeTask);
+			GetCurrentTask ().AddTask (compositeTask);
 			return (BuilderType)this;
 		}
 		

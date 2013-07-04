@@ -30,10 +30,13 @@ namespace FOnline
 			CritterBehaviorBuilder builder = new CritterBehaviorBuilder (npc);
 			
 			builder
+				.DoSelection ()
+					.Do (new Attack("dsadsa"))
+				.End ()
 				.DoSequence ()
 					.Do (new BT.Say (FOnline.Say.NormOnHead, "Patrolling..."))
 					.Do (new Patrol (401))
-					.Do (new LookAround(3, Time.RealSecond(3)))
+					.Do (new LookAround (3, Time.RealSecond (3)))
 					.Do (new Wait (Time.RealSecond (3), Time.RealSecond (10)))
 				.End ();
 			

@@ -133,6 +133,12 @@
     <Compile Include="BehaviorTrees\Critter\Tasks\Defines.cs" />
     <Compile Include="Roles\Roles.cs" />
     <Compile Include="BehaviorTrees\Critter\Tasks\Composites\LookAround.cs" />
+    <Compile Include="BehaviorTrees\Critter\Tasks\CallReinforcements.cs" />
+    <Compile Include="BehaviorTrees\Core\Condition.cs" />
+    <Compile Include="BehaviorTrees\Critter\CritterCondition.cs" />
+    <Compile Include="BehaviorTrees\Critter\Tasks\Condition\PlayerAttacks.cs" />
+    <Compile Include="BehaviorTrees\Critter\Tasks\Attack.cs" />
+    <Compile Include="BehaviorTrees\Core\Condition\ICondition.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="readme.txt" />
@@ -166,6 +172,8 @@
     <Folder Include="BehaviorTrees\" />
     <Folder Include="Roles\" />
     <Folder Include="BehaviorTrees\Critter\Tasks\Composites\" />
+    <Folder Include="BehaviorTrees\Critter\Tasks\Condition\" />
+    <Folder Include="BehaviorTrees\Core\Condition\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FOnline.Mono\FOnline.Mono.csproj">

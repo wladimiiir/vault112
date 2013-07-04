@@ -48,6 +48,22 @@ namespace FOnline.BT
 			critterContainer.Clear (key);
 		}
 
+		public bool HasCritter (string key)
+		{
+			return critterContainer.HasEntity(key);
+		}
+
+		public IList<Critter> GetCritters (params string[] keys)
+		{
+			IList<Critter> critters = new List<Critter>();
+			foreach (var key in keys) {
+				foreach (var critter in critterContainer.GetEntities(key)) {
+					critters.Add(critter);
+				}
+			}
+			return critters;
+		}
+
 		public void AddItems (string key, params Item[] items)
 		{
 			itemContainer.AddEntities (key, items);

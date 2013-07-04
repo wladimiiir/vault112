@@ -45,6 +45,16 @@ namespace FOnline.BT
 		{
 			GetEntityList(key).Clear();
 		}
+
+		public bool HasEntity(string key)
+		{
+			return GetEntityList(key).Count > 0;
+		}
+
+		public IList<T> GetEntities(string key)
+		{
+			return new List<T>(GetEntityList(key));
+		}
 	}
 }
 

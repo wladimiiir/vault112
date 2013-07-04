@@ -382,6 +382,9 @@ namespace FOnline
         public const uint NoWalk = 539; // Critter can't walk                                     Hardcoded
         public const uint NoRun = 540; // Critter can't run                                      Hardcoded
         public const uint NoTalk = 541; // Npc can't talk                                         Hardcoded
+
+		//Vault 112 modes
+		public const uint SpecialAttackFlags = 838;
     }
     // ext mode flags
     public enum ModeExt
