@@ -153,6 +153,9 @@ uint e_WakeUp(uint[]@ values)
 	return 0;	
 }
 
+/**
+* Map init
+*/
 void InitVaultMap(Map& map, bool firstTime)
 {
 	Critter@[] critters;
@@ -177,60 +180,24 @@ void InitVaultMap(Map& map, bool firstTime)
 
 void InitGuard(Critter& critter, bool firstTime)
 {
-	if(true || firstTime)
+	if(firstTime)
 	{
 		critter.StatBase[ST_AI_ID] = AIPACKET_GENERAL_TOWN_GUARDS;
 		critter.StatBase[ST_TEAM_ID] = TEAM_Vault112;
 		critter.ParamBase[SPECIAL_ATTACK_FLAGS] = SPECIAL_ATTACK_ELECTRIFY | SPECIAL_ATTACK_PACIFY;
+		critter.SetScript("mono@Vault112Roles::InitGuard");
 	}
-	
-	Action@ action = 
-		LoopAction()
-			.AddSubAction(ProvideReinforcements(TEAM_Vault112))
-			.AddSubAction(WhenAttacked()
-				.IfNot(IsTeamMember())
-				.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70140))
-				.AddSubAction(CallReinforcements(TEAM_Vault112))
-				.AddSubAction(Attack()))
-			.AddSubAction(WhenSomeoneAttacks()
-				.IfNot(IsTeamMember())
-				.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70140))
-				.AddSubAction(CallReinforcements(TEAM_Vault112))
-				.AddSubAction(Attack()))
-		;
-		
-	actionManager.Start(critter, action);
 }
 
 void InitPatrol(Critter& critter, bool firstTime)
 {
-	if(true || firstTime)
+	if(firstTime)
 	{
 		critter.StatBase[ST_AI_ID] = AIPACKET_GENERAL_TOWN_GUARDS;
 		critter.StatBase[ST_TEAM_ID] = TEAM_Vault112;
 		critter.ParamBase[SPECIAL_ATTACK_FLAGS] = SPECIAL_ATTACK_ELECTRIFY | SPECIAL_ATTACK_PACIFY;
+		critter.SetScript("mono@Vault112Roles::InitPatrol");
 	}
-	
-	Action@ action = 
-		LoopAction()
-			.AddSubAction(ProvideReinforcements(TEAM_Vault112))
-			.AddSubAction(WhenAttacked()
-				.IfNot(IsTeamMember())
-				.AddSubAction(CrittersHolderAction()
-					.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70140))
-					.AddSubAction(CallReinforcements(TEAM_Vault112))
-					.AddSubAction(Attack())))
-			.AddSubAction(WhenSomeoneAttacks()
-				.IfNot(IsTeamMember())
-				.AddSubAction(CrittersHolderAction()
-					.AddSubAction(Say(SAY_NORM_ON_HEAD, TEXTMSG_TEXT, 70140))
-					.AddSubAction(CallReinforcements(TEAM_Vault112))
-					.AddSubAction(Attack())))
-			.AddSubAction(Patrol(DEFAULT_PATROL_ENTIRE, false))
-			.AddSubAction(LookAround(3, REAL_SECOND(5)))
-		;
-		
-	actionManager.Start(critter, action);
 }
 
 void InitChuck(Critter& critter, bool firstTime)
