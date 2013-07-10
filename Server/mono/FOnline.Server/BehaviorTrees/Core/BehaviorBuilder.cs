@@ -9,33 +9,26 @@ namespace FOnline.BT
 			where BlackboardType : Blackboard
 	{
 		private BlackboardType blackboard;
-		private CompositeTask mainTask;
+		private MainTask mainTask;
 		private Queue<CompositeTask> compositeQueue;
+		private LeafTask<BlackboardType> lastTask;
 
 		public BehaviorBuilder (BlackboardType blackboard)
 		{
-			mainTask = new Sequence ();
+			mainTask = new MainTask (blackboard);
 			compositeQueue = new Queue<CompositeTask> ();
 			this.blackboard = blackboard;
 		}
 
-		public Task MainTask {
+		public MainTask MainTask {
 			get {
 				return this.mainTask;
 			}
 		}
 		
-		private CompositeTask GetCurrentTask ()
+		private CompositeTask GetCurrentCompositeTask ()
 		{
 			return compositeQueue.Count == 0 ? mainTask : compositeQueue.Peek ();
-		}
-
-		public BuilderType When (Condition<BlackboardType> condition)
-		{
-			//start sequence with condition as first task
-			DoSequence ();
-			GetCurrentTask ().AddTask (condition);
-			return (BuilderType)this;
 		}
 
 		public BuilderType Do (CompositeTask compositeTask)
@@ -45,7 +38,7 @@ namespace FOnline.BT
 				if (leafTask != null)
 					leafTask.Blackboard = this.blackboard;
 			}
-			GetCurrentTask ().AddTask (compositeTask);
+			GetCurrentCompositeTask ().AddTask (compositeTask);
 			return (BuilderType)this;
 		}
 		
@@ -53,14 +46,15 @@ namespace FOnline.BT
 		{
 
 			task.Blackboard = this.blackboard;
-			GetCurrentTask ().AddTask (task);
+			GetCurrentCompositeTask ().AddTask (task);
+			lastTask = task;
 			return (BuilderType)this;
 		}
 		
 		public BuilderType DoSequence ()
 		{
 			var sequence = new Sequence ();
-			GetCurrentTask ().AddTask (sequence);
+			GetCurrentCompositeTask ().AddTask (sequence);
 			compositeQueue.Enqueue (sequence);
 			return (BuilderType)this;
 		}
@@ -68,11 +62,51 @@ namespace FOnline.BT
 		public BuilderType DoSelection ()
 		{
 			var selector = new Selector ();
-			GetCurrentTask ().AddTask (selector);
+			GetCurrentCompositeTask ().AddTask (selector);
 			compositeQueue.Enqueue (selector);
 			return (BuilderType)this;
 		}
+
+		public BuilderType If (CritterCheckCondition<BlackboardType> condition)
+		{
+			if (lastTask == null) {
+				Global.Log ("Trying to add condition on not existing task");
+				return (BuilderType)this;
+			}
+			lastTask.If (condition);
+			return (BuilderType)this;
+		}
+
+		public BuilderType If (ItemCheckCondition<BlackboardType> condition)
+		{
+			if (lastTask == null) {
+				Global.Log ("Trying to add condition on not existing task");
+				return (BuilderType)this;
+			}
+			lastTask.If (condition);
+			return (BuilderType)this;
+		}
+
+		public BuilderType IfNot (CritterCheckCondition<BlackboardType> condition)
+		{
+			if (lastTask == null) {
+				Global.Log ("Trying to add condition on not existing task");
+				return (BuilderType)this;
+			}
+			lastTask.IfNot (condition);
+			return (BuilderType)this;
+		}
 		
+		public BuilderType IfNot (ItemCheckCondition<BlackboardType> condition)
+		{
+			if (lastTask == null) {
+				Global.Log ("Trying to add condition on not existing task");
+				return (BuilderType)this;
+			}
+			lastTask.IfNot (condition);
+			return (BuilderType)this;
+		}
+
 		public BuilderType End ()
 		{
 			if (compositeQueue.Count == 0) {

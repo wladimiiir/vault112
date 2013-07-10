@@ -544,6 +544,7 @@ namespace FOnline
         extern static void Crit_SendMessage(IntPtr thisptr, int num, int val, int to);
         public virtual void SendMessage(int num, int val, MessageTo to)
         {
+			Global.Log("Val: "+val);
             Crit_SendMessage(thisptr, num, val, (int)to);
         }
         [MethodImpl(MethodImplOptions.InternalCall)]

@@ -21,7 +21,7 @@ namespace FOnline.BT
 		
 		private TaskState ProcessByState (Task processedTask, TaskState state)
 		{
-//			Global.Log ("Processing task: " + processedTask.ToString() + " with state: " + state.ToString());
+			//Global.Log ("Processing task of sequence (" + ToString () + "): " + processedTask.ToString() + " with state: " + state.ToString());
 			switch (state) {
 			case TaskState.Ready:
 				return ExecuteSubTask (processedTask);
@@ -48,11 +48,10 @@ namespace FOnline.BT
 		
 		private TaskState ExecuteSubTask (Task subTask)
 		{
-//			Global.Log ("Executing sequence subtask: " + subTask.ToString ());
+			//Global.Log ("Executing sequence subtask in sequence: " + subTask.ToString ());
 			var state = subTask.Execute ();
 			if (state == TaskState.Ready)
 				return TaskState.Success; //maybe failed as this is unexpected
-//			Global.Log ("Executed task returned: " + state);
 			return ProcessByState (subTask, state);
 		}
 	}

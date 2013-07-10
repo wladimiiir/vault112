@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Diagnostics;
 
 namespace FOnline.BT
 {
 	public class Controller
 	{
-		private IList<Task> tasks = new List<Task> ();
+		private IList<MainTask> tasks = new List<MainTask> ();
 		private static bool running = false;
 
 		public void Start ()
@@ -20,7 +21,7 @@ namespace FOnline.BT
 			running = false;
 		}
 
-		public void RegisterTask (Task task)
+		public void RegisterTask (MainTask task)
 		{
 			tasks.Add (task);
 		}
@@ -28,7 +29,7 @@ namespace FOnline.BT
 		public static uint ExecuteTasks(IntPtr ptr)
 		{
 			Global.BTController.Execute (null);
-			return running ? Time.RealMillisecond (200) : 0;
+			return running ? Time.RealMillisecond (300) : 0;
 		}
 
 		void Execute (Object state)

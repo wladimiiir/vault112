@@ -13,8 +13,7 @@ namespace FOnline.BT
 			if (!entityMap.ContainsKey (key)) {
 				entityList = new List<T> ();
 				entityMap.Add (key, entityList);
-			}
-			else {
+			} else {
 				entityList = entityMap [key];
 			}
 			return entityList;
@@ -24,36 +23,41 @@ namespace FOnline.BT
 		{
 			var entityList = GetEntityList (key);
 			foreach (var entity in entities) {
-				entityList.Add(entity);
+				entityList.Add (entity);
 			}
 		}
 
-		public void RemoveEntities(string key, params T[] entities)
+		public void RemoveEntities (string key, params T[] entities)
 		{
 			var entityList = GetEntityList (key);
 			foreach (var entity in entities) {
-				entityList.Remove(entity);
+				entityList.Remove (entity);
 			}
 		}
 
 		public void SetEntities (string key, IList<T> entities)
 		{
-			entityMap.Add(key, entities);
+			entityMap.Add (key, new List<T> (entities));
 		}
 
-		public void Clear(string key)
+		public void Clear (string key)
 		{
-			GetEntityList(key).Clear();
+			GetEntityList (key).Clear ();
 		}
 
-		public bool HasEntity(string key)
+		public bool HasEntity (string key)
 		{
-			return GetEntityList(key).Count > 0;
+			return GetEntityList (key).Count > 0;
 		}
 
-		public IList<T> GetEntities(string key)
+		public IList<T> GetEntities (string key)
 		{
-			return new List<T>(GetEntityList(key));
+			return new List<T> (GetEntityList (key));
+		}
+
+		public ISet<string> GetKeys ()
+		{
+			return new HashSet<string> (entityMap.Keys);
 		}
 	}
 }

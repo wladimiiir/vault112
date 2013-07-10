@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
 
 namespace FOnline.BT
 {
 	public abstract class CritterTask : LeafTask<CritterBlackboard>
 	{
+
+
 		protected Critter GetCritter ()
 		{
 			return GetBlackboard ().Critter;

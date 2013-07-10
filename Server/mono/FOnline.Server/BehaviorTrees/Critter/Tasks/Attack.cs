@@ -20,16 +20,13 @@ namespace FOnline.BT
 		public override TaskState Execute ()
 		{
 			if (GetCritter ().GetPlanes ((int)PlaneType.Attack, null) > 0)
-				return TaskState.Failed; //attacking someone
+				return TaskState.Running; //attacking someone
 
 			bool foundAttacker = false;
 
 			foreach (var key in critterKeys) {
 				foreach (var critterToAttack in GetBlackboard().GetCritters(key)) {
 					foundAttacker |= TryToAttack (critterToAttack);
-					
-					GetBlackboard ().RemoveCritters (key, critterToAttack);
-					foundAttacker = true;
 				}
 			}
 
@@ -45,7 +42,7 @@ namespace FOnline.BT
 
 			if (specialAttackFlags != 0)
 				GetCritter ().Mode [Modes.SpecialAttackFlags] = specialAttackFlags;
-			NpcPlanes.AddAttackPlane (GetCritter (), Priorities.Attack, critterToAttack);
+			NpcPlanes.AddAttackPlane (GetCritter (), Priorities.Attack, critterToAttack, true);
 			return true;
 		}
 	}

@@ -590,7 +590,7 @@ namespace FOnline
 		#endregion
 		#region Behavior Tree API
 		public static Controller BTController { get; set; }
-		public static void RegisterBehaviorTask(Task task)
+		public static void RegisterBehaviorTask(MainTask task)
 		{
 			BTController.RegisterTask(task);
 		}

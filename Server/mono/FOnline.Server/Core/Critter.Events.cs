@@ -128,7 +128,7 @@ namespace FOnline
         {
             this.From = from_cr;
             this.Num = num;
-            this.Val = Val;
+            this.Val = val;
         }
         public Critter From { get; private set; }
         public int Num { get; private set; }
