@@ -1982,6 +1982,22 @@ void SetMikeWall( Critter& cr, int, int, int)
 	cr.AddItem(PID_5MM_JHP, 1000);
 }
 
+void BTPerformanceTest1(Critter& cr, int npcCount, int, int)
+{
+	Map@ map = cr.GetMap();
+	if(!valid(map))
+		return;
+		
+	for (uint i = 0; i < uint(npcCount); i++)
+	{
+		uint16 hexX = cr.HexX;
+		uint16 hexY = cr.HexY;
+		map.MoveHexByDir(hexX, hexY, Random(0, 5), Random(3, 50));
+		map.AddNpc(NPC_PID_RaiderMale, hexX, hexY, Random(0, 5), null, null, "mono@Roles::InitPerformanceTestFindCritters");
+	}
+}
+
+
 /*void TestCritterAction( Critter& cr, int, int, int)
 {
 	Map@ map = cr.GetMap();
