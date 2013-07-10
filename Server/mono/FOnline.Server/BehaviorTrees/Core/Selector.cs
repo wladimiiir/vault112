@@ -4,7 +4,7 @@ namespace FOnline.BT
 {
 	public class Selector : CompositeTask
 	{
-		private int currentTaskIndex = 0;
+		protected int currentTaskIndex = 0;
 
 		public Selector ()
 		{
@@ -16,13 +16,12 @@ namespace FOnline.BT
 				return TaskState.Failed;
 			var currentTask = SubTasks [currentTaskIndex];
 
-			ProcessByState(currentTask, currentTask.GetState());
-
-			return TaskState.Failed;
+			return ProcessByState (currentTask, currentTask.GetState ());
 		}
 
 		private TaskState ProcessByState (Task processedTask, TaskState state)
 		{
+			//Global.Log ("Processing task in selector (" + ToString () + "): " + processedTask.ToString () + " with state: " + state.ToString ());
 			switch (state) {
 			case TaskState.Ready:
 				return ExecuteSubTask (processedTask);
@@ -35,7 +34,6 @@ namespace FOnline.BT
 					currentTaskIndex = 0;
 					return TaskState.Failed;
 				}
-				//executing next task
 				return ExecuteSubTask (SubTasks [currentTaskIndex]);
 			case TaskState.Success:
 				processedTask.State = TaskState.Ready;
@@ -50,10 +48,11 @@ namespace FOnline.BT
 
 		private TaskState ExecuteSubTask (Task subTask)
 		{
-			var state = subTask.Execute();
-			if(state == TaskState.Ready)
+			//Global.Log ("Executing sequence subtask of selector: " + subTask.ToString ());
+			var state = subTask.Execute ();
+			if (state == TaskState.Ready)
 				return TaskState.Success; //maybe failed as this is unexpected
-			return ProcessByState(subTask, state);
+			return ProcessByState (subTask, state);
 		}
 	}
 }
