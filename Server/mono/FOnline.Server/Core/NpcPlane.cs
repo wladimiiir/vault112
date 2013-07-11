@@ -39,6 +39,14 @@ namespace FOnline
         public const uint Patrol = 25;
         public const uint Courier = 30;
     }
+	public static class NpcPlaneReason
+	{
+		public const uint GoHome = 10;
+		public const uint FoundInEnemyStack = 11;
+		public const uint FromDialog = 12;
+		public const uint FromScript = 13;
+		public const uint RunAway = 14;
+	}
     public sealed class NpcPlaneArray : HandleArray<NpcPlane>
     {
         static readonly IntPtr type;

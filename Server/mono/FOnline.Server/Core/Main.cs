@@ -230,7 +230,7 @@ namespace FOnline
             var e = new CritterCheckMoveItemEventArgs();
             if(CritterCheckMoveItem != null)
                 CritterCheckMoveItem(cr, item, (ItemSlot)slot, swap_item, e);
-            return e.Prevent;
+            return !e.Prevent;
         }
         public static event EventHandler<CritterMoveItemEventArgs> CritterMoveItem;
         // called by engine

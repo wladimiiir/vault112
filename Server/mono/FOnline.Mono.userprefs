@@ -1,39 +1,13 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|Mixed Platforms" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="FOnline.Server/BehaviorTrees/Critter/Tasks/Attack.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="FOnline.Server\Core\Main.cs">
     <Files>
-      <File FileName="FOnline.Server/BehaviorTrees/Critter/Tasks/Attack.cs" Line="39" Column="26" />
-      <File FileName="FOnline.Server/BehaviorTrees/Core/LeafTask.cs" Line="5" Column="53" />
-      <File FileName="FOnline.Server/Common.cs" Line="71" Column="23" />
-      <File FileName="FOnline.Server/Critter.Constants.cs" Line="1" Column="1" />
-      <File FileName="FOnline.Server/BehaviorTrees/Critter/Tasks/CallReinforcements.cs" Line="23" Column="1" />
-      <File FileName="FOnline.Server/BehaviorTrees/Core/Condition.cs" Line="11" Column="58" />
-      <File FileName="FOnline.Server/BehaviorTrees/Critter/CritterCondition.cs" Line="7" Column="3" />
-      <File FileName="FOnline.Server/BehaviorTrees/Critter/CritterBehaviorBuilder.cs" Line="8" Column="23" />
-      <File FileName="FOnline.Server/BehaviorTrees/Core/BehaviorBuilder.cs" Line="38" Column="29" />
-      <File FileName="FOnline.Server/BehaviorTrees/Critter/CritterBlackboard.cs" Line="24" Column="1" />
-      <File FileName="FOnline.Server/BehaviorTrees/Core/Blackboard.cs" Line="6" Column="25" />
-      <File FileName="FOnline.Server/BehaviorTrees/Utils/EntityContainer.cs" Line="54" Column="42" />
-      <File FileName="FOnline.Server/BehaviorTrees/Critter/Tasks/Condition/PlayerAttacks.cs" Line="14" Column="60" />
-      <File FileName="FOnline.Server/BehaviorTrees/Critter/CritterTask.cs" Line="10" Column="41" />
-      <File FileName="FOnline.Server/BehaviorTrees/Core/Condition/ICondition.cs" Line="5" Column="32" />
-      <File FileName="FOnline.Server/BehaviorTrees/Core/Task.cs" Line="16" Column="4" />
-      <File FileName="FOnline.Server/Core/Main.cs" Line="18" Column="10" />
+      <File FileName="d:\Development\vault112\Server\mono\FOnline.Server\Roles\Vault112Roles.cs" Line="11" Column="18" />
+      <File FileName="FOnline.Server\Core\Main.cs" Line="284" Column="17" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
-        <State expanded="True">
-          <Node name="FOnline.Server" expanded="True">
-            <Node name="BehaviorTrees" expanded="True">
-              <Node name="Critter" expanded="True">
-                <Node name="Tasks" expanded="True">
-                  <Node name="Attack.cs" selected="True" />
-                </Node>
-              </Node>
-            </Node>
-            <Node name="Core" expanded="True" />
-          </Node>
-        </State>
+        <State expanded="True" />
       </Pad>
       <Pad Id="ClassPad">
         <State expanded="True" selected="True" />

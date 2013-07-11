@@ -6,7 +6,8 @@ namespace FOnline.BT
 	{
 		public enum PlaneIdentifier
 		{
-			Patrol = 1001
+			Patrol = 1001,
+			Loot = 1002
 		}
 	}
 }

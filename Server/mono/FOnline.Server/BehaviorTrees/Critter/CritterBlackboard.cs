@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace FOnline.BT
 {
@@ -10,7 +11,9 @@ namespace FOnline.BT
 		public const string Killers = "Killers";
 		public const string SeenAttackers = "SeenAttackers";
 		public const string SeenKillers = "SeenKillers";
+		public const string SeenDead = "SeenDead";
 		public const string ToAttack = "ToAttack";
+		public const string FoundInEnemyStack = "FoundInEnemyStack";
 	}
 
 	public class CritterBlackboard : Blackboard
@@ -49,6 +52,20 @@ namespace FOnline.BT
 			};
 			critter.Message += (sender, e) => {
 				AddMessages(new CritterMessage(e.From, e.Num, e.Val));
+			};
+			critter.PlaneBegin += (sender, e) => {
+				if(e.Reason == NpcPlaneReason.FoundInEnemyStack)
+				{
+					//let BT use its own system of attack response
+					Debug.Assert(e.SomeCr != null, "Some critter in FoundInEnemyStack plane cannot be null");
+					AddCrittersFromEvent(BlackboardKeys.FoundInEnemyStack, e.SomeCr);
+					e.Result = NpcPlaneEventResult.Discard;
+				}
+			};
+			critter.SmthDead += (sender, e) => {
+				AddCrittersFromEvent(BlackboardKeys.SeenDead, e.From);
+				if(e.Killer != null)
+					AddCrittersFromEvent(BlackboardKeys.SeenKillers, e.Killer);
 			};
 		}
 
