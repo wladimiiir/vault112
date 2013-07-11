@@ -26,6 +26,7 @@ namespace FOnline.BT
 				if(!Check(critterToAttack))
 					continue;
 
+				Global.Log("Calling reinforcements to attack critter: "+critterToAttack.Id);
 				GetCritter().SendMessage(team, (int)critterToAttack.Id, MessageTo.AllOnMap);
 			}
 
