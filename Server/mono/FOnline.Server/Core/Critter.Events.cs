@@ -727,9 +727,9 @@ namespace FOnline
             {
                 var e = new CritterBarterEventArgs(this, cr_barter, attach, barter_count);
                 Barter(this, e);
-                return e.Prevent;
+                return !e.Prevent;
             }
-            return false;
+            return true;
         }
         public event EventHandler<CritterTalkEventArgs> Talk;
         // called by native
@@ -739,9 +739,9 @@ namespace FOnline
             {
                 var e = new CritterTalkEventArgs(this, cr_talk, attach, talk_count);
                 Talk(this, e);
-                return e.Prevent;
+                return !e.Prevent;
             }
-            return false;
+            return true;
         }
         /// <summary>
         /// Raised when critter moves on globalmap.
