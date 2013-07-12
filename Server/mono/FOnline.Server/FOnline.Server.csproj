@@ -158,6 +158,10 @@
     <Compile Include="BehaviorTrees\Critter\Task\CancelSneaking.cs" />
     <Compile Include="BehaviorTrees\Critter\Task\Loot.cs" />
     <Compile Include="Data\ItemHolderData.cs" />
+    <Compile Include="Item.Contants.cs" />
+    <Compile Include="BehaviorTrees\Critter\Condition\HasLoot.cs" />
+    <Compile Include="BehaviorTrees\Critter\Condition\HasLooter.cs" />
+    <Compile Include="BehaviorTrees\Critter\Task\TakeDrug.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="readme.txt" />

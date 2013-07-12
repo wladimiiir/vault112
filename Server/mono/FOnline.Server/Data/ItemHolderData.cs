@@ -14,11 +14,10 @@ namespace FOnline.Data
 			Load ();
 		}
 
-		private string GetSerKey()
+		private string GetSerKey ()
 		{
 			return "ItemHolderData_" + itemHolder.Id;
 		}
-	
 
 		private void Load ()
 		{
@@ -39,7 +38,7 @@ namespace FOnline.Data
 			}
 		}
 
-		private void Save()
+		private void Save ()
 		{
 			var serializator = new Serializator ();
 
@@ -52,10 +51,43 @@ namespace FOnline.Data
 			serializator.Save (GetSerKey ());
 		}
 
-		private Item GetContainer(Critter critter)
+		private Item GetContainer (Critter critter, bool create)
 		{
-			//TODO:
-			return null;
+			var container = critterContainerMap [critter.Id];
+			if (container == null && create) {
+				container = itemHolder.AddItem (ItemProtoId.HiddenContainer, 1);
+				if (container == null) {
+					Global.Log ("Could not create item holder's container.");
+				} else {
+					container.IsHidden = true;
+					critterContainerMap.Add (critter.Id, container);
+					Save ();
+				}
+			}
+			return container;
+		}
+
+		public void PutItems (Critter critter, IList<Item> items)
+		{
+			var container = GetContainer (critter, true);
+			if (container == null) 
+				return;
+
+			var itemArray = new ItemArray ();
+			itemArray.AddRange (items);
+
+			Global.MoveItems (itemArray, container, 0);
+		}
+
+		public IList<Item> GetItems (Critter critter)
+		{
+			var container = GetContainer (critter, false);
+			if (container == null) 
+				return new List<Item> (0);
+
+			var itemArray = new ItemArray ();
+			container.GetItems (0, itemArray);
+			return new List<Item> (itemArray);
 		}
 	}
 }

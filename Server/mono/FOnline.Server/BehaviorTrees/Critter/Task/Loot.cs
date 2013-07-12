@@ -1,5 +1,6 @@
 using System;
 using FOnline.AngelScript;
+using FOnline.Data;
 
 namespace FOnline.BT
 {
@@ -12,7 +13,7 @@ namespace FOnline.BT
 
 	public class Loot : CritterTask
 	{
-		private enum Stage 
+		private enum Stage
 		{
 			MoveToLoot,
 			NextToLoot
@@ -37,12 +38,12 @@ namespace FOnline.BT
 		{
 			TaskState state = base.GetState ();
 			if (currentStage == Stage.MoveToLoot && state == TaskState.Running) {
-				if(GetCritter ().GetPlanes ((int)CritterDefines.PlaneIdentifier.Patrol, currentLootCritter.Id, null) == 0){
+				if (GetCritter ().GetPlanes ((int)CritterDefines.PlaneIdentifier.Patrol, currentLootCritter.Id, null) == 0) {
 					currentStage = Stage.NextToLoot;
 					State = TaskState.Ready;
 					return TaskState.Ready;
 				}
-			} else if(currentStage == Stage.NextToLoot) {
+			} else if (currentStage == Stage.NextToLoot) {
 				//reseting, just in case
 				currentStage = Stage.MoveToLoot;
 			}
@@ -52,8 +53,7 @@ namespace FOnline.BT
 
 		public override TaskState Execute ()
 		{
-			switch(currentStage)
-			{
+			switch (currentStage) {
 			case Stage.MoveToLoot:
 				return ProcessStageMoveToLoot ();
 			case Stage.NextToLoot:
@@ -70,7 +70,7 @@ namespace FOnline.BT
 					continue;
 
 				var dir = Global.GetDirection (GetCritter ().HexX, GetCritter ().HexY, critter.HexX, critter.HexY);
-				NpcPlanes.AddWalkPlane (GetCritter (), Priorities.Walk, (int) CritterDefines.PlaneIdentifier.Loot, critter.Id, critter.HexX, critter.HexY, dir, true, 0);
+				NpcPlanes.AddWalkPlane (GetCritter (), Priorities.Walk, (int)CritterDefines.PlaneIdentifier.Loot, critter.Id, critter.HexX, critter.HexY, dir, true, 0);
 				currentLootCritter = critter;
 
 				return TaskState.Running;
@@ -83,7 +83,7 @@ namespace FOnline.BT
 			if (currentLootCritter == null)
 				return TaskState.Failed;
 			//check map and distance
-			if (currentLootCritter.GetMapId () != GetCritter ().GetMapId () || Global.GetCrittersDistantion(GetCritter(), currentLootCritter) > 2)
+			if (currentLootCritter.GetMapId () != GetCritter ().GetMapId () || Global.GetCrittersDistantion (GetCritter (), currentLootCritter) > 2)
 				return TaskState.Failed;
 
 			var items = new ItemArray ();
@@ -98,7 +98,8 @@ namespace FOnline.BT
 				Global.DeleteItems (items);
 				break;
 			case LootType.Remember:
-				//TODO:
+				var data = new ItemHolderData (GetCritter ());
+				data.PutItems (currentLootCritter, items);
 				break;
 			default:
 				break;
