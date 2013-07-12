@@ -1,11 +1,12 @@
 using System;
 
-namespace FOnline
+namespace FOnline.BT
 {
-	public class SeesCritter
+	public class IsSeen : CritterCheckCondition<CritterBlackboard>
 	{
-		public SeesCritter ()
+		public override bool Check (Critter checkEntity)
 		{
+			return GetBlackboard ().Critter.IsSeeCr (checkEntity);
 		}
 	}
 }

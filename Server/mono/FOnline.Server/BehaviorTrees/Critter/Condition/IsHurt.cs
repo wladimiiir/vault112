@@ -6,7 +6,7 @@ namespace FOnline.BT
 	{
 		private uint underHPPercentage;
 
-		public IsHurt (uint underHPPercentage)
+		public IsHurt (uint underHPPercentage = 100)
 		{
 			this.underHPPercentage = underHPPercentage;
 		}

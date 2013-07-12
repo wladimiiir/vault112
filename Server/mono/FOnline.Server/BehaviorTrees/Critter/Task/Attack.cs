@@ -7,6 +7,11 @@ namespace FOnline.BT
 		private string[] critterKeys;
 		private int specialAttackFlags;
 
+		public Attack () : this(0, BlackboardKeys.FoundCritters)
+		{
+
+		}
+
 		public Attack (params string[] critterKeys) : this(0, critterKeys)
 		{
 		}

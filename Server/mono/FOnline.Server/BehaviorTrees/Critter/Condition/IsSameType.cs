@@ -1,11 +1,12 @@
 using System;
 
-namespace FOnline
+namespace FOnline.BT
 {
-	public class IsSameCritterType
+	public class IsSameType : CritterCheckCondition<CritterBlackboard>
 	{
-		public IsSameCritterType ()
+		public override bool Check (Critter checkEntity)
 		{
+			return GetBlackboard ().Critter.Stat [Stats.BodyType] == checkEntity.Stat [Stats.BodyType];
 		}
 	}
 }

@@ -108,7 +108,7 @@ namespace FOnline.BT
 			GetCritter ().Animate (0, Anim2.Pickup, null, true, true);
 			GetCritter ().Wait (2000);
 
-			//reset holders
+			//reset state
 			currentStage = Stage.MoveToLoot;
 			currentLootCritter = null;
 

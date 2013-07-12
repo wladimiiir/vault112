@@ -5,6 +5,7 @@ namespace FOnline.BT
 {
 	public class FindCritters : CritterTask
 	{
+		private CritterChooser<CritterBlackboard> chooser;
 		private Find find;
 		private string key;
 
@@ -18,6 +19,12 @@ namespace FOnline.BT
 		{
 		}
 
+		public FindCritters Choose (CritterChooser<CritterBlackboard> chooser)
+		{
+			this.chooser = chooser;
+			return this;
+		}
+
 		public override TaskState Execute ()
 		{
 			var map = blackboard.Critter.GetMap ();
@@ -27,16 +34,23 @@ namespace FOnline.BT
 			var critters = new CritterArray ();
 			map.GetCritters (0, find, critters);
 
-			List<Critter> found = new List<Critter>();
+			List<Critter> found = new List<Critter> ();
+
 			foreach (var critter in critters) {
-				if(!Check(critter))
+				if (critter == GetCritter () || !Check (critter))
 					continue;
-				found.Add(critter);			
+				found.Add (critter);			
 			}
-			if(found.Count == 0)
+			if (found.Count == 0)
 				return TaskState.Failed;
 
-			GetBlackboard().SetCritters(key, found);
+			if (chooser != null) {
+				var critter = chooser.Choose (found);
+				found.Clear ();
+				found.Add (critter);
+			}
+
+			GetBlackboard ().SetCritters (key, found);
 
 			return TaskState.Success;
 		}

@@ -3,12 +3,11 @@ using System.Collections.Generic;
 
 namespace FOnline.BT
 {
-	public class CritterBehaviorBuilder : BehaviorBuilder<CritterBehaviorBuilder, CritterTask, CritterBlackboard>
+	public class CritterBehaviorBuilder : BehaviorBuilder<CritterBehaviorBuilder, CritterBlackboard>
 	{
 		public CritterBehaviorBuilder (Critter critter) : base(new CritterBlackboard(critter))
 		{
 		}
-
 		// methods for adding specific critter tasks could be added here for ease of use
 		//
 		// Example:

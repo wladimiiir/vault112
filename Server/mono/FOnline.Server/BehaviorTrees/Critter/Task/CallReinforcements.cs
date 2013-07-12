@@ -23,11 +23,10 @@ namespace FOnline.BT
 			int team = reinforcementTeam == UseTeamId ? GetCritter ().Stat [Stats.TeamId] : reinforcementTeam;
 
 			foreach (var critterToAttack in GetBlackboard().GetCritters(critterKeys)) {
-				if(!Check(critterToAttack))
+				if (!Check (critterToAttack))
 					continue;
 
-				Global.Log("Calling reinforcements to attack critter: "+critterToAttack.Id);
-				GetCritter().SendMessage(team, (int)critterToAttack.Id, MessageTo.AllOnMap);
+				GetCritter ().SendMessage (team, (int)critterToAttack.Id, MessageTo.AllOnMap);
 			}
 
 			return TaskState.Success;
