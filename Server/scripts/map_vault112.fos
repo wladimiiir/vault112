@@ -13,6 +13,10 @@
 #include "critter_action_condition.fos"
 #include "critter_action_when.fos"
 
+#pragma bindfunc "void InitGuard(Critter&) -> mono Vault112Roles::InitGuard"
+#pragma bindfunc "void InitPatrol(Critter&) -> mono Vault112Roles::InitPatrol"
+#pragma bindfunc "void InitInhabitant(Critter&) -> mono Vault112Roles::InitInhabitant"
+
 import void FlushScreen(Critter& cr, bool fadeOut, uint timeMs) from "effects";
 import bool AutoClose(Item& locker) from "doors";
 import void PlayOpenLockerSound(Item& locker) from "sounds";
@@ -185,8 +189,8 @@ void InitGuard(Critter& critter, bool firstTime)
 		critter.StatBase[ST_AI_ID] = AIPACKET_GENERAL_TOWN_GUARDS;
 		critter.StatBase[ST_TEAM_ID] = TEAM_Vault112;
 		critter.ParamBase[SPECIAL_ATTACK_FLAGS] = SPECIAL_ATTACK_ELECTRIFY | SPECIAL_ATTACK_PACIFY;
-		critter.SetScript("mono@Vault112Roles::InitGuard");
 	}
+	InitGuard(critter);
 }
 
 void InitPatrol(Critter& critter, bool firstTime)
@@ -198,6 +202,7 @@ void InitPatrol(Critter& critter, bool firstTime)
 		critter.ParamBase[SPECIAL_ATTACK_FLAGS] = SPECIAL_ATTACK_ELECTRIFY | SPECIAL_ATTACK_PACIFY;
 		critter.SetScript("mono@Vault112Roles::InitPatrol");
 	}
+	InitPatrol(critter);
 }
 
 void InitChuck(Critter& critter, bool firstTime)
@@ -209,5 +214,6 @@ void InitChuck(Critter& critter, bool firstTime)
 		critter.StatBase[ST_DIALOG_ID] = DIALOG_chuck;
 		critter.ModeBase[MODE_NO_BARTER] = 0;
 	}
+	InitInhabitant(critter);
 }
 

@@ -5,10 +5,36 @@ namespace FOnline
 {
 	public class Vault112Roles
 	{
-		public static Critter InitGuard (IntPtr ptr, bool firstTime)
+		/**
+		 * Functions to be bind by AS
+		 */
+		public static Critter InitGuard (IntPtr ptr)
 		{
-			Critter npc = (Critter)ptr;
-			CritterBehaviorBuilder builder = new CritterBehaviorBuilder (npc);
+			var critter = (Critter)ptr;
+			InitGuard (critter);
+			return critter;
+		}
+
+		public static Critter InitPatrol (IntPtr ptr)
+		{
+			var critter = (Critter)ptr;
+			InitPatrol (critter);
+			return critter;
+		}
+
+		public static Critter InitInhabitant (IntPtr ptr)
+		{
+			var critter = (Critter)ptr;
+			InitInhabitant (critter);
+			return critter;
+		}
+
+		/**
+		 * Init methods for use in Mono
+		 */ 
+		public static void InitGuard (Critter npc)
+		{
+			var builder = new CritterBehaviorBuilder (npc);
 			
 			builder
 				.DoSequence ()
@@ -21,13 +47,11 @@ namespace FOnline
 				.End ();
 			
 			Global.RegisterBehaviorTask (builder.MainTask);
-			return npc;
 		}
 
-		public static Critter InitPatrol (IntPtr ptr, bool firstTime)
+		public static void InitPatrol (Critter npc)
 		{
-			Critter npc = (Critter)ptr;
-			CritterBehaviorBuilder builder = new CritterBehaviorBuilder (npc);
+			var builder = new CritterBehaviorBuilder (npc);
 			
 			builder
 				.DoSequence ()
@@ -44,7 +68,19 @@ namespace FOnline
 				.End ();
 			
 			Global.RegisterBehaviorTask (builder.MainTask);
-			return npc;
+		}
+
+		public static void InitInhabitant (Critter npc)
+		{
+			var builder = new CritterBehaviorBuilder (npc);
+
+			builder
+				.DoSequence ("I am attacked")
+					.Do (new CallReinforcements (BlackboardKeys.Attackers, BlackboardKeys.Killers))
+			//TODO: maybe run to guard
+				.End ();
+
+			Global.RegisterBehaviorTask (builder.MainTask);
 		}
 	}
 }

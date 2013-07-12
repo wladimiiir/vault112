@@ -37,7 +37,7 @@ namespace FOnline
 		}
 
 		/**
-		 * Init methods used by mono engine
+		 * Init methods for use in Mono
 		 */ 
 		public static void InitHumanEvil (Critter critter)
 		{
