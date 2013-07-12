@@ -5,6 +5,40 @@ namespace FOnline
 {
 	public class EncounterRoles
 	{
+		/**
+		 * Functions to be bind by AS
+		 */
+		public static Critter InitHumanEvil (IntPtr ptr)
+		{
+			var critter = (Critter)ptr;
+			InitHumanEvil (critter);
+			return critter;
+		}
+
+		public static Critter InitHumanGood (IntPtr ptr)
+		{
+			var critter = (Critter)ptr;
+			InitHumanGood (critter);
+			return critter;
+		}
+
+		public static Critter InitAnimalEvil (IntPtr ptr)
+		{
+			var critter = (Critter)ptr;
+			InitAnimalEvil (critter);
+			return critter;
+		}
+
+		public static Critter InitAnimalGood (IntPtr ptr)
+		{
+			var critter = (Critter)ptr;
+			InitAnimalGood (critter);
+			return critter;
+		}
+
+		/**
+		 * Init methods used by mono engine
+		 */ 
 		public static void InitHumanEvil (Critter critter)
 		{
 			var builder = new CritterBehaviorBuilder (critter);

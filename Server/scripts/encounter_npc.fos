@@ -9,6 +9,11 @@
 #include "critter_action_condition.fos"
 #include "critter_action_when.fos"
 
+#pragma bindfunc "void InitHumanEvil(Critter&) -> mono EncounterRoles::InitHumanEvil"
+#pragma bindfunc "void InitHumanGood(Critter&) -> mono EncounterRoles::InitHumanEvil"
+#pragma bindfunc "void InitAnimalGood(Critter&) -> mono EncounterRoles::InitAnimalGood"
+#pragma bindfunc "void InitAnimalEvil(Critter&) -> mono EncounterRoles::InitAnimalEvil"
+
 import bool AddAttackPlane( Critter& npc, uint priority, Critter& target, bool run ) from "npc_planes";
 //import bool AddWalkPlane( Critter& npc, uint priority, int identifier, uint identifierExt, uint16 hexX, uint16 hexY, uint8 dir, bool run, uint cut ) from "npc_planes";
 import void SetDeterioration( Item& item, int deteriorationProcent ) from "repair";
@@ -45,7 +50,8 @@ void _NpcRoleInit(Critter& npc, bool firstTime)
 		case ROLE_ENCOUNTER_TRIBAL:
 		//todo
 		case ROLE_ENCOUNTER_HUMAN_EVIL:
-		//todo
+			InitHumanEvil(npc);
+			break;
 		case ROLE_ENCOUNTER_HUMAN_NEUTRAL:
 		//todo
 		case ROLE_ENCOUNTER_HUMAN_GOOD:
@@ -55,7 +61,7 @@ void _NpcRoleInit(Critter& npc, bool firstTime)
 		case ROLE_ENCOUNTER_ANIMAL_NEUTRAL:
 		//todo
 		case ROLE_ENCOUNTER_ANIMAL_GOOD:
-		//todo
+			InitAnimalGood(npc);
 		case ROLE_ENCOUNTER_ANIMAL_WEAK:
 		//todo
 		case ROLE_ENCOUNTER_ANIMAL_EVIL:
@@ -141,55 +147,6 @@ void InitGuard(Critter& npc)
 	actionManager.StartImmediately(npc, action);
 }
 
-void InitHumanGood(Critter& npc)
-{
-	uint reinforcementMessageNumber = npc.Stat[ST_TEAM_ID];
-	
-	Action@ attackAction = 
-		HasNpcEnemies(npc)
-			? ChooseOnlyOne()
-				.AddSubAction(FindCritters(FIND_LIFE | FIND_ONLY_PLAYERS)
-					.PickRandom()
-					.WithChance(20)
-					.If(IsEnemy())
-					.If(IsSeen())
-					.AddSubAction(Attack()))
-				.AddSubAction(FindCritters(FIND_LIFE)
-					.PickRandom()
-					.If(IsEnemy())
-					.If(IsSeen())
-					.AddSubAction(Attack()))
-			: ChooseOnlyOne()
-				.AddSubAction(FindCritters(WeakestPlayer)
-					.WithChance(70)
-					.If(IsEnemy())
-					.If(IsSeen())
-					.AddSubAction(Attack()))
-				.AddSubAction(FindCritters(FIND_LIFE)
-					.PickRandom()
-					.If(IsEnemy())
-					.If(IsSeen())
-					.AddSubAction(Attack()))
-	;
-
-	Action@ action = 
-		LoopAction()
-			.AddSubAction(@attackAction)
-			.AddSubAction(WhenEnemyFound(PLANE_DISCARD)
-				.AddSubAction(@attackAction))
-			.AddSubAction(ProvideReinforcements(reinforcementMessageNumber)
-				.If(NotAttacking()))
-			.AddSubAction(WhenAttacked()
-				.AddSubAction(CallReinforcements(reinforcementMessageNumber)))
-			.AddSubAction(WhenPlaneRun()
-				.If(IsInjured(70, true))
-				.AddSubAction(UseDrug(HEALING_DRUGS)))
-	;
-	AddClaimLootActions(action, npc.Stat[ST_TEAM_ID]);
-
-	actionManager.StartImmediately(npc, action);
-}
-
 bool HasNpcEnemies(Critter& npc)
 {
 	Map@ map = npc.GetMap();
@@ -222,45 +179,6 @@ void AddClaimLootActions(Action& mainAction, uint reinforcementMessageNumber)
 			.AddSubAction(CallReinforcements(reinforcementMessageNumber))
 			.AddSubAction(Attack()))
 	;
-}
-
-void InitAnimalEvil(Critter& npc)
-{
-	Action@ attackAction = 
-		ChooseOnlyOne()
-			.AddSubAction(FindCritters(FIND_LIFE | FIND_ONLY_PLAYERS)
-				.PickRandom()
-				.WithChance(25)
-				.If(IsEnemy())
-				.If(IsSeen())
-				.AddSubAction(Attack()))
-			.AddSubAction(FindCritters(FIND_LIFE | FIND_ONLY_NPC)
-				.PickRandom()
-				.If(IsEnemy())
-				.If(IsSeen())
-				.AddSubAction(Attack()))
-			.AddSubAction(FindCritters(FIND_LIFE)
-				.PickRandom()
-				.If(IsEnemy())
-				.If(IsSeen())
-				.AddSubAction(Attack()))
-	;
-	uint reinforcementMessageNumber = npc.Stat[ST_TEAM_ID];
-	
-	Action@ action = 
-		LoopAction()
-			.AddSubAction(@attackAction)
-			.AddSubAction(WhenEnemyFound(PLANE_DISCARD)
-				.AddSubAction(@attackAction))
-			.AddSubAction(ProvideReinforcements(reinforcementMessageNumber)
-				.If(NotAttacking()))
-			.AddSubAction(WhenAttackEnds()
-				.AddSubAction(SetHome()))
-			.AddSubAction(WhenAttacked()
-				.AddSubAction(CallReinforcements(reinforcementMessageNumber)))
-	;
-			
-	actionManager.StartImmediately(npc, action);
 }
 
 void SetupItems(Critter& npc)
