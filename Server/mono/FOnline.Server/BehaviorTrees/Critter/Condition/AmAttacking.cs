@@ -2,11 +2,11 @@ using System;
 
 namespace FOnline.BT
 {
-	public class IsAttacking : CritterCheckCondition<CritterBlackboard>
+	public class AmAttacking : CritterCheckCondition<CritterBlackboard>
 	{
 		private bool anyAttack;
 
-		public IsAttacking (bool anyAttack = true)
+		public AmAttacking (bool anyAttack = true)
 		{
 			this.anyAttack = anyAttack;
 		}
