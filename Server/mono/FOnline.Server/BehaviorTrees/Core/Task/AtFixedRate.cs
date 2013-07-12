@@ -2,19 +2,19 @@ using System;
 
 namespace FOnline.BT
 {
-	public class AtFixedRate : LeafTask<Blackboard>
+	public class AtFixedRate<B> : LeafTask<B> where B : Blackboard
 	{
-		private int rateFrom;
-		private int rateTo;
+		private uint rateFrom;
+		private uint rateTo;
 		private uint nextRun = 0;
 
-		public AtFixedRate (int rate)
+		public AtFixedRate (uint rate)
 		{
 			this.rateFrom = rate;
 			this.rateTo = rate;
 		}
 
-		public AtFixedRate (int rateRandomFrom, int rateRandomTo)
+		public AtFixedRate (uint rateRandomFrom, uint rateRandomTo)
 		{
 			this.rateFrom = rateRandomFrom;
 			this.rateTo = rateRandomTo;
@@ -25,7 +25,7 @@ namespace FOnline.BT
 			if (Global.FullSecond < nextRun)
 				return TaskState.Failed;
 
-			nextRun = Time.After ((uint)Global.Random (rateFrom, rateTo));
+			nextRun = Time.After (Global.Random (rateFrom, rateTo));
 			return TaskState.Success;
 		}
 	}
