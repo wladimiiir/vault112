@@ -4,10 +4,12 @@ namespace FOnline.BT
 {
 	public class Selector : CompositeTask
 	{
+		private readonly string name;
 		protected int currentTaskIndex = 0;
 
-		public Selector ()
+		public Selector (string name = "Unspecified")
 		{
+			this.name = name;
 		}
 
 		public override TaskState Execute ()

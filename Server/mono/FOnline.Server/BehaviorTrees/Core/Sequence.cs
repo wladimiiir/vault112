@@ -4,12 +4,14 @@ namespace FOnline.BT
 {
 	public class Sequence : CompositeTask
 	{
+		private readonly string name;
 		private int currentTaskIndex = 0;
-		
-		public Sequence ()
+
+		public Sequence (string name = "Unspecified")
 		{
+			this.name = name;
 		}
-		
+
 		public override TaskState Execute ()
 		{
 			if (SubTasks.Count == 0)
@@ -18,7 +20,7 @@ namespace FOnline.BT
 			
 			return ProcessByState (currentTask, currentTask.GetState ());
 		}
-		
+
 		private TaskState ProcessByState (Task processedTask, TaskState state)
 		{
 			//Global.Log ("Processing task of sequence (" + ToString () + "): " + processedTask.ToString() + " with state: " + state.ToString());
@@ -45,7 +47,7 @@ namespace FOnline.BT
 				return TaskState.Failed;
 			}
 		}
-		
+
 		private TaskState ExecuteSubTask (Task subTask)
 		{
 			//Global.Log ("Executing sequence subtask in sequence: " + subTask.ToString ());

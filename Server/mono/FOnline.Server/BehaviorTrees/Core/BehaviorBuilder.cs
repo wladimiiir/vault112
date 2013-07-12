@@ -3,9 +3,8 @@ using System.Collections.Generic;
 
 namespace FOnline.BT
 {
-	public abstract class BehaviorBuilder<BuilderType, TaskType, BlackboardType> 
-		where BuilderType : BehaviorBuilder<BuilderType, TaskType, BlackboardType> 
-		where TaskType : LeafTask<BlackboardType> 
+	public abstract class BehaviorBuilder<BuilderType,  BlackboardType> 
+		where BuilderType : BehaviorBuilder<BuilderType, BlackboardType> 
 			where BlackboardType : Blackboard
 	{
 		private BlackboardType blackboard;
@@ -25,7 +24,7 @@ namespace FOnline.BT
 				return this.mainTask;
 			}
 		}
-		
+
 		private CompositeTask GetCurrentCompositeTask ()
 		{
 			return compositeQueue.Count == 0 ? mainTask : compositeQueue.Peek ();
@@ -41,8 +40,8 @@ namespace FOnline.BT
 			GetCurrentCompositeTask ().AddTask (compositeTask);
 			return (BuilderType)this;
 		}
-		
-		public BuilderType Do (TaskType task)
+
+		public BuilderType Do (LeafTask<BlackboardType> task)
 		{
 
 			task.Blackboard = this.blackboard;
@@ -50,18 +49,18 @@ namespace FOnline.BT
 			lastTask = task;
 			return (BuilderType)this;
 		}
-		
-		public BuilderType DoSequence ()
+
+		public BuilderType DoSequence (string sequenceName = "Unspecified")
 		{
-			var sequence = new Sequence ();
+			var sequence = new Sequence (sequenceName);
 			GetCurrentCompositeTask ().AddTask (sequence);
 			compositeQueue.Enqueue (sequence);
 			return (BuilderType)this;
 		}
-		
-		public BuilderType DoSelection ()
+
+		public BuilderType DoSelection (string selectionName = "Unspecified")
 		{
-			var selector = new Selector ();
+			var selector = new Selector (selectionName);
 			GetCurrentCompositeTask ().AddTask (selector);
 			compositeQueue.Enqueue (selector);
 			return (BuilderType)this;
@@ -96,7 +95,7 @@ namespace FOnline.BT
 			lastTask.IfNot (condition);
 			return (BuilderType)this;
 		}
-		
+
 		public BuilderType IfNot (ItemCheckCondition<BlackboardType> condition)
 		{
 			if (lastTask == null) {
