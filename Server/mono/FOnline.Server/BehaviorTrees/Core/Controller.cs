@@ -26,7 +26,12 @@ namespace FOnline.BT
 			tasks.Add (task);
 		}
 
-		public static uint ExecuteTasks(IntPtr ptr)
+		public void DeregisterTask (MainTask task)
+		{
+			tasks.Remove (task);
+		}
+
+		public static uint ExecuteTasks (IntPtr ptr)
 		{
 			Global.BTController.Execute (null);
 			return running ? Time.RealMillisecond (300) : 0;

@@ -5,12 +5,11 @@ namespace FOnline.BT
 {
 	public class Blackboard
 	{
-		private EntityContainer<TimedEntity<Critter>> critterContainer = new EntityContainer<TimedEntity<Critter>> ();
-		private EntityContainer<TimedEntity<Item>> itemContainer = new EntityContainer<TimedEntity<Item>> ();
-		private EntityContainer<TimedEntity<Location>> locationContainer = new EntityContainer<TimedEntity<Location>> ();
-		private Dictionary<string, uint> uids = new Dictionary<string, uint> ();
+		private readonly EntityContainer<TimedEntity<Critter>> critterContainer = new EntityContainer<TimedEntity<Critter>> ();
+		private readonly EntityContainer<TimedEntity<Item>> itemContainer = new EntityContainer<TimedEntity<Item>> ();
+		private readonly EntityContainer<TimedEntity<Location>> locationContainer = new EntityContainer<TimedEntity<Location>> ();
+		private readonly Dictionary<string, uint> uids = new Dictionary<string, uint> ();
 		//private readonly object Lock = new object ();
-
 		protected long executionStartTime = 0;
 
 		public void MainTaskExecutionStart ()
@@ -33,7 +32,7 @@ namespace FOnline.BT
 
 		public void ClearEntities ()
 		{
-			ClearContainers();
+			ClearContainers ();
 		}
 
 		protected virtual void ClearContainers ()
@@ -89,7 +88,7 @@ namespace FOnline.BT
 
 		public void SetCritters (string key, List<Critter> critters)
 		{
-			critterContainer.SetEntities(key, CreateTimedEntities(critters.ToArray(), 0));
+			critterContainer.SetEntities (key, CreateTimedEntities (critters.ToArray (), 0));
 		}
 
 		public IList<Critter> GetCritters (params string[] keys)
@@ -111,7 +110,7 @@ namespace FOnline.BT
 		{
 			return GetEntities (itemContainer, keys);
 		}
-		
+
 		public void AddLocations (string key, params Location[] locations)
 		{
 			locationContainer.AddEntities (key, CreateTimedEntities (locations, 0));
@@ -126,7 +125,7 @@ namespace FOnline.BT
 		{
 			return GetEntities (locationContainer, keys);
 		}
-		
+
 		protected class TimedEntity<T>
 		{
 			private T entity;
@@ -137,7 +136,7 @@ namespace FOnline.BT
 				this.entity = entity;
 				this.time = time;
 			}
-			
+
 			public bool IsInTime (long time)
 			{
 				return time >= this.time;

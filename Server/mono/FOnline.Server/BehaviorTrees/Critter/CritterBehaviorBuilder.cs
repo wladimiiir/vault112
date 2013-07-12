@@ -7,6 +7,18 @@ namespace FOnline.BT
 	{
 		public CritterBehaviorBuilder (Critter critter) : base(new CritterBlackboard(critter))
 		{
+			InitCritterFinish (critter);
+
+			//do nothing, if critter is dead or KO
+			Do (new Nothing ().IfNot (new IsLife ()));
+		}
+
+		private void InitCritterFinish (Critter critter)
+		{
+			critter.Finish += (sender, e) => {
+				//deregistering task
+				Global.DeregisterBehaviorTask (mainTask);
+			};
 		}
 		// methods for adding specific critter tasks could be added here for ease of use
 		//

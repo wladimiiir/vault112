@@ -811,6 +811,11 @@ namespace FOnline
 		{
 			BTController.RegisterTask (task);
 		}
+
+		public static void DeregisterBehaviorTask (MainTask task)
+		{
+			BTController.DeregisterTask (task);
+		}
 		#endregion
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		extern static void Global_GC ();

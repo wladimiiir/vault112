@@ -172,6 +172,8 @@
     <Compile Include="BehaviorTrees\Critter\Chooser\Weakest.cs" />
     <Compile Include="BehaviorTrees\Critter\Condition\IsSameType.cs" />
     <Compile Include="BehaviorTrees\Critter\Task\MoveRandomly.cs" />
+    <Compile Include="BehaviorTrees\Critter\Task\Nothing.cs" />
+    <Compile Include="BehaviorTrees\Critter\Condition\IsLife.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="readme.txt" />

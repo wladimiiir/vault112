@@ -7,16 +7,16 @@ namespace FOnline.BT
 		where BuilderType : BehaviorBuilder<BuilderType, BlackboardType> 
 			where BlackboardType : Blackboard
 	{
-		private BlackboardType blackboard;
-		private MainTask mainTask;
-		private Queue<CompositeTask> compositeQueue;
+		protected readonly BlackboardType blackboard;
+		protected readonly MainTask mainTask;
+		private readonly Queue<CompositeTask> compositeQueue;
 		private LeafTask<BlackboardType> lastTask;
 
 		public BehaviorBuilder (BlackboardType blackboard)
 		{
+			this.blackboard = blackboard;
 			mainTask = new MainTask (blackboard);
 			compositeQueue = new Queue<CompositeTask> ();
-			this.blackboard = blackboard;
 		}
 
 		public MainTask MainTask {

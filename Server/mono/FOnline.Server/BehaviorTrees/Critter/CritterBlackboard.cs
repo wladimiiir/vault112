@@ -19,7 +19,7 @@ namespace FOnline.BT
 	public class CritterBlackboard : Blackboard
 	{
 		private readonly Critter critter;
-		private IList<TimedEntity<CritterMessage>> critterMessages = new List<TimedEntity<CritterMessage>> ();
+		private readonly IList<TimedEntity<CritterMessage>> critterMessages = new List<TimedEntity<CritterMessage>> ();
 
 		public CritterBlackboard (Critter critter)
 		{
@@ -29,15 +29,15 @@ namespace FOnline.BT
 
 		protected override void ClearContainers ()
 		{
-			ResetMessages();
+			ResetMessages ();
 			base.ClearContainers ();
 		}
 
 		private void ResetMessages ()
 		{
 			for (int index = critterMessages.Count - 1; index >= 0; index--) {
-				if(critterMessages[index].IsInTime(executionStartTime))
-					critterMessages.RemoveAt(index);
+				if (critterMessages [index].IsInTime (executionStartTime))
+					critterMessages.RemoveAt (index);
 			}
 		}
 
@@ -51,37 +51,36 @@ namespace FOnline.BT
 					AddCrittersFromEvent (BlackboardKeys.Killers, e.Killer);
 			};
 			critter.Message += (sender, e) => {
-				AddMessages(new CritterMessage(e.From, e.Num, e.Val));
+				AddMessages (new CritterMessage (e.From, e.Num, e.Val));
 			};
 			critter.PlaneBegin += (sender, e) => {
-				if(e.Reason == NpcPlaneReason.FoundInEnemyStack)
-				{
+				if (e.Reason == NpcPlaneReason.FoundInEnemyStack) {
 					//let BT use its own system of attack response
-					Debug.Assert(e.SomeCr != null, "Some critter in FoundInEnemyStack plane cannot be null");
-					AddCrittersFromEvent(BlackboardKeys.FoundInEnemyStack, e.SomeCr);
+					Debug.Assert (e.SomeCr != null, "Some critter in FoundInEnemyStack plane cannot be null");
+					AddCrittersFromEvent (BlackboardKeys.FoundInEnemyStack, e.SomeCr);
 					e.Result = NpcPlaneEventResult.Discard;
 				}
 			};
 			critter.SmthDead += (sender, e) => {
-				AddCrittersFromEvent(BlackboardKeys.SeenDead, e.From);
-				if(e.Killer != null)
-					AddCrittersFromEvent(BlackboardKeys.SeenKillers, e.Killer);
+				AddCrittersFromEvent (BlackboardKeys.SeenDead, e.From);
+				if (e.Killer != null)
+					AddCrittersFromEvent (BlackboardKeys.SeenKillers, e.Killer);
 			};
 		}
 
-		public void AddMessages(params CritterMessage[] messages)
+		public void AddMessages (params CritterMessage[] messages)
 		{
 			foreach (var message in CreateTimedEntities(messages, DateTime.Now.Ticks)) {
-				critterMessages.Add(message);
+				critterMessages.Add (message);
 			}
 		}
 
 		public IList<CritterMessage> GetMessages ()
 		{
-			IList<CritterMessage> messages = new List<CritterMessage>();
+			IList<CritterMessage> messages = new List<CritterMessage> ();
 			foreach (var message in critterMessages) {
-				if(message.IsInTime(executionStartTime))
-					messages.Add(message.Entity);
+				if (message.IsInTime (executionStartTime))
+					messages.Add (message.Entity);
 			}
 			return messages;
 		}

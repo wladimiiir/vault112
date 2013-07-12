@@ -1,25 +1,26 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|Mixed Platforms" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="FOnline.Server/Data/ItemHolderData.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="FOnline.Server\BehaviorTrees\Core\MainTask.cs">
     <Files>
-      <File FileName="FOnline.Server/BehaviorTrees/Critter/Task/Loot.cs" Line="101" Column="29" />
-      <File FileName="FOnline.Server/BehaviorTrees/Core/Task.cs" Line="18" Column="3" />
-      <File FileName="FOnline.Server/Data/ItemHolderData.cs" Line="62" Column="17" />
-      <File FileName="FOnline.Server/Common.cs" Line="1" Column="1" />
-      <File FileName="FOnline.Server/Critter.Constants.cs" Line="10" Column="51" />
-      <File FileName="FOnline.Server/Item.Contants.cs" Line="7" Column="22" />
+      <File FileName="FOnline.Server\Roles\EncounterRoles.cs" Line="24" Column="3" />
+      <File FileName="FOnline.Server\Roles\Vault112Roles.cs" Line="10" Column="31" />
+      <File FileName="FOnline.Server\Roles\Roles.cs" Line="1" Column="1" />
+      <File FileName="FOnline.Server\BehaviorTrees\Critter\CritterBehaviorBuilder.cs" Line="8" Column="72" />
+      <File FileName="FOnline.Server\BehaviorTrees\Critter\CritterBlackboard.cs" Line="54" Column="61" />
+      <File FileName="FOnline.Server\BehaviorTrees\Core\Controller.cs" Line="24" Column="33" />
+      <File FileName="FOnline.Server\BehaviorTrees\Core\BehaviorBuilder.cs" Line="11" Column="40" />
+      <File FileName="FOnline.Server\BehaviorTrees\Core\Blackboard.cs" Line="8" Column="122" />
+      <File FileName="FOnline.Server\BehaviorTrees\Core\MainTask.cs" Line="23" Column="14" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="FOnline.Server" expanded="True">
             <Node name="BehaviorTrees" expanded="True">
-              <Node name="Critter" expanded="True">
-                <Node name="Task" expanded="True" />
+              <Node name="Core" expanded="True">
+                <Node name="MainTask.cs" selected="True" />
               </Node>
-            </Node>
-            <Node name="Data" expanded="True">
-              <Node name="ItemHolderData.cs" selected="True" />
+              <Node name="Critter" expanded="True" />
             </Node>
           </Node>
         </State>
