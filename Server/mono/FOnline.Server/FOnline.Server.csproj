@@ -144,7 +144,6 @@
     <Compile Include="BehaviorTrees\Core\Condition\ItemCheckCondition.cs" />
     <Compile Include="BehaviorTrees\Core\Condition\NegativeContidion.cs" />
     <Compile Include="BehaviorTrees\Core\Task\AtFixedRate.cs" />
-    <Compile Include="BehaviorTrees\Critter\Condition\IsAttacking.cs" />
     <Compile Include="BehaviorTrees\Critter\Condition\IsEnemy.cs" />
     <Compile Include="BehaviorTrees\Critter\Condition\IsHurt.cs" />
     <Compile Include="BehaviorTrees\Critter\Condition\IsInRange.cs" />
@@ -162,6 +161,17 @@
     <Compile Include="BehaviorTrees\Critter\Condition\HasLoot.cs" />
     <Compile Include="BehaviorTrees\Critter\Condition\HasLooter.cs" />
     <Compile Include="BehaviorTrees\Critter\Task\TakeDrug.cs" />
+    <Compile Include="Roles\EncounterRoles.cs" />
+    <Compile Include="BehaviorTrees\Critter\Condition\SeesCritter.cs" />
+    <Compile Include="BehaviorTrees\Critter\Chooser\Random.cs" />
+    <Compile Include="BehaviorTrees\Core\Chooser\EntityChooser.cs" />
+    <Compile Include="BehaviorTrees\Core\Chooser\CritterChooser.cs" />
+    <Compile Include="BehaviorTrees\Core\Chooser\ItemChooser.cs" />
+    <Compile Include="BehaviorTrees\Critter\Condition\AmAttacking.cs" />
+    <Compile Include="BehaviorTrees\Core\Task\AtChance.cs" />
+    <Compile Include="BehaviorTrees\Critter\Chooser\Weakest.cs" />
+    <Compile Include="BehaviorTrees\Critter\Condition\IsSameType.cs" />
+    <Compile Include="BehaviorTrees\Critter\Task\MoveRandomly.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="readme.txt" />
@@ -199,6 +209,8 @@
     <Folder Include="BehaviorTrees\Core\Task\" />
     <Folder Include="BehaviorTrees\Critter\Condition\" />
     <Folder Include="Data\" />
+    <Folder Include="BehaviorTrees\Core\Chooser\" />
+    <Folder Include="BehaviorTrees\Critter\Chooser\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FOnline.Mono\FOnline.Mono.csproj">
