@@ -1,52 +1,31 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|Mixed Platforms" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="FOnline.Server/Core/Map.Events.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="FOnline.Server/Core/Critter.cs">
     <Files>
-      <File FileName="FOnline.Server/Roles/VirtualRealityRoles.cs" Line="23" Column="35" />
-      <File FileName="FOnline.Server/Roles/Vault112Roles.cs" Line="53" Column="4" />
-      <File FileName="FOnline.Server/BehaviorTrees/Critter/Task/Attack.cs" Line="18" Column="3" />
-      <File FileName="FOnline.Server/BehaviorTrees/Critter/Task/CallReinforcements.cs" Line="13" Column="4" />
-      <File FileName="FOnline.Server/Roles/EncounterRoles.cs" Line="113" Column="60" />
-      <File FileName="FOnline.Server/Item.Contants.cs" Line="12" Column="3" />
-      <File FileName="FOnline.Server/BehaviorTrees/Critter/Condition/SeesCritter.cs" Line="9" Column="58" />
-      <File FileName="FOnline.Server/BehaviorTrees/Core/LeafTask.cs" Line="12" Column="63" />
-      <File FileName="FOnline.Server/BehaviorTrees/Critter/Chooser/Weakest.cs" Line="6" Column="35" />
-      <File FileName="FOnline.Server/BehaviorTrees/Core/Chooser/CritterChooser.cs" Line="5" Column="50" />
-      <File FileName="FOnline.Server/BehaviorTrees/Core/Chooser/EntityChooser.cs" Line="6" Column="2" />
-      <File FileName="FOnline.Server/BehaviorTrees/Core/BehaviorBuilder.cs" Line="11" Column="40" />
-      <File FileName="FOnline.Server/Roles/Roles.cs" Line="9" Column="50" />
-      <File FileName="FOnline.Server/Program.cs" Line="18" Column="23" />
-      <File FileName="FOnline.Server/BehaviorTrees/Core/Blackboard.cs" Line="91" Column="28" />
-      <File FileName="FOnline.Server/BehaviorTrees/Utils/EntityContainer.cs" Line="22" Column="60" />
-      <File FileName="FOnline.Server/Roles/JunkyardRoles.cs" Line="28" Column="3" />
-      <File FileName="FOnline.Server/Core/Critter.NativeMethods.cs" Line="277" Column="3" />
-      <File FileName="FOnline.Server/Extension/Critter.Extension.cs" Line="11" Column="31" />
-      <File FileName="FOnline.Server/Team.Constants.cs" Line="5" Column="2" />
-      <File FileName="FOnline.Server/Misc.Constants.cs" Line="7" Column="31" />
-      <File FileName="FOnline.Server/Common.cs" Line="248" Column="54" />
-      <File FileName="FOnline.Server/Dialog.Constants.cs" Line="7" Column="31" />
-      <File FileName="FOnline.Server/AI.Constants.cs" Line="7" Column="47" />
-      <File FileName="FOnline.Server/Core/Global.cs" Line="713" Column="3" />
-      <File FileName="FOnline.Server/Maps/Junkyard.cs" Line="25" Column="62" />
-      <File FileName="FOnline.Server/BehaviorTrees/Core/MainTask.cs" Line="12" Column="4" />
-      <File FileName="FOnline.Server/BehaviorTrees/Critter/CritterBlackboard.cs" Line="80" Column="2" />
-      <File FileName="FOnline.Server/BehaviorTrees/Core/Controller.cs" Line="42" Column="33" />
-      <File FileName="FOnline.Server/Bags.Contants.cs" Line="7" Column="19" />
-      <File FileName="FOnline.Server/BehaviorTrees/Critter/CritterBehaviorBuilder.cs" Line="11" Column="4" />
-      <File FileName="FOnline.Server/Core/Critter.Events.cs" Line="749" Column="32" />
-      <File FileName="FOnline.Server/Core/CritterManager.cs" Line="63" Column="10" />
-      <File FileName="FOnline.Server/Core/Map.Events.cs" Line="75" Column="29" />
-      <File FileName="FOnline.Server/Core/Scenery.NativeMethods.cs" Line="28" Column="4" />
-      <File FileName="FOnline.Server/Core/Map.NativeMethods.cs" Line="510" Column="4" />
-      <File FileName="FOnline.Server/Core/Main.cs" Line="212" Column="21" />
-      <File FileName="FOnline.Server/Core/Map.Fields.cs" Line="12" Column="28" />
+      <File FileName="FOnline.Server/Core/Critter.cs" Line="8" Column="2" />
+      <File FileName="FOnline.Server/Roles/JunkyardRoles.cs" Line="54" Column="89" />
+      <File FileName="FOnline.Server/Roles/VirtualRealityRoles.cs" Line="11" Column="49" />
+      <File FileName="FOnline.Server/Roles/Vault112Roles.cs" Line="16" Column="4" />
+      <File FileName="FOnline.Server/Maps/Junkyard.cs" Line="21" Column="22" />
+      <File FileName="FOnline.Mono/IManagedWrapper.cs" Line="10" Column="6" />
+      <File FileName="FOnline.Mono/REPL.cs" Line="12" Column="2" />
+      <File FileName="FOnline.Mono/Logging.cs" Line="11" Column="34" />
+      <File FileName="FOnline.Server/Core/CritterManager.cs" Line="11" Column="40" />
+      <File FileName="FOnline.Server/Core/Critter.Events.cs" Line="459" Column="1" />
+      <File FileName="FOnline.Server/Core/Map.cs" Line="61" Column="51" />
+      <File FileName="FOnline.Server/Core/Main.cs" Line="433" Column="50" />
+      <File FileName="FOnline.Server/BehaviorTrees/Critter/CritterBlackboard.cs" Line="11" Column="43" />
+      <File FileName="FOnline.Server/Program.cs" Line="10" Column="18" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="FOnline.Server" expanded="True">
+            <Node name="BehaviorTrees" expanded="True">
+              <Node name="Critter" expanded="True" />
+            </Node>
             <Node name="Core" expanded="True">
-              <Node name="Map.Events.cs" selected="True" />
+              <Node name="Critter.cs" selected="True" />
             </Node>
             <Node name="Maps" expanded="True" />
             <Node name="Roles" expanded="True" />

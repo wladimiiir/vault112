@@ -7,49 +7,47 @@ namespace FOnline.BT
 		private string[] critterKeys;
 		private int specialAttackFlags;
 
-		public Attack () : this(0, BlackboardKeys.FoundCritters)
+		public Attack() : this(0, BlackboardKeys.FoundCritters)
 		{
 
 		}
 
-		public Attack (params string[] critterKeys) : this(0, critterKeys)
+		public Attack(params string[] critterKeys) : this(0, critterKeys)
 		{
 		}
 
-		public Attack (int specialAttackFlags, params string[] critterKeys)
+		public Attack(int specialAttackFlags, params string[] critterKeys)
 		{
 			this.specialAttackFlags = specialAttackFlags;
 			this.critterKeys = critterKeys;
 		}
 
-		public override TaskState Execute ()
+		public override TaskState Execute()
 		{
-			if (GetCritter ().GetPlanes ((int)PlaneType.Attack, null) > 0)
+			if (GetCritter().GetPlanes((int)PlaneType.Attack, null) > 0)
 				return TaskState.Running; //attacking someone
 
 			bool foundAttacker = false;
 
 			foreach (var key in critterKeys) {
 				foreach (var critterToAttack in GetBlackboard().GetCritters(key)) {
-					foundAttacker |= TryToAttack (critterToAttack);
+					foundAttacker |= TryToAttack(critterToAttack);
 				}
 			}
 
 			return foundAttacker ? TaskState.Success : TaskState.Failed;
 		}
 
-		private bool TryToAttack (Critter critterToAttack)
+		private bool TryToAttack(Critter critterToAttack)
 		{
-			Global.Log ("Trying to attack: " + critterToAttack.Id);
-			if (!Check (critterToAttack))
+			if (!Check(critterToAttack))
 				return false;
 
 			//TODO: maybe check if not already attacking the critter
 
 			if (specialAttackFlags != 0)
-				GetCritter ().Mode [Modes.SpecialAttackFlags] = specialAttackFlags;
-			Global.Log ("Attacking critter");
-			NpcPlanes.AddAttackPlane (GetCritter (), Priorities.Attack, critterToAttack, true);
+				GetCritter().Mode[Modes.SpecialAttackFlags] = specialAttackFlags;
+			NpcPlanes.AddAttackPlane(GetCritter(), Priorities.Attack, critterToAttack, true);
 			return true;
 		}
 	}
