@@ -3,7 +3,7 @@ using FOnline.BT;
 
 namespace FOnline
 {
-	public class Vault112Roles
+	public class JunkyardRoles
 	{
 		/**
 		 * Functions to be bind by AS
@@ -15,17 +15,10 @@ namespace FOnline
 			return critter;
 		}
 
-		public static Critter InitPatrol(IntPtr ptr)
+		public static Critter InitGyro(IntPtr ptr)
 		{
 			var critter = (Critter)ptr;
-			InitPatrol(critter);
-			return critter;
-		}
-
-		public static Critter InitInhabitant(IntPtr ptr)
-		{
-			var critter = (Critter)ptr;
-			InitInhabitant(critter);
+			InitGyro(critter);
 			return critter;
 		}
 
@@ -39,24 +32,6 @@ namespace FOnline
 			builder
 				.DoSequence()
 					.Do(new CallReinforcements(BlackboardKeys.Attackers, BlackboardKeys.SeenAttackers, BlackboardKeys.Killers))
-					.Do(new BT.Say(FOnline.Say.NormOnHead, TextMsg.Text, 70140))
-					.Do(new Attack(BlackboardKeys.Attackers))
-				.End()
-				.DoSelection()
-					.Do(new ProvideReinforcements())
-				.End();
-			
-			Global.RegisterBehaviorTask(builder.MainTask);
-		}
-
-		public static void InitPatrol(Critter npc)
-		{
-			var builder = new CritterBehaviorBuilder(npc);
-			
-			builder
-				.DoSequence()
-					.Do(new CallReinforcements(BlackboardKeys.Attackers, BlackboardKeys.SeenAttackers, BlackboardKeys.Killers))
-					.Do(new BT.Say(FOnline.Say.NormOnHead, TextMsg.Text, 70140))
 					.Do(new Attack(BlackboardKeys.Attackers))
 				.End()
 				.DoSelection()
@@ -64,19 +39,19 @@ namespace FOnline
 				.End()
 				.DoSequence()
 					.Do(new Patrol(Entire.Patrol))
-					.Do(new LookAround(3, Time.RealSecond(3)))
+					.Do(new LookAround(3, Time.RealSecond(15)))
 				.End();
 			
 			Global.RegisterBehaviorTask(builder.MainTask);
 		}
 
-		public static void InitInhabitant(Critter npc)
+		public static void InitGyro(Critter npc)
 		{
 			var builder = new CritterBehaviorBuilder(npc);
 
 			builder
 				.DoSequence("I am attacked")
-					.Do(new CallReinforcements(BlackboardKeys.Attackers, BlackboardKeys.Killers))
+					.Do(new CallReinforcements(BlackboardKeys.Attackers, BlackboardKeys.SeenAttackers, BlackboardKeys.Killers))
 			//TODO: maybe run to guard
 				.End();
 

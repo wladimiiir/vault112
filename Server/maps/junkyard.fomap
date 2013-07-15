@@ -22428,8 +22428,8 @@ ProtoId              519
 MapX                 54
 MapY                 58
 Dir                  5
-ScriptName           map_junkyard
-FuncName             InitGyro
+ScriptName           mono
+FuncName             Maps.Junkyard::InitGyro
 Critter_Cond         1
 Critter_Anim1        0
 Critter_Anim2        0
@@ -22451,8 +22451,8 @@ ProtoId              520
 MapX                 81
 MapY                 70
 Dir                  3
-ScriptName           map_junkyard
-FuncName             InitGuard
+ScriptName           mono
+FuncName             Maps.Junkyard::InitGuard
 Critter_Cond         1
 Critter_Anim1        0
 Critter_Anim2        0
@@ -22474,8 +22474,8 @@ ProtoId              520
 MapX                 53
 MapY                 85
 Dir                  3
-ScriptName           map_junkyard
-FuncName             InitGuard
+ScriptName           mono
+FuncName             Maps.Junkyard::InitGuard
 Critter_Cond         1
 Critter_Anim1        0
 Critter_Anim2        0
@@ -22496,8 +22496,8 @@ MapObjType           0
 ProtoId              521
 MapX                 85
 MapY                 111
-ScriptName           map_junkyard
-FuncName             InitGuard
+ScriptName           mono
+FuncName             Maps.Junkyard::InitGuard
 Critter_Cond         1
 Critter_Anim1        0
 Critter_Anim2        0
@@ -22519,8 +22519,8 @@ ProtoId              521
 MapX                 74
 MapY                 125
 Dir                  2
-ScriptName           map_junkyard
-FuncName             InitGuard
+ScriptName           mono
+FuncName             Maps.Junkyard::InitGuard
 Critter_Cond         1
 Critter_Anim1        0
 Critter_Anim2        0

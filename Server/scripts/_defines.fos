@@ -1,6 +1,8 @@
 #ifndef __DEFINES__
 #define __DEFINES__
 
+#define __MONO_RUNTIME__
+
 // 3d players mod, uncomment for use
 // #define PLAYERS_3D             // Enable 3d players
 // #define PLAYERS_3D_NO_HEAD     // No head slot

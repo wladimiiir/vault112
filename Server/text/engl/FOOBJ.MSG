@@ -819,8 +819,6 @@
 {41001}{}{A set of locksmith tools. Includes all the necessary picks and tension wrenches to open conventional pin and tumbler locks. This set also includes some special tools for more difficult mechanical locking mechanisms.}
 {41100}{}{Electronic Lockpick MKII}
 {41101}{}{This is the second generation Wattz Electronics Micromanipulator FingerStuff electronic lockpick. For defeating electronic locks and security devices. This Mark II version includes updated software and interface tools.}
-{41102}{}{Ñêàíåð}
-{41103}{}{Ñêàíåð ïðåäíàçíà÷åí äëÿ ñ÷èòûâàíèÿ èíôîðìàöèè èç áëîêîâ ïàìÿòè áîåâûõ ðîáîòîâ Ñüåððû. Îáúåì äàííûõ: @lex value@%}
 {41200}{}{Oil Can}
 {41201}{}{You see a can of Armor-Go. A space-age, polymer, lubricant for powered armor.}
 {41300}{}{Stables ID Badge}
@@ -862,12 +860,8 @@
 {43001}{}{A 75mm Howitzer shell. The casing has mostly corroded away, but you can make out these letters. EXP. 9-25-98.}
 {43100}{}{Ramirez Box, Closed}
 {43101}{}{This is the box you received from Big Jesus Mordino to give to Ramirez at the Stables.}
-{43102}{}{Îôèöèàëüíûé îòâåò Áðàòñòâà Ñòàëè}
-{43103}{}{Êåéñ çàêðûò. Ïî âñåé âèäèìîñòè, â íåì ëåæèò ïèñüìî äëÿ Øåéìàíà, êîòîðîå íàïèñàëè ïàëàäèíû Áðàòñòâà Ñòàëè.}
 {43200}{}{Ramirez Box, Open}
 {43201}{}{This is the box you received from Big Jesus Mordino to give to Ramirez at the Stables. It is open, and you have removed the Jet that was inside.}
-{43202}{}{Îôèöèàëüíûé îòâåò Áðàòñòâà Ñòàëè}
-{43203}{}{Êåéñ îòêðûò.}
 {43300}{}{Mirrored Shades}
 {43301}{}{This is a pair of fashionable and deadly-looking mirrored shades. Just having them in your inventory makes you feel cool.}
 {43400}{}{Wagon}
@@ -890,8 +884,6 @@
 {44201}{}{These dog tags list the owner as "Angel-Eyes." Beneath the name is the number "16."}
 {44300}{}{Tuco's Dog Tags}
 {44301}{}{These foul-smelling dog tags list the owner as "Tuco Benedicto Pacifico Juan Maria Ramirez," followed by the number "27."}
-{44302}{}{Æåòîí ïàëàäèíà Áðàòñòâà Ñòàëè}
-{44303}{}{Èìÿ íå ðàçîáðàòü. Â ëþáîì ñëó÷àå, â Áðàòñòâå Ñòàëè íàâåðíÿêà çàèíòåðåñóþòñÿ ýòîé íàõîäêîé.}
 {44400}{}{Raiders Map}
 {44401}{}{This is a crumpled map of pre-war Northern California. Reno and the surrounding caravan trails are outlined in red, and there is a red "X" far to the east of Reno with "Raiders" scrawled beneath it.}
 {44500}{}{Sheriff's Badge}
@@ -963,8 +955,6 @@
 {47801}{}{The label reads: "Mission Statement."}
 {47900}{}{NavCom Parts}
 {47901}{}{These are computer parts that look like they slot into the interior of a machine. The fact that they say "Poseidon Oil" and "Navigational Computer" on them lead you to believe they fit into a Poseidon Oil Navigational Computer.}
-{47902}{}{Ìîäóëü óïðàâëåíèÿ Ñòðàæåì}
-{47903}{}{Ìèíèàòþðíûé ÷èï ïðåäíàçíà÷åí äëÿ ïîëó÷åíèÿ êîíòðîëÿ íàä áîåâûìè ðîáîòàìè òèïîâ Ñòðàæ è Ñòðàæ-2. Óñòàíîâèòå ÷èï â êîììóíèêàöèîííûé ðàçúåì, è ñòðàæ áóäåò âàì ïîä÷èíÿòüñÿ. Ñðîê ñëóæáû îãðàíè÷åí.}
 {48000}{}{Bonus +1 Agility}
 {48100}{}{Bonus +1 Intelligence}
 {48200}{}{Bonus +1 Strength}
@@ -1041,8 +1031,6 @@
 {52201}{}{A short finely crafted knife. The tip seems to be designed to pierce armor.}
 {52300}{}{Survey Map}
 {52301}{}{It looks like a geological survey map of the Bay area.}
-{52302}{}{Êàðòà íàåìíèêà}
-{52303}{}{Íà ïîìÿòîé êàðòå ñëîæíî òî÷íî îïðåäåëèòü ìåñòî ðàñïîëîæåíèÿ òàéíèêà. Î÷åâèäíî òîëüêî, ÷òî îáåùàííûå ñîêðîâèùà ñïðÿòàíû ïîáëèçîñòè îò @lex location@. Íà îáðàòíîé ñòîðîíå êàðòû íàïèñàí êîä @lex code@.}
 {52400}{}{Bridgekeeper's Robes}
 {52401}{}{This smelly, filthy garment must be made out of some special fabric in order to have withstood the foulness of the bridgekeeper's body. Oddly enough, it has plasma burns and scorch marks all over it, as if these weapons were used against it... to no effect. You have NO idea why it's purple.}
 {52500}{}{Hypo}

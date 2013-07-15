@@ -9,10 +9,18 @@
 #include "critter_action_condition.fos"
 #include "critter_action_when.fos"
 
-#pragma bindfunc "void InitHumanEvil(Critter&) -> mono EncounterRoles::InitHumanEvil"
-#pragma bindfunc "void InitHumanGood(Critter&) -> mono EncounterRoles::InitHumanEvil"
-#pragma bindfunc "void InitAnimalGood(Critter&) -> mono EncounterRoles::InitAnimalGood"
-#pragma bindfunc "void InitAnimalEvil(Critter&) -> mono EncounterRoles::InitAnimalEvil"
+#ifdef __MONO_RUNTIME__
+	#pragma bindfunc "void InitHumanEvil(Critter&) -> mono EncounterRoles::InitHumanEvil"
+	#pragma bindfunc "void InitHumanGood(Critter&) -> mono EncounterRoles::InitHumanEvil"
+	#pragma bindfunc "void InitAnimalGood(Critter&) -> mono EncounterRoles::InitAnimalGood"
+	#pragma bindfunc "void InitAnimalEvil(Critter&) -> mono EncounterRoles::InitAnimalEvil"
+#endif
+#ifndef __MONO_RUNTIME__
+	void InitHumanEvil(Critter&){}
+	void InitHumanGood(Critter&){}
+	void InitAnimalGood(Critter&){}
+	void InitAnimalEvil(Critter&){}
+#endif
 
 import bool AddAttackPlane( Critter& npc, uint priority, Critter& target, bool run ) from "npc_planes";
 //import bool AddWalkPlane( Critter& npc, uint priority, int identifier, uint identifierExt, uint16 hexX, uint16 hexY, uint8 dir, bool run, uint cut ) from "npc_planes";

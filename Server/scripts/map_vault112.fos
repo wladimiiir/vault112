@@ -7,15 +7,19 @@
 #include "_npc_pids.fos"
 #include "_npc_roles.fos"
 #include "_teams.fos"
+#include "_ai.fos"
 #include "entire.fos"
-#include "critter_action_basic.fos"
-#include "critter_action_find.fos"
-#include "critter_action_condition.fos"
-#include "critter_action_when.fos"
 
-#pragma bindfunc "void InitGuard(Critter&) -> mono Vault112Roles::InitGuard"
-#pragma bindfunc "void InitPatrol(Critter&) -> mono Vault112Roles::InitPatrol"
-#pragma bindfunc "void InitInhabitant(Critter&) -> mono Vault112Roles::InitInhabitant"
+#ifdef __MONO_RUNTIME__
+	#pragma bindfunc "void InitGuard(Critter&) -> mono Vault112Roles::InitGuard"
+	#pragma bindfunc "void InitPatrol(Critter&) -> mono Vault112Roles::InitPatrol"
+	#pragma bindfunc "void InitInhabitant(Critter&) -> mono Vault112Roles::InitInhabitant"
+#endif
+#ifndef __MONO_RUNTIME__
+	void InitGuard(Critter&){}
+	void InitPatrol(Critter&){}
+	void InitInhabitant(Critter&){}
+#endif
 
 import void FlushScreen(Critter& cr, bool fadeOut, uint timeMs) from "effects";
 import bool AutoClose(Item& locker) from "doors";
@@ -200,7 +204,6 @@ void InitPatrol(Critter& critter, bool firstTime)
 		critter.StatBase[ST_AI_ID] = AIPACKET_GENERAL_TOWN_GUARDS;
 		critter.StatBase[ST_TEAM_ID] = TEAM_Vault112;
 		critter.ParamBase[SPECIAL_ATTACK_FLAGS] = SPECIAL_ATTACK_ELECTRIFY | SPECIAL_ATTACK_PACIFY;
-		critter.SetScript("mono@Vault112Roles::InitPatrol");
 	}
 	InitPatrol(critter);
 }

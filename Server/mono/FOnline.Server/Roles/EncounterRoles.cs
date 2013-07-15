@@ -45,18 +45,18 @@ namespace FOnline
 
 			builder
 				.Do (new CallReinforcements (BlackboardKeys.Attackers))
-				.Do (new TakeDrug (ItemPack.HealingDrugs).If (new IsHurt (70)))
+				.Do (new TakeDrug (ItemPack.HealingDrugs)).If (new IsHurt (70))
 				.DoSequence ("20% to find weakest player and attack him instead")
 					.Do (new AtFixedRate<CritterBlackboard> (Time.RealSecond (10)))
 					.Do (new AtChance<CritterBlackboard> (20))
-					.Do (new FindCritters (Find.Life | Find.OnlyPlayers).Choose (new Weakest ()).If (new IsSeen ()).IfNot (new IsTeamMember ()))
+					.Do (new FindCritters (Find.Life | Find.OnlyPlayers).Choose (new Weakest ())).If (new IsSeen ()).IfNot (new IsTeamMember ())
 					.Do (new Attack ())
 				.End ()
 				.DoSequence ("Attack every non member")
-					.Do (new FindCritters (Find.Life).If (new IsSeen ()).IfNot (new AmAttacking ()).IfNot (new IsTeamMember ()))
+					.Do (new FindCritters (Find.Life)).If (new IsSeen ()).IfNot (new AmAttacking ()).IfNot (new IsTeamMember ())
 					.Do (new Attack ())
 				.End ()
-				.Do (new ProvideReinforcements ().IfNot (new AmAttacking ()));
+				.Do (new ProvideReinforcements ()).IfNot (new AmAttacking ());
 
 			Global.RegisterBehaviorTask (builder.MainTask);
 		}
@@ -67,12 +67,12 @@ namespace FOnline
 
 			builder
 				.Do (new CallReinforcements (BlackboardKeys.Attackers))
-				.Do (new TakeDrug (ItemPack.HealingDrugs).If (new IsHurt (70)))
+				.Do (new TakeDrug (ItemPack.HealingDrugs)).If (new IsHurt (70))
 				.DoSequence ("Attack enemies in sight")
-					.Do (new FindCritters (Find.Life).Choose (new BT.Random ()).IfNot (new AmAttacking ()).If (new IsSeen ()).If (new IsEnemy ()))
+					.Do (new FindCritters (Find.Life).Choose (new BT.Random ())).IfNot (new AmAttacking ()).If (new IsSeen ()).If (new IsEnemy ())
 					.Do (new Attack ())
 				.End ()
-				.Do (new ProvideReinforcements ().IfNot (new AmAttacking ()))
+				.Do (new ProvideReinforcements ()).IfNot (new AmAttacking ())
 				.Do (new Attack (BlackboardKeys.Attackers));
 
 			Global.RegisterBehaviorTask (builder.MainTask);
@@ -87,20 +87,20 @@ namespace FOnline
 				.DoSequence ("3% to attack weakest animal from my team - fight over the area")
 					.Do (new AtFixedRate<CritterBlackboard> (Time.RealSecond (10)))
 					.Do (new AtChance<CritterBlackboard> (3))
-					.Do (new FindCritters (Find.Life).Choose (new Weakest ()).If (new IsSeen ()).If (new IsTeamMember ()))
+					.Do (new FindCritters (Find.Life).Choose (new Weakest ())).If (new IsSeen ()).If (new IsTeamMember ())
 					.Do (new Attack ())
 				.End ()
 				.DoSequence ("10% to attack animal of same type from other team")
 					.Do (new AtFixedRate<CritterBlackboard> (Time.RealSecond (10)))
 					.Do (new AtChance<CritterBlackboard> (10))
-					.Do (new FindCritters (Find.Life).Choose (new BT.Random ()).If (new IsSeen ()).IfNot (new IsTeamMember ()))
+					.Do (new FindCritters (Find.Life).Choose (new BT.Random ())).If (new IsSeen ()).IfNot (new IsTeamMember ())
 					.Do (new Attack ())
 				.End ()
 				.DoSequence ("Attack every non member and not same type critter")
-					.Do (new FindCritters (Find.Life).IfNot (new AmAttacking ()).If (new IsSeen ()).If (new IsTeamMember ()).IfNot (new IsSameType ()))
+					.Do (new FindCritters (Find.Life)).IfNot (new AmAttacking ()).If (new IsSeen ()).If (new IsTeamMember ()).IfNot (new IsSameType ())
 					.Do (new Attack ())
 				.End ()
-				.Do (new ProvideReinforcements ().IfNot (new AmAttacking ()));
+				.Do (new ProvideReinforcements ()).IfNot (new AmAttacking ());
 
 			Global.RegisterBehaviorTask (builder.MainTask);
 		}
@@ -111,7 +111,7 @@ namespace FOnline
 
 			builder
 				.Do (new CallReinforcements (BlackboardKeys.Attackers))
-				.Do (new ProvideReinforcements ().IfNot (new AmAttacking ()))
+				.Do (new ProvideReinforcements ()).IfNot (new AmAttacking ())
 				.DoSequence ("Move randomly every 10-20 seconds")
 					.Do (new AtFixedRate<CritterBlackboard> (Time.RealSecond (10), Time.RealSecond (20)))
 					.Do (new MoveRandomly (1, 5))

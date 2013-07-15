@@ -5,12 +5,15 @@
 #include "_macros.fos"
 #include "entire.fos"
 #include "_npc_pids.fos"
-#include "critter_action_basic.fos"
-#include "critter_action_when.fos"
-#include "critter_action_find.fos"
-#include "critter_action_condition.fos"
 #include "npc_spawn_h.fos"
 #include "wrappers.fos"
+
+#ifdef __MONO_RUNTIME__
+	#pragma bindfunc "void InitCritter1(Critter&) -> mono VirtualRealityRoles::InitCritter1"
+#endif
+#ifndef __MONO_RUNTIME__
+	void InitCritter1(Critter&){}
+#endif
 
 #define	ENTIRE_TERMINAL			(100)
 #define VIRTUAL_REALITY_TEAM	(1000)
@@ -41,29 +44,7 @@ void InitMap(Map& map, bool firstTime)
 */
 void InitCritter1(Critter& critter, bool)
 {
-	Action@ action = 
-		LoopAction()
-			.AddSubAction(FindCritters(FIND_LIFE | FIND_ONLY_PLAYERS)
-				.If(IsSeen())
-				.AddSubAction(Attack()))
-			.AddSubAction(RepeatAtInterval(REAL_SECOND(5), REAL_SECOND(20))
-				.If(NotAttacking())
-				.AddSubAction(ChangeDirection(RANDOM_DIRECTION, true)))
-			.AddSubAction(ProvideReinforcements(critter.Stat[ST_TEAM_ID])
-				.If(NotAttacking()))
-			.AddSubAction(ProvideReinforcements(VIRTUAL_REALITY_TEAM)
-				.If(NotAttacking())
-				.If(IsSeen()))
-			.AddSubAction(WhenAttackEnds()
-				.AddSubAction(SetHome()))
-			.AddSubAction(WhenAttacked()
-				.AddSubAction(CallReinforcements(critter.Stat[ST_TEAM_ID]))
-				.AddSubAction(CallReinforcements(VIRTUAL_REALITY_TEAM)))
-			.AddSubAction(WhenPlaneRun()
-				.If(IsInjured(70, true))
-				.AddSubAction(UseDrug(HEALING_DRUGS)))
-	;
-	actionManager.Start(critter, action);
+	InitCritter1(critter);
 }
 
 /**
@@ -71,7 +52,7 @@ void InitCritter1(Critter& critter, bool)
 */
 void InitCritter2(Critter& critter, bool)
 {
-	InitCritter1(critter, false);
+	InitCritter1(critter);
 }
 
 /**
@@ -94,7 +75,8 @@ bool TerminalSkill(Item& door, Critter& cr, int skill)
 /**
 * Test scripts
 *
-* Green forest	=	300
+* Green forest labyrinth	=	300
+* Green forest lane			=	301
 */
 import Location@ CreateLocationForCritter( Critter& player, int locPid, int worldX, int worldY, int delta, int varNum ) from "location";
 
@@ -107,6 +89,8 @@ void CreateVirtualReality(Critter& critter, int locationPid, int combatMode, int
 	Location@ location = GetLocation(locationId);
 	if(!valid(location))
 		return;
+	
+	location.AutoGarbage = false;
 	
 	Map@ map = location.GetMapByIndex(0);
 	if(combatMode == COMBAT_MODE_TURN_BASED)
