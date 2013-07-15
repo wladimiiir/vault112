@@ -1467,7 +1467,13 @@ Map@ GenerateEncounter( CFoundedEncounter@ fe, Critter@[] @ critters )
     CEncounter@ encounter = fe.Encounter;
     uint16      locPid = ( valid( encounter ) ? encounter.LocPid : 0 );
     if( locPid == 0 )
-        locPid = fe.LocationPids[ Random( 0, fe.LocationPids.length() - 1 ) ];
+    {
+		if(fe.LocationPids.isEmpty())
+			//use city encounter as default if nothing is specified
+			locPid = Random(LOCATION_CityEncounter1, LOCATION_CityEncounter8);
+		else
+			locPid = fe.LocationPids[ Random( 0, fe.LocationPids.length() - 1 ) ];
+	}
 
     fe.LocationId = CreateLocation( locPid, fe.PositionX, fe.PositionY, null );
     if( fe.LocationId == 0 )

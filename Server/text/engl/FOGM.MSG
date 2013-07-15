@@ -19,7 +19,7 @@
 {16}{}{blank:100}
 
 # Map 1, base 20
-{20}{}{Arroyo Temple Entrance}
+{20}{}{Vault 112 entrance}
 {25}{}{17arroyo}
 {26}{}{gntlwin1:25, gntlwind:25, animal1:20, animal:20, gustwind:5, gustwin1:5}
 # Map 2, base 30
@@ -43,6 +43,8 @@
 {70}{}{Den Business}
 {75}{}{05RAIDER}
 {76}{}{dogbark:10, dogbark1:10, gntlwind:20, gntlwin1:20, blank:40}
+
+{90}{}{Junkyard}
 
 # Map 9, base 100
 {100}{}{Klamath Downtown}
