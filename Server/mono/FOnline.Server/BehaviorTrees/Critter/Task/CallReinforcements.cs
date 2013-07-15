@@ -20,16 +20,18 @@ namespace FOnline.BT
 
 		public override TaskState Execute ()
 		{
-			int team = reinforcementTeam == UseTeamId ? GetCritter ().Stat [Stats.TeamId] : reinforcementTeam;
+			var team = reinforcementTeam == UseTeamId ? GetCritter ().Stat [Stats.TeamId] : reinforcementTeam;
+			var found = false;
 
 			foreach (var critterToAttack in GetBlackboard().GetCritters(critterKeys)) {
 				if (!Check (critterToAttack))
 					continue;
 
 				GetCritter ().SendMessage (team, (int)critterToAttack.Id, MessageTo.AllOnMap);
+				found = true;
 			}
 
-			return TaskState.Success;
+			return found ? TaskState.Success : TaskState.Failed;
 		}
 	}
 }

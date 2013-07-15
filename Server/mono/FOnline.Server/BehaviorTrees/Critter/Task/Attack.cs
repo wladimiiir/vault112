@@ -40,6 +40,7 @@ namespace FOnline.BT
 
 		private bool TryToAttack (Critter critterToAttack)
 		{
+			Global.Log ("Trying to attack: " + critterToAttack.Id);
 			if (!Check (critterToAttack))
 				return false;
 
@@ -47,6 +48,7 @@ namespace FOnline.BT
 
 			if (specialAttackFlags != 0)
 				GetCritter ().Mode [Modes.SpecialAttackFlags] = specialAttackFlags;
+			Global.Log ("Attacking critter");
 			NpcPlanes.AddAttackPlane (GetCritter (), Priorities.Attack, critterToAttack, true);
 			return true;
 		}

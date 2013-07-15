@@ -7,33 +7,33 @@ namespace FOnline.BT
 	{
 		protected B blackboard;
 		protected IList<Condition<B, Critter>> critterConditions = new List<Condition<B, Critter>> ();
-		protected IList<Condition<B, Item>> itemConditions = new List<Condition<B, Item>>();
+		protected IList<Condition<B, Item>> itemConditions = new List<Condition<B, Item>> ();
 		
-		public LeafTask<B> If (CritterCheckCondition<B> condition)
+		internal LeafTask<B> If (CritterCheckCondition<B> condition)
 		{
 			condition.Blackboard = blackboard;
 			critterConditions.Add (condition);
 			return this;
 		}
-		
-		public LeafTask<B> If (ItemCheckCondition<B> condition)
+
+		internal LeafTask<B> If (ItemCheckCondition<B> condition)
 		{
 			condition.Blackboard = blackboard;
 			itemConditions.Add (condition);
 			return this;
 		}
 
-		public LeafTask<B> IfNot (CritterCheckCondition<B> condition)
+		internal LeafTask<B> IfNot (CritterCheckCondition<B> condition)
 		{
 			condition.Blackboard = blackboard;
-			critterConditions.Add (new NegativeContidion<B, Critter>(condition));
+			critterConditions.Add (new NegativeContidion<B, Critter> (condition));
 			return this;
 		}
 		
-		public LeafTask<B> IfNot (ItemCheckCondition<B> condition)
+		internal LeafTask<B> IfNot (ItemCheckCondition<B> condition)
 		{
 			condition.Blackboard = blackboard;
-			itemConditions.Add (new NegativeContidion<B, Item>(condition));
+			itemConditions.Add (new NegativeContidion<B, Item> (condition));
 			return this;
 		}
 		
@@ -61,7 +61,7 @@ namespace FOnline.BT
 			}
 		}
 
-		protected virtual B GetBlackboard() 
+		protected virtual B GetBlackboard ()
 		{
 			return blackboard;
 		}

@@ -37,7 +37,7 @@ namespace FOnline.BT
 
 		public void SetEntities (string key, IList<T> entities)
 		{
-			entityMap.Add (key, new List<T> (entities));
+			entityMap [key] = new List<T> (entities);
 		}
 
 		public void Clear (string key)

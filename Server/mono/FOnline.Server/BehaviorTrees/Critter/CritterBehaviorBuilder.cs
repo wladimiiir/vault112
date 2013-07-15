@@ -17,6 +17,7 @@ namespace FOnline.BT
 		{
 			critter.Finish += (sender, e) => {
 				//deregistering task
+//				Global.Log ("Deregistering task");
 				Global.DeregisterBehaviorTask (mainTask);
 			};
 		}

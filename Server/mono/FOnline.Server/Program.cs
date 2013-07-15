@@ -11,40 +11,40 @@ namespace FOnline
 {
 	class Program
 	{
-		static void Init (object sender, EventArgs e)
+		static void Init(object sender, EventArgs e)
 		{
-			Global.Log ("Init from mono!");
+			Global.Log("Init from mono!");
             
 			//Tests.InitRun ();
 
-			Global.Log ("Done with tests.");
+			Global.Log("Done with tests.");
 		}
 
-		static void Main (string[] args)
+		static void Main(string[] args)
 		{
 			main.Init += Init;
-			if (args.Contains ("-mono_repl"))
-				main.Init += (o, e) => StartREPL ();
+			if (args.Contains("-mono_repl"))
+				main.Init += (o, e) => StartREPL();
 			main.Start += (o, e) =>
 			{
 				//Tests.StartRun();
-				Global.Log ("Start from mono!");  
+				Global.Log("Start from mono!");  
 			};		
 			main.Start += (sender, e) => 
 			{
-				Global.Log ("Starting BehaviourTree controller...");
+				Global.Log("Starting BehaviourTree controller...");
 				Global.BTController.Start();
 			};
 		}
 
-		static void StartREPL ()
+		static void StartREPL()
 		{
-			var thread = new Thread (() =>
+			var thread = new Thread(() =>
 			{
-				var repl = new REPL ();
-				repl.Process ();
+				var repl = new REPL();
+				repl.Process();
 			});
-			thread.Start ();
+			thread.Start();
 		}
 	}
 }

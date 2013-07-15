@@ -174,6 +174,14 @@
     <Compile Include="BehaviorTrees\Critter\Task\MoveRandomly.cs" />
     <Compile Include="BehaviorTrees\Critter\Task\Nothing.cs" />
     <Compile Include="BehaviorTrees\Critter\Condition\IsLife.cs" />
+    <Compile Include="Roles\VirtualRealityRoles.cs" />
+    <Compile Include="Roles\JunkyardRoles.cs" />
+    <Compile Include="Extension\Critter.Extension.cs" />
+    <Compile Include="Team.Constants.cs" />
+    <Compile Include="Dialog.Constants.cs" />
+    <Compile Include="AI.Constants.cs" />
+    <Compile Include="Maps\Junkyard.cs" />
+    <Compile Include="Bags.Contants.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="readme.txt" />
@@ -213,6 +221,8 @@
     <Folder Include="Data\" />
     <Folder Include="BehaviorTrees\Core\Chooser\" />
     <Folder Include="BehaviorTrees\Critter\Chooser\" />
+    <Folder Include="Extension\" />
+    <Folder Include="Maps\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FOnline.Mono\FOnline.Mono.csproj">
