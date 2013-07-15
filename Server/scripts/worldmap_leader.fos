@@ -420,6 +420,8 @@ class WorldmapRoute
 		WorldmapLeader@ wmLeader = GetWorldmapLeader();
 		if(valid(wmLeader))
 			wmLeader.RunCancelAction(Leader);
+		else
+			DeleteNpc(Leader);
 			
 		EraseAnyData(_GetKey);
 	}
@@ -445,10 +447,10 @@ bool _LeaderOnGlobal(Critter& leader, int type, Item@ car, float& x, float& y, f
 	WorldmapRoute route(leader);
 	Critter@[]@ group = leader.GetGlobalGroup();
 	
-	if(type == GLOBAL_PROCESS_MOVE || type == GLOBAL_PROCESS_STOPPED)
+	if(type == GLOBAL_PROCESS_MOVE || type == GLOBAL_PROCESS_STOPPED || type == GLOBAL_PROCESS_NPC_IDLE)
         if(!IsPlayerInGroup(group))
         {
-            route.Cancel();
+			route.Cancel();
             return true;
         }
 	
