@@ -438,9 +438,6 @@ namespace FOnline
 		{
 			if (CritterFinish != null)
 				CritterFinish(null, new CritterFinishEventArgs(cr, to_delete));
-			else
-			//workaround for bug, where engine does not raise finish on critter
-				cr.RaiseFinish(to_delete);
 		}
 		/// <summary>
 		/// Raised for every skill/perk when player levels up.

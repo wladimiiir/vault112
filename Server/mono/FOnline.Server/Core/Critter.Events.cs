@@ -454,7 +454,7 @@ namespace FOnline
 		/// </summary>
 		public event EventHandler<CritterFinishEventArgs> Finish;
 		// called by engine
-		public void RaiseFinish(bool deleted)
+		void RaiseFinish(bool deleted)
 		{
 			if (Finish != null)
 				Finish(this, new CritterFinishEventArgs(this, deleted));
