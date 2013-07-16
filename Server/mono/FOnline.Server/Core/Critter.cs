@@ -29,22 +29,23 @@ namespace FOnline
 			return Global.CritterManager.FromNative(ptr);
 		}
 		public IntPtr ThisPtr { get { return thisptr; } }
-
-		// for dev purposes
+		
+		// for dev purposes, it's not required to keep the references here
 		static Dictionary<IntPtr, Critter> critters = new Dictionary<IntPtr, Critter>();
 		public static IEnumerable<Critter> AllCritters { get { return critters.Values; } }
-
-		static Critter Add(IntPtr ptr)
+		
+		// creates default instance
+		static Critter Create(IntPtr ptr) // called by engine
 		{
 			if (critters.ContainsKey(ptr))
 				throw new InvalidOperationException(string.Format("Critter 0x{0:x} already added.", (int)ptr));
 			return new Critter(ptr); // TODO: allow custom factory
 		}
-		static void Remove(Critter cr)
+		static void Remove(IntPtr ptr) // called by engine
 		{
-			critters.Remove(cr.ThisPtr);
+			critters.Remove(ptr);
 		}
-
+		
 		string name = null;
 		public string Name { 
 			get {
@@ -53,17 +54,17 @@ namespace FOnline
 				return name;
 			}
 		}
-
+		
 		public class Data
 		{
 			IntPtr crptr;
 			uint dataIndex;
 			public Data()
-                : this(IntPtr.Zero, 0)
+				: this(IntPtr.Zero, 0)
 			{
 			}
 			public Data(IntPtr ptr)
-                : this(ptr, 0)
+				: this(ptr, 0)
 			{
 			}
 			public Data(IntPtr ptr, uint data_index)
@@ -84,7 +85,7 @@ namespace FOnline
 				}
 			}
 		}
-
+		
 		public virtual Data Param { get; private set; }
 		partial void InitData(IntPtr ptr);
 		
@@ -92,7 +93,7 @@ namespace FOnline
 		{
 			Timeout[to] = (int)Time.After(seconds);
 		}
-
+		
 		public bool CanDropItemsOnDead()
 		{
 			return Mode[Modes.NoSteal] == 0 && Mode[Modes.NoDrop] == 0;
@@ -107,7 +108,7 @@ namespace FOnline
 			return GetItem(0, ItemSlot.Armor);
 		}
 		// Timeouts in real seconds, generic values
-/*		
+		/*		
 #define FIRST_AID_TIMEOUT                        # (cr) ( __FullSecond + ( __TimeMultiplier * 100 / ( ( ( cr.Skill[ SK_FIRST_AID ] ) > 3 ? cr.Skill[ SK_FIRST_AID ] : 3 ) * 100 / MAX_SKILL_VAL ) ) * 60 ) // Orig 3 time on day, 5 min - sk
 #define DOCTOR_TIMEOUT                           # (cr) ( __FullSecond + ( __TimeMultiplier * 100 / ( ( ( cr.Skill[ SK_DOCTOR ] ) > 3 ? cr.Skill[ SK_DOCTOR ] : 3 ) * 100 / MAX_SKILL_VAL ) * 3 ) * 60 )   // Orig 1 time on day, 20 min - sk
 #define REPAIR_TIMEOUT                           # (cr) ( __FullSecond + REAL_MINUTE( 1 ) )                                                                                                                // Orig 4 time on day, 1 min
@@ -121,13 +122,13 @@ namespace FOnline
 				return (int)(Global.FullSecond + System.Math.Max(Global.TimeoutBattle - Time.RealSecond((uint)Stat[Stats.ArmorClass]), Time.RealSecond(12)));
 			}
 		}
-/*
+		/*
 #define TRAPS_TIMEOUT                            # (cr) ( __FullSecond + REAL_MINUTE( 1 ) )
 */
 		public int SneakTimeout {
 			get { return (int)(Global.FullSecond + Time.RealSecond((uint)System.Math.Max(34 - Stat[Stats.Sequence], 3))); }
 		}
-/*#define SNEAK_TIMEOUT                            # (cr) ( __FullSecond + REAL_SECOND( MAX( 34 - cr.Stat[ ST_SEQUENCE ], 3 ) ) ) // 34 second - sequence
+		/*#define SNEAK_TIMEOUT                            # (cr) ( __FullSecond + REAL_SECOND( MAX( 34 - cr.Stat[ ST_SEQUENCE ], 3 ) ) ) // 34 second - sequence
 #define HEALING_TIMEOUT                          # (cr) ( __FullSecond + REAL_MINUTE( 2 ) )                                     // 2 minutes
 #define IS_TURN_BASED_TIMEOUT                    # (cr) ( cr.Timeout[ TO_BATTLE ] > 10000000 )
 #define MAXIMUM_TIMEOUT                          ( REAL_HOUR( 5 ) )                                                             // Doctor timeout with min skill
@@ -213,11 +214,11 @@ namespace FOnline
 	{
 		static readonly IntPtr type;
 		public CritterArray()
-            : base(type)
+			: base(type)
 		{
 		}
 		internal CritterArray(IntPtr ptr)
-            : base(ptr, true)
+			: base(ptr, true)
 		{
 		}
 		static CritterArray()

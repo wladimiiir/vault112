@@ -9,6 +9,10 @@
 #include "entire.fos"
 #include "linetracer_h.fos"
 
+#ifdef __MONO_RUNTIME__
+#pragma bindfunc "bool CheckLook(Map&, Critter&, Critter&) -> mono Visibility::CheckLook"
+#endif
+
 // Imports
 import void InitializeGame() from "config";
 import bool OnUseExplode( Critter& cr, Item& explode, Critter@ targetCr, Item@ targetItem, Scenery@ targetScen, uint timer ) from "explode";
@@ -1328,6 +1332,11 @@ void karma_voting( Critter& crFrom, Critter& crTo, bool valUp )
 // Note: CRITTER_EVENT_SHOW_CRITTER_X, CRITTER_EVENT_HIDE_CRITTER_X is not processed.
 bool check_look( Map& map, Critter& cr, Critter& opponent )
 {
+	#ifdef __MONO_RUNTIME__
+	return CheckLook(map, cr, opponent);
+	#endif
+	
+	#ifndef __MONO_RUNTIME__
 	uint flags = cr.Param[VISIBILITY_FLAGS];
 	uint opponentFlags = opponent.Param[VISIBILITY_FLAGS];
 	if(flags & VISIBILITY_FLAG_SEE_ALL != 0)
@@ -1377,6 +1386,7 @@ bool check_look( Map& map, Critter& cr, Critter& opponent )
 	}
 	
     return true;
+    #endif
 }
 
 uint GetLookDirNerf(uint distance, uint8 lookDir)

@@ -9,202 +9,207 @@ namespace FOnline
 {
 	public class Global
 	{
-		static Global ()
+		static Global()
 		{
-			Time = new Time ();
-			MapManager = new MapManager ();
-			Randomizer = new Randomizer ();
-			GlobalProperties = new GlobalProperties ();
-			TimeEvents = new TimeEvents ();
-			Logging = new Logging ();
-			CritterManager = new CritterManager ();
-			VarManager = new VarManager ();
-			DialogManager = new DialogManager ();
-			ItemManager = new ItemManager ();
-			Math = new Math ();
-			AnyData = new AnyData ();
-			BTController = new Controller ();
+			Time = new Time();
+			MapManager = new MapManager();
+			Randomizer = new Randomizer();
+			GlobalProperties = new GlobalProperties();
+			TimeEvents = new TimeEvents();
+			Logging = new Logging();
+			CritterManager = new CritterManager();
+			VarManager = new VarManager();
+			DialogManager = new DialogManager();
+			ItemManager = new ItemManager();
+			Math = new Math();
+			AnyData = new AnyData();
+			BTController = new Controller();
 		}
 		# region Critter manager
 		public static ICritterManager CritterManager { get; set; }
 
-		public static Critter GetCritter (uint id)
+		public static Critter GetCritter(uint id)
 		{
-			return CritterManager.GetCritter (id);
+			return CritterManager.GetCritter(id);
 		}
 
-		public static void DeleteNpc (Critter cr)
+		public static void DeleteNpc(Critter cr)
 		{
-			CritterManager.DeleteNpc (cr);
+			CritterManager.DeleteNpc(cr);
 		}
 
-		public static NpcPlane CreatePlane ()
+		public static NpcPlane CreatePlane()
 		{
-			return CritterManager.CreatePlane ();
+			return CritterManager.CreatePlane();
 		}
 
-		public static bool SetParameterGetBehaviour (uint index, Func<IntPtr, uint, int> func)
+		public static bool SetParameterGetBehaviour(uint index, Func<IntPtr, uint, int> func)
 		{
-			return CritterManager.SetParameterGetBehaviour (index, func);
+			return CritterManager.SetParameterGetBehaviour(index, func);
 		}
 
-		public static bool SetParameterGetBehaviour (uint index, string func_name)
+		public static bool SetParameterGetBehaviour(uint index, string func_name)
 		{
-			return CritterManager.SetParameterGetBehaviour (index, func_name);
+			return CritterManager.SetParameterGetBehaviour(index, func_name);
 		}
 
-		public static bool SetParameterChangeBehaviour (uint index, Action<IntPtr, uint, int> func)
+		public static bool SetParameterChangeBehaviour(uint index, Action<IntPtr, uint, int> func)
 		{
-			return CritterManager.SetParameterChangeBehaviour (index, func);
+			return CritterManager.SetParameterChangeBehaviour(index, func);
 		}
 
-		public static bool SetParameterChangeBehaviour (uint index, string func_name)
+		public static bool SetParameterChangeBehaviour(uint index, string func_name)
 		{
-			return CritterManager.SetParameterChangeBehaviour (index, func_name);
+			return CritterManager.SetParameterChangeBehaviour(index, func_name);
 		}
 
-		public static void SetChosenSendParameter (int index, bool enabled)
+		public static void SetChosenSendParameter(int index, bool enabled)
 		{
-			CritterManager.SetChosenSendParameter (index, enabled);
+			CritterManager.SetChosenSendParameter(index, enabled);
 		}
 
-		public static void SetSendParameter (int index, bool enabled)
+		public static void SetSendParameter(int index, bool enabled)
 		{
-			CritterManager.SetSendParameter (index, enabled);
+			CritterManager.SetSendParameter(index, enabled);
 		}
 
-		public static void SetSendParameter (int index, bool enabled, string allow_func)
+		public static void SetSendParameter(int index, bool enabled, string allow_func)
 		{
-			CritterManager.SetSendParameter (index, enabled, allow_func);
+			CritterManager.SetSendParameter(index, enabled, allow_func);
 		}
 
-		public static void SetRegistrationParameter (uint index, bool enabled)
+		public static void SetRegistrationParameter(uint index, bool enabled)
 		{
-			CritterManager.SetRegistrationParameter (index, enabled);
+			CritterManager.SetRegistrationParameter(index, enabled);
 		}
 
-		public static bool IsCritterCanWalk (uint cr_type)
+		public static bool IsCritterCanWalk(uint cr_type)
 		{
-			return CritterManager.IsCritterCanWalk (cr_type);
+			return CritterManager.IsCritterCanWalk(cr_type);
 		}
 
-		public static bool IsCritterCanRun (uint cr_type)
+		public static bool IsCritterCanRun(uint cr_type)
 		{
-			return CritterManager.IsCritterCanRun (cr_type);
+			return CritterManager.IsCritterCanRun(cr_type);
 		}
 
-		public static bool IsCritterCanAim (uint cr_type)
+		public static bool IsCritterCanAim(uint cr_type)
 		{
-			return CritterManager.IsCritterCanAim (cr_type);
+			return CritterManager.IsCritterCanAim(cr_type);
 		}
 
-		public static bool IsCritterCanRotate (uint cr_type)
+		public static bool IsCritterCanRotate(uint cr_type)
 		{
-			return CritterManager.IsCritterCanRotate (cr_type);
+			return CritterManager.IsCritterCanRotate(cr_type);
 		}
 
-		public static bool IsCritterCanArmor (uint cr_type)
+		public static bool IsCritterCanArmor(uint cr_type)
 		{
-			return CritterManager.IsCritterCanArmor (cr_type);
+			return CritterManager.IsCritterCanArmor(cr_type);
 		}
 
-		public static bool IsCritterAnim1 (uint cr_type)
+		public static bool IsCritterAnim1(uint cr_type)
 		{
-			return CritterManager.IsCritterAnim1 (cr_type);
+			return CritterManager.IsCritterAnim1(cr_type);
 		}
 
-		public static uint GetCrittersDistantion (Critter cr1, Critter cr2)
+		public static uint GetCrittersDistantion(Critter cr1, Critter cr2)
 		{
-			return CritterManager.GetCrittersDistantion (cr1, cr2);
+			return CritterManager.GetCrittersDistantion(cr1, cr2);
 		}
 		#endregion
 		#region Item manager
 		public static IItemManager ItemManager { get; set; }
 
-		public static Item GetItem (uint item_id)
+		public static Item GetItem(uint item_id)
 		{
-			return ItemManager.GetItem (item_id);
+			return ItemManager.GetItem(item_id);
 		}
 
-		public static void MoveItem (Item item, uint count, Critter to_cr)
+		public static ProtoItem GetProtoItem(ushort pid)
 		{
-			ItemManager.MoveItem (item, count, to_cr);
+			return ItemManager.GetProtoItem(pid);
 		}
 
-		public static void MoveItem (Item item, uint count, Item to_cont, uint stack_id)
+		public static void MoveItem(Item item, uint count, Critter to_cr)
 		{
-			ItemManager.MoveItem (item, count, to_cont, stack_id);
+			ItemManager.MoveItem(item, count, to_cr);
 		}
 
-		public static void MoveItem (Item item, uint count, Map to_map, ushort to_hx, ushort to_hy)
+		public static void MoveItem(Item item, uint count, Item to_cont, uint stack_id)
 		{
-			ItemManager.MoveItem (item, count, to_map, to_hx, to_hy);
+			ItemManager.MoveItem(item, count, to_cont, stack_id);
 		}
 
-		public static void MoveItems (ItemArray items, Critter to_cr)
+		public static void MoveItem(Item item, uint count, Map to_map, ushort to_hx, ushort to_hy)
 		{
-			ItemManager.MoveItems (items, to_cr);
+			ItemManager.MoveItem(item, count, to_map, to_hx, to_hy);
 		}
 
-		public static void MoveItems (ItemArray items, Item to_cont, uint stack_id)
+		public static void MoveItems(ItemArray items, Critter to_cr)
 		{
-			ItemManager.MoveItems (items, to_cont, stack_id);
+			ItemManager.MoveItems(items, to_cr);
 		}
 
-		public static void MoveItems (ItemArray items, Map to_map, ushort to_hx, ushort to_hy)
+		public static void MoveItems(ItemArray items, Item to_cont, uint stack_id)
 		{
-			ItemManager.MoveItems (items, to_map, to_hx, to_hy);
+			ItemManager.MoveItems(items, to_cont, stack_id);
 		}
 
-		public static void DeleteItem (Item item)
+		public static void MoveItems(ItemArray items, Map to_map, ushort to_hx, ushort to_hy)
 		{
-			ItemManager.DeleteItem (item);
+			ItemManager.MoveItems(items, to_map, to_hx, to_hy);
 		}
 
-		public static void DeleteItems (ItemArray items)
+		public static void DeleteItem(Item item)
 		{
-			ItemManager.DeleteItems (items);
+			ItemManager.DeleteItem(item);
 		}
 
-		public static ulong WorldItemCount (ushort pid)
+		public static void DeleteItems(ItemArray items)
 		{
-			return ItemManager.WorldItemCount (pid);
+			ItemManager.DeleteItems(items);
+		}
+
+		public static ulong WorldItemCount(ushort pid)
+		{
+			return ItemManager.WorldItemCount(pid);
 		}
 		#endregion
 		#region Dialogs
 		public static IDialogManager DialogManager { get; set; }
 
-		public static bool RunDialog (Critter player, Critter npc, bool ignore_distance)
+		public static bool RunDialog(Critter player, Critter npc, bool ignore_distance)
 		{
-			return DialogManager.RunDialog (player, npc, ignore_distance);
+			return DialogManager.RunDialog(player, npc, ignore_distance);
 		}
 
-		public static bool RunDialog (Critter player, Critter npc, uint dialog_pack, bool ignore_distance)
+		public static bool RunDialog(Critter player, Critter npc, uint dialog_pack, bool ignore_distance)
 		{
-			return DialogManager.RunDialog (player, npc, dialog_pack, ignore_distance);
+			return DialogManager.RunDialog(player, npc, dialog_pack, ignore_distance);
 		}
 
-		public static bool RunDialog (Critter player, uint dialog_pack, ushort hx, ushort hy, bool ignore_distance)
+		public static bool RunDialog(Critter player, uint dialog_pack, ushort hx, ushort hy, bool ignore_distance)
 		{
-			return DialogManager.RunDialog (player, dialog_pack, hx, hy, ignore_distance);
+			return DialogManager.RunDialog(player, dialog_pack, hx, hy, ignore_distance);
 		}
 		#endregion
 		#region GameVars
 		public static IVarManager VarManager { get; set; }
 
-		public static GameVar GetGlobalVar (ushort var_id)
+		public static GameVar GetGlobalVar(ushort var_id)
 		{
-			return VarManager.GetGlobalVar (var_id);
+			return VarManager.GetGlobalVar(var_id);
 		}
 
-		public static GameVar GetLocalVar (ushort var_id, uint master_id)
+		public static GameVar GetLocalVar(ushort var_id, uint master_id)
 		{
-			return VarManager.GetLocalVar (var_id, master_id);
+			return VarManager.GetLocalVar(var_id, master_id);
 		}
 
-		public static GameVar GetUnicumVar (ushort var_id, uint master_id, uint slave_id)
+		public static GameVar GetUnicumVar(ushort var_id, uint master_id, uint slave_id)
 		{
-			return VarManager.GetUnicumVar (var_id, master_id, slave_id);
+			return VarManager.GetUnicumVar(var_id, master_id, slave_id);
 		}
 		#endregion
 		#region Global properties
@@ -473,356 +478,356 @@ namespace FOnline
 		#region AnyData
 		public static IAnyData AnyData { get; set; }
 
-		public static bool IsAnyData (string name)
+		public static bool IsAnyData(string name)
 		{
-			return AnyData.IsAnyData (name);
+			return AnyData.IsAnyData(name);
 		}
 
-		public static bool GetAnyData (string name, UInt8Array data)
+		public static bool GetAnyData(string name, UInt8Array data)
 		{
-			return AnyData.Get (name, data);
+			return AnyData.Get(name, data);
 		}
 
-		public static bool SetAnyData (string name, UInt8Array data)
+		public static bool SetAnyData(string name, UInt8Array data)
 		{
-			return AnyData.Set (name, data);
+			return AnyData.Set(name, data);
 		}
 
-		public static bool GetAnyData (string name, UInt16Array data)
+		public static bool GetAnyData(string name, UInt16Array data)
 		{
-			return AnyData.Get (name, data);
+			return AnyData.Get(name, data);
 		}
 
-		public static bool SetAnyData (string name, UInt16Array data)
+		public static bool SetAnyData(string name, UInt16Array data)
 		{
-			return AnyData.Set (name, data);
+			return AnyData.Set(name, data);
 		}
 
-		public static bool GetAnyData (string name, UIntArray data)
+		public static bool GetAnyData(string name, UIntArray data)
 		{
-			return AnyData.Get (name, data);
+			return AnyData.Get(name, data);
 		}
 
-		public static bool SetAnyData (string name, UIntArray data)
+		public static bool SetAnyData(string name, UIntArray data)
 		{
-			return AnyData.Set (name, data);
+			return AnyData.Set(name, data);
 		}
 
-		public static bool GetAnyData (string name, Int8Array data)
+		public static bool GetAnyData(string name, Int8Array data)
 		{
-			return AnyData.Get (name, data);
+			return AnyData.Get(name, data);
 		}
 
-		public static bool SetAnyData (string name, Int8Array data)
+		public static bool SetAnyData(string name, Int8Array data)
 		{
-			return AnyData.Set (name, data);
+			return AnyData.Set(name, data);
 		}
 
-		public static bool GetAnyData (string name, Int16Array data)
+		public static bool GetAnyData(string name, Int16Array data)
 		{
-			return AnyData.Get (name, data);
+			return AnyData.Get(name, data);
 		}
 
-		public static bool SetAnyData (string name, Int16Array data)
+		public static bool SetAnyData(string name, Int16Array data)
 		{
-			return AnyData.Set (name, data);
+			return AnyData.Set(name, data);
 		}
 
-		public static bool GetAnyData (string name, IntArray data)
+		public static bool GetAnyData(string name, IntArray data)
 		{
-			return AnyData.Get (name, data);
+			return AnyData.Get(name, data);
 		}
 
-		public static bool SetAnyData (string name, IntArray data)
+		public static bool SetAnyData(string name, IntArray data)
 		{
-			return AnyData.Set (name, data);
+			return AnyData.Set(name, data);
 		}
 
-		public static void EraseAnyData (string name)
+		public static void EraseAnyData(string name)
 		{
-			AnyData.Erase (name);
+			AnyData.Erase(name);
 		}
 		#endregion
 		#region Time events
 		public static ITimeEvents TimeEvents { get; set; }
 
-		public static uint CreateTimeEvent (uint begin_second, string func_name, bool save)
+		public static uint CreateTimeEvent(uint begin_second, string func_name, bool save)
 		{
-			return TimeEvents.CreateTimeEvent (begin_second, func_name, save);
+			return TimeEvents.CreateTimeEvent(begin_second, func_name, save);
 		}
 
-		public static uint CreateTimeEvent (uint begin_second, Func<IntPtr, uint> func, bool save)
+		public static uint CreateTimeEvent(uint begin_second, Func<IntPtr, uint> func, bool save)
 		{
-			return TimeEvents.CreateTimeEvent (begin_second, func, save);
+			return TimeEvents.CreateTimeEvent(begin_second, func, save);
 		}
 
-		public static uint CreateTimeEvent (uint begin_second, string func_name, int value, bool save)
+		public static uint CreateTimeEvent(uint begin_second, string func_name, int value, bool save)
 		{
-			return TimeEvents.CreateTimeEvent (begin_second, func_name, (uint)value, save);
+			return TimeEvents.CreateTimeEvent(begin_second, func_name, (uint)value, save);
 		}
 
-		public static uint CreateTimeEvent (uint begin_second, string func_name, uint value, bool save)
+		public static uint CreateTimeEvent(uint begin_second, string func_name, uint value, bool save)
 		{
-			return TimeEvents.CreateTimeEvent (begin_second, func_name, value, save);
+			return TimeEvents.CreateTimeEvent(begin_second, func_name, value, save);
 		}
 
-		public static uint CreateTimeEvent (uint begin_second, Func<IntPtr, uint> func, int value, bool save)
+		public static uint CreateTimeEvent(uint begin_second, Func<IntPtr, uint> func, int value, bool save)
 		{
-			return TimeEvents.CreateTimeEvent (begin_second, func, (uint)value, save);
+			return TimeEvents.CreateTimeEvent(begin_second, func, (uint)value, save);
 		}
 
-		public static uint CreateTimeEvent (uint begin_second, Func<IntPtr, uint> func, uint value, bool save)
+		public static uint CreateTimeEvent(uint begin_second, Func<IntPtr, uint> func, uint value, bool save)
 		{
-			return TimeEvents.CreateTimeEvent (begin_second, func, value, save);
+			return TimeEvents.CreateTimeEvent(begin_second, func, value, save);
 		}
 
-		public static uint CreateTimeEvent (uint begin_second, string func_name, UIntArray values, bool save)
+		public static uint CreateTimeEvent(uint begin_second, string func_name, UIntArray values, bool save)
 		{
-			return TimeEvents.CreateTimeEvent (begin_second, func_name, values, save);
+			return TimeEvents.CreateTimeEvent(begin_second, func_name, values, save);
 		}
 
-		public static uint CreateTimeEvent (uint begin_second, Func<IntPtr, uint> func, UIntArray values, bool save)
+		public static uint CreateTimeEvent(uint begin_second, Func<IntPtr, uint> func, UIntArray values, bool save)
 		{
-			return TimeEvents.CreateTimeEvent (begin_second, func, values, save);
+			return TimeEvents.CreateTimeEvent(begin_second, func, values, save);
 		}
 
-		public static uint CreateTimeEvent (uint begin_second, string func_name, IntArray values, bool save)
+		public static uint CreateTimeEvent(uint begin_second, string func_name, IntArray values, bool save)
 		{
-			return TimeEvents.CreateTimeEvent (begin_second, func_name, values, save);
+			return TimeEvents.CreateTimeEvent(begin_second, func_name, values, save);
 		}
 
-		public static uint CreateTimeEvent (uint begin_second, Func<IntPtr, uint> func, IntArray values, bool save)
+		public static uint CreateTimeEvent(uint begin_second, Func<IntPtr, uint> func, IntArray values, bool save)
 		{
-			return TimeEvents.CreateTimeEvent (begin_second, func, values, save);
+			return TimeEvents.CreateTimeEvent(begin_second, func, values, save);
 		}
 
-		public static bool EraseTimeEvent (uint id)
+		public static bool EraseTimeEvent(uint id)
 		{
-			return TimeEvents.EraseTimeEvent (id);
+			return TimeEvents.EraseTimeEvent(id);
 		}
 
-		public static bool GetTimeEvent (uint id, out uint duration, UIntArray values)
+		public static bool GetTimeEvent(uint id, out uint duration, UIntArray values)
 		{
-			return TimeEvents.GetTimeEvent (id, out duration, values);
+			return TimeEvents.GetTimeEvent(id, out duration, values);
 		}
 
-		public static bool GetTimeEvent (uint id, out uint duration, IntArray values)
+		public static bool GetTimeEvent(uint id, out uint duration, IntArray values)
 		{
-			return TimeEvents.GetTimeEvent (id, out duration, values);
+			return TimeEvents.GetTimeEvent(id, out duration, values);
 		}
 
-		public static bool SetTimeEvent (uint id, uint duration, UIntArray values)
+		public static bool SetTimeEvent(uint id, uint duration, UIntArray values)
 		{
-			return TimeEvents.SetTimeEvent (id, duration, values);
+			return TimeEvents.SetTimeEvent(id, duration, values);
 		}
 
-		public static bool SetTimeEvent (uint id, uint duration, IntArray values)
+		public static bool SetTimeEvent(uint id, uint duration, IntArray values)
 		{
-			return TimeEvents.SetTimeEvent (id, duration, values);
+			return TimeEvents.SetTimeEvent(id, duration, values);
 		}
 		#endregion
 		#region Time
 		public static ITime Time { get; set; }
 
-		public static uint GetFullSecond (ushort year, ushort month, ushort day, ushort hour, ushort minute, ushort second)
+		public static uint GetFullSecond(ushort year, ushort month, ushort day, ushort hour, ushort minute, ushort second)
 		{
-			return Time.GetFullSecond (year, month, day, hour, minute, second);
+			return Time.GetFullSecond(year, month, day, hour, minute, second);
 		}
 
-		public static uint GetFullSecond (DateTime dt)
+		public static uint GetFullSecond(DateTime dt)
 		{
-			return Time.GetFullSecond ((ushort)dt.Year, (ushort)dt.Month, (ushort)dt.Day, (ushort)dt.Hour, (ushort)dt.Minute, (ushort)dt.Second);
+			return Time.GetFullSecond((ushort)dt.Year, (ushort)dt.Month, (ushort)dt.Day, (ushort)dt.Hour, (ushort)dt.Minute, (ushort)dt.Second);
 		}
 
-		public static DateTime GetGameTime (uint full_second)
+		public static DateTime GetGameTime(uint full_second)
 		{
 			ushort year = 0, month = 0, day = 0, dayofweek = 0, hour = 0, minute = 0, second = 0;
-			Time.GetGameTime (full_second, ref year, ref month, ref day, ref dayofweek, ref hour, ref minute, ref second);
-			return new DateTime (year, month, day, hour, minute, second);
+			Time.GetGameTime(full_second, ref year, ref month, ref day, ref dayofweek, ref hour, ref minute, ref second);
+			return new DateTime(year, month, day, hour, minute, second);
 		}
 		#endregion
 		#region Maps/Locations
 		public static IMapManager MapManager { get; set; }
 
-		public static uint CreateLocation (ushort pid, ushort wx, ushort wy, CritterArray critters)
+		public static uint CreateLocation(ushort pid, ushort wx, ushort wy, CritterArray critters)
 		{
-			return MapManager.CreateLocation (pid, wx, wy, critters);
+			return MapManager.CreateLocation(pid, wx, wy, critters);
 		}
 
-		public static void DeleteLocation (uint loc_id)
+		public static void DeleteLocation(uint loc_id)
 		{
-			MapManager.DeleteLocation (loc_id);
+			MapManager.DeleteLocation(loc_id);
 		}
 
-		public static Location GetLocation (uint loc_id)
+		public static Location GetLocation(uint loc_id)
 		{
-			return MapManager.GetLocation (loc_id);
+			return MapManager.GetLocation(loc_id);
 		}
 
-		public static Location GetLocationByPid (ushort pid, uint skip_count)
+		public static Location GetLocationByPid(ushort pid, uint skip_count)
 		{
-			return MapManager.GetLocationByPid (pid, skip_count);
+			return MapManager.GetLocationByPid(pid, skip_count);
 		}
 
-		public static uint GetLocations (ushort wx, ushort wy, uint radius, LocationArray locations)
+		public static uint GetLocations(ushort wx, ushort wy, uint radius, LocationArray locations)
 		{
-			return MapManager.GetLocations (wx, wy, radius, locations);
+			return MapManager.GetLocations(wx, wy, radius, locations);
 		}
 
-		public static uint GetVisibleLocations (ushort wx, ushort wy, uint radius, Critter visible_for, LocationArray locations)
+		public static uint GetVisibleLocations(ushort wx, ushort wy, uint radius, Critter visible_for, LocationArray locations)
 		{
-			return MapManager.GetVisibleLocations (wx, wy, radius, visible_for, locations);
+			return MapManager.GetVisibleLocations(wx, wy, radius, visible_for, locations);
 		}
 
-		public static uint GetZoneLocationIds (ushort zx, ushort zy, uint zone_radius, UIntArray location_ids)
+		public static uint GetZoneLocationIds(ushort zx, ushort zy, uint zone_radius, UIntArray location_ids)
 		{
-			return MapManager.GetZoneLocationIds (zx, zy, zone_radius, location_ids);
+			return MapManager.GetZoneLocationIds(zx, zy, zone_radius, location_ids);
 		}
 
-		public static Map GetMap (uint map_id)
+		public static Map GetMap(uint map_id)
 		{
-			return MapManager.GetMap (map_id);
+			return MapManager.GetMap(map_id);
 		}
 
-		public static Map GetMapByPid (ushort pid, uint skip_count)
+		public static Map GetMapByPid(ushort pid, uint skip_count)
 		{
-			return MapManager.GetMapByPid (pid, skip_count);
+			return MapManager.GetMapByPid(pid, skip_count);
 		}
 		#endregion
 		#region Logging
 		public static ILogging Logging { get; set; }
 
-		public static void Log (string message)
+		public static void Log(string message)
 		{
-			Logging.Log (message);
+			Logging.Log(message);
 		}
 
-		public static void Log (string message, params object[] args)
+		public static void Log(string message, params object[] args)
 		{
-			Logging.Log (message, args);
+			Logging.Log(message, args);
 		}
 
-		public static string GetLastError ()
+		public static string GetLastError()
 		{
-			return Logging.GetLastError ();
+			return Logging.GetLastError();
 		}
 		#endregion
 		#region Random
 		public static IRandom Randomizer { get; set; }
 
-		public static int Random (int min, int max)
+		public static int Random(int min, int max)
 		{
-			return Randomizer.Random (min, max);
+			return Randomizer.Random(min, max);
 		}
 
-		public static uint Random (uint min, uint max)
+		public static uint Random(uint min, uint max)
 		{
-			return Randomizer.Random (min, max);
+			return Randomizer.Random(min, max);
 		}
 
-		public static T Random<T> (IConvertible min, IConvertible max) where T : IConvertible
+		public static T Random<T>(IConvertible min, IConvertible max) where T : IConvertible
 		{
-			return (T)Randomizer.Random (min, max);
+			return (T)Randomizer.Random(min, max);
 		}
 
-		public static bool HasChance (float chance)
+		public static bool HasChance(float chance)
 		{
-			return (float)Random (1, 10000) / 100.0f <= chance;
+			return (float)Random(1, 10000) / 100.0f <= chance;
 		}
 		#endregion
 		#region Math
 		public static IMath Math { get; set; }
 
-		public static uint GetDistantion (ushort hx1, ushort hy1, ushort hx2, ushort hy2)
+		public static uint GetDistantion(ushort hx1, ushort hy1, ushort hx2, ushort hy2)
 		{
-			return Math.GetDistantion (hx1, hy1, hx2, hy2);
+			return Math.GetDistantion(hx1, hy1, hx2, hy2);
 		}
 
-		public static Direction GetDirection (ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy)
+		public static Direction GetDirection(ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy)
 		{
-			return Math.GetDirection (from_hx, from_hy, to_hx, to_hy);
+			return Math.GetDirection(from_hx, from_hy, to_hx, to_hy);
 		}
 
-		public static Direction GetOffsetDir (ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, float offset)
+		public static Direction GetOffsetDir(ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, float offset)
 		{
-			return Math.GetOffsetDir (from_hx, from_hy, to_hx, to_hy, offset);
+			return Math.GetOffsetDir(from_hx, from_hy, to_hx, to_hy, offset);
 		}
 
-		public static float Distance (float x1, float y1, float x2, float y2)
+		public static float Distance(float x1, float y1, float x2, float y2)
 		{
-			return Math.Distance (x1, y1, x2, y2);
+			return Math.Distance(x1, y1, x2, y2);
 		}
 		#endregion
 		#region Misc
 		public static IMisc Misc { get; set; }
 
-		public static void RadioMessage (ushort channel, string text)
+		public static void RadioMessage(ushort channel, string text)
 		{
-			Misc.RadioMessage (channel, text);
+			Misc.RadioMessage(channel, text);
 		}
 
-		public static void RadioMessageMsg (ushort channel, ushort text_msg, uint str_num)
+		public static void RadioMessageMsg(ushort channel, ushort text_msg, uint str_num)
 		{
-			Misc.RadioMessageMsg (channel, text_msg, str_num);
+			Misc.RadioMessageMsg(channel, text_msg, str_num);
 		}
 
-		public static void RadioMessageMsg (ushort channel, ushort text_msg, uint str_num, string lexems)
+		public static void RadioMessageMsg(ushort channel, ushort text_msg, uint str_num, string lexems)
 		{
-			Misc.RadioMessageMsg (channel, text_msg, str_num, lexems);
+			Misc.RadioMessageMsg(channel, text_msg, str_num, lexems);
 		}
 
-		public static void SetBestScore (int score, Critter player, string name)
+		public static void SetBestScore(int score, Critter player, string name)
 		{
-			Misc.SetBestScore (score, player, name);
+			Misc.SetBestScore(score, player, name);
 		}
 
-		public static string GetPlayerName (uint id)
+		public static string GetPlayerName(uint id)
 		{
-			return Misc.GetPlayerName (id);
+			return Misc.GetPlayerName(id);
 		}
 
-		public static uint GetBagItems (uint bag_id, UInt16Array pids, UIntArray min_counts, UIntArray max_counts, IntArray slots)
+		public static uint GetBagItems(uint bag_id, UInt16Array pids, UIntArray min_counts, UIntArray max_counts, IntArray slots)
 		{
-			return Misc.GetBagItems (bag_id, pids, min_counts, max_counts, slots);
+			return Misc.GetBagItems(bag_id, pids, min_counts, max_counts, slots);
 		}
 
-		public static uint GetBagItems (uint bag_id, UInt16Array pids, UIntArray min_counts, UIntArray max_counts, List<ItemSlot> slots)
+		public static uint GetBagItems(uint bag_id, UInt16Array pids, UIntArray min_counts, UIntArray max_counts, List<ItemSlot> slots)
 		{
-			var slots_ = new IntArray ();
-			var res = Misc.GetBagItems (bag_id, pids, min_counts, max_counts, slots_);
-			slots.AddRange (slots_.Select (s => (ItemSlot)s));
+			var slots_ = new IntArray();
+			var res = Misc.GetBagItems(bag_id, pids, min_counts, max_counts, slots_);
+			slots.AddRange(slots_.Select(s => (ItemSlot)s));
 			return res;
 		}
 
-		public static bool AddTextListener (Say say_type, string first_str, ushort parameter, string script_name)
+		public static bool AddTextListener(Say say_type, string first_str, ushort parameter, string script_name)
 		{
-			return Misc.AddTextListener (say_type, first_str, parameter, script_name);
+			return Misc.AddTextListener(say_type, first_str, parameter, script_name);
 		}
 
-		public static void EraseTextListener (Say say_type, string first_str, ushort parameter)
+		public static void EraseTextListener(Say say_type, string first_str, ushort parameter)
 		{
-			Misc.EraseTextListener (say_type, first_str, parameter);
+			Misc.EraseTextListener(say_type, first_str, parameter);
 		}
 		#endregion
 		#region Behavior Tree API
 		public static Controller BTController { get; set; }
 
-		public static void RegisterBehaviorTask (MainTask task)
+		public static void RegisterBehaviorTask(MainTask task)
 		{
-			BTController.RegisterTask (task);
+			BTController.RegisterTask(task);
 		}
 
-		public static void DeregisterBehaviorTask (MainTask task)
+		public static void DeregisterBehaviorTask(MainTask task)
 		{
-			BTController.DeregisterTask (task);
+			BTController.DeregisterTask(task);
 		}
 		#endregion
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		extern static void Global_GC ();
+		extern static void Global_GC();
 
-		public static void CollectScriptGarbage ()
+		public static void CollectScriptGarbage()
 		{
-			Global_GC ();
+			Global_GC();
 		}
 	}
 }
