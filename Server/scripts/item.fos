@@ -204,23 +204,26 @@ void unsafe_GroundPickUp(Critter& player, int, int, int, string@, int[]@)
 	Map@ map = player.GetMap();
 	if(!valid(map))
 		return;
-		
+
 	Item@[] items;
 	map.GetItems(player.HexX, player.HexY, items);
-	
-	if(items.length() < 2)
-		return;
-		
-	int[] protoCounts;
-	uint16[] addedProtos;
+
+//	if(items.length() < 2)
+//	return;
+
+	array<int> itemsIds;
 	for (uint i = 0; i < items.length(); i++)
 	{
-		if(Present(items[i].GetProtoId(), addedProtos))
-			continue;
-		protoCounts.insertLast(items[i].GetProtoId());
-		protoCounts.insertLast(items[i].GetCount());
-		addedProtos.insertLast(items[i].GetProtoId());
+	    Item@ item = items[i];
+
+	    itemsIds.insertLast( int(item.Id) );
+	    itemsIds.insertLast( int(item.GetCount()) );
 	}
-		
-	player.RunClientScript("client_screen_ground_pickup@ShowGroundPickupScreen", 0, 0, 0, null, protoCounts);
+
+	player.RunClientScript("client_screen_ground_pickup@ShowGroundPickupScreen", 0, 0, 0, null, itemsIds );
+}
+
+void unsafe_GroundPickUpAnimation( Critter& player, int, int, int, string@, int[]@ )
+{
+    player.Animate( 0, ANIM2_PICKUP, null, true, true );
 }
