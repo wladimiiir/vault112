@@ -18,43 +18,39 @@ IGUIElementButtonOpt@ MoveUpButton;
 IGUIElementButtonOpt@ MoveDownButton;
 IGUIElementButtonOpt@ CancelButton;
 
-uint[] ItemProtos;
+uint[] ItemIds;
 uint[] ItemCounts;
 
-void PickUpItem(ProtoItem& proto)
+void PickUpItem( ItemCl& item )
 {
-	if(!valid(proto))
-		return;
-	
 	CritterCl@ chosen = GetChosen();
 	if(!valid(chosen))
 		return;
 
-	uint[] pickUp = {CHOSEN_PICK_ITEM, proto.ProtoId, chosen.HexX, chosen.HexY, 0, 0, 0};
-    SetChosenActions(pickUp);
-    /*for (uint i = 0; i < ItemProtos.length(); i++)
-		if(ItemProtos[i] == proto.ProtoId)
-		{
-			ItemProtos.removeAt(i);
-			ItemCounts.removeAt(i);
-			break;
-		}
-	if(ItemProtos.length() == 0)
-		HideScreen(CLIENT_SCREEN_MULTI_PICKUP, 0, 0, 0);
-	else 
-	{
-		ClearItems();
-		RefreshItems();
-	}*/
-	HideScreen(CLIENT_SCREEN_MULTI_PICKUP, 0, 0, 0);
+	// sanity checks
+	if( !chosen.IsLife() )
+	    return;
+
+	if( item.HexX != chosen.HexX || item.HexY != chosen.HexY )
+	    return;
+
+	if( item.Accessory != ACCESSORY_HEX )
+	    return;
+
+	array<uint> pickUp = { CHOSEN_USE_SKL_ON_ITEM, 0, uint(SKILL_PICK_ON_GROUND), item.Id, 0, 0, 0 };
+	SetChosenActions( pickUp );
+	HideScreen( CLIENT_SCREEN_MULTI_PICKUP, 0, 0, 0 );
+
+	// if we don't enforce animation, generic "use" animation would be played. we don't want that.
+	RunServerScriptUnsafe( "item@unsafe_GroundPickUpAnimation", 0, 0, 0, " ", null );
 }
 
-void ShowGroundPickupScreen(int, int, int, string@, int[]@ protoCounts)
+void ShowGroundPickupScreen(int, int, int, string@, int[]@ itemsIds)
 {
-	if(!valid(protoCounts))
+	if(!valid(itemsIds) || itemsIds.length() == 0 || itemsIds.length() %2 != 0 )
 		return;
-		
-	if(!PrepareScreen(protoCounts))
+
+	if(!PrepareScreen(itemsIds))
 	{
 		Message("<Error 1>");
 		return;
@@ -63,19 +59,23 @@ void ShowGroundPickupScreen(int, int, int, string@, int[]@ protoCounts)
 	ShowScreen(CLIENT_SCREEN_MULTI_PICKUP, 0, 0, 0);
 }
 
-bool PrepareScreen(int[] protoCounts)
+bool PrepareScreen( array<int>& itemsIds)
 {
-	if(protoCounts.length() % 2 != 0)
+	if(itemsIds.length() == 0 || itemsIds.length() %2 != 0 )
 		return false;
 	
 	ItemsIndex = 0;
 	ClearItems();
-	ItemProtos.resize(0);
+	ItemIds.resize(0);
 	ItemCounts.resize(0);
-	for (uint i = 0; i < protoCounts.length(); i+=2)
+	for (uint i = 0; i < itemsIds.length(); i++ )
 	{
-		ItemProtos.insertLast(protoCounts[i]);
-		ItemCounts.insertLast(protoCounts[i+1]);
+		ItemCl@ item = GetItem(itemsIds[i]);
+		if( valid(item) )
+		{
+		    ItemIds.insertLast( itemsIds[i++] );
+		    ItemCounts.insertLast( itemsIds[i] );
+		}
 	}
 
 	RefreshItems();
@@ -95,12 +95,12 @@ void ClearItems()
 
 void RefreshItems()
 {	
-	for (uint i = ItemsIndex; i < ItemProtos.length() && i < ItemsIndex + InvItemCount; i++)
+	for (uint i = ItemsIndex; i < ItemIds.length() && i < ItemsIndex + InvItemCount; i++)
 	{
-		ProtoItem@ proto = GetProtoItem(ItemProtos[i]);
-		if(valid(proto))
+		ItemCl@ item = GetItem(ItemIds[i]);
+		if(valid(item))
 		{
-			ItemsUIs[i - ItemsIndex].loadImage(proto.PicInv, 0);
+			ItemsUIs[i - ItemsIndex].loadImage( (item.PicInv > 0 ? item.PicInv : item.Proto.PicInv), 0); // respect custom images
 			ItemCountUIs[i - ItemsIndex].Text(ItemCounts[i] == 1 ? "" : ("x"+ItemCounts[i]));
 		}
 	}
@@ -109,7 +109,7 @@ void RefreshItems()
 void RefreshButtons()
 {
 	MoveUpButton.setVisible(ItemsIndex > 0);
-	MoveDownButton.setVisible(ItemProtos.length() > ItemsIndex + InvItemCount);
+	MoveDownButton.setVisible(ItemIds.length() > ItemsIndex + InvItemCount);
 }
 
 void InitGroundPickUpScreen()
@@ -166,7 +166,7 @@ class ItemClicked : IGUIElementCallbackMouseClick
 	
 	void OnMouseClick(int id, int click) override
 	{
-		if(ItemsIndex + Index >= ItemProtos.length())
+		if(ItemsIndex + Index >= ItemIds.length())
 			return;
 		
 		if(click == MOUSE_CLICK_WHEEL_DOWN)
@@ -177,11 +177,11 @@ class ItemClicked : IGUIElementCallbackMouseClick
 		if(click != MOUSE_CLICK_LEFT)
 			return;
 		
-		ProtoItem@ proto = GetProtoItem(ItemProtos[ItemsIndex + Index]);
-		if(!valid(proto))
+		ItemCl@ item = GetItem(ItemIds[ItemsIndex + Index]);
+		if(!valid(item))
 			return;
 		
-		PickUpItem(proto);
+		PickUpItem(item);
 	}
 }
 
