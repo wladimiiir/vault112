@@ -68,13 +68,13 @@ bool PrepareScreen( array<int>& itemsIds)
 	ClearItems();
 	ItemIds.resize(0);
 	ItemCounts.resize(0);
-	for (uint i = 0; i < itemsIds.length(); i++ )
+	for (uint i = 0; i < itemsIds.length(); i+=2 )
 	{
 		ItemCl@ item = GetItem(itemsIds[i]);
 		if( valid(item) )
 		{
-		    ItemIds.insertLast( itemsIds[i++] );
-		    ItemCounts.insertLast( itemsIds[i] );
+		    ItemIds.insertLast( itemsIds[i] );
+		    ItemCounts.insertLast( itemsIds[i+1] );
 		}
 	}
 
