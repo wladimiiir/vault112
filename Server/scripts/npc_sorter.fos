@@ -1,0 +1,196 @@
+#include "_macros.fos"
+#include "critter_action_basic.fos"
+
+/**
+ * Critter init script
+ */
+void NpcSorterInit(Critter& npc, bool firstTime)
+{
+ 
+}
+ 
+ /**
+  * Dialog scripts
+  */ 
+void r_SortItemsOnGround(Critter& player, Critter@ npc)
+{
+	if(!valid(npc))
+		return;
+	
+	Item@[] containers = FindContainers(npc.GetMap());
+	Item@[] groundItems = FindGroundItems(npc.GetMap());
+	
+	Action@ action = DefaultAction();
+	for (uint i = 0; i < groundItems.length(); i++)
+	{
+		Item@ item = groundItems[i];
+		Item@ container = FindContainerForItem(containers, item);
+		if(!valid(container))
+			continue;
+			
+		action
+			.AddSubAction(MoveTo(item.HexX, item.HexY, true))
+			.AddSubAction(PickUp(item))
+			.AddSubAction(MoveTo(container.HexX, item.HexY, true))
+			.AddSubAction(PutInto(item, container))
+		;
+	}
+	actionManager.Start(npc, action);
+}
+  
+Item@[] FindContainers(Map@ map)
+{
+	Item@[] containers;
+	map.GetItemsByType(ITEM_TYPE_CONTAINER, containers);
+	return containers;
+}
+
+Item@[] FindGroundItems(Map@ map)
+{
+	Item@[] items;
+	map.GetItemsByType(ITEM_TYPE_AMMO, items);
+	map.GetItemsByType(ITEM_TYPE_ARMOR, items);
+	map.GetItemsByType(ITEM_TYPE_DRUG, items);
+	map.GetItemsByType(ITEM_TYPE_MISC, items);
+	map.GetItemsByType(ITEM_TYPE_WEAPON, items);
+	return items;
+}
+
+int GetWeaponSubType(Item@ weapon)
+{
+	ProtoItem@ proto = GetProtoItem(weapon.GetProtoId());
+	if(!valid(proto))
+		return -1;
+	
+	return _WeaponSubType(proto, 0);
+}
+
+Item@ FindContainerForItem(Item@[] containers, Item@ item)
+{
+	Item@ container;
+
+	@container = FindContainerByItem(containers, item.GetProtoId());
+	if(valid(container))
+		return container;
+		
+	if(item.GetType() == ITEM_TYPE_WEAPON)
+	{
+		@container = FindContainerByWeaponSubType(containers, GetWeaponSubType(item), true);
+		if(valid(container))
+			return container;
+		
+		@container = FindContainerByWeaponSubType(containers, GetWeaponSubType(item), false);
+		if(valid(container))
+			return container;	
+	}
+	
+	@container = FindContainerByItemType(containers, item.GetType(), true);
+	if(valid(container))
+		return container;
+		
+	@container = FindContainerByItemType(containers, item.GetType(), false);
+	if(valid(container))
+		return container;
+		
+	@container = FindEmptyContainer(containers);
+	if(valid(container))
+		return container;
+	
+	return null;
+}
+
+Item@ FindContainerByItem(Item@[] containers, uint16 itemPid)
+{
+	for (uint i = 0; i < containers.length(); i++)
+	{
+		Item@[] items;
+		containers[i].GetItems(0, items);
+		
+		if(items.length() == 0)
+			continue;
+			
+		if(AllItemsHavePid(items, itemPid))
+			return containers[i];
+	}
+	return null;
+}
+
+bool AllItemsHavePid(Item@[] items, uint16 itemPid)
+{
+	for (uint i = 0; i < items.length(); i++)
+	{
+		if(items[i].GetProtoId() != itemPid)
+			return false;
+	}
+	return true;
+}
+
+Item@ FindContainerByWeaponSubType(Item@[] containers, int weaponSubType, bool checkAllItems)
+{
+	for (uint i = 0; i < containers.length(); i++)
+	{
+		Item@[] items;
+		containers[i].GetItems(0, items);
+		
+		if(items.length() == 0)
+			continue;
+			
+		bool ok = true;
+		for (uint j = 0; j < items.length(); j++)
+		{
+			if(checkAllItems && GetWeaponSubType(items[j]) != weaponSubType)
+			{
+				ok = false;
+				break;
+			} 
+			else if(!checkAllItems && GetWeaponSubType(items[j]) == weaponSubType)
+				break;
+		}
+		if(ok)
+			return containers[i];
+	}
+	return null;
+}
+
+Item@ FindContainerByItemType(Item@[] containers, uint16 itemType, bool checkAllItems)
+{
+	for (uint i = 0; i < containers.length(); i++)
+	{
+		Item@[] items;
+		containers[i].GetItems(0, items);
+		
+		if(items.length() == 0)
+			continue;
+			
+		bool ok = true;
+		for (uint j = 0; j < items.length(); j++)
+		{
+			if(checkAllItems && items[j].GetType() != itemType)
+			{
+				ok = false;
+				break;
+			} 
+			else if(!checkAllItems && items[j].GetType() == itemType)
+				break;
+		}
+		if(ok)
+			return containers[i];
+	}
+	return null;
+}
+
+Item@ FindEmptyContainer(Item@[] containers)
+{
+	for (uint i = 0; i < containers.length(); i++)
+	{
+		if(containers[i].GetItems(0, null) == 0)
+			return containers[i];
+	}
+	return null;
+}
+
+
+
+
+
+ 
