@@ -409,7 +409,7 @@
 #define ST_NEXT_CRTYPE                           ( 130 )
 #define ST_NEXT_REPLICATION_MAP                  ( 131 )
 #define ST_NEXT_REPLICATION_ENTIRE               ( 132 )
-#define ST_CURRENT_AP_EXT						 ( 133 )
+#define ST_RESERVED1							 ( 133 )
 #define ST_BONUS_LOOK_EXT						 ( 134 )
 #define ST_DAMAGE_EXPERIENCE					 ( 135 )
 // 133..149

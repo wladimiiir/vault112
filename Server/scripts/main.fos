@@ -1665,8 +1665,6 @@ void turn_based_process( Map& map, Critter& cr, bool beginTurn )
             }
         }
 
-		cr.StatBase[ ST_CURRENT_AP ] += cr.Stat[ ST_CURRENT_AP_EXT ] * 100;
-		cr.StatBase[ ST_CURRENT_AP_EXT ] = 0;
         cr.StatBase[ ST_TURN_BASED_AC ] = cr.Stat[ ST_CURRENT_AP ] * ( hthEvade ? 2 : 1 );
         if( cr.Stat[ ST_TURN_BASED_AC ] < 0 )
             cr.StatBase[ ST_TURN_BASED_AC ] = 0;

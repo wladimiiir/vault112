@@ -80,9 +80,8 @@ void unsafe_EndTurnBasedCombat(Critter& player, int, int, int, string@, int[]@)
 	
 	if(map.IsTurnBased() && player.Stat[ST_CURRENT_AP] > 0)
 	{
-		player.StatBase[ST_CURRENT_AP_EXT] = player.Stat[ST_CURRENT_AP];
 		player.ModeBase[MODE_END_COMBAT] = 1;
-		player.StatBase[ST_CURRENT_AP] -= player.Stat[ST_CURRENT_AP] * 100;
+		player.StatBase[ST_CURRENT_AP] = 0;
 	}
 }
 
@@ -94,8 +93,7 @@ void unsafe_EndTurnBasedTurn(Critter& player, int, int, int, string@, int[]@)
 	
 	if(map.IsTurnBased() && player.Stat[ST_CURRENT_AP] > 0)
 	{
-		player.StatBase[ST_CURRENT_AP_EXT] = player.Stat[ST_CURRENT_AP];
-		player.StatBase[ST_CURRENT_AP] -= player.Stat[ST_CURRENT_AP] * 100;
+		player.StatBase[ST_CURRENT_AP] = 0;
 	}
 }
 
