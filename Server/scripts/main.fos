@@ -484,6 +484,11 @@ bool critter_use_item( Critter& cr, Item& item, Critter@ targetCr, Item@ targetI
 // Call on something critter use skill.
 bool critter_use_skill( Critter& cr, int skill, Critter@ targetCr, Item@ targetItem, Scenery@ targetScen )
 {
+    // SetChosenActions() is using uints, but we need int here;
+    // we "fix" that problem manually here - it's *bit* ugly, but hey... it works :)
+    if( uint(skill) == uint16( SKILL_PICK_ON_GROUND ))
+	skill = SKILL_PICK_ON_GROUND;
+
     bool isPlayer = cr.IsPlayer();
 
     // Cars

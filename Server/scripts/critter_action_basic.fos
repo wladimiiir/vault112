@@ -581,6 +581,13 @@ class PickUp : ItemsHolderAction
 	
 	private uint16[] PickItemPids;
 	
+	PickUp() {}
+	
+	PickUp(Item& item)
+	{
+		AddItem(item);
+	}
+	
 	void Perform(Critter& critter) override
 	{
 		if(!HasValidItems())
@@ -605,6 +612,57 @@ class PickUp : ItemsHolderAction
 			return PLANE_RUN_GLOBAL;
 			
 		RemoveFromArray(PickItemPids, plane.Pick_Pid);
+		if(PickItemPids.length() == 0)
+		{
+			Info("Finishing pick up.");
+			SetListening(false);
+			Finish(critter);
+		}
+			
+		return PLANE_RUN_GLOBAL;
+	}
+}
+
+class PutInto : ItemsHolderAction
+{
+	#define PUT_INTO_PRIORITY	(AI_PLANE_PICK_PRIORITY + 2)
+	
+	private uint16[] PickItemPids;
+	private Item@ Container;
+	
+	PutInto() {}
+	
+	PutInto(Item& item, Item& container)
+	{
+		AddItem(item);
+		@Container = container;
+	}
+	
+	void Perform(Critter& critter) override
+	{
+		if(!HasValidItems())
+		{
+			StartNextSuperAction(critter);
+			return;
+		}
+		Info("Performing put into container");
+		PickItemPids.resize(0);
+		for (uint i = 0; i < GetItems().length(); i++)
+		{
+			Item@ item = GetItems()[i];
+			PickItemPids.insertLast(item.GetProtoId());
+			AddPickPlane(critter, PICK_UP_PRIORITY, item, 0, false);
+		}
+		SetListening(true);
+	}
+	
+	int PlaneEndEvent(Critter& critter, NpcPlane& plane, int reason, Critter@ someCr, Item@ someItem) override 
+	{ 
+		if(plane.Type != AI_PLANE_PICK || plane.Priority != PICK_UP_PRIORITY)
+			return PLANE_RUN_GLOBAL;
+			
+		RemoveFromArray(PickItemPids, plane.Pick_Pid);
+		MoveItem(someItem, someItem.GetCount(), Container, 0);
 		if(PickItemPids.length() == 0)
 		{
 			Info("Finishing pick up.");
