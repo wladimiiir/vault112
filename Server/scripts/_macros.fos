@@ -72,7 +72,7 @@
 #define _NpcEraseAllPlanesPick       # (npc) npc.ErasePlane( AI_PLANE_PICK, true )
 
 // Weapon
-#define _WeaponIsHtHAttack           # ( proto, use )( _WeaponSkill( proto, use ) == SK_UNARMED || _WeaponSkill( proto, use ) == SK_MELEE_WEAPONS )
+#define _WeaponIsHtHAttack           # ( proto, use )( _WeaponSkill( proto, use ) == SK_CLOSE_COMBAT)
 #define _WeaponIsGunAttack           # ( proto, use )( _WeaponSkill( proto, use ) == SK_SMALL_GUNS || _WeaponSkill( proto, use ) == SK_BIG_GUNS || _WeaponSkill( proto, use ) == SK_ENERGY_WEAPONS )
 #define _WeaponIsRangedAttack        # ( proto, use )( _WeaponIsGunAttack( weap, use ) || _WeaponSkill( proto, use ) == SK_THROWING )
 #define _WeaponIsPrimaryAviable      # (proto) ( ( proto.Weapon_ActiveUses & 1 ) != 0 )
@@ -93,7 +93,7 @@
 #define _WeaponModeUse               # (weaponMode) ( ( weaponMode ) & 0xF )
 #define _WeaponModeAim               # (weaponMode) ( ( ( weaponMode ) >> 4 ) & 0xF )
 #define _WeaponModeMake              # ( use, aim )( ( ( ( aim ) << 4 ) | ( ( use ) & 0xF ) ) & 0xFF )
-#define _WeaponSubType				 # (proto, use) (_WeaponSkill(proto, use)  == SK_SMALL_GUNS || _WeaponSkill(proto, use) == SK_BIG_GUNS || _WeaponSkill(proto, use) == SK_ENERGY_WEAPONS ) ? 4 : ( ( _WeaponSkill(proto, use) == SK_THROWING ) ? 3 : ( _WeaponSkill(proto, use) == SK_MELEE_WEAPONS ) ? 2 : 1)
+#define _WeaponSubType				 # (proto, use) (_WeaponSkill(proto, use)  == SK_SMALL_GUNS || _WeaponSkill(proto, use) == SK_BIG_GUNS || _WeaponSkill(proto, use) == SK_ENERGY_WEAPONS ) ? 4 : ( ( _WeaponSkill(proto, use) == SK_THROWING ) ? 3 : 1)
 
 // Locker
 #define _LockerIsOpen                # (door) ( ( door.LockerCondition & LOCKER_ISOPEN ) != 0 )

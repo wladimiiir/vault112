@@ -407,7 +407,7 @@ void dlg_TrySpy( Critter& player, Critter@ banker, string@ playerName )
     if( player.Skill[ SK_SPEECH ] >= 80 - ( player.Stat[ ST_CHARISMA ] + player.Stat[ ST_LUCK ] ) / 2 )
     {
 
-        uint[] CombatSkills = { SK_SMALL_GUNS, SK_BIG_GUNS, SK_ENERGY_WEAPONS, SK_UNARMED, SK_MELEE_WEAPONS, SK_THROWING };
+        uint[] CombatSkills = { SK_SMALL_GUNS, SK_BIG_GUNS, SK_ENERGY_WEAPONS, SK_CLOSE_COMBAT, SK_RUNNING_SPEED, SK_THROWING };
         uint[] TagSkills = { cr.TagSkill[ TAG_SKILL1 ], cr.TagSkill[ TAG_SKILL2 ], cr.TagSkill[ TAG_SKILL3 ], cr.TagSkill[ TAG_SKILL4 ] };
 
         for( uint i = 0; i < CombatSkills.length(); i++ )
@@ -430,10 +430,10 @@ void dlg_TrySpy( Critter& player, Critter@ banker, string@ playerName )
                         case SK_ENERGY_WEAPONS:
                             lexems += "$CombatSkillMax @msg dlg " + DLGSTR( BankerDialog, DlgStr + 43 ) + "@";
                             break;
-                        case SK_UNARMED:
+                        case SK_CLOSE_COMBAT:
                             lexems += "$CombatSkillMax @msg dlg " + DLGSTR( BankerDialog, DlgStr + 44 ) + "@";
                             break;
-                        case SK_MELEE_WEAPONS:
+                        case SK_RUNNING_SPEED:
                             lexems += "$CombatSkillMax @msg dlg " + DLGSTR( BankerDialog, DlgStr + 45 ) + "@";
                             break;
                         case SK_THROWING:
@@ -520,7 +520,7 @@ void dlg_TrySpy( Critter& player, Critter@ banker, string@ playerName )
         lexems = "";
         int CurSkill = 0;
         int MaxSkill = 0;
-        uint[] CombatSkills = { SK_SMALL_GUNS, SK_BIG_GUNS, SK_ENERGY_WEAPONS, SK_UNARMED, SK_MELEE_WEAPONS, SK_THROWING };
+        uint[] CombatSkills = { SK_SMALL_GUNS, SK_BIG_GUNS, SK_ENERGY_WEAPONS, SK_CLOSE_COMBAT, SK_RUNNING_SPEED, SK_THROWING };
 
         for( uint i = 0; i < CombatSkills.length(); i++ )
         {
@@ -554,10 +554,10 @@ void dlg_TrySpy( Critter& player, Critter@ banker, string@ playerName )
             case SK_ENERGY_WEAPONS:
                 lexems += "$CombatSkillMax @msg dlg " + DLGSTR( BankerDialog, DlgStr + 43 ) + "@";
                 break;
-            case SK_UNARMED:
+            case SK_CLOSE_COMBAT:
                 lexems += "$CombatSkillMax @msg dlg " + DLGSTR( BankerDialog, DlgStr + 44 ) + "@";
                 break;
-            case SK_MELEE_WEAPONS:
+            case SK_RUNNING_SPEED:
                 lexems += "$CombatSkillMax @msg dlg " + DLGSTR( BankerDialog, DlgStr + 45 ) + "@";
                 break;
             case SK_THROWING:

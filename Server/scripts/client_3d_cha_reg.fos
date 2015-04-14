@@ -72,14 +72,14 @@ class ChaRegScreen : IGUIElementCallbackInit, IGUIElementCallbackDraw
         AnimIndex      = ANIM2_IDLE;
     }
 
-    void OnInit()
+    void OnInit(int)
     {
         for( uint i = 0; i < CUST_COUNT; i++ )
             if( valid( RegCust[ i ] ) )
                 RegCust[ i ].RefreshTexts();
     }
 
-    void OnDraw()
+    void OnDraw(int)
     {
         uint tick = GetTick();
         if( tick >= RotateTick )       // Rotate every 50 ms
@@ -151,7 +151,7 @@ class ChaRegScreen : IGUIElementCallbackInit, IGUIElementCallbackDraw
                 }
             }
         }
-    }
+    }   
 }
 
 class Customizer
@@ -307,7 +307,7 @@ class CustomizerScroll : IGUIElementCallbackMouseClick
         Type  = type;
     }
 
-    void OnMouseClick( int click )
+    void OnMouseClick( int id, int click )
     {
         if(     click == MOUSE_CLICK_LEFT       && Type == 0 && Cust.Scroll > 0 )
             Cust.Scroll--;
@@ -334,15 +334,15 @@ class CustomizerTabText : IGUIElementCallbackInit
         cust.TextTabs.insertLast( @this );
     }
 
-    void OnInit()
+    void OnInit(int)
     {
         @Options = GUI_GetElementOptions();
     }
 
     void SetText( string& text, bool selected )
     {
-        if( valid( Options ) )
-            Options.Text( text, FONT_FALLOUT, selected ? COLOR_LGRAY : 0, 0, 0 );
+        //if( valid( Options ) )
+            //Options.Text( text, FONT_FALLOUT, selected ? COLOR_LGRAY : 0, 0 );
     }
 };
 
@@ -357,7 +357,7 @@ class CustomizerTabButton : IGUIElementCallbackMouseClick
         Index = index;
     }
 
-    void OnMouseClick( int click )
+    void OnMouseClick( int id, int click )
     {
         if( click == MOUSE_CLICK_LEFT )
             Cust.ChooseTab( Index );
@@ -391,27 +391,27 @@ void Init3DChaRegScreen() // Export
 
         // Scroll arrows and region
         CustomizerScroll arrayUp( RegCust[ c ], 0 );
-        GUI_AddScreenElement( CLIENT_MAIN_SCREEN_REGISTRATION, null,
-                              regCustArrUp[ 0 ] + cx, regCustArrUp[ 1 ] + cy )
+        GUI_AddButton( CLIENT_MAIN_SCREEN_REGISTRATION,
+                              regCustArrUp[ 0 ] + cx, regCustArrUp[ 1 ] + cy)
         .DownPic( regCustArrUpPicDn )
         .CallbackMouseClick( arrayUp );
 
         CustomizerScroll arrayDown( RegCust[ c ], 1 );
-        GUI_AddScreenElement( CLIENT_MAIN_SCREEN_REGISTRATION, null,
-                              regCustArrDn[ 0 ] + cx, regCustArrDn[ 1 ] + cy )
+        GUI_AddButton( CLIENT_MAIN_SCREEN_REGISTRATION,
+                              regCustArrDn[ 0 ] + cx, regCustArrDn[ 1 ] + cy)
         .DownPic( regCustArrDnPicDn )
         .CallbackMouseClick( arrayDown );
 
         CustomizerScroll scrollRegion( RegCust[ c ], 2 );
-        GUI_AddScreenElement( CLIENT_MAIN_SCREEN_REGISTRATION, null, 0, 0 )
+        GUI_AddScreenElement( CLIENT_MAIN_SCREEN_REGISTRATION)
         .Position( regCustTabText[ 0 ] + cx, regCustTabText[ 1 ] + cy,
                    regCustTabText[ 2 ] - regCustTabText[ 0 ] + regCustTabNextX * ( RegTabCount - 1 ),
                    regCustTabText[ 3 ] - regCustTabText[ 1 ] + regCustTabNextY * ( RegTabCount - 1 ) )
         .CallbackMouseClick( scrollRegion );
 
         // Title
-        GUI_AddScreenElement( CLIENT_MAIN_SCREEN_REGISTRATION, null, 0, 0 )
-        .Position( regCustTabTitle[ 0 ] + cx, regCustTabTitle[ 1 ] + cy )
+        GUI_AddText( CLIENT_MAIN_SCREEN_REGISTRATION)
+        .Position( regCustTabTitle[ 0 ] + cx, regCustTabTitle[ 1 ] + cy)
         .Text( RegCust[ c ].Title, FONT_FALLOUT, 0, 0, 0 );
 
         // Tabs
@@ -420,13 +420,13 @@ void Init3DChaRegScreen() // Export
         {
             // Text
             CustomizerTabText tabText( RegCust[ c ] );
-            GUI_AddScreenElement( CLIENT_MAIN_SCREEN_REGISTRATION, null, 0, 0 )
-            .Position( regCustTabText[ 0 ] + tx, regCustTabText[ 1 ] + ty )
+            GUI_AddText( CLIENT_MAIN_SCREEN_REGISTRATION)
+            .Position( regCustTabText[ 0 ] + tx, regCustTabText[ 1 ] + ty)
             .CallbackInit( tabText );
 
             // Button
             CustomizerTabButton tabButton( RegCust[ c ], t );
-            GUI_AddScreenElement( CLIENT_MAIN_SCREEN_REGISTRATION, null, 0, 0 )
+            GUI_AddButton( CLIENT_MAIN_SCREEN_REGISTRATION)
             .Position( regCustTabButton[ 0 ] + tx, regCustTabButton[ 1 ] + ty )
             .DownPic( regCustTabButtonPicDn )
             .CallbackMouseClick( tabButton );
@@ -441,10 +441,10 @@ void Init3DChaRegScreen() // Export
 
     @ChaReg = ChaRegScreen();
     ChaReg.Init();
-    GUI_AddScreenElement( CLIENT_MAIN_SCREEN_REGISTRATION, null, 0, 0 )
+    GUI_AddScreenElement( CLIENT_MAIN_SCREEN_REGISTRATION, 0, 0, 10, 10 )
     .CallbackInit( ChaReg )
     .CallbackDraw( ChaReg );
-    GUI_AddScreenElement( CLIENT_SCREEN_CHARACTER, null, 0, 0 )
+    GUI_AddScreenElement( CLIENT_SCREEN_CHARACTER, 0, 0, 10, 10 )
     .CallbackDraw( ChaReg );
 }
 

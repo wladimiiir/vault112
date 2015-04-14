@@ -448,7 +448,7 @@ EXPORT bool Item_Weapon_IsHtHAttack( Item& item, uint8 mode )
     if( !item.IsWeapon() || !item.WeapIsUseAviable( mode & 7 ) )
         return false;
     int skill = SKILL_OFFSET( item.Proto->Weapon_Skill[ mode & 7 ] );
-    return skill == SK_UNARMED || skill == SK_MELEE_WEAPONS;
+    return skill == SK_CLOSE_COMBAT;
 }
 
 EXPORT bool Item_Weapon_IsGunAttack( Item& item, uint8 mode )

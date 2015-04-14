@@ -33,26 +33,26 @@ void InitializeGame()                    // Export
     __TurnBasedTick             = 30000;
     __Breaktime                 = 1200;
     __TimeoutTransfer           = 0;
-    __TimeoutBattle             = REAL_SECOND( 7 );
+    __TimeoutBattle             = REAL_SECOND( 10 );
     __ApRegeneration            = 7000;
     __RtApCostCritterWalk       = 0;     // 1 AP == 100, maximim 255
-    __RtApCostCritterRun        = 0;     // 1 AP == 100, maximim 255
+    __RtApCostCritterRun        = 5;     // 1 AP == 100, maximim 255
     __RtApCostMoveItemContainer = 0;
-    __RtApCostMoveItemInventory = 2;
-    __RtApCostPickItem          = 2;
+    __RtApCostMoveItemInventory = 1;
+    __RtApCostPickItem          = 1;
     __RtApCostDropItem          = 1;
     __RtApCostReloadWeapon      = 2;
-    __RtApCostPickCritter       = 3;
+    __RtApCostPickCritter       = 1;
     __RtApCostUseItem           = 3;
     __RtApCostUseSkill          = 3;
     __RtAlwaysRun               = false;
     __TbApCostCritterMove       = 1;
     __TbApCostMoveItemContainer = 0;
     __TbApCostMoveItemInventory = 2;
-    __TbApCostPickItem          = 3;
-    __TbApCostDropItem          = 1;
+    __TbApCostPickItem          = 2;
+    __TbApCostDropItem          = 2;
     __TbApCostReloadWeapon      = 2;
-    __TbApCostPickCritter       = 5;
+    __TbApCostPickCritter       = 2;
     __TbApCostUseItem           = 3;
     __TbApCostUseSkill          = 3;
     __TbAlwaysRun               = false;
@@ -76,20 +76,20 @@ void InitializeGame()                    // Export
     __GlobalMapMaxGroupCount    = 10;
     __GlobalMapMoveTime         = 250;
     __EncounterTime             = 5000;
-    __DeadHitPoints             = -40;
+    __DeadHitPoints             = -25;
     __BagRefreshTime            = 60;     // Real minutes
     __WisperDist                = 3;
-    __ShoutDist                 = 400;
+    __ShoutDist                 = 100;
     __CustomItemCost            = true;
     __RegistrationTimeout       = 0;  // In real seconds, 0 to disable
     __AccountPlayTime           = 0; // In real seconds, 0 to disable
-    __TalkDistance              = 3;
-    __NpcMaxTalkers             = 1;
+    __TalkDistance              = 4;
+    __NpcMaxTalkers             = 3;
     __MinNameLength             = 4;       // Minimum 1
     __MaxNameLength             = 20;      // Maximum 30
     __PermanentDeath            = 0;       // Disable
     __DlgTalkMinTime            = 100000;
-    __DlgBarterMinTime          = 50000;
+    __DlgBarterMinTime          = 30000;
     __MinimumOfflineTime        = 120000;  // 3 minutes
     __MainStoryLineActive       = true;
     __NoPvpMaps                 = true;
@@ -216,7 +216,7 @@ void InitializeGame()                    // Export
     for( uint i = TIMEOUT_BEGIN; i <= TIMEOUT_END; i++ )
         SetParameterGetBehaviour( i, dllName + "getParam_Timeout"          );
     SetParameterGetBehaviour( ST_BONUS_LOOK, dllName + "getParam_BonusLook" );
-    //SetParameterGetBehaviour( ST_RUN_TIME, dllName + "getParam_RunTime" );
+    
     // for(uint i = REPUTATION_BEGIN; i <= REPUTATION_END   ; i++) SetParameterGetBehaviour(i, dllName + "getParam_Reputation"       );
     // for(uint i = REPUTATION_BEGIN; i <= REPUTATION_END   ; i++) SetParameterChangeBehaviour(i, dllName + "changedParam_Reputation");
 
@@ -226,6 +226,7 @@ void InitializeGame()                    // Export
     SetParameterChangeBehaviour( TO_BATTLE, "parameters@changedTimeout_Battle" );
     SetParameterChangeBehaviour( MODE_HIDE, "parameters@changedParam_Hide"      );
     SetParameterChangeBehaviour( TRAIT_FAST_SHOT, "parameters@changedParam_FastShot"  );
+    SetParameterChangeBehaviour( SK_RUNNING_SPEED, "parameters@changedParam_RunningSpeed" );
     for( uint i = PERK_BEGIN; i <= PERK_END; i++ )
         SetParameterChangeBehaviour( i, "parameters@changedParam_Perks" );
     SetParameterDialogGetBehaviour( ST_INTELLECT, "parameters@getParamDialog_Intellect" );

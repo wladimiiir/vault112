@@ -91,6 +91,14 @@ void changedParam_FastShot( Critter& cr, uint, int oldValue )
     cr.ModeBase[ MODE_NO_AIM ] = ( cr.Trait[ TRAIT_FAST_SHOT ] != 0 ? 1 : 0 );
 }
 
+void changedParam_RunningSpeed( Critter& cr, uint, int oldValue )
+{
+	if(!cr.IsPlayer())
+		return;
+		
+	cr.StatBase[ ST_RUN_TIME ] = 220 - ( cr.SkillBase[ SK_RUNNING_SPEED ] - 100 ) / 2;
+}
+
 int NextLevelNeedExp( Critter& cr ) // Export
 {
     int level = cr.Stat[ ST_LEVEL ];
@@ -232,8 +240,7 @@ void CritterGenerate( int[]& data ) // Export to client_main@player_data_generat
         _param_[ SK_SMALL_GUNS ] -= 10;
         _param_[ SK_BIG_GUNS ] -= 10;
         _param_[ SK_ENERGY_WEAPONS ] -= 10;
-        _param_[ SK_UNARMED ] -= 10;
-        _param_[ SK_MELEE_WEAPONS ] -= 10;
+        _param_[ SK_CLOSE_COMBAT ] -= 10;        
         _param_[ SK_THROWING ] -= 10;
     }
     // if(_param_[TRAIT_GIFTED]!=0)
@@ -242,11 +249,11 @@ void CritterGenerate( int[]& data ) // Export to client_main@player_data_generat
     //	for(uint i=SKILL_BEGIN;i<=SKILL_END;i++) _param_[i]-=10;
     // }
 
-    _param_[ SK_SMALL_GUNS ] += 30 + 3 * _param_[ ST_AGILITY ];
-    _param_[ SK_BIG_GUNS ] += 0 + 2 * _param_[ ST_AGILITY ];
-    _param_[ SK_ENERGY_WEAPONS ] += 0 + 2 * _param_[ ST_AGILITY ];
-    _param_[ SK_UNARMED ] += 30 + 2 * ( _param_[ ST_AGILITY ] + _param_[ ST_STRENGTH ] );
-    _param_[ SK_MELEE_WEAPONS ] += 20 + 2 * ( _param_[ ST_AGILITY ] + _param_[ ST_STRENGTH ] );
+    _param_[ SK_SMALL_GUNS ] += 20 + 3 * _param_[ ST_AGILITY ];
+    _param_[ SK_BIG_GUNS ] += 20 + 2 * _param_[ ST_AGILITY ];
+    _param_[ SK_ENERGY_WEAPONS ] += 20 + 2 * _param_[ ST_AGILITY ];
+    _param_[ SK_CLOSE_COMBAT ] += 20 + 2 * ( _param_[ ST_AGILITY ] + _param_[ ST_STRENGTH ] );
+    _param_[ SK_RUNNING_SPEED ] += 100;
     _param_[ SK_THROWING ] += 0 + 4 * _param_[ ST_AGILITY ];
     _param_[ SK_FIRST_AID ] += 0 + 2 * ( _param_[ ST_PERCEPTION ] + _param_[ ST_INTELLECT ] );
     _param_[ SK_DOCTOR ] += 5 + _param_[ ST_PERCEPTION ] + _param_[ ST_INTELLECT ];
@@ -272,7 +279,7 @@ void CritterGenerate( int[]& data ) // Export to client_main@player_data_generat
     {
         _param_[ ST_RADIATION_RESISTANCE ] -= _param_[ ST_ENDURANCE ] * 2;
         _param_[ ST_POISON_RESISTANCE ] -= _param_[ ST_ENDURANCE ] * 5;
-        _param_[ ST_HEALING_RATE ] += 2;
+        _param_[ ST_HEALING_RATE ] = 15;
     }
     if( _param_[ TRAIT_BRUISER ] != 0 )
         _param_[ ST_ACTION_POINTS ] -= 2;
@@ -304,7 +311,7 @@ void CritterGenerate( int[]& data ) // Export to client_main@player_data_generat
     _param_[ ST_CRITICAL_CHANCE ] += _param_[ ST_LUCK ];
     #endif
 
-    _param_[ ST_MAX_LIFE ] += 15;
+    _param_[ ST_MAX_LIFE ] += 50;
     _param_[ ST_ACTION_POINTS ] += 5;
     _param_[ ST_CURRENT_HP ] = _param_[ ST_MAX_LIFE ];
     _param_[ ST_CURRENT_AP ] = _param_[ ST_ACTION_POINTS ] * 100;

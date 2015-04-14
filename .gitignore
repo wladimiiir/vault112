@@ -1,4 +1,4 @@
-/Server/maps/*.fomapb
+﻿/Server/maps/*.fomapb
 /Server/scripts/*.fosb
 /Server/scripts/*.fosp
 /Server/scripts/geany_run_script.sh
@@ -20,4 +20,7 @@
 /Client/fallout.dat
 /Client/ftrobots.bos
 /Server/dumps/*
-/Server/profiler/*
+/Server/profiler/*/Client/CrashDump_FOnline*
+/Client/CrashDump_FOnline*
+/Server/scripts/vc110.idb
+/Server/cache_fail

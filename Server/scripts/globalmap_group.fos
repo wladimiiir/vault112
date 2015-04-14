@@ -25,6 +25,8 @@ void global_process( int processType, Critter& cr, Item@ car,
                      float& curX, float& curY, float& toX, float& toY, float& speed,
                      uint& encounterDescriptor, bool& waitForAnswer )
 {
+	//~ Log("Process type: " + processType+", x: "+curX+", y: " +curY + ", toX: "+toX+", toY: "+toY);
+	
     int movementType = ( valid( car ) ? car.Proto.Car_MovementType : GM_WALK_GROUND );
     int curXi = int(curX);
     int curYi = int(curY);

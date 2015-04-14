@@ -1,36 +1,9 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|Mixed Platforms" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="FOnline.Server/Core/Critter.cs">
-    <Files>
-      <File FileName="FOnline.Server/Core/Critter.cs" Line="8" Column="2" />
-      <File FileName="FOnline.Server/Roles/JunkyardRoles.cs" Line="54" Column="89" />
-      <File FileName="FOnline.Server/Roles/VirtualRealityRoles.cs" Line="11" Column="49" />
-      <File FileName="FOnline.Server/Roles/Vault112Roles.cs" Line="16" Column="4" />
-      <File FileName="FOnline.Server/Maps/Junkyard.cs" Line="21" Column="22" />
-      <File FileName="FOnline.Mono/IManagedWrapper.cs" Line="10" Column="6" />
-      <File FileName="FOnline.Mono/REPL.cs" Line="12" Column="2" />
-      <File FileName="FOnline.Mono/Logging.cs" Line="11" Column="34" />
-      <File FileName="FOnline.Server/Core/CritterManager.cs" Line="11" Column="40" />
-      <File FileName="FOnline.Server/Core/Critter.Events.cs" Line="459" Column="1" />
-      <File FileName="FOnline.Server/Core/Map.cs" Line="61" Column="51" />
-      <File FileName="FOnline.Server/Core/Main.cs" Line="433" Column="50" />
-      <File FileName="FOnline.Server/BehaviorTrees/Critter/CritterBlackboard.cs" Line="11" Column="43" />
-      <File FileName="FOnline.Server/Program.cs" Line="10" Column="18" />
-    </Files>
+  <MonoDevelop.Ide.Workbench>
     <Pads>
       <Pad Id="ProjectPad">
-        <State expanded="True">
-          <Node name="FOnline.Server" expanded="True">
-            <Node name="BehaviorTrees" expanded="True">
-              <Node name="Critter" expanded="True" />
-            </Node>
-            <Node name="Core" expanded="True">
-              <Node name="Critter.cs" selected="True" />
-            </Node>
-            <Node name="Maps" expanded="True" />
-            <Node name="Roles" expanded="True" />
-          </Node>
-        </State>
+        <State expanded="True" selected="True" />
       </Pad>
       <Pad Id="ClassPad">
         <State expanded="True" selected="True" />

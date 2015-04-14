@@ -38,9 +38,7 @@ bool IsProtectedFromAttack(Critter& critter, uint8 weaponSubType, uint8 damageTy
 		isProtected = true;
 	else if(isGrenade(weaponSubType, damageType) && info.IsProtected(ATTACK_PROTECTION_GRENADE))
 		isProtected = true;
-	else if(weaponSubType == WS_UNARMED && info.IsProtected(ATTACK_PROTECTION_UNARMED))
-		isProtected = true;
-	else if(weaponSubType == WS_MELEE && info.IsProtected(ATTACK_PROTECTION_MELEE))
+	else if(weaponSubType == WS_CLOSE_COMBAT && info.IsProtected(ATTACK_PROTECTION_CLOSE_COMBAT))
 		isProtected = true;
 	else if(damageType == DAMAGE_FIRE && info.IsProtected(ATTACK_PROTECTION_FLAME))
 		isProtected = true;

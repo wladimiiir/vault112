@@ -31,7 +31,7 @@
 #define MF_WAS_KILLED              ( 0x10000000 )
 
 // for WeaponSubtype
-#define WS_UNARMED                 ( 1 )
+#define WS_CLOSE_COMBAT                 ( 1 )
 #define WS_MELEE                   ( 2 )
 #define WS_THROWING                ( 3 )
 #define WS_GUN                     ( 4 )

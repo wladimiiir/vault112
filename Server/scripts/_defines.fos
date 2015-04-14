@@ -428,8 +428,8 @@
 #define SK_SMALL_GUNS                            ( 200 )
 #define SK_BIG_GUNS                              ( 201 )
 #define SK_ENERGY_WEAPONS                        ( 202 )
-#define SK_UNARMED                               ( 203 ) // Hardcoded
-#define SK_MELEE_WEAPONS                         ( 204 )
+#define SK_CLOSE_COMBAT                          ( 203 ) // Hardcoded
+#define SK_RUNNING_SPEED                         ( 204 )
 #define SK_THROWING                              ( 205 )
 #define SK_FIRST_AID                             ( 206 ) // Hardcoded
 #define SK_DOCTOR                                ( 207 ) // Hardcoded
@@ -851,7 +851,7 @@
 #define BATTLE_TIMEOUT                           # (cr) ( __FullSecond + MAX( __TimeoutBattle - REAL_SECOND( cr.Stat[ ST_ARMOR_CLASS ] ), int( REAL_SECOND( 12 ) ) ) )
 #define TRAPS_TIMEOUT                            # (cr) ( __FullSecond + REAL_MINUTE( 1 ) )
 #define SNEAK_TIMEOUT                            # (cr) ( __FullSecond + REAL_SECOND( MAX( 34 - cr.Stat[ ST_SEQUENCE ], 3 ) ) ) // 34 second - sequence
-#define HEALING_TIMEOUT                          # (cr) ( __FullSecond + REAL_MINUTE( 2 ) )                                     // 2 minutes
+#define HEALING_TIMEOUT                          # (cr) ( __FullSecond + REAL_MINUTE( 1 ) )                                     // 2 minutes
 #define IS_TURN_BASED_TIMEOUT                    # (cr) ( cr.Timeout[ TO_BATTLE ] > 10000000 )
 #define MAXIMUM_TIMEOUT                          ( REAL_HOUR( 5 ) )                                                             // Doctor timeout with min skill
 
