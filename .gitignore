@@ -24,3 +24,4 @@
 /Client/CrashDump_FOnline*
 /Server/scripts/vc110.idb
 /Server/cache_fail
+/Server/maps/*.fomapb
