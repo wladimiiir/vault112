@@ -2,10 +2,10 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">Mixed Platforms</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{0D4B0E4C-BE64-44F2-A7C9-09578D3EED3E}</ProjectGuid>
+    <ProjectGuid>{B209273D-179C-4748-B1BC-4C98EA15F0B1}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FOnline</RootNamespace>
@@ -28,184 +28,28 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <DebugSymbols>True</DebugSymbols>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Mixed Platforms' ">
+    <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>False</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>..\..</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
+    <DefineConstants>DEBUG;</DefineConstants>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <Externalconsole>True</Externalconsole>
-    <ConsolePause>False</ConsolePause>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="Custom" name="Run Server" command="wine FOnlineServer.exe -mono_debug" workingdir="${SolutionDir}/.." externalConsole="True" pauseExternalConsole="True" />
-      </CustomCommands>
-    </CustomCommands>
+    <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>True</Optimize>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|Mixed Platforms' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
     <OutputPath>..\..</OutputPath>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Core\Anims.cs" />
-    <Compile Include="Core\Critter.cs" />
-    <Compile Include="Core\Critter.Fields.cs" />
-    <Compile Include="Core\Critter.NativeMethods.cs" />
-    <Compile Include="Core\CritterManager.cs" />
-    <Compile Include="Core\DialogManager.cs" />
-    <Compile Include="Core\GlobalProperties.cs" />
-    <Compile Include="Core\ItemManager.cs" />
-    <Compile Include="Core\MapManager.cs" />
-    <Compile Include="Core\Math.cs" />
-    <Compile Include="Core\NpcPlane.cs" />
-    <Compile Include="Core\NpcPlane.Fields.cs" />
-    <Compile Include="Core\NpcPlanes.cs" />
-    <Compile Include="Core\Random.cs" />
-    <Compile Include="Core\TimeEvents.cs" />
-    <Compile Include="Core\EventArgs.cs" />
-    <Compile Include="Core\GameVar.cs" />
-    <Compile Include="Core\Global.cs" />
-    <Compile Include="Core\Item.cs" />
-    <Compile Include="Core\Item.Events.cs" />
-    <Compile Include="Core\Item.Fields.cs" />
-    <Compile Include="Core\Item.NativeMethods.cs" />
-    <Compile Include="Core\Location.cs" />
-    <Compile Include="Core\Location.Fields.cs" />
-    <Compile Include="Core\Location.NativeMethods.cs" />
-    <Compile Include="Core\Main.cs" />
-    <Compile Include="Core\Map.cs" />
-    <Compile Include="Core\Map.Events.cs" />
-    <Compile Include="Core\Map.Fields.cs" />
-    <Compile Include="Core\Map.NativeMethods.cs" />
-    <Compile Include="Core\NativeFields.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Core\ProtoItem.cs" />
-    <Compile Include="Core\ProtoItem.Fields.cs" />
-    <Compile Include="Core\ProtoItem.NativeMethods.cs" />
-    <Compile Include="Core\Scenery.cs" />
-    <Compile Include="Core\Scenery.Fields.cs" />
-    <Compile Include="Core\Scenery.NativeMethods.cs" />
-    <Compile Include="Core\AnyData.cs" />
-    <Compile Include="Core\Time.cs" />
-    <Compile Include="Core\Critter.Events.cs" />
-    <Compile Include="Core\NpcPlane.NativeMethods.cs" />
-    <Compile Include="Common.cs" />
-    <Compile Include="Core\Misc.cs" />
-    <Compile Include="Critter.cs" />
-    <Compile Include="Critter.Constants.cs" />
-    <Compile Include="Core\Tests.cs" />
-    <Compile Include="Serializator.cs" />
-    <Compile Include="BehaviorTrees\Core\BehaviorBuilder.cs" />
-    <Compile Include="BehaviorTrees\Core\Blackboard.cs" />
-    <Compile Include="BehaviorTrees\Core\CompositeTask.cs" />
-    <Compile Include="BehaviorTrees\Core\Controller.cs" />
-    <Compile Include="BehaviorTrees\Core\LeafTask.cs" />
-    <Compile Include="BehaviorTrees\Core\Selector.cs" />
-    <Compile Include="BehaviorTrees\Core\Sequence.cs" />
-    <Compile Include="BehaviorTrees\Core\Task.cs" />
-    <Compile Include="BehaviorTrees\Core\TaskState.cs" />
-    <Compile Include="BehaviorTrees\Critter\CritterBehaviorBuilder.cs" />
-    <Compile Include="BehaviorTrees\Critter\CritterBlackboard.cs" />
-    <Compile Include="BehaviorTrees\Critter\CritterTask.cs" />
-    <Compile Include="BehaviorTrees\Map\MapBlackboard.cs" />
-    <Compile Include="BehaviorTrees\Map\MapTask.cs" />
-    <Compile Include="BehaviorTrees\Utils\EntityContainer.cs" />
-    <Compile Include="Roles\Roles.cs" />
-    <Compile Include="BehaviorTrees\Critter\Task\Attack.cs" />
-    <Compile Include="BehaviorTrees\Critter\Task\CallReinforcements.cs" />
-    <Compile Include="BehaviorTrees\Critter\Task\ChangeDirection.cs" />
-    <Compile Include="BehaviorTrees\Critter\Task\Defines.cs" />
-    <Compile Include="BehaviorTrees\Critter\Task\FindCritters.cs" />
-    <Compile Include="BehaviorTrees\Critter\Task\LookAt.cs" />
-    <Compile Include="BehaviorTrees\Critter\Task\Patrol.cs" />
-    <Compile Include="BehaviorTrees\Critter\Task\ProvideReinforcements.cs" />
-    <Compile Include="BehaviorTrees\Critter\Task\RecordOffence.cs" />
-    <Compile Include="BehaviorTrees\Critter\Task\Say.cs" />
-    <Compile Include="BehaviorTrees\Critter\Task\Wait.cs" />
-    <Compile Include="BehaviorTrees\Critter\Task\Composites\LookAround.cs" />
-    <Compile Include="BehaviorTrees\Core\Condition\Condition.cs" />
-    <Compile Include="BehaviorTrees\Core\Condition\CritterCheckCondition.cs" />
-    <Compile Include="BehaviorTrees\Core\Condition\ItemCheckCondition.cs" />
-    <Compile Include="BehaviorTrees\Core\Condition\NegativeContidion.cs" />
-    <Compile Include="BehaviorTrees\Core\Task\AtFixedRate.cs" />
-    <Compile Include="BehaviorTrees\Critter\Condition\IsEnemy.cs" />
-    <Compile Include="BehaviorTrees\Critter\Condition\IsHurt.cs" />
-    <Compile Include="BehaviorTrees\Critter\Condition\IsInRange.cs" />
-    <Compile Include="BehaviorTrees\Critter\Condition\IsPlayer.cs" />
-    <Compile Include="BehaviorTrees\Critter\Condition\IsTeamMember.cs" />
-    <Compile Include="Data\OffenceData.cs" />
-    <Compile Include="BehaviorTrees\Core\MainTask.cs" />
-    <Compile Include="Roles\Vault112Roles.cs" />
-    <Compile Include="Misc.Constants.cs" />
-    <Compile Include="BehaviorTrees\Critter\Condition\IsArmed.cs" />
-    <Compile Include="BehaviorTrees\Critter\Task\CancelSneaking.cs" />
-    <Compile Include="BehaviorTrees\Critter\Task\Loot.cs" />
-    <Compile Include="Data\ItemHolderData.cs" />
-    <Compile Include="Item.Contants.cs" />
-    <Compile Include="BehaviorTrees\Critter\Condition\HasLoot.cs" />
-    <Compile Include="BehaviorTrees\Critter\Condition\HasLooter.cs" />
-    <Compile Include="BehaviorTrees\Critter\Task\TakeDrug.cs" />
-    <Compile Include="Roles\EncounterRoles.cs" />
-    <Compile Include="BehaviorTrees\Critter\Condition\SeesCritter.cs" />
-    <Compile Include="BehaviorTrees\Critter\Chooser\Random.cs" />
-    <Compile Include="BehaviorTrees\Core\Chooser\EntityChooser.cs" />
-    <Compile Include="BehaviorTrees\Core\Chooser\CritterChooser.cs" />
-    <Compile Include="BehaviorTrees\Core\Chooser\ItemChooser.cs" />
-    <Compile Include="BehaviorTrees\Critter\Condition\AmAttacking.cs" />
-    <Compile Include="BehaviorTrees\Core\Task\AtChance.cs" />
-    <Compile Include="BehaviorTrees\Critter\Chooser\Weakest.cs" />
-    <Compile Include="BehaviorTrees\Critter\Condition\IsSameType.cs" />
-    <Compile Include="BehaviorTrees\Critter\Task\MoveRandomly.cs" />
-    <Compile Include="BehaviorTrees\Critter\Task\Nothing.cs" />
-    <Compile Include="BehaviorTrees\Critter\Condition\IsLife.cs" />
-    <Compile Include="Roles\VirtualRealityRoles.cs" />
-    <Compile Include="Roles\JunkyardRoles.cs" />
-    <Compile Include="Extension\Critter.Extension.cs" />
-    <Compile Include="Team.Constants.cs" />
-    <Compile Include="Dialog.Constants.cs" />
-    <Compile Include="AI.Constants.cs" />
-    <Compile Include="Maps\Junkyard.cs" />
-    <Compile Include="Bags.Contants.cs" />
-    <Compile Include="Core\Linetracer.cs" />
-    <Compile Include="Core\Visibility.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="readme.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
-      <Visible>False</Visible>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-    </BootstrapperPackage>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
+  <!--<PropertyGroup>
     <PreBuildEvent>$(ProjectDir)MonoBuilder.exe -server_path ../../../sdk/Server</PreBuildEvent>
-  </PropertyGroup>
+  </PropertyGroup>-->
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -215,19 +59,162 @@
   -->
   <ItemGroup>
     <Folder Include="BehaviorTrees\" />
-    <Folder Include="Roles\" />
-    <Folder Include="BehaviorTrees\Core\Condition\" />
-    <Folder Include="BehaviorTrees\Critter\Task\" />
-    <Folder Include="BehaviorTrees\Core\Task\" />
-    <Folder Include="BehaviorTrees\Critter\Condition\" />
+    <Folder Include="Core\" />
     <Folder Include="Data\" />
-    <Folder Include="BehaviorTrees\Core\Chooser\" />
-    <Folder Include="BehaviorTrees\Critter\Chooser\" />
     <Folder Include="Extension\" />
     <Folder Include="Maps\" />
+    <Folder Include="Properties\" />
+    <Folder Include="Roles\" />
+    <Folder Include="AI\" />
+    <Folder Include="AI\CombatClass\" />
+    <Folder Include="AI\CombatAction\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FOnline.Mono\FOnline.Mono.csproj">
+    <Compile Include="BehaviorTrees\Core\BehaviorBuilder.cs" />
+    <Compile Include="BehaviorTrees\Core\Blackboard.cs" />
+    <Compile Include="BehaviorTrees\Core\CompositeTask.cs" />
+    <Compile Include="BehaviorTrees\Core\Controller.cs" />
+    <Compile Include="BehaviorTrees\Core\LeafTask.cs" />
+    <Compile Include="BehaviorTrees\Core\MainTask.cs" />
+    <Compile Include="BehaviorTrees\Core\Selector.cs" />
+    <Compile Include="BehaviorTrees\Core\Sequence.cs" />
+    <Compile Include="BehaviorTrees\Core\Task.cs" />
+    <Compile Include="BehaviorTrees\Core\TaskState.cs" />
+    <Compile Include="BehaviorTrees\Core\Chooser\CritterChooser.cs" />
+    <Compile Include="BehaviorTrees\Core\Chooser\EntityChooser.cs" />
+    <Compile Include="BehaviorTrees\Core\Chooser\ItemChooser.cs" />
+    <Compile Include="BehaviorTrees\Core\Condition\Condition.cs" />
+    <Compile Include="BehaviorTrees\Core\Condition\CritterCheckCondition.cs" />
+    <Compile Include="BehaviorTrees\Core\Condition\ItemCheckCondition.cs" />
+    <Compile Include="BehaviorTrees\Core\Condition\NegativeContidion.cs" />
+    <Compile Include="BehaviorTrees\Core\Task\AtChance.cs" />
+    <Compile Include="BehaviorTrees\Core\Task\AtFixedRate.cs" />
+    <Compile Include="BehaviorTrees\Critter\CritterBehaviorBuilder.cs" />
+    <Compile Include="BehaviorTrees\Critter\CritterBlackboard.cs" />
+    <Compile Include="BehaviorTrees\Critter\CritterTask.cs" />
+    <Compile Include="BehaviorTrees\Critter\Chooser\Random.cs" />
+    <Compile Include="BehaviorTrees\Critter\Chooser\Weakest.cs" />
+    <Compile Include="BehaviorTrees\Critter\Condition\AmAttacking.cs" />
+    <Compile Include="BehaviorTrees\Critter\Condition\HasLoot.cs" />
+    <Compile Include="BehaviorTrees\Critter\Condition\HasLooter.cs" />
+    <Compile Include="BehaviorTrees\Critter\Condition\IsArmed.cs" />
+    <Compile Include="BehaviorTrees\Critter\Condition\IsEnemy.cs" />
+    <Compile Include="BehaviorTrees\Critter\Condition\IsHurt.cs" />
+    <Compile Include="BehaviorTrees\Critter\Condition\IsInRange.cs" />
+    <Compile Include="BehaviorTrees\Critter\Condition\IsLife.cs" />
+    <Compile Include="BehaviorTrees\Critter\Condition\IsPlayer.cs" />
+    <Compile Include="BehaviorTrees\Critter\Condition\IsSameType.cs" />
+    <Compile Include="BehaviorTrees\Critter\Condition\IsTeamMember.cs" />
+    <Compile Include="BehaviorTrees\Critter\Condition\SeesCritter.cs" />
+    <Compile Include="BehaviorTrees\Critter\Task\Attack.cs" />
+    <Compile Include="BehaviorTrees\Critter\Task\CallReinforcements.cs" />
+    <Compile Include="BehaviorTrees\Critter\Task\CancelSneaking.cs" />
+    <Compile Include="BehaviorTrees\Critter\Task\ChangeDirection.cs" />
+    <Compile Include="BehaviorTrees\Critter\Task\Defines.cs" />
+    <Compile Include="BehaviorTrees\Critter\Task\FindCritters.cs" />
+    <Compile Include="BehaviorTrees\Critter\Task\LookAt.cs" />
+    <Compile Include="BehaviorTrees\Critter\Task\Loot.cs" />
+    <Compile Include="BehaviorTrees\Critter\Task\MoveRandomly.cs" />
+    <Compile Include="BehaviorTrees\Critter\Task\Nothing.cs" />
+    <Compile Include="BehaviorTrees\Critter\Task\Patrol.cs" />
+    <Compile Include="BehaviorTrees\Critter\Task\ProvideReinforcements.cs" />
+    <Compile Include="BehaviorTrees\Critter\Task\RecordOffence.cs" />
+    <Compile Include="BehaviorTrees\Critter\Task\Say.cs" />
+    <Compile Include="BehaviorTrees\Critter\Task\TakeDrug.cs" />
+    <Compile Include="BehaviorTrees\Critter\Task\Wait.cs" />
+    <Compile Include="BehaviorTrees\Critter\Task\Composites\LookAround.cs" />
+    <Compile Include="BehaviorTrees\Map\MapBlackboard.cs" />
+    <Compile Include="BehaviorTrees\Map\MapTask.cs" />
+    <Compile Include="BehaviorTrees\Utils\EntityContainer.cs" />
+    <Compile Include="Core\Anims.cs" />
+    <Compile Include="Core\AnyData.cs" />
+    <Compile Include="Core\Critter.Events.cs" />
+    <Compile Include="Core\Critter.Fields.cs" />
+    <Compile Include="Core\Critter.NativeMethods.cs" />
+    <Compile Include="Core\Critter.cs" />
+    <Compile Include="Core\CritterManager.cs" />
+    <Compile Include="Core\DialogManager.cs" />
+    <Compile Include="Core\EventArgs.cs" />
+    <Compile Include="Core\GameVar.cs" />
+    <Compile Include="Core\Global.cs" />
+    <Compile Include="Core\GlobalProperties.cs" />
+    <Compile Include="Core\Item.Events.cs" />
+    <Compile Include="Core\Item.Fields.cs" />
+    <Compile Include="Core\Item.NativeMethods.cs" />
+    <Compile Include="Core\Item.cs" />
+    <Compile Include="Core\ItemManager.cs" />
+    <Compile Include="Core\Linetracer.cs" />
+    <Compile Include="Core\Location.Fields.cs" />
+    <Compile Include="Core\Location.NativeMethods.cs" />
+    <Compile Include="Core\Location.cs" />
+    <Compile Include="Core\Main.cs" />
+    <Compile Include="Core\Map.Events.cs" />
+    <Compile Include="Core\Map.Fields.cs" />
+    <Compile Include="Core\Map.NativeMethods.cs" />
+    <Compile Include="Core\Map.cs" />
+    <Compile Include="Core\MapManager.cs" />
+    <Compile Include="Core\Math.cs" />
+    <Compile Include="Core\Misc.cs" />
+    <Compile Include="Core\NativeFields.cs" />
+    <Compile Include="Core\NpcPlane.Fields.cs" />
+    <Compile Include="Core\NpcPlane.NativeMethods.cs" />
+    <Compile Include="Core\NpcPlane.cs" />
+    <Compile Include="Core\NpcPlanes.cs" />
+    <Compile Include="Core\ProtoItem.Fields.cs" />
+    <Compile Include="Core\ProtoItem.NativeMethods.cs" />
+    <Compile Include="Core\ProtoItem.cs" />
+    <Compile Include="Core\Random.cs" />
+    <Compile Include="Core\Scenery.Fields.cs" />
+    <Compile Include="Core\Scenery.NativeMethods.cs" />
+    <Compile Include="Core\Scenery.cs" />
+    <Compile Include="Core\Tests.cs" />
+    <Compile Include="Core\Time.cs" />
+    <Compile Include="Core\TimeEvents.cs" />
+    <Compile Include="Core\Visibility.cs" />
+    <Compile Include="Data\ItemHolderData.cs" />
+    <Compile Include="Data\OffenceData.cs" />
+    <Compile Include="Extension\Critter.Extension.cs" />
+    <Compile Include="Maps\Junkyard.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Roles\EncounterRoles.cs" />
+    <Compile Include="Roles\JunkyardRoles.cs" />
+    <Compile Include="Roles\Roles.cs" />
+    <Compile Include="Roles\Vault112Roles.cs" />
+    <Compile Include="Roles\VirtualRealityRoles.cs" />
+    <Compile Include="AI.Constants.cs" />
+    <Compile Include="Bags.Contants.cs" />
+    <Compile Include="Common.cs" />
+    <Compile Include="Critter.Constants.cs" />
+    <Compile Include="Critter.cs" />
+    <Compile Include="Dialog.Constants.cs" />
+    <Compile Include="Item.Contants.cs" />
+    <Compile Include="Misc.Constants.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Serializator.cs" />
+    <Compile Include="Team.Constants.cs" />
+    <Compile Include="AI\CombatClass\CombatClass.cs" />
+    <Compile Include="AI\CombatClass\Crippler.cs" />
+    <Compile Include="AI\CombatClass\Medic.cs" />
+    <Compile Include="AI\CombatClass\Melee.cs" />
+    <Compile Include="AI\CombatClass\OneHexBurster.cs" />
+    <Compile Include="AI\CombatClass\Sniper.cs" />
+    <Compile Include="AI\CombatAction\Heal.cs" />
+    <Compile Include="AI\CombatAction\Attack.cs" />
+    <Compile Include="AI\CombatAction\CombatAction.cs" />
+    <Compile Include="AI\CombatAction\UseItem.cs" />
+    <Compile Include="AI\AIManager.cs" />
+    <Compile Include="Core\Position.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Mono.CSharp">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Vault112\Server\mono\FOnline.Mono\FOnline.Mono.csproj">
       <Project>{2365FF66-D33F-4A95-B128-5327EEFE068C}</Project>
       <Name>FOnline.Mono</Name>
     </ProjectReference>
