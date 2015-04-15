@@ -53,7 +53,7 @@ void _NpcRoleInit(Critter& npc, bool firstTime)
 			InitTrader(npc);
 			break;
 		case ROLE_ENCOUNTER_GUARD:
-			InitGuard(npc);
+			InitEncounterGuard(npc);
 			break;
 		case ROLE_ENCOUNTER_TRIBAL:
 		//todo
@@ -101,7 +101,7 @@ void InitTrader(Critter& npc)
 	actionManager.StartImmediately(npc, action);
 }
 
-void InitGuard(Critter& npc)
+void InitEncounterGuard(Critter& npc)
 {
 	uint reinforcementMessageNumber = npc.Stat[ST_TEAM_ID];
 	

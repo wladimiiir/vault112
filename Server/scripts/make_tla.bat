@@ -1,13 +1,13 @@
 @echo off
 
 @: Environment
-@set PATH=C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE;%PATH%
-@set PATH=C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\BIN;%PATH%
-@set LIB=C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\LIB;%LIB%
-@set LIB=C:\Program Files (x86)\Microsoft SDKs\Windows\v6.0A\Lib;%LIB%
-@set LIB=C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib;%LIB%
+@set PATH=C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE;%PATH%
+@set PATH=C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\BIN;%PATH%
+@set LIB=C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\LIB;%LIB%
+@set LIB=C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0\Lib;%LIB%
+@set LIB=C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib;%LIB%
 @set LIB=.\StlPort;%LIB%
-@set INCLUDE=C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include;%INCLUDE%
+@set INCLUDE=C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include;%INCLUDE%
 @set INCLUDE=.\StlPort;%INCLUDE%
 
 @: Server

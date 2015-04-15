@@ -232,7 +232,7 @@
 {421}{}{MOVE ITEMS}
 {422}{}{ALL}
 {423}{}{SET TIMER}
-{424}{}{Unarmed dmg:}
+{424}{}{Close combat dmg:}
 {425}{}{You cannot pick that up. You are at your maximum weight capacity.}
 {426}{}{There is no space left for that item.}
 {429}{}{You gain %d experience points for successfully using your Steal skill.}
@@ -1401,12 +1401,12 @@
 # SK_ENERGY_WEAPONS
 {102021}{}{Energy Weapons}
 {102022}{}{The care and feeding of energy-based weapons.  How to arm and operate weapons that use laser or plasma technology.}
-# SK_UNARMED
-{102031}{}{Unarmed}
-{102032}{}{A combination of martial arts, boxing and other hand-to-hand martial arts.  Combat with your hands and feet.}
-# SK_MELEE_WEAPONS
-{102041}{}{Melee Weapons}
-{102042}{}{Using non-ranged weapons in hand-to-hand, or melee combat - knives, sledgehammers, spears, clubs and so on.}
+# SK_CLOSE_COMBAT
+{102031}{}{Close Combat}
+{102032}{}{A combination of martial arts, boxing and other hand-to-hand martial arts.  Combat with your hands, feet. Using non-ranged weapons in hand-to-hand, or melee combat - knives, sledgehammers, spears, clubs and so on.}
+# SK_RUNNING_SPEED
+{102041}{}{Running Speed}
+{102042}{}{Determines your speed when running. It is always better to be the fastest one.}
 # SK_THROWING
 {102051}{}{Throwing}
 {102052}{}{The skill of muscle-propelled ranged weapons, such as throwing knives, spears and grenades.}

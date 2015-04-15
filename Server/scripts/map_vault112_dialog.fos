@@ -25,10 +25,10 @@ void r_GiveFirstTimeItems(Critter& player, Critter@ npc)
 		items.insertLast(player.AddItem(PID_LASER_PISTOL, 1));
 		items.insertLast(player.AddItem(PID_SMALL_ENERGY_CELL, Random(60, 70)));
 	}
-	if(_CritIsTagSkill(player, SK_UNARMED))
+	if(_CritIsTagSkill(player, SK_CLOSE_COMBAT))
 		items.insertLast(player.AddItem(PID_BRASS_KNUCKLES, 1));
 
-	if(_CritIsTagSkill(player, SK_MELEE_WEAPONS))
+	if(_CritIsTagSkill(player, SK_RUNNING_SPEED))
 		items.insertLast(player.AddItem(PID_SPEAR, 1));
 
 	if(_CritIsTagSkill(player, SK_FIRST_AID) && _CritIsTagSkill(player, SK_DOCTOR))

@@ -671,7 +671,7 @@ table.AddLocationPid( LOCATION_CityEncounter5 );
 table.AddLocationPid( LOCATION_CityEncounter6 );
 table.AddLocationPid( LOCATION_CityEncounter7 );
 table.AddLocationPid( LOCATION_CityEncounter8 );
-table.AddEncounter( 10, 10030020 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
+table.AddEncounter( 100, 10030020 ).AddGroup( GROUP_Player, 0, 0 ).AddGroup( GROUP_Giant_Rats, 5, 15 ).Fighting( 0, 1 );
 
 
 @table = @EncounterTables[ TABLE_11_13 ];

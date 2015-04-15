@@ -680,18 +680,17 @@ bool critter_use_skill( Critter& cr, int skill, Critter@ targetCr, Item@ targetI
 	        if( activePid == PID_FIRST_AID_KIT )
 	        {
 	            sk += 25;
-	            if( Random( 0, 30 ) == 0 )
+	            if( Random( 0, 10 ) == 0 )
 	                cr.DeleteItem( PID_FIRST_AID_KIT, 1 );
 	        }
 	        else if( activePid == PID_FIELD_MEDIC_KIT )
 	        {
 	            sk += 50;
-	            if( Random( 0, 30 ) == 0 )
+	            if( Random( 0, 10 ) == 0 )
 	                cr.DeleteItem( PID_FIELD_MEDIC_KIT, 1 );
 	        }
-	        int mod = 11 - cr.Stat[ ST_LUCK ];
-	        mod = CLAMP( mod, 1, 10 );
-	        int heal = Random( sk / mod, sk );
+	        
+	        int heal = sk - Random(0, sk * 0.2);
 	        if( heal < 1 )
 	            heal = 1;
 	        if( cr.Perk[ PE_VAMPIRE_REGENERATION ] > 0 )
@@ -1670,13 +1669,11 @@ void turn_based_process( Map& map, Critter& cr, bool beginTurn )
             }
         }
 
-		cr.StatBase[ ST_CURRENT_AP ] += cr.Stat[ ST_CURRENT_AP_EXT ] * 100;
-		cr.StatBase[ ST_CURRENT_AP_EXT ] = 0;
         cr.StatBase[ ST_TURN_BASED_AC ] = cr.Stat[ ST_CURRENT_AP ] * ( hthEvade ? 2 : 1 );
         if( cr.Stat[ ST_TURN_BASED_AC ] < 0 )
             cr.StatBase[ ST_TURN_BASED_AC ] = 0;
-        if( hthEvade && cr.Skill[ SK_UNARMED ] > 0 )
-            cr.StatBase[ ST_TURN_BASED_AC ] += cr.Skill[ SK_UNARMED ] / 12;
+        if( hthEvade && cr.Skill[ SK_CLOSE_COMBAT ] > 0 )
+            cr.StatBase[ ST_TURN_BASED_AC ] += cr.Skill[ SK_CLOSE_COMBAT ] / 12;
         cr.StatBase[ ST_MOVE_AP ] = 0;
         if(cr.IsPlayer() && _CritIsOffline(cr))
 			cr.ModeBase[MODE_END_COMBAT] = 1;

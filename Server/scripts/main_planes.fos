@@ -365,7 +365,7 @@ bool npc_plane_run( Critter& npc, NpcPlane& plane, int reason, uint& r0, uint& r
         r1 = 0;
 
         // Sort skills
-        int[] skillsNum = { SK_SMALL_GUNS, SK_BIG_GUNS, SK_ENERGY_WEAPONS, SK_UNARMED, SK_MELEE_WEAPONS, SK_THROWING };
+        int[] skillsNum = { SK_SMALL_GUNS, SK_BIG_GUNS, SK_ENERGY_WEAPONS, SK_CLOSE_COMBAT, SK_RUNNING_SPEED, SK_THROWING };
         uint skillsCount = skillsNum.length();
         SkillsSort( npc, skillsNum, 0, skillsCount );
 
@@ -388,11 +388,11 @@ bool npc_plane_run( Critter& npc, NpcPlane& plane, int reason, uint& r0, uint& r
             }
             break;
         case BW_Unarmed:
-            SkillToBegin( skillsNum, SK_UNARMED );
+            SkillToBegin( skillsNum, SK_CLOSE_COMBAT );
             break;
         case BW_RangedOvMelee:
-            SkillToBegin( skillsNum, SK_UNARMED );        // 5
-            SkillToBegin( skillsNum, SK_MELEE_WEAPONS );  // 4
+            SkillToBegin( skillsNum, SK_CLOSE_COMBAT );        // 5
+            SkillToBegin( skillsNum, SK_RUNNING_SPEED );  // 4
             SkillToBegin( skillsNum, SK_THROWING );       // 3
             SkillToBegin( skillsNum, SK_ENERGY_WEAPONS ); // 2
             SkillToBegin( skillsNum, SK_BIG_GUNS );       // 1
@@ -405,15 +405,15 @@ bool npc_plane_run( Critter& npc, NpcPlane& plane, int reason, uint& r0, uint& r
             SkillToBegin( skillsNum, SK_ENERGY_WEAPONS ); // 4
             SkillToBegin( skillsNum, SK_BIG_GUNS );       // 3
             SkillToBegin( skillsNum, SK_SMALL_GUNS );     // 2
-            SkillToBegin( skillsNum, SK_UNARMED );        // 1
-            SkillToBegin( skillsNum, SK_MELEE_WEAPONS );  // 0
+            SkillToBegin( skillsNum, SK_CLOSE_COMBAT );        // 1
+            SkillToBegin( skillsNum, SK_RUNNING_SPEED );  // 0
             SkillsSort( npc, skillsNum, 0, 2 );           // Sort 0, 1
             SkillsSort( npc, skillsNum, 2, 4 );           // Sort 2, 3, 4, 5
             break;
         case BW_UnarmOvThrown:
             SkillToBegin( skillsNum, SK_THROWING );       // 2
-            SkillToBegin( skillsNum, SK_MELEE_WEAPONS );  // 1
-            SkillToBegin( skillsNum, SK_UNARMED );        // 0
+            SkillToBegin( skillsNum, SK_RUNNING_SPEED );  // 1
+            SkillToBegin( skillsNum, SK_CLOSE_COMBAT );        // 0
             SkillsSort( npc, skillsNum, 0, 2 );
             break;
         default:
@@ -485,7 +485,7 @@ bool npc_plane_run( Critter& npc, NpcPlane& plane, int reason, uint& r0, uint& r
 
         // non-ranged weapons:
         int skill = _WeaponSkill( weapon, use );
-        if( skill == SK_UNARMED || skill == SK_MELEE_WEAPONS )
+        if( skill == SK_CLOSE_COMBAT || skill == SK_RUNNING_SPEED )
         {
             int base =
                 npc.Skill[ skill ] -
@@ -746,7 +746,7 @@ bool CogitateFiring( Critter& cr, uint& mode, uint& aim ) // in: targetId, 0; ou
     ProtoItem@ protoAmmo = null;
     if( weapon.AmmoPid != 0 )
         @protoAmmo = GetProtoItem( weapon.AmmoPid );
-    if( protoWeapon.Weapon_Skill_0 == SK_UNARMED || protoWeapon.Weapon_Skill_0 == SK_MELEE_WEAPONS ) // assuming all modes melee
+    if( protoWeapon.Weapon_Skill_0 == SK_CLOSE_COMBAT || protoWeapon.Weapon_Skill_0 == SK_RUNNING_SPEED ) // assuming all modes melee
     {
         mode = 0;
         if( cr.IsCanAim() )
@@ -814,7 +814,7 @@ int ChooseAim( Critter& cr, Critter& target, ProtoItem@ weapon, uint8 mode, Prot
 
     int  ap = valid( weapon ) ? _WeaponApCost( weapon, mode ) : 3;
     uint skill = valid( weapon ) ? _WeaponSkill( weapon, mode ) : 0;
-    int  pendiv = valid( weapon ) ? ( skill == SK_MELEE_WEAPONS || skill == SK_UNARMED ? 2 : 1 ) : 2;
+    int  pendiv = valid( weapon ) ? ( skill == SK_RUNNING_SPEED || skill == SK_CLOSE_COMBAT ? 2 : 1 ) : 2;
     bool isTB = cr.GetMap().IsTurnBasedAvailability();
     int  maxap = isTB ? cr.Stat[ ST_CURRENT_AP ] : cr.Stat[ ST_ACTION_POINTS ];
 

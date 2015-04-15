@@ -763,7 +763,7 @@ int to_hit( CritterCl& chosen, CritterCl& target, ProtoItem& weapon, uint8 weapo
     int weaponPerk = weapon.Weapon_Perk;
     int blockers = 0;
 
-    if( skillNum != SK_UNARMED && skillNum != SK_MELEE_WEAPONS )
+    if( skillNum != SK_CLOSE_COMBAT )
     {
         // Ranged attack modifiers
         int distmod1 = 2; // Used for initial weapon bonus
@@ -841,7 +841,7 @@ int to_hit( CritterCl& chosen, CritterCl& target, ProtoItem& weapon, uint8 weapo
     toHit += target.GetMultihex() * 15;
 
     int hitMod = GetHitAim( hitLocation );
-    if( skillNum == SK_MELEE_WEAPONS || skillNum == SK_UNARMED )
+    if( skillNum == SK_CLOSE_COMBAT )
         hitMod /= 2;
     toHit -= hitMod;
     toHit = CLAMP( toHit, 5, 95 );

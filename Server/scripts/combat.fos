@@ -80,9 +80,8 @@ void unsafe_EndTurnBasedCombat(Critter& player, int, int, int, string@, int[]@)
 	
 	if(map.IsTurnBased() && player.Stat[ST_CURRENT_AP] > 0)
 	{
-		player.StatBase[ST_CURRENT_AP_EXT] = player.Stat[ST_CURRENT_AP];
 		player.ModeBase[MODE_END_COMBAT] = 1;
-		player.StatBase[ST_CURRENT_AP] -= player.Stat[ST_CURRENT_AP] * 100;
+		player.StatBase[ST_CURRENT_AP] = 0;
 	}
 }
 
@@ -94,8 +93,7 @@ void unsafe_EndTurnBasedTurn(Critter& player, int, int, int, string@, int[]@)
 	
 	if(map.IsTurnBased() && player.Stat[ST_CURRENT_AP] > 0)
 	{
-		player.StatBase[ST_CURRENT_AP_EXT] = player.Stat[ST_CURRENT_AP];
-		player.StatBase[ST_CURRENT_AP] -= player.Stat[ST_CURRENT_AP] * 100;
+		player.StatBase[ST_CURRENT_AP] = 0;
 	}
 }
 
@@ -120,10 +118,9 @@ void CombatAttack( Critter& cr, Critter& target, ProtoItem& weapon, uint8 weapon
         wpnMaxDist = MIN( wpnMaxDist, 3 * MIN( int(10), ( cr.Stat[ ST_STRENGTH ] + 2 * cr.Perk[ PE_HEAVE_HO ] ) ) );
     int    skillVal = cr.Skill[ skillNum ];
     uint8  weaponSubtype =
-        ( skillNum == SK_SMALL_GUNS || skillNum == SK_BIG_GUNS || skillNum == SK_ENERGY_WEAPONS ) ? WS_GUN : ( ( skillNum == SK_THROWING ) ? WS_THROWING : ( skillNum == SK_MELEE_WEAPONS ) ? WS_MELEE : WS_UNARMED );
-    bool   isRanged = ( weaponSubtype == WS_THROWING || weaponSubtype == WS_GUN );
+        ( skillNum == SK_SMALL_GUNS || skillNum == SK_BIG_GUNS || skillNum == SK_ENERGY_WEAPONS ) ? WS_GUN : ( ( skillNum == SK_THROWING ) ? WS_THROWING : WS_CLOSE_COMBAT );    bool   isRanged = ( weaponSubtype == WS_THROWING || weaponSubtype == WS_GUN );
     bool   isUnarmed = weapon.Weapon_IsUnarmed;
-    bool   isHthAttack = ( weaponSubtype == WS_MELEE || weaponSubtype == WS_UNARMED );
+    bool   isHthAttack = ( weaponSubtype == WS_CLOSE_COMBAT );
     uint16 ammoRound = _WeaponRound( weapon, use );
     bool   wpnIsRemoved = _WeaponRemove( weapon, use );
     uint16 hx = cr.HexX;
@@ -219,9 +216,9 @@ void CombatAttack( Critter& cr, Critter& target, ProtoItem& weapon, uint8 weapon
     {
         if( weaponSubtype == WS_GUN )
             cr.AddScore( SCORE_SHOOTER, 1 );
-        else if( skillNum == SK_MELEE_WEAPONS || skillNum == SK_THROWING )
+        else if( skillNum == SK_RUNNING_SPEED || skillNum == SK_THROWING )
             cr.AddScore( SCORE_MELEE, 1 );
-        else if( skillNum == SK_UNARMED )
+        else if( skillNum == SK_CLOSE_COMBAT )
             cr.AddScore( SCORE_UNARMED, 1 );
     }
 
@@ -266,7 +263,7 @@ void CombatAttack( Critter& cr, Critter& target, ProtoItem& weapon, uint8 weapon
     attack.IsBurst = isBurst;
     attack.BloodyMess = cr.Trait[ TRAIT_BLOODY_MESS ] != 0;
     attack.CombatMessage = true;
-    attack.scoreUnarmed = ( weaponSubtype == WS_UNARMED );
+    attack.scoreUnarmed = ( weaponSubtype == WS_CLOSE_COMBAT );
     attack.WeaponPerk = ( isUnarmed && weapon.Weapon_UnarmedArmorPiercing ) ? WEAPON_PERK_PENETRATE : weaponPerk;
     attack.WeaponSubtype = weaponSubtype;
     attack.DmgMin = _WeaponDmgMin( weapon, use );
@@ -1824,7 +1821,7 @@ void ApplyDamage( AttackStruct& attack, Critter& target, uint rounds, bool isCri
         if( ( isBelow || knockOut || knockDown || dmgType == DAMAGE_EXPLODE ) && !target.IsKnockout() && target.Mode[ MODE_NO_KNOCK ] == 0 )
         {
             int knockDist = knockDmg;
-            if( ( dmgType == DAMAGE_EXPLODE || attack.WeaponSubtype == WS_MELEE ) && target.IsCanWalk() )
+            if( ( dmgType == DAMAGE_EXPLODE || attack.WeaponSubtype == WS_CLOSE_COMBAT ) && target.IsCanWalk() )
             {
                 if( weaponPerk == WEAPON_PERK_KNOCKBACK )
                     knockDist /= 5;
@@ -2451,12 +2448,12 @@ uint GetHitAim( int hitLocation )
 // client only, possible use by AI
 int RawToHit( Critter& cr, Critter& target, ProtoItem@ weapon, uint8 weaponUse, ProtoItem@ ammo )
 {
-    int skillNum = valid( weapon ) ? _WeaponSkill( weapon, weaponUse ) : SK_UNARMED;
+    int skillNum = valid( weapon ) ? _WeaponSkill( weapon, weaponUse ) : SK_CLOSE_COMBAT;
     int toHit = cr.Skill[ skillNum ];
     int weaponPerk = valid( weapon ) ? weapon.Weapon_Perk : 0;
     int blockers = 0;
     int dist = GetDistantion( cr.HexX, cr.HexY, target.HexX, target.HexY );
-    if( skillNum != SK_UNARMED && skillNum != SK_MELEE_WEAPONS )
+    if( skillNum != SK_CLOSE_COMBAT && skillNum != SK_RUNNING_SPEED )
     {
         // ranged attack modifiers
         int distmod1 = 2; // used for initial weapon bonus
@@ -2535,7 +2532,7 @@ int RawToHit( Critter& cr, Critter& target, ProtoItem@ weapon, uint8 weaponUse, 
         toHit += 40;
     if( target.GetMultihex() > 0 )
         toHit += 15;
-    if( skillNum != SK_UNARMED && skillNum != SK_MELEE_WEAPONS )
+    if( skillNum != SK_CLOSE_COMBAT && skillNum != SK_RUNNING_SPEED )
         toHit -= GetSmokePenalty( cr.GetMap(), cr, target );
 
     return toHit;
