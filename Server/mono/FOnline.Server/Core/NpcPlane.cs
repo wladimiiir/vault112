@@ -29,10 +29,12 @@ namespace FOnline
 		Attack = 1,
 		Walk = 2,
 		Pick = 3,
+
+		// WIP
 		Patrol = 4,
 		// WIP
-		Courier = 5
-		// WIP
+		Courier = 5,
+		CustomAI = 6
 	}
 
 	public static class Priorities
@@ -52,6 +54,17 @@ namespace FOnline
 		public const int FromDialog = 12;
 		public const int FromScript = 13;
 		public const int RunAway = 14;
+
+		public const int Success = 30;
+		public const int HexTooFar = 31;
+		public const int HexBusy = 32;
+		public const int HexBusyRing = 33;
+		public const int Deadlock = 34;
+		public const int CantWalk = 38;
+		public const int TargetDissapeared = 39;
+		public const int GagCritter = 41;
+		public const int GagItem = 42;
+		public const int NoUnarmed = 43;
 
 		public const int AttackTarget = 50;
 		public const int AttackWeapon = 51;

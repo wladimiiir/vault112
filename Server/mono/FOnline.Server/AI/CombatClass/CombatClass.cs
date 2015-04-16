@@ -4,21 +4,37 @@ namespace FOnline.AI
 {
 	public interface ICombatClass
 	{
-		ICombatAction ChooseNextAction (Critter npc);
-
 		Critter ChooseNextTarget (Critter npc);
 
-		UInt16Array GetNextPosition (Critter npc, Critter target);
+		UInt16Array ChoosePosition (Critter npc, Critter target);
 
-		int ChooseNextItemId (Critter npc, Critter target);
+		AttackChoice ChooseAttack (Critter npc, Critter target);
 
-		uint ChooseWeaponId (Critter npc, Critter target);
+		ItemChoice ChooseItem (Critter npc, Critter target);
 
-		uint ChooseWeaponUse (Critter npc, Critter target);
+		SkillChoice ChooseSkill (Critter npc, Critter target);
 
-		uint ChooseUnarmedProtoId (Critter npc, Critter target);
+	}
 
-		uint ChooseHitLocation (Critter npc, Critter target);
+	public class AttackChoice
+	{
+		public uint WeaponId { get; set; }
+
+		public uint WeaponUse { get; set; }
+
+		public uint UnarmedProtoId { get; set; }
+
+		public HitLocation HitLocation { get; set; }
+	}
+
+	public class ItemChoice
+	{
+		public uint ItemId { get; set; }
+	}
+
+	public class SkillChoice
+	{
+		public uint Skill { get; set; }
 	}
 }
 

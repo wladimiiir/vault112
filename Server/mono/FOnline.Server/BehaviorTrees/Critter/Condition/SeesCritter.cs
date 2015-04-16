@@ -2,7 +2,7 @@ using System;
 
 namespace FOnline.BT
 {
-	public class IsSeen : CritterCheckCondition<CritterBlackboard>
+	public class SeesCritter : CritterCheckCondition<CritterBlackboard>
 	{
 		public override bool Check (Critter checkEntity)
 		{

@@ -38,7 +38,7 @@ namespace FOnline.BT
 		{
 			TaskState state = base.GetState ();
 			if (currentStage == Stage.MoveToLoot && state == TaskState.Running) {
-				if (GetCritter ().GetPlanes ((int)CritterDefines.PlaneIdentifier.Patrol, currentLootCritter.Id, null) == 0) {
+				if (GetCritter ().GetPlanes ((int)CritterDefines.PlaneIdentifier.Loot, currentLootCritter.Id, null) == 0) {
 					currentStage = Stage.NextToLoot;
 					State = TaskState.Ready;
 					return TaskState.Ready;

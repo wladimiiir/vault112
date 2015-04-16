@@ -32,9 +32,9 @@ namespace FOnline
 					.Do(new Attack(BlackboardKeys.Attackers))
 				.End()
 				.Do(new ProvideReinforcements()).IfNot(new AmAttacking())
-				.Do(new ProvideReinforcements(VirtualRealityReinforcements)).IfNot(new AmAttacking()).If(new IsSeen())
+				.Do(new ProvideReinforcements(VirtualRealityReinforcements)).IfNot(new AmAttacking()).If(new SeesCritter())
 				.DoSequence("Find player and attack him")
-					.Do(new FindCritters(Find.Life | Find.OnlyPlayers).Choose(new Weakest())).If(new IsSeen()).IfNot(new AmAttacking())
+					.Do(new FindCritters(Find.Life | Find.OnlyPlayers).Choose(new Weakest())).If(new SeesCritter()).IfNot(new AmAttacking())
 					.Do(new Attack())
 				.End();
 			
