@@ -6,7 +6,7 @@ namespace FOnline
 {
 	public class Ranged : ICombatClass
 	{
-		public Critter ChooseNextTarget (Critter npc)
+		public Critter ChooseNextTarget (Critter npc, Critter currentTarget)
 		{
 			var enemyStack = new UIntArray ();
 			npc.GetEnemyStack (enemyStack);
@@ -22,8 +22,32 @@ namespace FOnline
 			return null;
 		}
 
-		public UInt16Array ChoosePosition (Critter npc, Critter target)
+		public UInt16Array ChooseAttackPosition (Critter npc, Critter target, AttackChoice attackChoice)
 		{
+
+			var weapon = npc.GetItemById (attackChoice.WeaponId);
+			if (weapon == null)
+				return null;
+
+			var weaponDistance = weapon.Proto.WeaponMaxDist (attackChoice.WeaponUse);
+			var distance = Global.GetDistance (npc, target);
+
+			if (weaponDistance < distance) {
+				var direction = Global.GetDirection (npc, target);
+				var hexX = npc.HexX;
+				var hexY = npc.HexY;
+
+				do {
+					npc.GetMap ().MoveHexByDir (ref hexX, ref hexY, direction, 1);
+				} while(!npc.GetMap ().IsHexPassed (hexX, hexY));
+
+				var result = new UInt16Array ();
+				result.Add (hexX);
+				result.Add (hexY);
+				result.Add ((ushort)direction);
+				return result;
+			}
+
 			return null;
 		}
 

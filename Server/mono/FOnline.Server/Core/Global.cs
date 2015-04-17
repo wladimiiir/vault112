@@ -780,9 +780,19 @@ namespace FOnline
 			return Math.GetDistantion (hx1, hy1, hx2, hy2);
 		}
 
+		public static uint GetDistance (Critter fromCritter, Critter toCritter)
+		{
+			return GetDistantion (fromCritter.HexX, fromCritter.HexY, toCritter.HexX, toCritter.HexY);
+		}
+
 		public static Direction GetDirection (ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy)
 		{
 			return Math.GetDirection (from_hx, from_hy, to_hx, to_hy);
+		}
+
+		public static Direction GetDirection (Critter fromCritter, Critter toCritter)
+		{
+			return GetDirection (fromCritter.HexX, fromCritter.HexY, toCritter.HexX, toCritter.HexY);
 		}
 
 		public static Direction GetOffsetDir (ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, float offset)

@@ -8,6 +8,8 @@ namespace FOnline.AI
 	public class AIManager
 	{
 		private const long PROCESS_INTERVAL = 200;
+
+		private Linetracer shootTracer = new Linetracer (new ShootTraceContext ());
 		private System.Diagnostics.Stopwatch Time = System.Diagnostics.Stopwatch.StartNew ();
 
 		public static void InitRanged (IntPtr npcPtr)
@@ -62,18 +64,18 @@ namespace FOnline.AI
 
 		private long ProcessCustomAI (Critter npc, ref Critter currentTarget, ICombatClass combatClass, NpcPlane plane)
 		{
-			currentTarget = combatClass.ChooseNextTarget (npc);
+			currentTarget = combatClass.ChooseNextTarget (npc, currentTarget);
 			if (currentTarget == null)
 				return 0;
 
-			var position = combatClass.ChoosePosition (npc, currentTarget);
-			if (position != null) {
-				GoToPosition (npc, plane, position [0], position [1], position [2]);
-				return 0;
-			}
-
 			var attackChoice = combatClass.ChooseAttack (npc, currentTarget);
 			if (attackChoice != null) {
+				var position = combatClass.ChooseAttackPosition (npc, currentTarget, attackChoice);
+				if (position != null) {
+					GoToPosition (npc, plane, position [0], position [1], position [2]);
+					return 0;
+				}
+
 				return AttackTarget (npc, currentTarget, attackChoice);
 			}
 
@@ -92,11 +94,19 @@ namespace FOnline.AI
 			return 0;
 		}
 
-		private long AttackTarget (Critter npc, Critter currentTarget, AttackChoice attackChoice)
+		private long AttackTarget (Critter npc, Critter target, AttackChoice attackChoice)
 		{
 			if (npc.Stat [Stats.CurrentAP] <= 0) {
 				npc.Wait (500);
 				return 0;
+			}
+
+			var distance = Global.GetDistance (npc, target);
+			if (distance > 1) {
+				var tracedDistance = shootTracer.TraceDistance (npc.GetMap (), npc.HexX, npc.HexY, target.HexX, target.HexY, distance);
+				if (tracedDistance != distance)
+					//cannot shoot through objects
+					return 0;
 			}
 
 			var currentWeapon = npc.GetItemHand ();
@@ -111,11 +121,15 @@ namespace FOnline.AI
 			if (currentWeapon == null)
 				return 0;
 
+			if (distance > currentWeapon.Proto.Weapon_MaxDist_0) {
+				return 0;
+			}
+
 			var weaponAttackApCost = currentWeapon.Proto.Weapon_ApCost_0;
 			npc.Stat [Stats.CurrentAP] -= (int)weaponAttackApCost * 100;
 
 			dynamic mainModule = ScriptEngine.GetModule ("main");
-			mainModule.critter_attack (npc, currentTarget, currentWeapon.Proto, attackChoice.WeaponUse, Global.GetProtoItem (currentWeapon.Proto.Weapon_DefaultAmmoPid));
+			mainModule.critter_attack (npc, target, currentWeapon.Proto, attackChoice.WeaponUse, Global.GetProtoItem (currentWeapon.Proto.Weapon_DefaultAmmoPid));
 			return Global.Breaktime;
 		}
 
@@ -143,6 +157,7 @@ namespace FOnline.AI
 
 		private NpcPlaneEventResult ProcessWalkResult (Critter npc, CritterEventPlaneBeginEndArgs e)
 		{
+			Global.Log ("Processing walk result: " + e.Reason);
 			switch (e.Reason) {
 			case NpcPlaneReason.Success:
 				return NpcPlaneEventResult.Discard;
