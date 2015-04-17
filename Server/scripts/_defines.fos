@@ -848,7 +848,7 @@
 #define LOCKPICK_TIMEOUT                         # (cr) ( __FullSecond + REAL_SECOND( 10 ) )                                                                                                                // Orig 15 minutes, 2 min
 #define STEAL_TIMEOUT                            # (cr) ( __FullSecond + REAL_SECOND( 30 ) )                                                                                                                // 2 minutes
 #define TRANSFER_TIMEOUT                         # (cr) ( __FullSecond + __TimeoutTransfer )
-#define BATTLE_TIMEOUT                           # (cr) ( __FullSecond + __TimeoutBattle  )
+#define BATTLE_TIMEOUT                           # (cr) ( __FullSecond + REAL_SECOND(__TimeoutBattle)  )
 #define TRAPS_TIMEOUT                            # (cr) ( __FullSecond + REAL_SECOND( 5 ) )
 #define SNEAK_TIMEOUT                            # (cr) ( __FullSecond + REAL_SECOND( MIN( 30, cr.Skill[ SK_SNEAK ] / 150) ) )
 #define HEALING_TIMEOUT                          # (cr) ( __FullSecond + REAL_MINUTE( 1 ) )                                     // 2 minutes

@@ -33,7 +33,7 @@ void InitializeGame()                    // Export
     __TurnBasedTick             = 30000;
     __Breaktime                 = 1200;
     __TimeoutTransfer           = 0;
-    __TimeoutBattle             = REAL_SECOND( 10 );
+    __TimeoutBattle             = 10;
     __ApRegeneration            = 7000;
     __RtApCostCritterWalk       = 0;     // 1 AP == 100, maximim 255
     __RtApCostCritterRun        = 5;     // 1 AP == 100, maximim 255
