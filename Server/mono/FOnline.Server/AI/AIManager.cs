@@ -7,6 +7,9 @@ namespace FOnline.AI
 {
 	public class AIManager
 	{
+		private const long PROCESS_INTERVAL = 200;
+		private System.Diagnostics.Stopwatch Time = System.Diagnostics.Stopwatch.StartNew ();
+
 		public static void InitRanged (IntPtr npcPtr)
 		{
 			var npc = (Critter)npcPtr;
@@ -15,24 +18,22 @@ namespace FOnline.AI
 
 		public void InitRanged (Critter npc)
 		{
-			Global.Log ("Initializing Ranged combat class");
 			InitAIEvents (npc, new Ranged ());
 		}
 
 		private void InitAIEvents (Critter npc, ICombatClass combatClass)
 		{
 			Critter currentTarget = null;
+			long NextProcessTime = 0;
 
-			npc.Idle += (sender, e) => {
-				Global.Log ("Idle raised");
-			};
 			npc.Attacked += (sender, e) => {
-				Global.Log ("Attacked");
 				if (e.Attacker != null)
 					npc.AddEnemyInStack (e.Attacker.Id);
 			};
 			npc.PlaneBegin += (sender, e) => {
-				if (e.Plane.Type != PlaneType.CustomAI) {
+				if (e.Plane.Type == PlaneType.CustomAI) {
+					e.Result = NpcPlaneEventResult.Keep;
+				} else {
 					//TODO: check if discard
 					Global.Log ("Plane begin: " + e.Plane.Type);
 				}
@@ -41,9 +42,12 @@ namespace FOnline.AI
 				e.Result = NpcPlaneEventResult.Discard;
 			};
 			npc.PlaneEnd += (sender, e) => {
-				Global.Log ("Plane end");
 				if (e.Plane.Type == PlaneType.CustomAI) {
-					ProcessCustomAI (npc, ref currentTarget, combatClass, e.Plane);
+					if (NextProcessTime <= Time.ElapsedMilliseconds) {
+						var breakTime = ProcessCustomAI (npc, ref currentTarget, combatClass, e.Plane);
+						NextProcessTime = Time.ElapsedMilliseconds + (breakTime == 0 ? PROCESS_INTERVAL : breakTime);
+					}
+
 					e.Result = NpcPlaneEventResult.Keep;
 				} else if (e.Plane.Type == PlaneType.Walk) {
 					e.Result = ProcessWalkResult (npc, e);
@@ -54,54 +58,65 @@ namespace FOnline.AI
 
 			npc.DropPlanes ();
 			npc.AddPlane (CreateCustomAIPlane ());
-			Global.Log ("Successfully initialized");
 		}
 
-		private void ProcessCustomAI (Critter npc, ref Critter currentTarget, ICombatClass combatClass, NpcPlane plane)
+		private long ProcessCustomAI (Critter npc, ref Critter currentTarget, ICombatClass combatClass, NpcPlane plane)
 		{
 			currentTarget = combatClass.ChooseNextTarget (npc);
 			if (currentTarget == null)
-				return;
+				return 0;
 
 			var position = combatClass.ChoosePosition (npc, currentTarget);
 			if (position != null) {
 				GoToPosition (npc, plane, position [0], position [1], position [2]);
-				return;
+				return 0;
 			}
 
 			var attackChoice = combatClass.ChooseAttack (npc, currentTarget);
 			if (attackChoice != null) {
-				AttackTarget (npc, currentTarget, attackChoice);
-				return;
+				return AttackTarget (npc, currentTarget, attackChoice);
 			}
 
 			var itemChoice = combatClass.ChooseItem (npc, currentTarget);
 			if (itemChoice != null) {
 				UseItemOnTarget (npc, currentTarget, itemChoice);
-				return;
+				return 0;
 			}
 
 			var skillChoice = combatClass.ChooseSkill (npc, currentTarget);
 			if (skillChoice != null) {
 				UseSkillOnTarget (npc, currentTarget, skillChoice);
-				return;
+				return 0;
 			}
+
+			return 0;
 		}
 
-		private void AttackTarget (Critter npc, Critter currentTarget, AttackChoice attackChoice)
+		private long AttackTarget (Critter npc, Critter currentTarget, AttackChoice attackChoice)
 		{
+			if (npc.Stat [Stats.CurrentAP] <= 0) {
+				npc.Wait (500);
+				return 0;
+			}
+
 			var currentWeapon = npc.GetItemHand ();
 			if (currentWeapon.Id != attackChoice.WeaponId) {
 				var map = npc.GetMap ();
-				var apCost = map != null && map.IsTurnBased () ? Global.TbApCostDropItem : Global.RtApCostDropItem;
+				var moveItemApCost = map != null && map.IsTurnBased () ? Global.TbApCostDropItem : Global.RtApCostDropItem;
 
-				npc.Stat [Stats.CurrentAP] -= (int)apCost * 100;
+				npc.Stat [Stats.CurrentAP] -= (int)moveItemApCost * 100;
 				npc.MoveItem (attackChoice.WeaponId, 1, ItemSlot.Hand1);
 				currentWeapon = npc.GetItemById (attackChoice.WeaponId);
 			}
+			if (currentWeapon == null)
+				return 0;
+
+			var weaponAttackApCost = currentWeapon.Proto.Weapon_ApCost_0;
+			npc.Stat [Stats.CurrentAP] -= (int)weaponAttackApCost * 100;
 
 			dynamic mainModule = ScriptEngine.GetModule ("main");
 			mainModule.critter_attack (npc, currentTarget, currentWeapon.Proto, attackChoice.WeaponUse, Global.GetProtoItem (currentWeapon.Proto.Weapon_DefaultAmmoPid));
+			return Global.Breaktime;
 		}
 
 		private void UseItemOnTarget (Critter npc, Critter currentTarget, ItemChoice itemChoice)
@@ -140,6 +155,7 @@ namespace FOnline.AI
 		{
 			var plane = Global.CreatePlane ();
 			plane.Type = PlaneType.CustomAI;
+			plane.Priority = 0;
 			return plane;
 		}
 	}

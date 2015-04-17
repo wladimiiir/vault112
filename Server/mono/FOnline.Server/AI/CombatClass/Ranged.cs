@@ -8,14 +8,16 @@ namespace FOnline
 	{
 		public Critter ChooseNextTarget (Critter npc)
 		{
-			UIntArray enemyStack = new UIntArray ();
+			var enemyStack = new UIntArray ();
 			npc.GetEnemyStack (enemyStack);
 
-			if (enemyStack.Length == 0)
-				return null;
-
-			if (enemyStack.Length == 1)
-				return Global.GetCritter (enemyStack [0]);
+			for (int i = 0; i < enemyStack.Length; i++) {
+				if (enemyStack [i] != 0) {
+					var target = npc.GetMap ().GetCritter (enemyStack [i]);
+					if (target != null)
+						return target;
+				}
+			}
 
 			return null;
 		}
